@@ -1,0 +1,32 @@
+use leptos::ev::MouseEvent;
+use leptos::prelude::{ClassAttribute, ElementChild, GlobalAttributes, OnAttribute};
+use leptos::{IntoView, component, view};
+
+const PRIMARY_BUTTON_CLASSES: &'static str = "text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none";
+const OA_PRIMARY_BUTTON_CLASSES: &'static str = "dark:focus:ring-gray-800 focus:outline-none focus:ring-4 focus:ring-oa-blue-darker font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 hover:bg-oa-blue-darker bg-oa-blue text-white";
+
+#[component]
+pub fn PrimaryButton(
+    #[prop(into)] id: String,
+    #[prop(into)] label: String,
+    on_click: impl Fn(MouseEvent) + 'static,
+) -> impl IntoView {
+    view! {
+        <button type="button" id=id on:click=on_click class=PRIMARY_BUTTON_CLASSES>
+            {label}
+        </button>
+    }
+}
+
+#[component]
+pub fn OAPrimaryButton(
+    #[prop(into)] id: String,
+    #[prop(into)] label: String,
+    on_click: impl Fn(MouseEvent) + 'static,
+) -> impl IntoView {
+    view! {
+        <button type="button" id=id on:click=on_click class=OA_PRIMARY_BUTTON_CLASSES>
+            {label}
+        </button>
+    }
+}

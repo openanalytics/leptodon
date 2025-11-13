@@ -1,0 +1,11 @@
+[tasks.dev-up]
+command = "docker"
+args = ["compose", "-f", "docker-compose.overview.yaml", "up", "-d"]
+
+[tasks.dev-logs]
+command = "docker"
+args = ["compose", "-f", "docker-compose.overview.yaml", "logs", "-f"]
+
+[tasks.dev-stop]
+command = "docker"
+args = ["compose", "-f", "docker-compose.overview.yaml", "stop"]
