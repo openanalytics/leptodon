@@ -1,0 +1,17 @@
+[package]
+name = "overview"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+console_error_panic_hook = "0.1.7"
+leptos = { version = "0.8.12", features = ["csr"] }
+leptos_meta = { version = "0.8.5"}
+leptos_router = { version = "0.8.9" }
+itertools = "0.14.0"
+leptos-components = { path=".." }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 'z'
