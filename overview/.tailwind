@@ -1,4 +1,5 @@
-use leptos::ev::MouseEvent;
+pub mod button;
+pub mod include_generated;include!(concat!(env!("OUT_DIR"), "/generated.rs"));use leptos::ev::MouseEvent;
 use leptos::prelude::{ClassAttribute, ElementChild, GlobalAttributes, OnAttribute};
 use leptos::{IntoView, component, view};
 

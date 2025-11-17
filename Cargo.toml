@@ -5,5 +5,17 @@ edition = "2024"
 
 [dependencies]
 console_error_panic_hook = "0.1.7"
+icondata_core = "0.1.0"
 leptos = { version = "0.8.12", features = ["csr"] }
-itertools = "0.14.0"
+leptos_meta = { version = "0.8.5" }
+leptos_router = { version = "0.8.5" }
+reactive_stores = { version = "0.2.5" }
+uuid = { version = "1.18.1",  features = ["v4", "js"] }
+
+[build-dependencies]
+walkdir = "2.5.0"
+
+[features]
+csr = ["leptos/csr"]
+ssr = ["leptos/ssr", "leptos_meta/ssr"]
+hydrate = ["leptos/hydrate"]

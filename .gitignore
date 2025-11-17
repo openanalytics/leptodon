@@ -4,3 +4,6 @@
 */target
 */node_modules
 */.dist
+
+overview/dist
+overview/.tailwind

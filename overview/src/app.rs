@@ -1,7 +1,6 @@
 use leptos::prelude::*;
-use leptos_components::button::OAPrimaryButton;
-use leptos_components::button::PrimaryButton;
-use leptos_components::test::TestPage;
+
+use leptos_components::button::Button;
 use leptos_meta::*;
 use leptos_router::{
     StaticSegment,
@@ -30,7 +29,6 @@ fn Home() -> impl IntoView {
     view! {
         <Title text="Leptos components" />
         <main>
-            <TestPage />
             <button
                 on:click=move |_| { *set_count.write() += 1 }
                 class=("red", move || count.get() % 2 == 1)
@@ -44,9 +42,19 @@ fn Home() -> impl IntoView {
             <ProgressBar label="shark" progress=Signal::derive(double_count) />
             <ProgressBar progress=count />
 
-            <PrimaryButton id="5" label="5" on_click=move |_| {  } />
+            <Button
+                on_click=move |_| {}
+                {..}
+                id="5">
+                5
+            </Button>
             <br/>
-            <OAPrimaryButton id="add" label ="Add" on_click=move |_| {} />
+            <Button
+                on_click=move |_| {}
+                {..}
+                id="add">
+                Add
+            </Button>
         </main>
     }
 }

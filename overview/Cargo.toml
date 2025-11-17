@@ -9,7 +9,10 @@ leptos = { version = "0.8.12", features = ["csr"] }
 leptos_meta = { version = "0.8.5"}
 leptos_router = { version = "0.8.9" }
 itertools = "0.14.0"
-leptos-components = { path=".." }
+leptos-components = { path = ".." }
+
+[build-dependencies]
+leptos-components = { path = ".." }
 
 [profile.release]
 codegen-units = 1
