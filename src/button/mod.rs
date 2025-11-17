@@ -12,7 +12,8 @@ use leptos::{
     prelude::*,
 };
 // const PRIMARY_BUTTON_CLASSES: &'static str = "text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none";
-const OA_PRIMARY_BUTTON_CLASSES: &'static str = "dark:focus:ring-gray-800 focus:outline-none focus:ring-4 focus:ring-oa-blue-darker font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 hover:bg-oa-blue-darker bg-oa-blue text-white";
+const OA_PRIMARY_BUTTON_CLASSES: &'static str = "dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline focus:outline-oa-blue font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 hover:bg-oa-blue-darker bg-oa-blue text-white";
+const OA_SECONDARY_BUTTON_CLASSES: &'static str = "dark:focus:ring-gray-800 focus:outline-none focus:ring-4 focus:ring-oa-gray font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 bg-gray-200 hover:bg-oa-gray-darker text-gray-700 dark:bg-gray-700 dark:text-gray-400";
 
 /// A button triggers an action or event when activated.
 #[component]
@@ -83,7 +84,12 @@ pub fn Button(
                 move || format!("thaw-button--{}", size.get().as_str()),
                 move || format!("thaw-button--{}", appearance.get().as_str()),
                 move || format!("thaw-button--{}", shape.get().as_str()),
-                OA_PRIMARY_BUTTON_CLASSES,
+                match appearance.get() {
+                    ButtonAppearance::Secondary => OA_SECONDARY_BUTTON_CLASSES,
+                    ButtonAppearance::Primary => OA_PRIMARY_BUTTON_CLASSES,
+                    ButtonAppearance::Subtle => "",
+                    ButtonAppearance::Transparent => todo!(),
+                },
                 class
             ]
             type=move || button_type.get().map(|t| t.as_str())
@@ -116,7 +122,7 @@ pub fn Button(
 
 #[derive(Default, PartialEq, Clone, Copy)]
 pub enum ButtonAppearance {
-    /// Gives emphasis to the button in such a way that it i ndicates a secondary action.
+    /// Gives emphasis to the button in such a way that it indicates a secondary action.
     #[default]
     Secondary,
     /// Emphasizes the button as a primary action.

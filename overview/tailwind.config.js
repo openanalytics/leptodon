@@ -17,6 +17,8 @@ module.exports = {
       "oa-blue-darker": "#00729c",
       "oa-red-2": "#be1717",
       "oa-docs-blue": "#30638e",
+      "oa-gray": "#e6e6e6",
+      "oa-gray-darker": "#c3c3c3", // 15% darker
     },
     extend: {
       aria: {

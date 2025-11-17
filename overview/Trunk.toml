@@ -1,0 +1,2 @@
+[watch]
+watch = ["../../leptos-components/src"] # watches leptos-components

@@ -1,6 +1,6 @@
 use leptos::prelude::*;
 
-use leptos_components::button::Button;
+use leptos_components::button::{Button, ButtonAppearance};
 use leptos_meta::*;
 use leptos_router::{
     StaticSegment,
@@ -28,7 +28,7 @@ fn Home() -> impl IntoView {
     let double_count = move || count.get() * 2;
     view! {
         <Title text="Leptos components" />
-        <main>
+        <main class="px-3">
             <button
                 on:click=move |_| { *set_count.write() += 1 }
                 class=("red", move || count.get() % 2 == 1)
@@ -44,6 +44,8 @@ fn Home() -> impl IntoView {
 
             <Button
                 on_click=move |_| {}
+                appearance=ButtonAppearance::Primary
+                class="m-2"
                 {..}
                 id="5">
                 5
@@ -51,6 +53,8 @@ fn Home() -> impl IntoView {
             <br/>
             <Button
                 on_click=move |_| {}
+                appearance=ButtonAppearance::Secondary
+                class="m-2"
                 {..}
                 id="add">
                 Add
