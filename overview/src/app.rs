@@ -1,6 +1,10 @@
 use leptos::prelude::*;
+use leptos_components::input::InputType;
 
-use leptos_components::button::{Button, ButtonAppearance};
+use leptos_components::{
+    button::{Button, ButtonAppearance},
+    input::Input,
+};
 use leptos_meta::*;
 use leptos_router::{
     StaticSegment,
@@ -52,6 +56,7 @@ fn Home() -> impl IntoView {
             </Button>
             <br/>
             <Button
+                icon=leptos_components::icon::AddIcon()
                 on_click=move |_| {}
                 appearance=ButtonAppearance::Secondary
                 class="m-2"
@@ -59,6 +64,14 @@ fn Home() -> impl IntoView {
                 id="add">
                 Add
             </Button>
+            <br/>
+            <Input/>
+            <br/>
+            <Input label="Username" name="username" placeholder="Username" input_type=InputType::Text  />
+            <Input label="Email" name="email" placeholder="Email" input_type=InputType::Email readonly=true />
+            <Input label="Password" name="pass" placeholder="Password" input_type=InputType::Password />
+            <br/>
+            <crate::gen_icons::IconList />
         </main>
     }
 }

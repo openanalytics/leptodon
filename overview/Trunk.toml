@@ -1,2 +1,2 @@
 [watch]
-watch = ["../../leptos-components/src"] # watches leptos-components
+watch = ["../../leptos-components/src", "src", "build.rs"] # watches leptos-components

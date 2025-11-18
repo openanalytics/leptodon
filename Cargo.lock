@@ -793,6 +793,7 @@ dependencies = [
  "leptos_meta",
  "leptos_router",
  "reactive_stores 0.2.5",
+ "regex",
  "uuid",
  "walkdir",
 ]

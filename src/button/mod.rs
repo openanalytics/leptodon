@@ -1,7 +1,7 @@
 use crate::class_list;
+use crate::icon::Icon;
 use crate::util::signals::ComponentRef;
 use crate::{
-    icon::Icon,
     spinner::{Spinner, SpinnerSize},
     util::callback::BoxOneCallback,
 };
@@ -11,9 +11,9 @@ use leptos::{
     ev, html,
     prelude::*,
 };
-// const PRIMARY_BUTTON_CLASSES: &'static str = "text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none";
-const OA_PRIMARY_BUTTON_CLASSES: &'static str = "dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline focus:outline-oa-blue font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 hover:bg-oa-blue-darker bg-oa-blue text-white";
-const OA_SECONDARY_BUTTON_CLASSES: &'static str = "dark:focus:ring-gray-800 focus:outline-none focus:ring-4 focus:ring-oa-gray font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 bg-gray-200 hover:bg-oa-gray-darker text-gray-700 dark:bg-gray-700 dark:text-gray-400";
+
+const OA_PRIMARY_BUTTON_CLASSES: &'static str = "shadow-sm dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline focus:outline-oa-blue font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 hover:bg-oa-blue-darker bg-oa-blue text-white";
+const OA_SECONDARY_BUTTON_CLASSES: &'static str = "shadow-sm border-solid border border-gray-400 dark:focus:ring-gray-800 focus:outline-none focus:ring-4 focus:ring-oa-gray font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 bg-gray-200 hover:bg-oa-gray-darker text-gray-700 dark:bg-gray-700 dark:text-gray-400";
 
 /// A button triggers an action or event when activated.
 #[component]
@@ -22,18 +22,12 @@ pub fn Button(
     /// A button can have its content and borders styled for greater emphasis or to be subtle.
     #[prop(optional, into)]
     appearance: Signal<ButtonAppearance>,
-    /// A button can be rounded, circular, or square.
-    #[prop(optional, into)]
-    shape: Signal<ButtonShape>,
     /// A button supports different sizes.
     #[prop(optional, into)]
     size: Option<Signal<ButtonSize>>,
     /// The default behavior of the button.
     #[prop(optional, into)]
     button_type: MaybeProp<ButtonType>,
-    /// Whether the button is displayed as block.
-    #[prop(optional, into)]
-    block: Signal<bool>,
     /// The icon of the button.
     #[prop(optional, into)]
     icon: MaybeProp<icondata_core::Icon>,
@@ -43,7 +37,9 @@ pub fn Button(
     #[prop(optional, into)] on_click: Option<BoxOneCallback<ev::MouseEvent>>,
     #[prop(optional)] children: Option<Children>,
     #[prop(optional)] comp_ref: ComponentRef<ButtonRef>,
-) -> impl IntoView {
+) -> impl IntoView
+where
+{
     let none_children = children.is_none();
     let size_injection = ButtonSizeInjection::use_context().map(|s| s.0);
     let size = size.unwrap_or_else(|| Signal::stored(size_injection.unwrap_or_default()));
@@ -75,15 +71,6 @@ pub fn Button(
     view! {
         <button
             class=class_list![
-                "thaw-button",
-
-                ("thaw-button--block", move || block.get()),
-                ("thaw-button--only-icon", only_icon),
-                ("thaw-button--icon", move || icon.with(|i| i.is_some())),
-                ("thaw-button--loading", move || loading.get()),
-                move || format!("thaw-button--{}", size.get().as_str()),
-                move || format!("thaw-button--{}", appearance.get().as_str()),
-                move || format!("thaw-button--{}", shape.get().as_str()),
                 match appearance.get() {
                     ButtonAppearance::Secondary => OA_SECONDARY_BUTTON_CLASSES,
                     ButtonAppearance::Primary => OA_PRIMARY_BUTTON_CLASSES,
@@ -106,7 +93,9 @@ pub fn Button(
                         },
                     )
                 } else if let Some(icon) = icon.get() {
-                    EitherOf3::B(view! { <Icon icon=icon class="thaw-button__icon" /> })
+                    EitherOf3::B(view!{
+                        <Icon icon=icon/>
+                    })
                 } else {
                     EitherOf3::C(())
                 }

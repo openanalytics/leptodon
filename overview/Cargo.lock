@@ -576,11 +576,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8714ae4adeaa846d838f380fbd72f049197de629948f91bf045329e0cf0a283"
 dependencies = [
  "futures",
+ "js-sys",
  "once_cell",
  "or_poisoned",
  "pin-project-lite",
  "serde",
  "throw_error",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -708,6 +710,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "71dd52191aae121e8611f1e8dc3e324dd0dd1dee1e6dd91d10ee07a3cfb4d9d8"
 
 [[package]]
+name = "inventory"
+version = "0.3.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc61209c082fbeb19919bee74b176221b27223e27b65d781eb91af24eb1fb46e"
+dependencies = [
+ "rustversion",
+]
+
+[[package]]
 name = "itertools"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -782,6 +793,7 @@ dependencies = [
  "leptos_meta",
  "leptos_router",
  "reactive_stores 0.2.5",
+ "regex",
  "uuid",
  "walkdir",
 ]
@@ -1036,6 +1048,7 @@ dependencies = [
  "leptos-components",
  "leptos_meta",
  "leptos_router",
+ "syn",
 ]
 
 [[package]]
@@ -1485,6 +1498,7 @@ dependencies = [
  "futures",
  "gloo-net",
  "http",
+ "inventory",
  "js-sys",
  "pin-project-lite",
  "rustc_version",

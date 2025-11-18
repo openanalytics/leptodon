@@ -1,4 +1,5 @@
 mod app;
+mod gen_icons;
 
 use app::App;
 

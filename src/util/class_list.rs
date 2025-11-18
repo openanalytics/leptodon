@@ -2,7 +2,7 @@
 use leptos::prelude::{Get, MaybeProp, Memo};
 use leptos::{
     prelude::{Oco, RenderEffect, RwSignal, Update, With, WithUntracked},
-    tachys::renderer::{types, Rndr},
+    tachys::renderer::{Rndr, types},
 };
 use std::collections::HashSet;
 #[cfg(not(feature = "ssr"))]
