@@ -1,5 +1,6 @@
 use crate::class_list;
 use crate::icon::Icon;
+use crate::icon::icon_data::IconRef;
 use crate::util::signals::ComponentRef;
 use crate::{
     spinner::{Spinner, SpinnerSize},
@@ -30,7 +31,7 @@ pub fn Button(
     button_type: MaybeProp<ButtonType>,
     /// The icon of the button.
     #[prop(optional, into)]
-    icon: MaybeProp<icondata_core::Icon>,
+    icon: MaybeProp<IconRef>,
     /// Whether the button shows the loading status.
     #[prop(optional, into)]
     loading: Signal<bool>,

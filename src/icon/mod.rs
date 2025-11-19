@@ -1,30 +1,32 @@
+pub mod icon_data;
+
+use crate::icon::icon_data::*;
+use crate::icon_data;
+use leptos::IntoView;
+use leptos::component;
+use leptos::leptos_dom::logging::console_log;
+use leptos::prelude::ClassAttribute;
+use leptos::prelude::CustomAttribute;
+use leptos::prelude::Get;
+use leptos::prelude::InnerHtmlAttribute;
+use leptos::prelude::MaybeProp;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RenderHtml;
-use leptos::prelude::InnerHtmlAttribute;
-use leptos::prelude::CustomAttribute;
-use leptos::prelude::ArcMemo;
-use leptos::prelude::ClassAttribute;
-use leptos::prelude::Get;
 use leptos::prelude::Signal;
-use icondata_core::IconData;
-use leptos::prelude::MaybeProp;
 use leptos::prelude::StyleAttribute;
 use leptos::view;
-use leptos::component;
-use leptos::IntoView;
-use icondata_core::Icon;
 use std::sync::LazyLock;
 
-use leptos::{ev};
+use leptos::ev;
 
-use crate::util::callback::ArcOneCallback;
 use crate::class_list;
+use crate::util::callback::ArcOneCallback;
 /// The Icon component.
 #[component]
 pub fn Icon(
     /// The icon to render.
     #[prop(into)]
-    icon: icondata_core::Icon,
+    icon: IconRef,
     /// The width of the icon (horizontal side length of the square surrounding the icon).
     /// Defaults to "1em".
     #[prop(into, default = "1em".into())]
@@ -36,30 +38,20 @@ pub fn Icon(
     /// HTML class attribute.
     #[prop(into, default = "w-6 h-6".into())]
     class: MaybeProp<String>,
-    /// HTML style attribute.
-    #[prop(into, optional)]
-    style: Option<Signal<String>>,
     /// Callback when clicking on the icon.
     #[prop(optional, into)]
     on_click: Option<ArcOneCallback<ev::MouseEvent>>,
 ) -> impl IntoView {
-    let style = match (style, icon.style) {
-        (Some(a), Some(b)) => Some(ArcMemo::new(move |_| format!("{b} {}", a.get())).into()),
-        (Some(a), None) => Some(a),
-        (None, Some(b)) => Some(b.into()),
-        (None, None) => None,
-    };
-
     let on_click = move |ev| {
         if let Some(click) = on_click.as_ref() {
             click(ev);
         }
     };
 
+    console_log(format!("{:?}", icon.class).as_str());
     view! {
         <svg
-            class=class_list![class]
-            style=move || style.clone().map(|s| s.get())
+            class=class_list![icon.class.unwrap_or_default(), class]
             x=icon.x
             y=icon.y
             width=move || width.get()
@@ -69,42 +61,34 @@ pub fn Icon(
             stroke-linejoin=icon.stroke_linejoin
             stroke-width=icon.stroke_width
             stroke=icon.stroke
-            fill=icon.fill.unwrap_or("currentColor")
+            fill=icon.fill.unwrap_or("none")
             inner_html=icon.data
             on:click=on_click
         ></svg>
     }
 }
 
-macro_rules! return_icon_from_square {
-    ($side:expr, $html:tt) => {
-        static RET: LazyLock<IconData> = std::sync::LazyLock::new(|| IconData {
-            style: None,
-            x: Some("0"),
-            y: Some("0"),
-            width: Some(stringify!($side)),
-            height: Some(stringify!($side)),
-            view_box: Some(concat!("0 0 ", stringify!($side), " ", stringify!($side))),
-            stroke_linecap: None,
-            stroke_linejoin: None,
-            stroke_width: None,
-            stroke: None,
-            fill: Some("currentColor"),
-            data: $html.as_str(),
-        });
-        return &RET;
+/// Creates a [LazyLock] around a rendered version of the passed `view! {...}`.
+macro_rules! lazy_path {
+    ($name:ident, view! $vw:tt) => {
+        static $name: LazyLock<String> = std::sync::LazyLock::new(|| view!$vw.into_view().to_html());
     };
 }
 
-macro_rules! lazy_icon {
-    ($name:ident, $vw:tt) => {
-        static $name: LazyLock<String> = std::sync::LazyLock::new(|| $vw.into_view().to_html());
-    };
+/// Creates a [LazyLock] around the passed IconData to obtain a reference with `'static` lifetime
+macro_rules! return_lazified_icon {
+    ($($stmt:stmt)*) => {
+        static RET: LazyLock<IconData> = std::sync::LazyLock::new(|| {
+            $($stmt)*
+        });
+        return &RET;
+    }
 }
 
 #[component]
-pub fn HamburgerIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn HamburgerIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 clip-rule="evenodd"
@@ -112,23 +96,25 @@ pub fn HamburgerIcon() -> Icon {
                 d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn UserIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn UserIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z"></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn CalendarIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn CalendarIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path d="M12.75 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM7.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM8.25 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM9.75 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM10.5 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM12.75 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM14.25 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 17.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 15.75a.75.75 0 100-1.5.75.75 0 000 1.5zM15 12.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM16.5 13.5a.75.75 0 100-1.5.75.75 0 000 1.5z"></path>
             <path
@@ -137,13 +123,14 @@ pub fn CalendarIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn ProjectsIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn ProjectsIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -153,23 +140,25 @@ pub fn ProjectsIcon() -> Icon {
                 d="M13.5 8H4m0-2v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-5.032a1 1 0 0 1-.768-.36l-1.9-2.28a1 1 0 0 0-.768-.36H5a1 1 0 0 0-1 1Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn ProjectsIconFilled() -> Icon {
-    lazy_icon!(HTML, {
+pub fn ProjectsIconFilled() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path d="M19.5 21a3 3 0 003-3v-4.5a3 3 0 00-3-3h-15a3 3 0 00-3 3V18a3 3 0 003 3h15zM1.5 10.146V6a3 3 0 013-3h5.379a2.25 2.25 0 011.59.659l2.122 2.121c.14.141.331.22.53.22H19.5a3 3 0 013 3v1.146A4.483 4.483 0 0019.5 9h-15a4.483 4.483 0 00-3 1.146z"></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn CustomersIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn CustomersIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -177,13 +166,14 @@ pub fn CustomersIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn ContractsIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn ContractsIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -193,23 +183,25 @@ pub fn ContractsIcon() -> Icon {
                 d="M18 5V4a1 1 0 0 0-1-1H8.914a1 1 0 0 0-.707.293L4.293 7.207A1 1 0 0 0 4 7.914V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5M9 3v4a1 1 0 0 1-1 1H4m11.383.772 2.745 2.746m1.215-3.906a2.089 2.089 0 0 1 0 2.953l-6.65 6.646L9 17.95l.739-3.692 6.646-6.646a2.087 2.087 0 0 1 2.958 0Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
 #[component]
-pub fn ConsultantsIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn ConsultantsIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z"></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn BillingIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn BillingIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -223,23 +215,25 @@ pub fn BillingIcon() -> Icon {
             ></path>
             <path d="M10.5 14.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn TaskIcon() -> icondata_core::Icon {
-    lazy_icon!(HTML, {
+pub fn TaskIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path d="M17.133 12.632v-1.8a5.406 5.406 0 0 0-4.154-5.262.955.955 0 0 0 .021-.106V3.1a1 1 0 0 0-2 0v2.364a.955.955 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C6.867 15.018 5 15.614 5 16.807 5 17.4 5 18 5.538 18h12.924C19 18 19 17.4 19 16.807c0-1.193-1.867-1.789-1.867-4.175ZM8.823 19a3.453 3.453 0 0 0 6.354 0H8.823Z"></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn ReportingIcon() -> icondata_core::Icon {
-    lazy_icon!(HTML, {
+pub fn ReportingIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -247,13 +241,14 @@ pub fn ReportingIcon() -> icondata_core::Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn ApproveIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn ApproveIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
         <path
             fill-rule="evenodd"
@@ -261,13 +256,14 @@ pub fn ApproveIcon() -> Icon {
             clip-rule="evenodd"
         ></path>
             }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn RejectIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn RejectIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -275,13 +271,14 @@ pub fn RejectIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn CloseIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn CloseIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -291,13 +288,14 @@ pub fn CloseIcon() -> Icon {
                 d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 14).filled());
 }
 
 #[component]
-pub fn SearchIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn SearchIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -307,13 +305,14 @@ pub fn SearchIcon() -> Icon {
                 d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20));
 }
 
 #[component]
-pub fn PreviousIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn PreviousIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -321,13 +320,14 @@ pub fn PreviousIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn NextIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn NextIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -335,13 +335,14 @@ pub fn NextIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn DownIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn DownIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -351,13 +352,14 @@ pub fn DownIcon() -> Icon {
                 d="m1 1 4 4 4-4"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 10, 6));
 }
 
 #[component]
-pub fn RefreshIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn RefreshIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -367,13 +369,14 @@ pub fn RefreshIcon() -> Icon {
                 d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
 #[component]
-pub fn DecrementIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn DecrementIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -383,13 +386,14 @@ pub fn DecrementIcon() -> Icon {
                 d="M1 1h16"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 18, 2));
 }
 
 #[component]
-pub fn IncrementIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn IncrementIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -399,13 +403,14 @@ pub fn IncrementIcon() -> Icon {
                 d="M9 1v16M1 9h16"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 18));
 }
 
 #[component]
-pub fn NoteFilledIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn NoteFilledIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -413,13 +418,14 @@ pub fn NoteFilledIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn NoteIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn NoteIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -429,13 +435,14 @@ pub fn NoteIcon() -> Icon {
                 d="M7.556 8.5h8m-8 3.5H12m7.111-7H4.89a.896.896 0 0 0-.629.256.868.868 0 0 0-.26.619v9.25c0 .232.094.455.26.619A.896.896 0 0 0 4.89 16H9l3 4 3-4h4.111a.896.896 0 0 0 .629-.256.868.868 0 0 0 .26-.619v-9.25a.868.868 0 0 0-.26-.619.896.896 0 0 0-.63-.256Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
 #[component]
-pub fn ProjectAssignmentsIconFilled() -> Icon {
-    lazy_icon!(HTML, {
+pub fn ProjectAssignmentsIconFilled() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -443,13 +450,14 @@ pub fn ProjectAssignmentsIconFilled() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn ProjectAssignmentsIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn ProjectAssignmentsIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -458,13 +466,14 @@ pub fn ProjectAssignmentsIcon() -> Icon {
                 d="M4.5 17H4a1 1 0 0 1-1-1 3 3 0 0 1 3-3h1m0-3.05A2.5 2.5 0 1 1 9 5.5M19.5 17h.5a1 1 0 0 0 1-1 3 3 0 0 0-3-3h-1m0-3.05a2.5 2.5 0 1 0-2-4.45m.5 13.5h-7a1 1 0 0 1-1-1 3 3 0 0 1 3-3h3a3 3 0 0 1 3 3 1 1 0 0 1-1 1Zm-1-9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
 #[component]
-pub fn LockOpenIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn LockOpenIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -472,13 +481,14 @@ pub fn LockOpenIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn LockIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn LockIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -486,13 +496,14 @@ pub fn LockIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn ApprovedIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn ApprovedIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -502,13 +513,17 @@ pub fn ApprovedIcon() -> Icon {
                 d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon! {
+        icon_data!(&HTML, 24)
+            .set_class(Some("text-oa-blue dark:text-white"))
+    };
 }
 
 #[component]
-pub fn RejectedIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn RejectedIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -518,13 +533,17 @@ pub fn RejectedIcon() -> Icon {
                 d="m15 9-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon! {
+        icon_data!(&HTML, 24)
+            .set_class(Some("text-red-600 dark:text-red-500"))
+    };
 }
 
 #[component]
-pub fn PendingApprovalIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn PendingApprovalIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -534,13 +553,17 @@ pub fn PendingApprovalIcon() -> Icon {
                 d="M9.529 9.988a2.502 2.502 0 1 1 5 .191A2.441 2.441 0 0 1 12 12.582V14m-.01 3.008H12M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon! {
+        icon_data!(&HTML, 24)
+            .set_class(Some("text-yellow-300 dark:text-yellow-300"))
+    };
 }
 
 #[component]
-pub fn SavedIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn SavedIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -550,13 +573,17 @@ pub fn SavedIcon() -> Icon {
                 d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon! {
+        icon_data!(&HTML, 24)
+            .set_class(Some("text-oa-blue dark:text-oa-blue"))
+    };
 }
 
 #[component]
-pub fn EmptyIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn EmptyIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke-linecap="round"
@@ -566,13 +593,17 @@ pub fn EmptyIcon() -> Icon {
                 stroke-width="2"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon! {
+        icon_data!(&HTML, 24)
+            .set_class(Some("text-gray-400 dark:text-gray-400"))
+    };
 }
 
 #[component]
-pub fn OpenIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn OpenIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke-linejoin="round"
@@ -582,23 +613,28 @@ pub fn OpenIcon() -> Icon {
                 stroke-linecap="round"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon! {
+        icon_data!(&HTML, 24)
+            .set_class(Some("text-yellow-300 dark:text-yellow-300"))
+    };
 }
 
 #[component]
-pub fn InfoIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn InfoIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn AutoFillIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn AutoFillIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -608,13 +644,14 @@ pub fn AutoFillIcon() -> Icon {
                 d="M19 12H5m14 0-4 4m4-4-4-4"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn SaveIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn SaveIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -622,23 +659,25 @@ pub fn SaveIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn DateIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn DateIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn TableSearchIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn TableSearchIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -646,13 +685,14 @@ pub fn TableSearchIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn UnsortedIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn UnsortedIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -660,13 +700,14 @@ pub fn UnsortedIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn SortedAscendingIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn SortedAscendingIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -674,13 +715,14 @@ pub fn SortedAscendingIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn SortedDescendingIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn SortedDescendingIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -688,13 +730,14 @@ pub fn SortedDescendingIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn HideIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn HideIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -702,13 +745,14 @@ pub fn HideIcon() -> Icon {
                 d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
 #[component]
-pub fn ShowIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn ShowIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -721,13 +765,14 @@ pub fn ShowIcon() -> Icon {
                 d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
 #[component]
-pub fn MoveIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn MoveIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -736,23 +781,25 @@ pub fn MoveIcon() -> Icon {
                 d="M12 6h.01M12 12h.01M12 18h.01"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
 #[component]
-pub fn EditIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn EditIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z"></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn DeleteIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn DeleteIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -760,13 +807,14 @@ pub fn DeleteIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn WarningIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn WarningIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -776,33 +824,39 @@ pub fn WarningIcon() -> Icon {
                 d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon! {
+        icon_data!(&HTML, 20)
+            .set_class(Some("text-gray-400 dark:text-gray-200"))
+    };
 }
 
 #[component]
-pub fn CancelIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn CancelIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn AddIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn AddIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"></path>
         }
-    });
-    return_icon_from_square!(20, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn FirstIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn FirstIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -810,13 +864,14 @@ pub fn FirstIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn LastIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn LastIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -829,13 +884,14 @@ pub fn LastIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
 #[component]
-pub fn DownloadIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn DownloadIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 fill-rule="evenodd"
@@ -848,13 +904,14 @@ pub fn DownloadIcon() -> Icon {
                 clip-rule="evenodd"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
 #[component]
-pub fn ClearIcon() -> Icon {
-    lazy_icon!(HTML, {
+pub fn ClearIcon() -> IconRef {
+    lazy_path!(
+        HTML,
         view! {
             <path
                 stroke="currentColor"
@@ -864,6 +921,6 @@ pub fn ClearIcon() -> Icon {
                 d="M6 18 17.94 6M18 18 6.06 6"
             ></path>
         }
-    });
-    return_icon_from_square!(24, HTML);
+    );
+    return_lazified_icon!(icon_data!(&HTML, 24));
 }
