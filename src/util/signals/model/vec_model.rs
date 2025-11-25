@@ -54,11 +54,7 @@ impl<T: Send + Sync> VecModel<T> {
     }
 
     pub fn is_vec(&self) -> bool {
-        if let VecModel::Vec(_, _, _) = self {
-            true
-        } else {
-            false
-        }
+        matches!(self, VecModel::Vec(_, _, _))
     }
 
     pub fn with<O>(&self, fun: impl FnOnce(VecModelWithValue<T>) -> O) -> O {

@@ -1,5 +1,3 @@
-use std::sync::LazyLock;
-
 #[derive(Debug, PartialEq, Eq, Clone, Hash)]
 pub struct IconData {
     pub class: Option<&'static str>,
@@ -66,13 +64,13 @@ impl IconData {
         self.data = data;
         self
     }
-    pub fn filled(mut self) -> Self{
+    pub fn filled(mut self) -> Self {
         self.fill = Some("currentColor");
         self
     }
 }
 
-#[macro_export] 
+#[macro_export]
 /// Signature 1: `icon_data!(path: LazyLock<String>, width: u32, height: u32)` \
 /// Signature 2: `icon_data!(path: LazyLock<String>, side: u32)` \
 /// This is not a simple constructor because icons need static str refs to their width, height, viewbox etc.

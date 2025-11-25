@@ -60,8 +60,10 @@ pub fn IconList() -> impl IntoView {{
 }
 
 fn main() -> Result<(), Error> {
+    println!("cargo:rustc-env=RUSTFLAGS=--cfg=erase_components");
+    // Unavailable due to https://github.com/leptos-rs/leptos/issues/3813
     let dest_path = Path::new("./").join(".tailwind");
-    fs::write(&dest_path, leptos_components::include_generated::all())?;
+    // fs::write(&dest_path, leptos_components::include_generated::all())?;
     gen_icons()?;
     println!("cargo::rerun-if-changed=build.rs");
     println!("cargo::rerun-if-changed=Cargo.toml");

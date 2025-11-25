@@ -2,20 +2,124 @@
 name = "overview"
 version = "0.1.0"
 edition = "2024"
+resolver = "2"
+
+[lib]
+name = "overview"
+crate-type = ["cdylib", "rlib"]
+
 
 [dependencies]
-console_error_panic_hook = "0.1.7"
-leptos = { version = "0.8.12", features = ["csr", "ssr"] }
-leptos_meta = { version = "0.8.5"}
-leptos_router = { version = "0.8.9" }
+http = "1"
+tower = { version = "0.5.0", optional = true }
+tower-http = { version = "0.5", features = ["fs"], optional = true }
+axum = { version = "0.8.7", optional = true, features = ["macros"] }
+
+
+tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
+
+console_log = "1"
+console_error_panic_hook = "0.1"
+
+leptos = { version = "0.8.5" }
+leptos_axum = { version = "0.8.5", optional = true }
+leptos_meta = { version = "0.8.5" }
+leptos_router = { version = "0.8.5" }
+
+wasm-bindgen = { version = "=0.2.105", optional = true }
+
 itertools = "0.14.0"
-leptos-components = { path = ".." }
+leptos-components = { path = "..", default-features = false, features = ["leptos"] }
+
+axum-extra = { version = "0.12.2", optional = true, features = ["cookie"] }
+
+thiserror = "1"
+tracing = { version = "0.1", optional = true }
+log = "0.4"
+cfg-if = "1.0.4"
+derive_more = { version = "2.0.1", features = ["display"] }
 
 [build-dependencies]
-leptos-components = { path = ".." }
+# leptos-components = { path = "../../leptos-components", default-features = false, features = [] }
 syn = "2.0.110"
 
-[profile.release]
-codegen-units = 1
-lto = true
+
+[features]
+default = ["ssr"]
+ssr = [
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
+    "leptos-components/leptos",
+    "leptos-components/ssr",
+    "dep:leptos_axum",
+    "dep:tokio",
+    "dep:axum",
+    "dep:axum-extra",
+    "dep:tower",
+    "dep:tower-http"
+]
+hydrate = [
+    "leptos/hydrate",
+    "dep:wasm-bindgen",
+    "leptos-components/leptos",
+    "leptos-components/hydrate"
+]
+csr = [
+    "leptos/csr",
+    "leptos-components/leptos",
+    "leptos-components/csr"
+]
+tower = ["dep:tower"]
+tower-http = ["dep:tower-http"]
+
+# Defines a size-optimized profile for the WASM bundle in release mode
+[profile.wasm-release]
+inherits = "release"
 opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[package.metadata.leptos]
+# # https://github.com/leptos-rs/leptos/issues/3813#issuecomment-3563904837
+# Disabling (thus enabling this option) the erasure of components causes large linker errors in this project.
+disable-erase-components = false
+
+# The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
+output-name = "overview"
+
+# The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
+site-root = "target/site"
+
+# The site-root relative folder where all compiled output (JS, WASM and CSS) is written
+# Defaults to pkg
+site-pkg-dir = "pkg"
+
+# [Optional] The source CSS file. If it ends with .sass or .scss then it will be compiled by dart-sass into CSS. The CSS is optimized by Lightning CSS before being written to <site-root>/<site-pkg>/app.css
+style-file = "style/output.css"
+# Assets source dir. All files found here will be copied and synchronized to site-root.
+# The assets-dir cannot have a sub directory with the same name/path as site-pkg-dir.
+#
+# Optional. Env: LEPTOS_ASSETS_DIR.
+assets-dir = "public"
+site-addr = "127.0.0.1:3000"
+# The port to use for automatic reload monitoring
+reload-port = 3001
+
+# [Optional] Command to use when running end2end tests. It will run in the end2end dir.
+end2end-cmd = "npx playwright test"
+end2end-dir = "end2end"
+browserquery = "defaults"
+
+# The environment Leptos will run in, usually either "DEV" or "PROD"
+env = "DEV"
+bin-features = ["ssr"]
+bin-default-features = false
+lib-features = ["hydrate"]
+lib-default-features = false
+
+# The profile to use for the lib target when compiling for release
+#
+# Optional. Defaults to "release".
+lib-profile-release = "wasm-release"

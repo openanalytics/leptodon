@@ -1,2 +1,5 @@
+[build]
+features = ["csr", "hydrate"]
+
 [watch]
 watch = ["../../leptos-components/src", "src", "build.rs"] # watches leptos-components

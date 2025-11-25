@@ -13,19 +13,27 @@ use leptos::{
     prelude::*,
 };
 
-const OA_PRIMARY_BUTTON_CLASSES: &'static str = "shadow-sm dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline focus:outline-oa-blue font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 hover:bg-oa-blue-darker bg-oa-blue text-white";
-const OA_SECONDARY_BUTTON_CLASSES: &'static str = "shadow-sm border-solid border border-gray-400 dark:focus:ring-gray-800 focus:outline-none focus:ring-4 focus:ring-oa-gray font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 bg-gray-200 hover:bg-oa-gray-darker text-gray-700 dark:bg-gray-700 dark:text-gray-400";
+mod variations;
+
+// Re-exports
+pub use crate::button::variations::DropdownButton;
+pub use crate::button::variations::DropdownButtonChildren;
+
+const OA_PRIMARY_BUTTON_CLASSES: &str = "shadow-sm dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline focus:outline-oa-blue font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 hover:bg-oa-blue-darker bg-oa-blue text-white";
+const OA_SECONDARY_BUTTON_CLASSES: &str = "shadow-sm border-solid border border-gray-400 dark:focus:ring-gray-800 focus:outline-none focus:ring-4 focus:ring-oa-gray font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 bg-gray-200 hover:bg-oa-gray-darker text-gray-700 dark:bg-gray-700 dark:text-gray-400";
 
 /// A button triggers an action or event when activated.
 #[component]
 pub fn Button(
-    #[prop(optional, into)] class: MaybeProp<String>,
+    /// Extra classes appened to the button's default style
+    #[prop(optional, into)]
+    class: MaybeProp<String>,
     /// A button can have its content and borders styled for greater emphasis or to be subtle.
     #[prop(optional, into)]
     appearance: Signal<ButtonAppearance>,
     /// A button supports different sizes.
     #[prop(optional, into)]
-    size: Option<Signal<ButtonSize>>,
+    size: MaybeProp<Signal<ButtonSize>>,
     /// The default behavior of the button.
     #[prop(optional, into)]
     button_type: MaybeProp<ButtonType>,
@@ -41,15 +49,15 @@ pub fn Button(
 ) -> impl IntoView
 where
 {
-    let none_children = children.is_none();
     let size_injection = ButtonSizeInjection::use_context().map(|s| s.0);
-    let size = size.unwrap_or_else(|| Signal::stored(size_injection.unwrap_or_default()));
-    let only_icon = Memo::new(move |_| icon.with(|i| i.is_some()) && none_children);
+    let size = size
+        .get()
+        .unwrap_or_else(|| Signal::stored(size_injection.unwrap_or_default()));
     let aria_disabled = move || {
         if loading.get() {
-            return Some("true");
+            Some("true")
         } else {
-            return None;
+            None
         }
     };
 
@@ -75,7 +83,7 @@ where
                 match appearance.get() {
                     ButtonAppearance::Secondary => OA_SECONDARY_BUTTON_CLASSES,
                     ButtonAppearance::Primary => OA_PRIMARY_BUTTON_CLASSES,
-                    ButtonAppearance::Subtle => "",
+                    ButtonAppearance::Subtle => todo!(),
                     ButtonAppearance::Transparent => todo!(),
                 },
                 class

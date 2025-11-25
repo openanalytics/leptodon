@@ -2,20 +2,47 @@
 name = "leptos-components"
 version = "0.1.0"
 edition = "2024"
+resolver = "3"
 
 [dependencies]
-console_error_panic_hook = "0.1.7"
-leptos = { version = "0.8.12", features = ["csr"] }
-leptos_meta = { version = "0.8.5" }
-leptos_router = { version = "0.8.5" }
-reactive_stores = { version = "0.2.5" }
-uuid = { version = "1.18.1",  features = ["v4", "js"] }
-regex = "1.12.2"
+console_error_panic_hook = { version = "0.1", optional = true }
+leptos = { version = "0.8.5", optional = true }
+leptos_meta = { version = "0.8.5", optional = true }
+leptos_router = { version = "0.8.5", optional = true }
+leptos_axum = { version = "0.8.5", optional = true }
+leptos-use = { version = "0.16.3", optional = true }
+
+reactive_stores = { version = "0.2.5", optional = true }
+uuid = { version = "1.18.1",  features = ["v4", "js"], optional = true }
+wasm-bindgen = { version = "=0.2.105", optional = true }
+wasm-cookies = { version = "=0.2.1", optional = true }
+
+axum = { version = "0.8", optional = true }
+axum-extra = { version = "0.9", optional = true, features = ["cookie"] }
+web-sys = {version = "0.3.82", features = ["HtmlDocument", "Window", "MediaQueryList"], optional = true }
+cfg-if = "1.0.4"
+rstml-to-string-macro = { version = "0.1.0", optional = true }
+serde = { version = "1.0", features=["derive"], optional = true }
 
 [build-dependencies]
 walkdir = "2.5.0"
 
 [features]
+default = ["leptos"]
+leptos = ["dep:leptos", "dep:leptos_router","dep:leptos-use", "dep:leptos_meta", "dep:web-sys", "dep:serde", "dep:rstml-to-string-macro", "dep:reactive_stores", "dep:uuid", "dep:wasm-cookies"]
 csr = ["leptos/csr"]
-ssr = ["leptos/ssr", "leptos_meta/ssr"]
-hydrate = ["leptos/hydrate"]
+ssr = [
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "dep:leptos_axum",
+    "dep:axum",
+    "dep:axum-extra",
+    "leptos-use/axum",
+    "leptos-use/ssr"
+]
+hydrate = [
+    "leptos/hydrate",
+]
+
+[lints.rust]
+dead_code = "allow"

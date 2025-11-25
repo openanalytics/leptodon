@@ -13,13 +13,10 @@ fn main() -> Result<(), Error> {
             Ok(entry) => {
                 let path = entry.path();
                 println!(
-                    "cargo::warning={}",
-                    format!(
-                        "path: {} is_file: {}, is_rust: {}",
-                        path.display(),
-                        path.is_file(),
-                        path.ends_with("rs")
-                    )
+                    "cargo::warning=path: {} is_file: {}, is_rust: {}",
+                    path.display(),
+                    path.is_file(),
+                    path.ends_with("rs")
                 );
                 if path.is_file() {
                     let contents = fs::read_to_string(path)?;
@@ -29,9 +26,10 @@ fn main() -> Result<(), Error> {
             Err(err) => println!("cargo::error={}", err),
         }
     }
-    println!("cargo::warning={}", format!("{:?}", &all_src.len()));
+    println!("cargo::warning={:?}", &all_src.len());
     // Replace every " by \" so it can be embedded in a string
     // all_src = all_src.replace("\"", "\\\"");
+
     fs::write(
         &dest_path,
         format!(

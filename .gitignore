@@ -4,6 +4,8 @@
 */target
 */node_modules
 */.dist
+.idea
 
+overview/.idea
 overview/dist
 overview/.tailwind

@@ -1,6 +1,23 @@
-pub mod button;
-pub mod icon;
+#[cfg(not(feature = "leptos"))]
 pub mod include_generated;
+
+#[cfg(feature = "leptos")]
+pub mod button;
+#[cfg(feature = "leptos")]
+pub mod darkmode;
+#[cfg(feature = "leptos")]
+pub mod icon;
+#[cfg(feature = "leptos")]
 pub mod input;
+#[cfg(feature = "leptos")]
 pub mod spinner;
+#[cfg(feature = "leptos")]
+pub mod toggle;
+#[cfg(feature = "leptos")]
 pub mod util;
+#[cfg(feature = "leptos")]
+pub mod select;
+#[cfg(feature = "leptos")]
+pub mod class_list;
+#[cfg(feature = "leptos")]
+pub mod dropdown;
