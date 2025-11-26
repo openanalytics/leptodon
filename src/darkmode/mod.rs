@@ -16,8 +16,8 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 
-use std::str::FromStr;
 use std::fmt::Display;
+use std::str::FromStr;
 
 use leptos::leptos_dom::logging::console_log;
 use leptos::logging::debug_log;
@@ -62,11 +62,11 @@ impl From<&str> for Theme {
 impl FromStr for Theme {
     /// Err when value cannot be mapped to a theme
     fn from_str(value: &str) -> Result<Theme, ()> {
-        Ok( match value {
+        Ok(match value {
             "dark" => Theme::Dark,
             "light" => Theme::Light,
             "followsystem" => Theme::FollowSystem,
-            _ => return Err(())
+            _ => return Err(()),
         })
     }
     type Err = ();
@@ -181,7 +181,7 @@ pub fn initial_theme_from_cookie() -> Theme {
 pub fn initial_theme_from_cookie() -> Theme {
     use leptos::server::codee::string::FromToStringCodec;
     use leptos_use::use_cookie;
-    
+
     let (read, _write) = use_cookie::<Theme, FromToStringCodec>("theme");
     read.get().unwrap_or_default()
 }

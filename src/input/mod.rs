@@ -1,5 +1,7 @@
 use crate::class_list;
+use crate::input_group::GroupItemClassContext;
 use crate::util::signals::ComponentRef;
+use leptos::either::Either;
 use leptos::html;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -8,6 +10,7 @@ use leptos::prelude::MaybeProp;
 use leptos::prelude::NodeRef;
 use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::Signal;
+use leptos::prelude::use_context;
 use leptos::{IntoView, component, view};
 
 const OA_READONLY_INPUT_CLASSES: &str = "border-0 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
@@ -38,27 +41,38 @@ pub fn Input(
 ) -> impl IntoView {
     let input_ref = NodeRef::<html::Input>::new();
     comp_ref.load(InputRef { input_ref });
+    let group_context = use_context::<GroupItemClassContext>();
+    let group_classes = group_context.map(|item| item.class);
+    
+    let standalone_input = view! {
+        <input type=input_type.get().as_str()
+            name={name.get()}
+            class=class_list![
+                if let Some(group_classes) = group_classes { group_classes } else { String::new() },
+                if readonly.get() {
+                    OA_READONLY_INPUT_CLASSES
+                } else {
+                    OA_INPUT_CLASSES
+                },
+                class
+            ]
+            disabled={readonly.get()}
+            readonly={readonly.get()}
+            node_ref=input_ref
+            placeholder={placeholder.get()} required=""/>
+    };
 
-    view! {
-        <div>
-            <label class="block mb-2.5 text-sm font-medium text-heading">
-                {label.get()}
-                <input type=input_type.get().as_str()
-                    name={name.get()}
-                    class=class_list![
-                        if readonly.get() { 
-                            OA_READONLY_INPUT_CLASSES 
-                        } else { 
-                            OA_INPUT_CLASSES
-                        },
-                        class
-                    ]
-                    disabled={readonly.get()}
-                    readonly={readonly.get()}
-                    node_ref=input_ref
-                    placeholder={placeholder.get()} required=""/>
-            </label>
-        </div>
+    if let Some(label) = label.get() {
+        Either::Left(view! {
+            <div>
+                <label class="block mb-2.5 text-sm font-medium text-heading">
+                    {label}
+                    {standalone_input}
+                </label>
+            </div>
+        })
+    } else {
+        Either::Right(standalone_input)
     }
 }
 

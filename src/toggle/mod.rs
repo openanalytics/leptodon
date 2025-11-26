@@ -1,9 +1,14 @@
-use leptos::prelude::OnAttribute;
-use leptos::prelude::GlobalAttributes;
-use leptos::prelude::Get;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
-use leptos::{IntoView, component, ev::Event, prelude::{MaybeProp, Signal}, view};
+use leptos::prelude::Get;
+use leptos::prelude::GlobalAttributes;
+use leptos::prelude::OnAttribute;
+use leptos::{
+    IntoView, component,
+    ev::Event,
+    prelude::{MaybeProp, Signal},
+    view,
+};
 
 use crate::class_list;
 
@@ -12,10 +17,10 @@ pub fn Toggle(
     #[prop(optional, into)] id: MaybeProp<String>,
     #[prop(optional, into)] name: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeProp<String>,
-    
+
     value: Signal<bool>,
     label: String,
-    
+
     on_input: impl Fn(Event) + 'static,
 ) -> impl IntoView {
     view! {

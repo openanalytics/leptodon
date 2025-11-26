@@ -97,7 +97,6 @@ pub fn HamburgerIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
-
 pub fn UserIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -107,7 +106,6 @@ pub fn UserIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
-
 
 pub fn CalendarIcon() -> IconRef {
     lazy_path!(
@@ -123,7 +121,6 @@ pub fn CalendarIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
-
 
 pub fn ProjectsIcon() -> IconRef {
     lazy_path!(
@@ -141,7 +138,6 @@ pub fn ProjectsIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
-
 pub fn ProjectsIconFilled() -> IconRef {
     lazy_path!(
         HTML,
@@ -151,7 +147,6 @@ pub fn ProjectsIconFilled() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
-
 
 pub fn CustomersIcon() -> IconRef {
     lazy_path!(
@@ -166,7 +161,6 @@ pub fn CustomersIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
-
 
 pub fn ContractsIcon() -> IconRef {
     lazy_path!(
@@ -184,7 +178,6 @@ pub fn ContractsIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
-
 pub fn ConsultantsIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -194,7 +187,6 @@ pub fn ConsultantsIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
-
 
 pub fn BillingIcon() -> IconRef {
     lazy_path!(
@@ -216,7 +208,6 @@ pub fn BillingIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
-
 pub fn TaskIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -226,7 +217,6 @@ pub fn TaskIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
-
 
 pub fn ReportingIcon() -> IconRef {
     lazy_path!(
@@ -242,7 +232,6 @@ pub fn ReportingIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
-
 pub fn ApproveIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -257,7 +246,6 @@ pub fn ApproveIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
-
 pub fn RejectIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -271,7 +259,6 @@ pub fn RejectIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
-
 
 pub fn CloseIcon() -> IconRef {
     lazy_path!(
@@ -289,7 +276,6 @@ pub fn CloseIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 14).filled());
 }
 
-
 pub fn SearchIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -306,7 +292,6 @@ pub fn SearchIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 20));
 }
 
-
 pub fn PreviousIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -321,7 +306,6 @@ pub fn PreviousIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
-
 pub fn NextIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -335,7 +319,6 @@ pub fn NextIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
-
 
 pub fn DownIcon() -> IconRef {
     lazy_path!(
@@ -353,7 +336,6 @@ pub fn DownIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 10, 6));
 }
 
-
 pub fn RefreshIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -369,7 +351,6 @@ pub fn RefreshIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24));
 }
-
 
 pub fn DecrementIcon() -> IconRef {
     lazy_path!(
@@ -387,7 +368,6 @@ pub fn DecrementIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 18, 2));
 }
 
-
 pub fn IncrementIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -404,7 +384,6 @@ pub fn IncrementIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 18));
 }
 
-
 pub fn NoteFilledIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -418,7 +397,6 @@ pub fn NoteFilledIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
-
 
 pub fn NoteIcon() -> IconRef {
     lazy_path!(
@@ -436,7 +414,6 @@ pub fn NoteIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
-
 pub fn ProjectAssignmentsIconFilled() -> IconRef {
     lazy_path!(
         HTML,
@@ -450,7 +427,6 @@ pub fn ProjectAssignmentsIconFilled() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
-
 
 pub fn ProjectAssignmentsIcon() -> IconRef {
     lazy_path!(
@@ -467,7 +443,6 @@ pub fn ProjectAssignmentsIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
-
 pub fn LockOpenIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -482,7 +457,6 @@ pub fn LockOpenIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
-
 pub fn LockIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -496,7 +470,6 @@ pub fn LockIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
-
 
 pub fn ApprovedIcon() -> IconRef {
     lazy_path!(
@@ -517,7 +490,6 @@ pub fn ApprovedIcon() -> IconRef {
     };
 }
 
-
 pub fn RejectedIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -536,7 +508,6 @@ pub fn RejectedIcon() -> IconRef {
             .set_class(Some("text-red-600 dark:text-red-500"))
     };
 }
-
 
 pub fn PendingApprovalIcon() -> IconRef {
     lazy_path!(
@@ -557,7 +528,6 @@ pub fn PendingApprovalIcon() -> IconRef {
     };
 }
 
-
 pub fn SavedIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -576,7 +546,6 @@ pub fn SavedIcon() -> IconRef {
             .set_class(Some("text-oa-blue dark:text-oa-blue"))
     };
 }
-
 
 pub fn EmptyIcon() -> IconRef {
     lazy_path!(
@@ -597,7 +566,6 @@ pub fn EmptyIcon() -> IconRef {
     };
 }
 
-
 pub fn OpenIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -617,7 +585,6 @@ pub fn OpenIcon() -> IconRef {
     };
 }
 
-
 pub fn InfoIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -627,7 +594,6 @@ pub fn InfoIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
-
 
 pub fn AutoFillIcon() -> IconRef {
     lazy_path!(
@@ -645,7 +611,6 @@ pub fn AutoFillIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
-
 pub fn SaveIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -660,7 +625,6 @@ pub fn SaveIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
-
 pub fn DateIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -670,7 +634,6 @@ pub fn DateIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
-
 
 pub fn TableSearchIcon() -> IconRef {
     lazy_path!(
@@ -686,7 +649,6 @@ pub fn TableSearchIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
-
 pub fn UnsortedIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -700,7 +662,6 @@ pub fn UnsortedIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
-
 
 pub fn SortedAscendingIcon() -> IconRef {
     lazy_path!(
@@ -716,7 +677,6 @@ pub fn SortedAscendingIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
-
 pub fn SortedDescendingIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -731,7 +691,6 @@ pub fn SortedDescendingIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
-
 pub fn HideIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -745,7 +704,6 @@ pub fn HideIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24));
 }
-
 
 pub fn ShowIcon() -> IconRef {
     lazy_path!(
@@ -766,7 +724,6 @@ pub fn ShowIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
-
 pub fn MoveIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -782,7 +739,6 @@ pub fn MoveIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24));
 }
 
-
 pub fn EditIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -792,7 +748,6 @@ pub fn EditIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
-
 
 pub fn DeleteIcon() -> IconRef {
     lazy_path!(
@@ -807,7 +762,6 @@ pub fn DeleteIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
-
 
 pub fn WarningIcon() -> IconRef {
     lazy_path!(
@@ -828,7 +782,6 @@ pub fn WarningIcon() -> IconRef {
     };
 }
 
-
 pub fn CancelIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -839,7 +792,6 @@ pub fn CancelIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
-
 pub fn AddIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -849,7 +801,6 @@ pub fn AddIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
-
 
 pub fn FirstIcon() -> IconRef {
     lazy_path!(
@@ -864,7 +815,6 @@ pub fn FirstIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
-
 
 pub fn LastIcon() -> IconRef {
     lazy_path!(
@@ -885,7 +835,6 @@ pub fn LastIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
-
 pub fn DownloadIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -905,7 +854,6 @@ pub fn DownloadIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 24).filled());
 }
 
-
 pub fn ClearIcon() -> IconRef {
     lazy_path!(
         HTML,
@@ -921,4 +869,3 @@ pub fn ClearIcon() -> IconRef {
     );
     return_lazified_icon!(icon_data!(&HTML, 24));
 }
-

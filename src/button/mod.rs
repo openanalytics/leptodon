@@ -1,6 +1,7 @@
 use crate::class_list;
 use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
+use crate::input_group::GroupItemClassContext;
 use crate::util::signals::ComponentRef;
 use crate::{
     spinner::{Spinner, SpinnerSize},
@@ -54,11 +55,7 @@ where
         .get()
         .unwrap_or_else(|| Signal::stored(size_injection.unwrap_or_default()));
     let aria_disabled = move || {
-        if loading.get() {
-            Some("true")
-        } else {
-            None
-        }
+        if loading.get() { Some("true") } else { None }
     };
 
     let button_ref = NodeRef::<html::Button>::new();
@@ -77,9 +74,14 @@ where
         };
         on_click(e);
     };
+    
+    let group_context = use_context::<GroupItemClassContext>();
+    let group_classes = group_context.map(|item| item.class);
+    
     view! {
         <button
             class=class_list![
+                if let Some(group_classes) = group_classes { group_classes } else { String::new() },
                 match appearance.get() {
                     ButtonAppearance::Secondary => OA_SECONDARY_BUTTON_CLASSES,
                     ButtonAppearance::Primary => OA_PRIMARY_BUTTON_CLASSES,

@@ -47,7 +47,7 @@ pub fn DropdownButton(
 ) -> impl IntoView
 where
 {
-    let (is_visible, set_visible) = signal(true);
+    let (is_visible, set_visible) = signal(false);
 
     let button = Button(ButtonProps {
         class,
