@@ -1192,6 +1192,7 @@ dependencies = [
  "leptos_axum",
  "leptos_meta",
  "leptos_router",
+ "num-traits",
  "reactive_stores 0.2.5",
  "rstml-to-string-macro",
  "serde",

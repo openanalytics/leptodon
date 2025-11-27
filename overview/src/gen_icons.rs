@@ -2,6 +2,8 @@
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};
 use leptos_components::icon::Icon;
+
+#[component]
 pub fn IconList() -> impl IntoView {
     view! {
         
@@ -220,5 +222,5 @@ pub fn IconList() -> impl IntoView {
     }
 }
 
-// 73
+// 74
         

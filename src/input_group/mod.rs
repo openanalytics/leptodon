@@ -9,6 +9,11 @@ use leptos::prelude::MaybeProp;
 use leptos::prelude::provide_context;
 use leptos::{IntoView, component, view};
 
+mod presets;
+
+// Re-exports
+pub use crate::input_group::presets::ControlledNumberInput;
+
 const OA_READONLY_INPUT_CLASSES: &str = "border-0 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
 const OA_INPUT_CLASSES: &str = "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
 
@@ -71,10 +76,6 @@ pub fn InputGroup(children: ChildrenFragment) -> impl IntoView {
             })
             .collect::<Vec<_>>(),
     };
-
-    provide_context::<GroupItemClassContext>(GroupItemClassContext {
-        class: String::from("test-context"),
-    });
 
     view! {
         <div class="relative flex items-center mb-2">

@@ -1,3 +1,4 @@
+use leptos::prelude::BindAttribute;
 use crate::class_list;
 use crate::input_group::GroupItemClassContext;
 use crate::util::signals::ComponentRef;
@@ -6,9 +7,11 @@ use leptos::html;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
+use leptos::prelude::GlobalAttributes;
 use leptos::prelude::MaybeProp;
 use leptos::prelude::NodeRef;
 use leptos::prelude::NodeRefAttribute;
+use leptos::prelude::RwSignal;
 use leptos::prelude::Signal;
 use leptos::prelude::use_context;
 use leptos::{IntoView, component, view};
@@ -32,6 +35,12 @@ pub fn Input(
     /// An input can have different text-based types based on the type of value the user will enter.
     #[prop(optional, into)]
     input_type: Signal<InputType>,
+    /// An input can have different modes, useful for mobile devices to bring up the correct virtual keyboard. More fine-grained than type.
+    #[prop(optional, into)]
+    input_mode: Signal<InputMode>,
+    /// Binds to the value of the input, has to be a string.
+    #[prop(optional, into)]
+    value: RwSignal<String>,
     /// Whether the input is readonly.
     #[prop(optional, into)]
     readonly: Signal<bool>,
@@ -46,7 +55,9 @@ pub fn Input(
     
     let standalone_input = view! {
         <input type=input_type.get().as_str()
+            inputmode=input_mode.get().as_str()   
             name={name.get()}
+            bind:value=value
             class=class_list![
                 if let Some(group_classes) = group_classes { group_classes } else { String::new() },
                 if readonly.get() {
@@ -113,6 +124,39 @@ impl InputType {
             Self::Month => "month",
             Self::Week => "week",
             Self::Number => "number",
+        }
+    }
+}
+
+
+#[derive(Default, Clone)]
+pub enum InputMode {
+    #[default]
+    Text,
+    /// Decimal numbers
+    Decimal,
+    /// Only digits
+    Numeric, 
+    /// Telephone number keypad
+    Tel,
+    /// Submit button may become "search" button
+    Search,
+    /// Standard text with an @ key
+    Email,
+    /// Standard keyboard with perhaps a / key 
+    Url
+}
+
+impl InputMode {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Text => "text",
+            Self::Decimal => "decimal",
+            Self::Numeric => "numeric",
+            Self::Search => "search",
+            Self::Tel => "tel",
+            Self::Url => "url",
+            Self::Email => "email"
         }
     }
 }

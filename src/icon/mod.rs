@@ -10,6 +10,7 @@ use leptos::prelude::ClassAttribute;
 use leptos::prelude::CustomAttribute;
 use leptos::prelude::Get;
 use leptos::prelude::InnerHtmlAttribute;
+use leptos::prelude::IntoAny;
 use leptos::prelude::MaybeProp;
 use leptos::prelude::OnAttribute;
 use leptos::view;
@@ -63,7 +64,7 @@ pub fn Icon(
             inner_html=icon.data
             on:click=on_click
         ></svg>
-    }
+    }.into_any()
 }
 
 /// Creates a [LazyLock] around a rendered version of the passed `html! {...}`.

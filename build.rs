@@ -34,7 +34,7 @@ fn main() -> Result<(), Error> {
         &dest_path,
         format!(
             "pub fn all() -> &'static str {{
-            r#\"{all_src}\"#
+            r#####\"{all_src}\"#####
         }}
         "
         ),

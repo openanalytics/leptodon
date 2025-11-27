@@ -105,7 +105,7 @@ where
                     )
                 } else if let Some(icon) = icon.get() {
                     EitherOf3::B(view!{
-                        <Icon icon=icon/>
+                        <Icon icon=icon class="w-5 h-5"/>
                     })
                 } else {
                     EitherOf3::C(())

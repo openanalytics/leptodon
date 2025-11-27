@@ -1,4 +1,3 @@
-#[cfg(not(feature = "leptos"))]
 pub mod include_generated;
 
 #[cfg(feature = "leptos")]
