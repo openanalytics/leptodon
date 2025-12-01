@@ -26,3 +26,7 @@ pub mod util;
 pub mod accordion;
 #[cfg(feature = "leptos")]
 pub mod avatar;
+#[cfg(feature = "leptos")]
+pub mod button_group;
+#[cfg(feature = "leptos")]
+pub mod checkbox;

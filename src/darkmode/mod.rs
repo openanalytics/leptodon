@@ -213,11 +213,9 @@ pub fn initial_theme_from_cookie() -> Theme {
 
 #[cfg(feature = "ssr")]
 pub fn initial_theme_from_cookie() -> Theme {
-    use std::{borrow::Cow, ffi::OsStr};
+    use std::borrow::Cow;
 
     use axum_extra::extract::cookie::Cookie;
-    use http1::{HeaderValue, header::SET_COOKIE};
-    use leptos::server::codee::string::FromToStringCodec;
 
     let Some(headers) = use_context::<http1::request::Parts>().map(|parts| parts.headers) else {
         return Theme::FollowSystem;

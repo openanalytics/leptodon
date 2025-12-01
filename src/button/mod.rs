@@ -1,3 +1,4 @@
+use crate::button_group::InGroupContext;
 use crate::class_list;
 use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
@@ -7,6 +8,7 @@ use crate::{
     spinner::{Spinner, SpinnerSize},
     util::callback::BoxOneCallback,
 };
+use leptos::html::div;
 use leptos::{IntoView, component, view};
 use leptos::{
     either::{Either, EitherOf3},
@@ -24,18 +26,30 @@ pub use crate::button::variations::DropdownButton;
 pub use crate::button::variations::DropdownButtonChildren;
 pub use crate::button::variations::EditButton;
 
-const SHARED_BUTTON_CLASSES: &str = "shadow-sm dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2";
+const SHARED_BUTTON_CLASSES: &str = "relative hover:z-50 focus:z-50 shadow-sm dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2";
 const OA_PRIMARY_BUTTON_CLASSES: &str = const_str::concat!(
     "focus:outline-oa-blue hover:bg-oa-blue-darker bg-oa-blue text-white",
     " ",
     SHARED_BUTTON_CLASSES
 );
+
 const OA_DANGER_BUTTON_CLASSES: &str = const_str::concat!(
     "focus:outline-oa-red hover:bg-oa-red-darker bg-oa-red text-white",
     " ",
     SHARED_BUTTON_CLASSES
 );
-const OA_SECONDARY_BUTTON_CLASSES: &str = "shadow-sm border-solid border border-gray-400 dark:focus:ring-gray-800 focus:outline-none focus:ring-4 focus:ring-oa-gray font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 bg-gray-200 hover:bg-oa-gray-darker text-gray-700 dark:bg-gray-700 dark:text-gray-400";
+
+const OA_SECONDARY_BUTTON_CLASSES: &str = const_str::join!(
+    &[
+        "!active:outline-oa-gray-darker focus:outline-oa-gray-darker hover:focus:outline-oa-gray text-gray-700 dark:text-gray-400",
+        "border-solid border border-gray-400",
+        "!active:bg-oa-gray-darker bg-gray-200 hover:bg-oa-gray-darker !dark:active:bg-gray-800 dark:bg-gray-700 hover:dark:bg-gray-800",
+        SHARED_BUTTON_CLASSES
+    ],
+    " "
+);
+
+// "shadow-sm border-solid border border-gray-400 dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline focus:ring-4  font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 bg-gray-200 hover:bg-oa-gray-darker text-gray-700 dark:bg-gray-700 dark:text-gray-400";
 
 /// A button triggers an action or event when activated.
 #[component]
@@ -68,6 +82,8 @@ where
     let size = size
         .get()
         .unwrap_or_else(|| Signal::stored(size_injection.unwrap_or_default()));
+    let in_group =
+        use_context::<InGroupContext>().unwrap_or_else(|| InGroupContext { in_group: false });
     let aria_disabled = move || {
         if loading.get() { Some("true") } else { None }
     };
@@ -96,6 +112,7 @@ where
         <button
             class=class_list![
                 if let Some(group_classes) = group_classes { group_classes } else { String::new() },
+                if in_group.in_group { "rounded-none border-r-0 !mr-0" } else { "" },
                 match appearance.get() {
                     ButtonAppearance::Secondary => OA_SECONDARY_BUTTON_CLASSES,
                     ButtonAppearance::Primary => OA_PRIMARY_BUTTON_CLASSES,

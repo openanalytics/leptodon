@@ -12,6 +12,7 @@ use leptos_components::button::EditButton;
 use leptos_components::button_group::ButtonGroup;
 use leptos_components::button_group::First;
 use leptos_components::button_group::Last;
+use leptos_components::checkbox::Checkbox;
 use leptos_components::darkmode::ThemeSelector;
 use leptos_components::dropdown::DropdownItem;
 use leptos_components::input::InputType;
@@ -157,6 +158,8 @@ fn Home() -> impl IntoView {
                     <Button on_click=move |_| {} appearance=ButtonAppearance::Secondary>Messages</Button>
                 </Last>
             </ButtonGroup>
+            <br/>
+            <Checkbox label="Done all tasks" value=Signal::derive(|| false)/>
             <br/>
             <AddButton/>
             <EditButton/>

@@ -5,7 +5,6 @@ use crate::icon;
 use crate::icon::icon_data::IconRef;
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
-use leptos::prelude::AddAnyAttr;
 use leptos::prelude::{Children, Get, MaybeProp, Signal, Write, provide_context, signal};
 use leptos::slot;
 use leptos::{IntoView, component, view};
