@@ -24,3 +24,5 @@ pub mod toggle;
 pub mod util;
 #[cfg(feature = "leptos")]
 pub mod accordion;
+#[cfg(feature = "leptos")]
+pub mod avatar;

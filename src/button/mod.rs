@@ -17,10 +17,24 @@ use leptos::{
 mod variations;
 
 // Re-exports
+pub use crate::button::variations::AddButton;
+pub use crate::button::variations::DeleteButton;
+pub use crate::button::variations::DownloadButton;
 pub use crate::button::variations::DropdownButton;
 pub use crate::button::variations::DropdownButtonChildren;
+pub use crate::button::variations::EditButton;
 
-const OA_PRIMARY_BUTTON_CLASSES: &str = "shadow-sm dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline focus:outline-oa-blue font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 hover:bg-oa-blue-darker bg-oa-blue text-white";
+const SHARED_BUTTON_CLASSES: &str = "shadow-sm dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2";
+const OA_PRIMARY_BUTTON_CLASSES: &str = const_str::concat!(
+    "focus:outline-oa-blue hover:bg-oa-blue-darker bg-oa-blue text-white",
+    " ",
+    SHARED_BUTTON_CLASSES
+);
+const OA_DANGER_BUTTON_CLASSES: &str = const_str::concat!(
+    "focus:outline-oa-red hover:bg-oa-red-darker bg-oa-red text-white",
+    " ",
+    SHARED_BUTTON_CLASSES
+);
 const OA_SECONDARY_BUTTON_CLASSES: &str = "shadow-sm border-solid border border-gray-400 dark:focus:ring-gray-800 focus:outline-none focus:ring-4 focus:ring-oa-gray font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 bg-gray-200 hover:bg-oa-gray-darker text-gray-700 dark:bg-gray-700 dark:text-gray-400";
 
 /// A button triggers an action or event when activated.
@@ -74,10 +88,10 @@ where
         };
         on_click(e);
     };
-    
+
     let group_context = use_context::<GroupItemClassContext>();
     let group_classes = group_context.map(|item| item.class);
-    
+
     view! {
         <button
             class=class_list![
@@ -85,6 +99,7 @@ where
                 match appearance.get() {
                     ButtonAppearance::Secondary => OA_SECONDARY_BUTTON_CLASSES,
                     ButtonAppearance::Primary => OA_PRIMARY_BUTTON_CLASSES,
+                    ButtonAppearance::Danger => OA_DANGER_BUTTON_CLASSES,
                     ButtonAppearance::Subtle => todo!(),
                     ButtonAppearance::Transparent => todo!(),
                 },
@@ -127,6 +142,8 @@ pub enum ButtonAppearance {
     Secondary,
     /// Emphasizes the button as a primary action.
     Primary,
+    /// Dangerous action
+    Danger,
     /// Minimizes emphasis to blend into the background until hovered or focused.
     Subtle,
     /// Removes background and border styling.
@@ -140,6 +157,7 @@ impl ButtonAppearance {
             ButtonAppearance::Primary => "primary",
             ButtonAppearance::Subtle => "subtle",
             ButtonAppearance::Transparent => "transparent",
+            ButtonAppearance::Danger => "danger",
         }
     }
 }

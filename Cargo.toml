@@ -25,6 +25,7 @@ rstml-to-string-macro = { version = "0.1.0", optional = true }
 serde = { version = "1.0", features=["derive"], optional = true }
 num-traits = "0.2.19"
 http1 = { version = "1", package = "http", optional = true }
+const-str = "0.7.0"
 
 [build-dependencies]
 walkdir = "2.5.0"
@@ -39,9 +40,9 @@ ssr = [
     "dep:leptos_axum",
     "dep:axum",
     "dep:axum-extra",
+    "dep:http1",
     "leptos-use/axum",
-    "leptos-use/ssr",
-    "dep:http1"
+    "leptos-use/ssr"
 ]
 hydrate = [
     "leptos/hydrate",

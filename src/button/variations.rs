@@ -1,12 +1,70 @@
 use crate::button::ButtonProps;
 use crate::button::{Button, ButtonAppearance, ButtonRef, ButtonSize, ButtonType};
 use crate::dropdown::Dropdown;
+use crate::icon;
 use crate::icon::icon_data::IconRef;
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
+use leptos::prelude::AddAnyAttr;
 use leptos::prelude::{Children, Get, MaybeProp, Signal, Write, provide_context, signal};
 use leptos::slot;
 use leptos::{IntoView, component, view};
+
+#[component]
+pub fn AddButton() -> impl IntoView {
+    view! {
+        <Button
+            icon=icon::AddIcon()
+            on_click=move |_| {}
+            appearance=ButtonAppearance::Primary
+            class="m-2"
+            {..}>
+            Add
+        </Button>
+    }
+}
+
+#[component]
+pub fn EditButton() -> impl IntoView {
+    view! {
+        <Button
+            icon=icon::EditIcon()
+            on_click=move |_| {}
+            appearance=ButtonAppearance::Secondary
+            class="m-2"
+            {..}>
+            Edit
+        </Button>
+    }
+}
+
+#[component]
+pub fn DeleteButton() -> impl IntoView {
+    view! {
+        <Button
+            icon=icon::DeleteIcon()
+            on_click=move |_| {}
+            appearance=ButtonAppearance::Danger
+            class="m-2"
+            {..}>
+            Delete
+        </Button>
+    }
+}
+
+#[component]
+pub fn DownloadButton() -> impl IntoView {
+    view! {
+        <Button
+            icon=icon::DownloadIcon()
+            on_click=move |_| {}
+            appearance=ButtonAppearance::Secondary
+            class="m-2"
+            {..}>
+            Download
+        </Button>
+    }
+}
 
 #[slot]
 pub struct DropdownButtonChildren {
