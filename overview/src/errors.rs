@@ -16,7 +16,7 @@
 use cfg_if::cfg_if;
 use derive_more::Display;
 use http::status::StatusCode;
-use leptos::{error::Errors, html::ElementChild, prelude::{For, Get, RwSignal, use_context}, *};
+use leptos::{error::Errors, html::ElementChild, prelude::{For, Get, RwSignal}, *};
 #[cfg(feature = "ssr")]
 use leptos_axum::ResponseOptions;
 use thiserror::Error;
@@ -71,6 +71,7 @@ pub fn ErrorTemplate(
     // this may be customized by the specific application
     cfg_if! {
       if #[cfg(feature="ssr")]{
+        use leptos::context::use_context;
         let response = use_context::<ResponseOptions>();
         if let Some(response) = response{
           response.set_status(errors[0].status_code());

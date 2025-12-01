@@ -3,17 +3,20 @@ use leptos::prelude::*;
 use leptos_components::accordion::Accordion;
 use leptos_components::accordion::AccordionEntry;
 use leptos_components::avatar::Avatar;
+use leptos_components::button::AddButton;
+use leptos_components::button::DeleteButton;
+use leptos_components::button::DownloadButton;
 use leptos_components::button::DropdownButton;
 use leptos_components::button::DropdownButtonChildren;
+use leptos_components::button::EditButton;
+use leptos_components::button_group::ButtonGroup;
+use leptos_components::button_group::First;
+use leptos_components::button_group::Last;
 use leptos_components::darkmode::ThemeSelector;
 use leptos_components::dropdown::DropdownItem;
 use leptos_components::input::InputType;
 use leptos_components::input_group::InputGroup;
 use leptos_components::toggle::Toggle;
-use leptos_components::button::AddButton;
-use leptos_components::button::EditButton;
-use leptos_components::button::DeleteButton;
-use leptos_components::button::DownloadButton;
 use leptos_components::{
     button::{Button, ButtonAppearance},
     input::Input,
@@ -124,6 +127,36 @@ fn Home() -> impl IntoView {
                 id="5">
                 5
             </Button>
+            <br/>
+            <ButtonGroup>
+                <First slot:first>
+                    <Button class="mr-0" on_click=move |_| {} appearance=ButtonAppearance::Secondary>Profile</Button>
+                </First>
+                <Button on_click=move |_| {} appearance=ButtonAppearance::Secondary>Settings</Button>
+                <Last slot:last>
+                    <Button on_click=move |_| {} appearance=ButtonAppearance::Secondary>Messages</Button>
+                </Last>
+            </ButtonGroup>
+            <br/>
+            <ButtonGroup>
+                <First slot:first>
+                    <Button class="mr-0" on_click=move |_| {} appearance=ButtonAppearance::Secondary>Profile</Button>
+                </First>
+                <Last slot:last>
+                    <Button on_click=move |_| {} appearance=ButtonAppearance::Secondary>Messages</Button>
+                </Last>
+            </ButtonGroup>
+            <br/>
+            <ButtonGroup>
+                <First slot:first>
+                    <Button class="mr-0" on_click=move |_| {} appearance=ButtonAppearance::Secondary>Profile</Button>
+                </First>
+                <Button on_click=move |_| {} appearance=ButtonAppearance::Secondary>Settings</Button>
+                <Button on_click=move |_| {} appearance=ButtonAppearance::Secondary>Settings2</Button>
+                <Last slot:last>
+                    <Button on_click=move |_| {} appearance=ButtonAppearance::Secondary>Messages</Button>
+                </Last>
+            </ButtonGroup>
             <br/>
             <AddButton/>
             <EditButton/>
