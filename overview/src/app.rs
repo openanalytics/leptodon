@@ -1,14 +1,19 @@
 use leptos::logging::log;
 use leptos::prelude::*;
 use leptos_components::accordion::Accordion;
+use leptos_components::accordion::AccordionEntry;
+use leptos_components::avatar::Avatar;
 use leptos_components::button::DropdownButton;
 use leptos_components::button::DropdownButtonChildren;
 use leptos_components::darkmode::ThemeSelector;
 use leptos_components::dropdown::DropdownItem;
 use leptos_components::input::InputType;
 use leptos_components::input_group::InputGroup;
-use leptos_components::accordion::AccordionEntry;
 use leptos_components::toggle::Toggle;
+use leptos_components::button::AddButton;
+use leptos_components::button::EditButton;
+use leptos_components::button::DeleteButton;
+use leptos_components::button::DownloadButton;
 use leptos_components::{
     button::{Button, ButtonAppearance},
     input::Input,
@@ -26,6 +31,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                // Metadata injection is not allowed here, only use them in components down the chain
                 <AutoReload options=options.clone() />
                 <HydrationScripts options/>
                 <MetaTags/>
@@ -63,34 +69,6 @@ pub fn App() -> impl IntoView {
 fn Home() -> impl IntoView {
     let (count, set_count) = signal(0);
     let double_count = move || count.get() * 2;
-    // let initial = initial_prefers_dark();
-
-    // let toggle_dark_mode_action = ServerAction::<UpdateTheme>::new();
-    // // input is `Some(value)` when pending, and `None` if not pending
-    // let input = toggle_dark_mode_action.input();
-    // // value contains most recently-returned value
-    // let value = toggle_dark_mode_action.value();
-
-    // let prefers_dark = move || {
-    //     match (input.get(), value.get()) {
-    //         // if there's some current input, use that optimistically
-    //         (Some(submission), _) => submission.prefers_dark,
-    //         // otherwise, if there was a previous value confirmed by server, use that
-    //         (_, Some(Ok(value))) => value,
-    //         // otherwise, use the initial value
-    //         _ => initial,
-    //     }
-    // };
-
-    // let style = "selection:bg-oa-blue selection:text-white";
-
-    // let color_scheme = move || {
-    //     if prefers_dark() {
-    //         format!("dark {style}")
-    //     } else {
-    //         format!("light {style}")
-    //     }
-    // };
 
     view! {
         <Title text="Leptos components" />
@@ -107,12 +85,20 @@ fn Home() -> impl IntoView {
                 <leptos_components::input_group::ControlledNumberInput<i32> class="w-96" min=-1 max=15 />
             </div>
             <Toggle label="Lightswitch" value=Signal::derive(move || false) />
+            <Avatar src="/favicon.ico" />
+            <Avatar />
             <Accordion>
                 <AccordionEntry title="What is Flowbite?">
                     <p class="mb-2 text-body">Flowbite is an open - source library of interactive components built on top of
                     Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
-                    <p class="text-body">Check out this guide to learn how to<a href="/docs/getting-started/introduction/" class="text-fg-brand hover:underline">get started</a>and start developing websites even faster with components on top of Tailwind
+                    <p class="mb-2 text-body">Check out this guide to learn how to<a href="/docs/getting-started/introduction/" class="text-fg-brand hover:underline">get started</a>and start developing websites even faster with components on top of Tailwind
                     CSS.</p>
+
+                    <Accordion>
+                        <AccordionEntry title="What about version 2.7.2?">
+                            <p class="mb-2 text-body">Version 2.7.2 is available at <a href="https://web.archive.org/web/20240328025144/https://flowbite.com/docs/components/dropdowns/">this location</a></p>
+                        </AccordionEntry>
+                    </Accordion>
                 </AccordionEntry>
             </Accordion>
 
@@ -139,15 +125,10 @@ fn Home() -> impl IntoView {
                 5
             </Button>
             <br/>
-            <Button
-                icon=leptos_components::icon::AddIcon()
-                on_click=move |_| {}
-                appearance=ButtonAppearance::Secondary
-                class="m-2"
-                {..}
-                id="add">
-                Add
-            </Button>
+            <AddButton/>
+            <EditButton/>
+            <DeleteButton/>
+            <DownloadButton/>
             <br/>
             <Input/>
             <br/>

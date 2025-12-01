@@ -411,6 +411,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "451d0640545a0553814b4c646eb549343561618838e9b42495f466131fe3ad49"
 
 [[package]]
+name = "const-str"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f4d34b8f066904ed7cfa4a6f9ee96c3214aa998cb44b69ca20bd2054f47402ed"
+
+[[package]]
 name = "const_format"
 version = "0.2.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1251,6 +1257,7 @@ dependencies = [
  "axum 0.8.7",
  "axum-extra 0.9.6",
  "cfg-if",
+ "const-str 0.7.0",
  "http",
  "leptos",
  "leptos-use",
@@ -2231,7 +2238,7 @@ dependencies = [
  "axum 0.8.7",
  "base64",
  "bytes",
- "const-str",
+ "const-str 0.6.4",
  "const_format",
  "dashmap",
  "futures",
