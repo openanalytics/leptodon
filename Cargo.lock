@@ -1187,6 +1187,7 @@ dependencies = [
  "axum-extra",
  "cfg-if",
  "console_error_panic_hook",
+ "http",
  "leptos",
  "leptos-use",
  "leptos_axum",

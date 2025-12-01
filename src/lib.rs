@@ -22,3 +22,5 @@ pub mod spinner;
 pub mod toggle;
 #[cfg(feature = "leptos")]
 pub mod util;
+#[cfg(feature = "leptos")]
+pub mod accordion;

@@ -1251,6 +1251,7 @@ dependencies = [
  "axum 0.8.7",
  "axum-extra 0.9.6",
  "cfg-if",
+ "http",
  "leptos",
  "leptos-use",
  "leptos_axum",

@@ -21,21 +21,23 @@ use std::str::FromStr;
 
 use leptos::leptos_dom::logging::console_log;
 use leptos::logging::debug_log;
-use leptos::logging::log;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
+use leptos::prelude::Memo;
 use leptos::prelude::RwSignal;
-use leptos::prelude::document;
-use leptos::prelude::window;
+use leptos::prelude::Signal;
+use leptos::prelude::{use_context};
 use leptos::server::ServerAction;
 use leptos::{prelude::ServerFnError, *};
+use leptos_meta::Html;
 use leptos_meta::Meta;
+use leptos_use::use_preferred_dark;
 
 use crate::select::Select;
 
-#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum Theme {
     Light,
     Dark,
@@ -65,12 +67,14 @@ impl FromStr for Theme {
         Ok(match value {
             "dark" => Theme::Dark,
             "light" => Theme::Light,
-            "followsystem" => Theme::FollowSystem,
+            "follow_system" => Theme::FollowSystem,
             _ => return Err(()),
         })
     }
     type Err = ();
 }
+
+const THEME_COOKIE: &str = "theme";
 
 #[server(UpdateTheme, "/api")]
 pub async fn update_theme(new_theme: Theme) -> Result<Theme, ServerFnError> {
@@ -84,34 +88,67 @@ pub async fn update_theme(new_theme: Theme) -> Result<Theme, ServerFnError> {
     let mut headers = HeaderMap::new();
     headers.insert(
         SET_COOKIE,
-        HeaderValue::from_str(&format!("theme={new_theme}; Path=/"))
-            .expect("to create header value"),
+        HeaderValue::from_str(&format!(
+            "{THEME_COOKIE}={new_theme}; Path=/; Max-Age=186400; SameSite=Strict"
+        ))
+        .expect("to create header value"),
     );
     response_parts.headers = headers;
     response.overwrite(response_parts);
     Ok(new_theme)
 }
 
+pub fn fetch_ssr_tailwind_class() -> String {
+    let theme = initial_theme_from_cookie();
+    if theme == Theme::FollowSystem && !browser_prefers_darkmode().get() {
+        return "".to_string();
+    }
+    debug_log!("Final theme: {theme:?}");
+    console_log(format!("Final theme: {theme:?}").as_str());
+    let resulting_theme = match theme {
+        Theme::Light => "light",
+        Theme::FollowSystem if browser_prefers_darkmode().get() => "dark",
+        Theme::FollowSystem => "light",
+        Theme::Dark => "dark",
+    };
+    debug_log!("Resulting theme: {resulting_theme:?}");
+    console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
+    resulting_theme.to_string()
+}
+
 #[component]
 pub fn ThemeSelector() -> impl IntoView {
     let update_theme_action: ServerAction<UpdateTheme> = ServerAction::new();
     let cookie_theme = initial_theme_from_cookie();
+    let browser_prefers_dark = browser_prefers_darkmode();
+    // Bound to the html select.
     let selected_theme = RwSignal::new(cookie_theme.to_string());
-    let resulting_light_dark = move || {
-        debug_log!("cookie_theme: {}", cookie_theme);
-        debug_log!("{}", selected_theme.get());
-
+    let resulting_light_dark = Memo::new(move |_| {
         let theme = Theme::from(selected_theme.get().as_str());
-        debug_log!("{}", theme);
         let resulting_theme = match theme {
             Theme::Light => "light",
-            Theme::FollowSystem if browser_prefers_darkmode() != Some(true) => "light dark",
-            Theme::FollowSystem => "dark light",
+            Theme::FollowSystem if browser_prefers_dark.get() => "dark light",
+            Theme::FollowSystem => "light dark",
             Theme::Dark => "dark",
         };
-        debug_log!("Resulting_theme: {resulting_theme}");
+        console_log(format!("Resulting DL theme: {resulting_theme:?}").as_str());
         resulting_theme
-    };
+    });
+
+    let resulting_dark = Memo::new(move |_| {
+        let theme = Theme::from(selected_theme.get().as_str());
+        debug_log!("Final theme: {theme:?}");
+        console_log(format!("Final theme: {theme:?}").as_str());
+        let resulting_theme = match theme {
+            Theme::Light => "light",
+            Theme::FollowSystem if browser_prefers_dark.get() => "dark",
+            Theme::FollowSystem => "light",
+            Theme::Dark => "dark",
+        };
+        debug_log!("Resulting theme: {resulting_theme:?}");
+        console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
+        resulting_theme
+    });
 
     Effect::watch(
         move || selected_theme.get(),
@@ -129,9 +166,17 @@ pub fn ThemeSelector() -> impl IntoView {
     );
 
     view! {
+        <Html {..} class=move || {
+            debug_log!("{:?}", resulting_dark.get());
+            if resulting_dark.get() == "" {
+                fetch_ssr_tailwind_class().to_string()
+            } else {
+                resulting_dark.get().to_string()
+            }
+        } />
         <Meta
             name="color-scheme"
-            content=resulting_light_dark
+            content=move || resulting_light_dark.get()
         />
         <label for="theme">Choose theme:</label>
         <Select
@@ -147,24 +192,13 @@ pub fn ThemeSelector() -> impl IntoView {
 
 /// Checks whether the user's system prefers dark mode based on media queries.
 /// returns None iff the browser is unavailable.
-#[cfg(not(feature = "ssr"))]
-pub fn browser_prefers_darkmode() -> Option<bool> {
-    let prefers_darkmode = window()
-        .match_media("(prefers-color-scheme: dark)")
-        .ok()
-        .flatten()
-        .map(|media| media.matches())
-        .unwrap_or_default();
-    Some(prefers_darkmode)
-}
-
-#[cfg(feature = "ssr")]
-pub fn browser_prefers_darkmode() -> Option<bool> {
-    None
+pub fn browser_prefers_darkmode() -> Signal<bool> {
+    use_preferred_dark()
 }
 
 #[cfg(not(feature = "ssr"))]
 pub fn initial_theme_from_cookie() -> Theme {
+    use leptos::prelude::document;
     use wasm_cookies::cookies;
     use web_sys::wasm_bindgen::JsCast;
 
@@ -179,9 +213,38 @@ pub fn initial_theme_from_cookie() -> Theme {
 
 #[cfg(feature = "ssr")]
 pub fn initial_theme_from_cookie() -> Theme {
-    use leptos::server::codee::string::FromToStringCodec;
-    use leptos_use::use_cookie;
+    use std::{borrow::Cow, ffi::OsStr};
 
-    let (read, _write) = use_cookie::<Theme, FromToStringCodec>("theme");
-    read.get().unwrap_or_default()
+    use axum_extra::extract::cookie::Cookie;
+    use http1::{HeaderValue, header::SET_COOKIE};
+    use leptos::server::codee::string::FromToStringCodec;
+
+    let Some(headers) = use_context::<http1::request::Parts>().map(|parts| parts.headers) else {
+        return Theme::FollowSystem;
+    };
+
+    let Some(Ok(head_value_bytes)) = headers
+        .get(axum::http::header::COOKIE)
+        .map(|value| value.to_str())
+    else {
+        console_log(format!("Failed to find cookie header").as_str());
+        return Theme::FollowSystem;
+    };
+    let parseable_value = Cow::from(head_value_bytes.to_string());
+    let found = Cookie::split_parse_encoded(parseable_value).find_map(|a| match a {
+        Ok(cookie) => {
+            if let Ok(theme) = Theme::from_str(cookie.value_trimmed())
+                && cookie.name() == THEME_COOKIE
+            {
+                Some(theme)
+            } else {
+                console_log(
+                    format!("Failed to decode {}={}", cookie.name(), cookie.value()).as_str(),
+                );
+                None
+            }
+        }
+        _ => None,
+    });
+    found.unwrap_or_default()
 }

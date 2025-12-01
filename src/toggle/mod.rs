@@ -1,11 +1,16 @@
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
+use leptos::prelude::GetUntracked;
 use leptos::prelude::GlobalAttributes;
+use leptos::prelude::NodeRef;
+use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::OnAttribute;
+use leptos::prelude::RwSignal;
+use leptos::prelude::Set;
+use leptos::tachys::html;
 use leptos::{
     IntoView, component,
-    ev::Event,
     prelude::{MaybeProp, Signal},
     view,
 };
@@ -17,12 +22,21 @@ pub fn Toggle(
     #[prop(optional, into)] id: MaybeProp<String>,
     #[prop(optional, into)] name: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeProp<String>,
-
+    
+    #[prop(into)]
     value: Signal<bool>,
+    #[prop(optional, into)]
     label: String,
 
-    on_input: impl Fn(Event) + 'static,
+    #[prop(optional, into)] checked: RwSignal<bool>
 ) -> impl IntoView {
+    
+    let input_ref = NodeRef::<html::element::Input>::new();
+    let on_change = move |_| {
+        let input = input_ref.get_untracked().unwrap();
+        checked.set(input.checked());
+    };
+    
     view! {
         <label class=class_list!("relative inline-flex items-center mb-4 cursor-pointer", class)>
             <input
@@ -30,8 +44,9 @@ pub fn Toggle(
                 type="checkbox"
                 value=move || (!value.get()).to_string()
                 checked=value
+                node_ref=input_ref
                 class="sr-only peer"
-                on:input=on_input
+                on:change=on_change
             />
 
             <div

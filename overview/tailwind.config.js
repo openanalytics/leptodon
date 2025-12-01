@@ -9,7 +9,7 @@ module.exports = {
       ".tailwind",
     ],
   },
-  darkMode: "class",
+  darkMode: "selector",
   plugins: [require("flowbite/plugin")],
   theme: {
     colors: {

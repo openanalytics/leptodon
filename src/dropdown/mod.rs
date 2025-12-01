@@ -59,8 +59,6 @@ pub fn DropdownItem(
             // Call the provided click handler
             on_click(e);
 
-            log!("{auto_close:?}");
-            log!("{set_visible:?}");
             // Handle the closing of the dropdown
             if let Some(set_visible) = set_visible && auto_close {
                 // close -> not visible

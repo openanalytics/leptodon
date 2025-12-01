@@ -5,6 +5,7 @@
 */node_modules
 */.dist
 .idea
+.zed 
 
 overview/.idea
 overview/dist

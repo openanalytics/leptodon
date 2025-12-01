@@ -47,7 +47,6 @@ pub fn Icon(
         }
     };
 
-    console_log(format!("{:?}", icon.class).as_str());
     view! {
         <svg
             class=class_list![icon.class.unwrap_or_default(), class]

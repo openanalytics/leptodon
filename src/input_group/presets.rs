@@ -128,7 +128,7 @@ where
             <GroupItemContextProvider class="rounded-none rounded-l-lg">
                 <Input name placeholder input_type=InputType::Text input_mode=InputMode::Numeric value=value_binder />
             </GroupItemContextProvider>
-            <GroupItemContextProvider class="rounded-none border-x-0 mr-0">
+            <GroupItemContextProvider class="rounded-none border-x-0 !mr-0">
                 <Button icon=icon::DecrementIcon() on_click=dec_handler />
             </GroupItemContextProvider>
             <GroupItemContextProvider class="rounded-none rounded-r-lg">
