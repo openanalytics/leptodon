@@ -1,12 +1,14 @@
 use leptos::logging::log;
 use leptos::prelude::*;
+use leptos_components::accordion::Accordion;
 use leptos_components::button::DropdownButton;
 use leptos_components::button::DropdownButtonChildren;
 use leptos_components::darkmode::ThemeSelector;
 use leptos_components::dropdown::DropdownItem;
 use leptos_components::input::InputType;
 use leptos_components::input_group::InputGroup;
-
+use leptos_components::accordion::AccordionEntry;
+use leptos_components::toggle::Toggle;
 use leptos_components::{
     button::{Button, ButtonAppearance},
     input::Input,
@@ -24,7 +26,6 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <Stylesheet href="/pkg/overview.css"/>
                 <AutoReload options=options.clone() />
                 <HydrationScripts options/>
                 <MetaTags/>
@@ -42,6 +43,7 @@ pub fn App() -> impl IntoView {
 
     view! {
         // <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
+        <Stylesheet href="/pkg/overview.css"/>
         <Router>
             <Routes fallback=|| "Page not found.">
                 <Route path=StaticSegment("") view=Home/>
@@ -91,11 +93,6 @@ fn Home() -> impl IntoView {
     // };
 
     view! {
-
-        <Meta
-            name="color-scheme"
-            content="light dark"
-        />
         <Title text="Leptos components" />
         <main class="px-3">
             <Settings>
@@ -109,6 +106,16 @@ fn Home() -> impl IntoView {
             <div>
                 <leptos_components::input_group::ControlledNumberInput<i32> class="w-96" min=-1 max=15 />
             </div>
+            <Toggle label="Lightswitch" value=Signal::derive(move || false) />
+            <Accordion>
+                <AccordionEntry title="What is Flowbite?">
+                    <p class="mb-2 text-body">Flowbite is an open - source library of interactive components built on top of
+                    Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
+                    <p class="text-body">Check out this guide to learn how to<a href="/docs/getting-started/introduction/" class="text-fg-brand hover:underline">get started</a>and start developing websites even faster with components on top of Tailwind
+                    CSS.</p>
+                </AccordionEntry>
+            </Accordion>
+
             <br/>
             <button
                 on:click=move |_| { *set_count.write() += 1 }
