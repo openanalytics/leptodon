@@ -30,3 +30,5 @@ pub mod avatar;
 pub mod button_group;
 #[cfg(feature = "leptos")]
 pub mod checkbox;
+#[cfg(feature = "leptos")]
+pub mod date_picker;

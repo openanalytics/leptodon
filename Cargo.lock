@@ -1189,9 +1189,11 @@ dependencies = [
 name = "leptos-components"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "axum 0.8.7",
  "axum-extra",
  "cfg-if",
+ "chrono",
  "console_error_panic_hook",
  "const-str 0.7.0",
  "http",

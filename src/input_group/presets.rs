@@ -22,6 +22,7 @@ use num_traits::Bounded;
 use num_traits::ConstOne;
 use num_traits::SaturatingAdd;
 use num_traits::SaturatingSub;
+use web_sys::js_sys::JSON::parse;
 
 use crate::{button::Button, input::Input};
 
@@ -79,10 +80,22 @@ where
                 return;
             }
             let Ok(new_value) = new_value.parse::<T>() else {
+                let text = String::new();
+                if new_value.is_empty() {
+                    // Loop breaker
+                    return;
+                }
+                if prev_value.unwrap_or(&text).parse::<T>().is_err() {
+                    debug_log!(
+                        "User inputted a non-number {new_value:?} after a non-number, resetting to empty"
+                    );
+                    value_binder.set(text);
+                    return;
+                }
                 debug_log!(
                     "User inputted a non-number {new_value:?} resetting their input to {prev_value:?}"
                 );
-                let text = String::new();
+
                 value_binder.set(format!("{}", prev_value.unwrap_or(&text)));
                 return;
             };

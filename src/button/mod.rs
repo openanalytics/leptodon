@@ -39,6 +39,8 @@ const OA_DANGER_BUTTON_CLASSES: &str = const_str::concat!(
     SHARED_BUTTON_CLASSES
 );
 
+const OA_TRANSPARENT_BUTTON_CLASSES: &str = "text-sm rounded-lg text-heading font-medium py-2.5 px-5 hover:bg-oa-gray focus:outline-none focus:ring-2 focus:ring-oa-gray view-switch";
+
 const OA_SECONDARY_BUTTON_CLASSES: &str = const_str::join!(
     &[
         "!active:outline-oa-gray-darker focus:outline-oa-gray-darker hover:focus:outline-oa-gray text-gray-700 dark:text-gray-400",
@@ -118,7 +120,7 @@ where
                     ButtonAppearance::Primary => OA_PRIMARY_BUTTON_CLASSES,
                     ButtonAppearance::Danger => OA_DANGER_BUTTON_CLASSES,
                     ButtonAppearance::Subtle => todo!(),
-                    ButtonAppearance::Transparent => todo!(),
+                    ButtonAppearance::Transparent => OA_TRANSPARENT_BUTTON_CLASSES,
                 },
                 class
             ]

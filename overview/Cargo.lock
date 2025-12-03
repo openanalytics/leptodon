@@ -1254,9 +1254,11 @@ dependencies = [
 name = "leptos-components"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "axum 0.8.7",
  "axum-extra 0.9.6",
  "cfg-if",
+ "chrono",
  "const-str 0.7.0",
  "http",
  "leptos",
@@ -1656,9 +1658,11 @@ checksum = "8c04f5d74368e4d0dfe06c45c8627c81bd7c317d52762d118fb9b3076f6420fd"
 name = "overview"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "axum 0.8.7",
  "axum-extra 0.12.2",
  "cfg-if",
+ "chrono",
  "console_error_panic_hook",
  "console_log",
  "derive_more",
