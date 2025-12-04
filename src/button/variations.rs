@@ -6,8 +6,27 @@ use crate::icon::icon_data::IconRef;
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
 use leptos::prelude::{Children, Get, MaybeProp, Signal, Write, provide_context, signal};
-use leptos::slot;
 use leptos::{IntoView, component, view};
+use leptos::{ev, slot};
+
+/// An icon only button meant for controlling another view (e.g. < > << >>)
+#[component]
+pub fn ControllButton(
+    /// The icon of the button.
+    #[prop(into)]
+    icon: IconRef,
+    #[prop(into)] on_click: BoxOneCallback<ev::MouseEvent>,
+) -> impl IntoView {
+    view! {
+        <Button
+            icon
+            on_click
+            appearance=ButtonAppearance::Transparent
+            class="!px-3"
+        >
+        </Button>
+    }
+}
 
 #[component]
 pub fn AddButton() -> impl IntoView {

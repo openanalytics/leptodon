@@ -5,7 +5,7 @@ module.exports = {
       "./node_modules/flowbite/**/*.js",
       "*.html",
       "./src/**/*.rs",
-      "../src",
+      "../src/**/*.rs",
       ".tailwind",
     ],
   },

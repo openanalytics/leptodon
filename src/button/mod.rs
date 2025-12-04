@@ -19,6 +19,7 @@ use leptos::{
 mod variations;
 
 // Re-exports
+pub use crate::button::variations::ControllButton;
 pub use crate::button::variations::AddButton;
 pub use crate::button::variations::DeleteButton;
 pub use crate::button::variations::DownloadButton;
@@ -113,6 +114,7 @@ where
     view! {
         <button
             class=class_list![
+                class,
                 if let Some(group_classes) = group_classes { group_classes } else { String::new() },
                 if in_group.in_group { "rounded-none border-r-0 !mr-0" } else { "" },
                 match appearance.get() {
@@ -121,8 +123,7 @@ where
                     ButtonAppearance::Danger => OA_DANGER_BUTTON_CLASSES,
                     ButtonAppearance::Subtle => todo!(),
                     ButtonAppearance::Transparent => OA_TRANSPARENT_BUTTON_CLASSES,
-                },
-                class
+                }
             ]
             type=move || button_type.get().map(|t| t.as_str())
             aria-disabled=aria_disabled
