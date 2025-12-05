@@ -10,7 +10,7 @@ leptos = { version = "0.8.5", optional = true }
 leptos_meta = { version = "0.8.5", optional = true }
 leptos_router = { version = "0.8.5", optional = true }
 leptos_axum = { version = "0.8.5", optional = true }
-leptos-use = { version = "0.16.3", features = ["use_calendar"], optional = true }
+leptos-use = { version = "0.16.3", features = ["use_calendar", "on_click_outside"], optional = true }
 
 reactive_stores = { version = "0.2.5", optional = true }
 uuid = { version = "1.18.1",  features = ["v4", "js"], optional = true }
@@ -19,7 +19,7 @@ wasm-cookies = { version = "=0.2.1", optional = true }
 
 axum = { version = "0.8", optional = true }
 axum-extra = { version = "0.9", optional = true, features = ["cookie"] }
-web-sys = {version = "0.3.82", features = ["HtmlDocument", "Window", "MediaQueryList","HtmlInputElement"], optional = true }
+web-sys = {version = "0.3.82", features = ["HtmlDocument", "Window", "MediaQueryList","HtmlInputElement", "KeyboardEvent"], optional = true }
 cfg-if = "1.0.4"
 rstml-to-string-macro = { version = "0.1.0", optional = true }
 serde = { version = "1.0", features=["derive"], optional = true }

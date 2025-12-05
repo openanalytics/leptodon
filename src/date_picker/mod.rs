@@ -4,16 +4,24 @@ use chrono::Month;
 use chrono::Months;
 use chrono::Weekday;
 use chrono::format::ParseErrorKind;
-use leptos::prelude::AnyView;
+use leptos::html::Div;
+use leptos::leptos_dom::logging::console_log;
+use leptos::prelude::AddAnyAttr;
 use leptos::prelude::CollectView;
+use leptos::prelude::Effect;
 use leptos::prelude::IntoAny;
 use leptos::prelude::Memo;
-use leptos::prelude::signal;
+use leptos::prelude::NodeRef;
+use leptos::prelude::NodeRefAttribute;
+use leptos::prelude::Update;
 use leptos_use::CalendarDate;
 use leptos_use::UseCalendarReturn;
+use leptos_use::on_click_outside;
 use leptos_use::use_calendar;
 use num_traits::FromPrimitive;
+use web_sys::KeyboardEvent;
 use std::str::FromStr;
+use web_sys::FocusEvent;
 
 use crate::button::Button;
 use crate::button::ButtonAppearance;
@@ -21,26 +29,28 @@ use crate::button::ControllButton;
 use crate::class_list;
 use crate::icon;
 use crate::input::GenericInput;
-use crate::input::Input;
-use crate::input::InputType;
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
 use chrono::NaiveDate;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
-use leptos::prelude::GetUntracked;
-use leptos::prelude::NodeRef;
-use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
-use leptos::tachys::html;
 use leptos::{
     IntoView, component,
     prelude::{MaybeProp, Signal},
     view,
 };
+
+const MILLENIUM_IN_MONTHS: Months = Months::new(12 * 100);
+const DECENIA_IN_MONTHS: Months = Months::new(12 * 10);
+const YEAR_IN_MONTHS: Months = Months::new(12);
+
+/// Elements refer to the date-picker elements like individual days, months, years.
+const SELECTED_ELEM_CLASSES: &str = "!hover:bg-oa-blue bg-oa-blue text-white";
+const ELEM_CLASSES: &str = "datepicker-cell hover:bg-oa-gray block flex-1 leading-9 border-0 rounded-lg cursor-pointer text-center text-body font-medium text-sme";
 
 const MONTHS: [Month; 12] = [
     Month::January,
@@ -57,97 +67,89 @@ const MONTHS: [Month; 12] = [
     Month::December,
 ];
 
+// Decenia need to be passed as a year rounded to the tens.
+// e.g. 2010, refers to 2010-2019
+fn naive_date_with_decenium(date: &NaiveDate, decenium: i32) -> NaiveDate {
+    assert!(decenium % 10 == 0);
+    let remainder = date.year() % 10;
+    date.with_year(decenium.saturating_add(remainder))
+        .unwrap_or(NaiveDate::MAX)
+}
+
+// Decenia need to be passed as a year rounded to the tens.
+// e.g. 2010, refers to 2010-2019
+fn decenium_from_naive_date(date: &NaiveDate) -> i32 {
+    let remainder = date.year() % 10;
+    date.year().saturating_sub(remainder)
+}
+
+/// Stores visibility and menu state information for a date-picker
 #[derive(Default, Clone)]
 pub(crate) struct DatePickerState {
     pub visible: bool,
-    pub menu_state: DatePickerMenu,
+    pub menu: DatePickerMenu,
 }
 
 impl DatePickerState {
-    fn shown(&self) -> Self {
-        DatePickerState {
-            visible: true,
-            menu_state: self.menu_state,
-        }
+    /// Creates a copy of [&self] that is visible.
+    fn show(&mut self) {
+        self.visible = true;
     }
-    fn hidden(&self) -> Self {
-        DatePickerState {
-            visible: false,
-            menu_state: self.menu_state,
-        }
+    /// Creates a copy of [&self] that is not visible.
+    fn hide(&mut self) {
+        self.visible = false;
     }
-    fn with_menu(&self, menu: DatePickerMenu) -> Self {
-        DatePickerState {
-            visible: self.visible,
-            menu_state: menu,
-        }
+    /// Creates a copy of [&self] that is not visible.
+    fn toggle_visibility(&mut self) {
+        self.visible = !self.visible;
+    }
+    /// Creates a copy of [&self] with [menu] as menu state.
+    fn set_menu(&mut self, menu: DatePickerMenu) {
+        self.menu = menu;
     }
 }
 
 #[derive(Default, Copy, Clone)]
 pub(crate) enum DatePickerMenu {
-    DayPicker,
     #[default]
+    DayPicker,
     MonthPicker,
     YearPicker,
-    MilleniaPicker,
+    DeceniaPicker,
 }
 
+// Navigation component for the day picking view of the date-picker.
+// Looks like: [<] [month] [>]
 #[component]
 fn DayPickerMenuNav<PreviousMonthFn, NextMonthFn>(
     previous_month: PreviousMonthFn,
     next_month: NextMonthFn,
-    current_month_year: Memo<String>,
-    state: RwSignal<DatePickerState>
+    current_date: Memo<NaiveDate>,
+    picker_state: RwSignal<DatePickerState>,
 ) -> impl IntoView
 where
     PreviousMonthFn: Fn() + Clone + Send + Sync + 'static,
     NextMonthFn: Fn() + Clone + Send + Sync + 'static,
 {
+    let current_month_year = Memo::new(move |_| {
+        let current = current_date.get();
+        format!(
+            "{} {}",
+            Month::from_u32(current.month()).unwrap().name(),
+            current.year(),
+        )
+    });
+
     view! {
         <ControllButton icon=icon::PreviousIcon() on_click=move |_| { previous_month() }></ControllButton>
         <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
-            state.set(state.get().with_menu(DatePickerMenu::MonthPicker))
+            picker_state.update(|state| state.set_menu(DatePickerMenu::MonthPicker))
         }>{ move || current_month_year.get() }</Button>
         <ControllButton icon=icon::NextIcon() on_click=move |_| { next_month() }></ControllButton>
     }
 }
 
-#[component]
-fn MonthPickerMenuNav<MonthByDateFn>(
-    month_by_date: MonthByDateFn,
-    current_date: Memo<NaiveDate>,
-) -> impl IntoView
-where
-    MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
-{
-    let prev_year = {
-        let month_by_date = month_by_date.clone();
-        move || {
-            month_by_date(
-                &current_date
-                    .get()
-                    .checked_sub_months(Months::new(12))
-                    .unwrap_or(NaiveDate::MIN),
-            );
-        }
-    };
-    let next_year = move || {
-        month_by_date(
-            &current_date
-                .get()
-                .checked_add_months(Months::new(12))
-                .unwrap_or(NaiveDate::MAX),
-        );
-    };
-
-    view! {
-        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_year() }></ControllButton>
-        <Button appearance=ButtonAppearance::Transparent>{ move || current_date.get().format("%Y").to_string() }</Button>
-        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_year() }></ControllButton>
-    }
-}
-
+// Day picking section of the date-picker.
 #[component]
 fn DayPickerMenu(
     weekdays: Signal<Vec<usize>>,
@@ -183,8 +185,8 @@ fn DayPickerMenu(
                         view! {
                             <div
                                 class=class_list!(
-                                    "datepicker-cell hover:bg-oa-gray block flex-1 leading-9 border-0 rounded-lg cursor-pointer text-center text-body font-medium text-sm",
-                                    ("hover:bg-oa-blue bg-oa-blue text-white", move || is_selected()),
+                                    ELEM_CLASSES,
+                                    (SELECTED_ELEM_CLASSES, move || is_selected()),
                                     ("text-gray-500", date.is_other_month()),
                                     ("text-oa-blue", move || date.is_today())
                                 )
@@ -205,11 +207,51 @@ fn DayPickerMenu(
     }
 }
 
+// Navigation component for the month picking view of the date-picker.
+// Looks like: [<] [year] [>]
+#[component]
+fn MonthPickerMenuNav<MonthByDateFn>(
+    month_by_date: MonthByDateFn,
+    current_date: Memo<NaiveDate>,
+    picker_state: RwSignal<DatePickerState>,
+) -> impl IntoView
+where
+    MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
+{
+    let prev_year = {
+        let month_by_date = month_by_date.clone();
+        move || {
+            month_by_date(
+                &current_date
+                    .get()
+                    .checked_sub_months(Months::new(12))
+                    .unwrap_or(NaiveDate::MIN),
+            );
+        }
+    };
+    let next_year = move || {
+        month_by_date(
+            &current_date
+                .get()
+                .checked_add_months(Months::new(12))
+                .unwrap_or(NaiveDate::MAX),
+        );
+    };
+
+    view! {
+        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_year() }></ControllButton>
+        <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
+            picker_state.update(|state| state.set_menu(DatePickerMenu::YearPicker))
+        }>{ move || current_date.get().format("%Y").to_string() }</Button>
+        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_year() }></ControllButton>
+    }
+}
+
 #[component]
 fn MonthPickerMenu<MonthByDateFn>(
     month_by_date: MonthByDateFn,
     current_date: Memo<NaiveDate>,
-    state: RwSignal<DatePickerState>
+    picker_state: RwSignal<DatePickerState>,
 ) -> impl IntoView
 where
     MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
@@ -218,14 +260,14 @@ where
         <div class="months">
             <div class="datepicker-grid w-64 grid grid-cols-4">
             {move || {
-
                 MONTHS
                     .iter()
                     .map(|month| {
                         view! {
                             <div
                                 class=class_list!(
-                                    "datepicker-cell hover:bg-oa-gray block flex-1 leading-9 border-0 rounded-lg cursor-pointer text-center text-body font-medium text-sm"
+                                    (SELECTED_ELEM_CLASSES, current_date.get().month() == month.number_from_month()),
+                                    ELEM_CLASSES
                                 )
                                 on:click={
                                     let month_by_date = month_by_date.clone();
@@ -235,7 +277,7 @@ where
                                                 .with_month(month.number_from_month())
                                                 .unwrap_or(NaiveDate::MIN)
                                         );
-                                        state.set(state.get().with_menu(DatePickerMenu::DayPicker))
+                                        picker_state.update(|state| state.set_menu(DatePickerMenu::DayPicker))
                                     }
                                 }
                             >
@@ -251,6 +293,198 @@ where
     }
 }
 
+// Navigation component for the month picking view of the date-picker.
+// Looks like: [<] [Decenium] [>]
+#[component]
+fn YearPickerMenuNav<MonthByDateFn>(
+    month_by_date: MonthByDateFn,
+    current_date: Memo<NaiveDate>,
+    picker_state: RwSignal<DatePickerState>,
+) -> impl IntoView
+where
+    MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
+{
+    let prev_decenia = {
+        let month_by_date = month_by_date.clone();
+        move || {
+            month_by_date(
+                &current_date
+                    .get()
+                    .checked_sub_months(Months::new(12 * 10))
+                    .unwrap_or(NaiveDate::MIN),
+            );
+        }
+    };
+    let next_decenia = move || {
+        month_by_date(
+            &current_date
+                .get()
+                .checked_add_months(Months::new(12 * 10))
+                .unwrap_or(NaiveDate::MAX),
+        );
+    };
+
+    view! {
+        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_decenia() }></ControllButton>
+        <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
+            picker_state.update(|state| state.set_menu(DatePickerMenu::DeceniaPicker))
+        }>
+        { move || {
+            let current_year = current_date.get().year();
+            let current_decenia = current_year - current_year % 10;
+            let decenia_end = current_decenia+9;
+            format!("{} - {}", current_decenia, decenia_end)
+        }}</Button>
+        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_decenia() }></ControllButton>
+    }
+}
+
+#[component]
+fn YearPickerMenu<MonthByDateFn>(
+    month_by_date: MonthByDateFn,
+    current_date: Memo<NaiveDate>,
+    picker_state: RwSignal<DatePickerState>,
+) -> impl IntoView
+where
+    MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
+{
+    let relevant_years = move || {
+        let current_year = current_date.get().year();
+        let current_decenia = current_year - current_year % 10;
+        // Should be 12 years in this range to fill a 4x3 grid
+        current_decenia - 1..=current_decenia + 10
+    };
+    view! {
+        <div class="years">
+            <div class="datepicker-grid w-64 grid grid-cols-4">
+            {move || {
+                relevant_years()
+                    .map(|year| {
+                        view! {
+                            <div
+                                class=class_list!(
+                                    (SELECTED_ELEM_CLASSES, current_date.get().year() == year),
+                                    ELEM_CLASSES
+                                )
+                                on:click={
+                                    let month_by_date = month_by_date.clone();
+                                    move |_| {
+                                        month_by_date(
+                                            &current_date.get()
+                                                .with_year(year)
+                                                .unwrap_or(NaiveDate::MIN)
+                                        );
+                                        picker_state.update(|state| state.set_menu(DatePickerMenu::MonthPicker))
+                                    }
+                                }
+                            >
+                                {format!("{year}")}
+                            </div>
+                        }
+                    })
+                    .collect_view()
+                    .into_any()
+            }}
+            </div>
+        </div>
+    }
+}
+
+
+// Navigation component for the month picking view of the date-picker.
+// Looks like: [<] [Millenium] [>]
+#[component]
+fn DeceniumPickerMenuNav<MonthByDateFn>(
+    month_by_date: MonthByDateFn,
+    current_date: Memo<NaiveDate>
+) -> impl IntoView
+where
+    MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
+{
+    let prev_millenium = {
+        let month_by_date = month_by_date.clone();
+        move || {
+            month_by_date(
+                &current_date
+                    .get()
+                    .checked_sub_months(MILLENIUM_IN_MONTHS)
+                    .unwrap_or(NaiveDate::MIN),
+            );
+        }
+    };
+    let next_millenium = move || {
+        month_by_date(
+            &current_date
+                .get()
+                .checked_add_months(MILLENIUM_IN_MONTHS)
+                .unwrap_or(NaiveDate::MAX),
+        );
+    };
+
+    view! {
+        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_millenium() }></ControllButton>
+        <Button appearance=ButtonAppearance::Transparent>
+        { move || {
+            let current_year = current_date.get().year();
+            let current_millenia = current_year - current_year % 100;
+            let millenia_end = current_millenia + 90;
+            format!("{} - {}", current_millenia, millenia_end)
+        }}</Button>
+        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_millenium() }></ControllButton>
+    }
+}
+
+#[component]
+fn DeceniumPickerMenu<MonthByDateFn>(
+    month_by_date: MonthByDateFn,
+    current_date: Memo<NaiveDate>,
+    picker_state: RwSignal<DatePickerState>,
+) -> impl IntoView
+where
+    MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
+{
+    let relevant_decenia = move || {
+        let current_year = current_date.get().year();
+        let current_millenium = current_year - current_year % 100;
+        // Should be 12 decenia in this range to fill a 4x3 grid
+        current_millenium - 20..=current_millenium + 90
+    };
+    view! {
+        <div class="decenia">
+            <div class="datepicker-grid w-64 grid grid-cols-4">
+            {move || {
+                relevant_decenia()
+                    .step_by(10)
+                    .map(|decenium| {
+                        view! {
+                            <div
+                                class=class_list!(
+                                    (SELECTED_ELEM_CLASSES, decenium_from_naive_date(&current_date.get()) == decenium),
+                                    ELEM_CLASSES
+                                )
+                                on:click={
+                                    let month_by_date = month_by_date.clone();
+                                    move |_| {
+                                        month_by_date(
+                                            &naive_date_with_decenium(&current_date.get(), decenium)
+                                        );
+                                        picker_state.update(|state| state.set_menu(DatePickerMenu::YearPicker))
+                                    }
+                                }
+                            >
+                                {format!("{decenium}")}
+                            </div>
+                        }
+                    })
+                    .collect_view()
+                    .into_any()
+            }}
+            </div>
+        </div>
+    }
+}
+
+
 #[component]
 pub fn DatePicker(
     #[prop(optional, into)] id: MaybeProp<String>,
@@ -261,8 +495,10 @@ pub fn DatePicker(
     #[prop(into)] value: RwSignal<NaiveDate>,
     #[prop(optional, into)] label: MaybeProp<String>,
 ) -> impl IntoView {
-    // let input_ref = NodeRef::<html::element::Input>::new();
+    // Extra internal state for hiding and which menu is active.
+    let picker_state = RwSignal::new(DatePickerState::default());
 
+    // Input parser
     let parser = Some(ArcOneCallback::new(|to_parse: String| {
         NaiveDate::from_str(to_parse.as_str()).map_err(|s| {
             match s.kind() {
@@ -278,7 +514,10 @@ pub fn DatePicker(
             }
         })
     }));
+    // Input formatter
+    let format = Some(BoxOneCallback::new(|date: NaiveDate| date.to_string()));
 
+    // Calendar helper object which backs the calendar view
     let UseCalendarReturn {
         dates,
         weekdays,
@@ -290,8 +529,7 @@ pub fn DatePicker(
         next_month,
     } = use_calendar();
 
-    let date_picker_state = RwSignal::new(DatePickerState::default());
-
+    // Current date fetched from the calendar helper
     let current_date = Memo::new(move |_| {
         dates
             .get()
@@ -306,72 +544,132 @@ pub fn DatePicker(
             .unwrap_or(Local::now().date_naive())
     });
 
-    let current_month_year = Memo::new(move |_| {
-        let current = current_date.get();
-        format!(
-            "{} {}",
-            Month::from_u32(current.month()).unwrap().name(),
-            current.year(),
-        )
-    });
+    // Handle changes of the passed [value], can change due to external use or due to a date being picked.
+    Effect::watch(
+        move || value.get(),
+        {
+            let month_by_date = month_by_date.clone();
+            move |new, old, _| {
+                if Some(new) != old {
+                    picker_state.update(|state| state.hide());
+                    month_by_date(new);
+                }
+            }
+        },
+        false,
+    );
 
-    let format = Some(BoxOneCallback::new(|date: NaiveDate| date.to_string()));
-
+    // Presents the items the user can pick depending on which menu is active.
     let body_picker = {
         let month_by_date = month_by_date.clone();
-        move || match date_picker_state.get().menu_state {
+        move || match picker_state.get().menu {
             DatePickerMenu::DayPicker => view! { <DayPickerMenu weekdays dates value/> }.into_any(),
             DatePickerMenu::MonthPicker => view! {
                 <MonthPickerMenu
                     month_by_date=month_by_date.clone()
                     current_date
-                    state=date_picker_state
+                    picker_state
                 />
             }
             .into_any(),
-            DatePickerMenu::YearPicker => todo!(),
-            DatePickerMenu::MilleniaPicker => todo!(),
+            DatePickerMenu::YearPicker => view! {
+                <YearPickerMenu
+                    month_by_date=month_by_date.clone()
+                    current_date
+                    picker_state
+                />
+            }
+            .into_any(),
+            DatePickerMenu::DeceniaPicker => view! {
+                <DeceniumPickerMenu
+                    month_by_date=month_by_date.clone()
+                    current_date
+                    picker_state
+                />
+            }
+            .into_any(),
         }
     };
-    let nav_picker = move || match date_picker_state.get().menu_state {
+
+    // Presents the navigation the user can user depending on which menu is active.
+    let nav_picker = move || match picker_state.get().menu {
         DatePickerMenu::DayPicker => view! {
             <DayPickerMenuNav
                 previous_month=previous_month.clone()
                 next_month=next_month.clone()
-                current_month_year
-                state=date_picker_state
+                current_date
+                picker_state
             />
         }
         .into_any(),
         DatePickerMenu::MonthPicker => view! {
             <MonthPickerMenuNav month_by_date=month_by_date.clone()
-            current_date/>
+                current_date
+                picker_state />
         }
         .into_any(),
-        DatePickerMenu::YearPicker => todo!(),
-        DatePickerMenu::MilleniaPicker => todo!(),
+        DatePickerMenu::YearPicker => view! {
+            <YearPickerMenuNav month_by_date=month_by_date.clone()
+                current_date
+                picker_state />
+        }
+        .into_any(),
+        DatePickerMenu::DeceniaPicker => view! {
+            <DeceniumPickerMenuNav month_by_date=month_by_date.clone()
+                current_date />
+        }
+        .into_any(),
     };
+    
+    let target = NodeRef::<Div>::new();
+    
+    // Magic
+    on_click_outside(target, move |event| {
+        picker_state.update(|state| state.hide());
+    });
+
     view! {
-        <GenericInput<NaiveDate, String> name class placeholder label parser format value />
-        <div class="relative top-0 left-0 z-50 pt-2 active block">
-            <div class="inline-block rounded-b-lg border border-oa-gray p-4">
+        <div node_ref=target>
+            <GenericInput<NaiveDate, String> name class placeholder label parser format value 
+                on:focus=move |_| {
+                    picker_state.update(|state| state.show());
+                }
+                on:keydown=move |key: KeyboardEvent| {
+                    console_log(key.code().as_str());
+                    if key.code() == "Escape" {
+                        picker_state.update(|state| state.hide());
+                    }
+                    if key.code() == "Enter" {
+                        picker_state.update(|state| state.toggle_visibility());
+                    }
+                }
+                {..}
+                role="combobox" // Makes vimium like plugins pass specia keys through
+            />
+            // Picker-Dropdown
+            <div class=class_list!(
+                ("hidden", move || !picker_state.get().visible),
+                "absolute bg-white z-50 ml-2 mt-px active block"
+            )>
+                <div class="inline-block rounded-b-lg border border-oa-gray p-4">
 
-                <div class="datepicker-header">
-                    <div class="flex justify-between mb-2">
-                        { nav_picker }
+                    <div class="datepicker-header">
+                        <div class="flex justify-between mb-2">
+                            { nav_picker }
+                        </div>
                     </div>
-                </div>
 
-                <div class="datepicker-main p-1">
-                    <div class="datepicker-view flex">
-                        { body_picker }
+                    <div class="datepicker-main p-1">
+                        <div class="datepicker-view flex">
+                            { body_picker }
+                        </div>
                     </div>
-                </div>
 
-                <div class="datepicker-footer">
-                    <div class="datepicker-controls flex space-x-2 rtl:space-x-reverse mt-2">
-                        <button type="button" class="button today-btn text-white bg-brand hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium font-medium rounded-base text-sm px-5 py-2 text-center w-1/2 hidden">Today</button>
-                        <button type="button" class="button clear-btn text-body bg-neutral-secondary-medium border border-default-medium hover:bg-neutral-tertiary-medium focus:ring-4 focus:ring-neutral-tertiary font-medium rounded-base text-sm px-5 py-2 text-center w-1/2 hidden">Clear</button>
+                    <div class="datepicker-footer">
+                        <div class="datepicker-controls flex space-x-2 rtl:space-x-reverse mt-2">
+                            <button type="button" class="button today-btn text-white bg-brand hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium font-medium rounded-base text-sm px-5 py-2 text-center w-1/2 hidden">Today</button>
+                            <button type="button" class="button clear-btn text-body bg-neutral-secondary-medium border border-default-medium hover:bg-neutral-tertiary-medium focus:ring-4 focus:ring-neutral-tertiary font-medium rounded-base text-sm px-5 py-2 text-center w-1/2 hidden">Clear</button>
+                        </div>
                     </div>
                 </div>
             </div>
