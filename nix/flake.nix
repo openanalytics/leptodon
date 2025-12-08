@@ -10,6 +10,12 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        playwrightPkgs = import
+          (builtins.fetchTarball {
+            # Currently pinned to: playwright-driver@1.47.0
+            url = "https://github.com/NixOS/nixpkgs/archive/34a626458d686f1b58139620a8b2793e9e123bba.tar.gz";
+            sha256 = "sha256:1dm43gvl20wbl6j1d6l35y4bqjdspg3xv143ibnbzvv5anw6q2cw";
+          }) {};
         # Read the file relative to the flake's root
         overrides = (builtins.fromTOML (builtins.readFile (self + "/rust-toolchain.toml")));
         libPath = with pkgs; lib.makeLibraryPath [

@@ -1,3 +1,4 @@
+use leptos::prelude::ElementChild;
 use crate::button::ButtonProps;
 use crate::button::{Button, ButtonAppearance, ButtonRef, ButtonSize, ButtonType};
 use crate::dropdown::Dropdown;
@@ -141,9 +142,11 @@ where
     provide_context::<crate::dropdown::SetVisibleCallback>(set_visible);
     provide_context::<crate::dropdown::AutoClose>(should_autoclose);
     view! {
-        {button}
-        <Dropdown is_visible=is_visible>
-            {children()}
-        </Dropdown>
+        <div>
+            {button}
+            <Dropdown is_visible=is_visible>
+                {children()}
+            </Dropdown>
+        </div>
     }
 }

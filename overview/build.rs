@@ -39,20 +39,17 @@ fn gen_icons() -> Result<(), Error> {
     fs::write(
         icons,
         format!(
-            r#"
-use leptos::prelude::ElementChild;
+            r#"use leptos::prelude::ElementChild;
 use leptos::{{IntoView, component, view}};
 use leptos_components::icon::Icon;
 
 #[component]
 pub fn IconList() -> impl IntoView {{
-    view! {{
-        {}
-    }}
+    view! {{{}    }}
 }}
 
 // {}
-        "#,
+"#,
             icon_html, func_count
         ),
     )?;

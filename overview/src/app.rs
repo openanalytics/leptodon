@@ -83,10 +83,10 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
-            <DropdownButton>
+            <DropdownButton {..} data-testid="test-dropdown">
                 <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>
                 // <li>hi</li>
-                <DropdownItem label="Entry-1" on_click=move |e| { log!("{:?}", e); }/>
+                <DropdownItem label="Entry-1" on_click=move |e| { log!("{:?}", e); } {..} data-testid="test-dropdown-item1" />
             </DropdownButton>
             <div>
                 <leptos_components::input_group::ControlledNumberInput<i32> class="w-96" min=-1 max=15 />

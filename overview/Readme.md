@@ -14,7 +14,7 @@ General CSS Architecture:
    - postcss.config.js
    - tailwind.config.js
    - node_modules
-   
+
 Leptos client side rendering with Trunk:
   - This overview demo expects to be ran with Trunk
   - Trunk will produce all the web resource: html, css, wasm based on the source.
@@ -23,4 +23,20 @@ Leptos client side rendering with Trunk:
   - Support live updating on rust source changes with `trunk serve`, add `--open` to open the dev-server's url in your browser automatically.
   - Can install the trunk cli with `cargo install trunk --locked`, make sure `.cargo/bin` is in your `$PATH` https://trunkrs.dev/#install
   - Expects the `wasm32-unknown-unknown` to be installed `rustup target add wasm32-unknown-unknown`
-  
+
+
+Testing with playwright:
+  - Playwright did not want to play nice with my NixOS, maybe someone can figure this out.
+  - As a workaround, distrobox works great. Allows you to run tests and use the playwright UI.
+  -
+```
+distrobox create \
+--name ubuntu --image ubuntu:24.04 \
+--home ~/distrobox/ubuntu \
+--additional-packages "git vim nodejs npm curl"
+```
+  - Navigate to ./overview/end2end
+  - `distrobox enter ubuntu`
+  - `npm install`
+  - `npx playwright install --with-deps` // This installs the browsers (and their dependencies) playwright uses for its testing.
+  - `npx playwright test --ui`

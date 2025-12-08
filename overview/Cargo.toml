@@ -128,7 +128,7 @@ site-addr = "127.0.0.1:3000"
 reload-port = 3001
 
 # [Optional] Command to use when running end2end tests. It will run in the end2end dir.
-end2end-cmd = "npx playwright test"
+end2end-cmd = "npx playwright test --ui"
 end2end-dir = "end2end"
 browserquery = "defaults"
 

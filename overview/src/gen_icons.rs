@@ -5,7 +5,6 @@ use leptos_components::icon::Icon;
 #[component]
 pub fn IconList() -> impl IntoView {
     view! {
-
             <p>
                 <Icon icon=leptos_components::icon::HamburgerIcon() class="border-2 border-solid w-24 h-24"/>
             </p>
@@ -217,7 +216,6 @@ pub fn IconList() -> impl IntoView {
             <p>
                 <Icon icon=leptos_components::icon::ClearIcon() class="border-2 border-solid w-24 h-24"/>
             </p>
-
     }
 }
 

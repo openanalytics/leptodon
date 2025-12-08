@@ -2,11 +2,25 @@
 .ignore
 .direnv
 */target
-*/node_modules
+**/node_modules
 */.dist
 .idea
-.zed 
+.zed
 
 overview/.idea
 overview/dist
 overview/.tailwind
+
+# Testing output
+**/playwright-report
+**/test-results
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
