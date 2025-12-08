@@ -1254,7 +1254,6 @@ dependencies = [
 name = "leptos-components"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "axum 0.8.7",
  "axum-extra 0.9.6",
  "cfg-if",

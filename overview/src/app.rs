@@ -1,3 +1,4 @@
+use chrono::prelude::*;
 use leptos::logging::log;
 use leptos::prelude::*;
 use leptos_components::accordion::Accordion;
@@ -15,6 +16,7 @@ use leptos_components::button_group::Last;
 use leptos_components::checkbox::Checkbox;
 use leptos_components::darkmode::ThemeSelector;
 use leptos_components::date_picker::DatePicker;
+use leptos_components::date_picker::range_picker::DateRangePicker;
 use leptos_components::dropdown::DropdownItem;
 use leptos_components::input::InputType;
 use leptos_components::input_group::InputGroup;
@@ -23,7 +25,6 @@ use leptos_components::{
     button::{Button, ButtonAppearance},
     input::Input,
 };
-use chrono::prelude::*;
 use leptos_meta::*;
 use leptos_router::{
     StaticSegment,
@@ -90,7 +91,8 @@ fn Home() -> impl IntoView {
             <div>
                 <leptos_components::input_group::ControlledNumberInput<i32> class="w-96" min=-1 max=15 />
             </div>
-            <DatePicker value=RwSignal::new(Local::now().date_naive()) />
+            <DatePicker value=RwSignal::new(None) />
+            <DateRangePicker />
             <br/>
             <Toggle label="Lightswitch" value=Signal::derive(move || false) />
             <Avatar src="/favicon.ico" />

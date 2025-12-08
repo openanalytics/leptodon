@@ -27,7 +27,6 @@ num-traits = "0.2.19"
 http1 = { version = "1", package = "http", optional = true }
 const-str = "0.7.0"
 chrono = "0.4.42"
-anyhow = "1.0.100"
 
 [build-dependencies]
 walkdir = "2.5.0"

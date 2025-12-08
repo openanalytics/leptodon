@@ -9,6 +9,7 @@ use leptos::leptos_dom::logging::console_log;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::CollectView;
 use leptos::prelude::Effect;
+use leptos::prelude::FlattenOptionRefOption;
 use leptos::prelude::IntoAny;
 use leptos::prelude::Memo;
 use leptos::prelude::NodeRef;
@@ -19,9 +20,10 @@ use leptos_use::UseCalendarReturn;
 use leptos_use::on_click_outside;
 use leptos_use::use_calendar;
 use num_traits::FromPrimitive;
-use web_sys::KeyboardEvent;
+use std::cmp::Ordering;
 use std::str::FromStr;
 use web_sys::FocusEvent;
+use web_sys::KeyboardEvent;
 
 use crate::button::Button;
 use crate::button::ButtonAppearance;
@@ -43,6 +45,7 @@ use leptos::{
     prelude::{MaybeProp, Signal},
     view,
 };
+pub mod range_picker;
 
 const MILLENIUM_IN_MONTHS: Months = Months::new(12 * 100);
 const DECENIA_IN_MONTHS: Months = Months::new(12 * 10);
@@ -50,7 +53,7 @@ const YEAR_IN_MONTHS: Months = Months::new(12);
 
 /// Elements refer to the date-picker elements like individual days, months, years.
 const SELECTED_ELEM_CLASSES: &str = "!hover:bg-oa-blue bg-oa-blue text-white";
-const ELEM_CLASSES: &str = "datepicker-cell hover:bg-oa-gray block flex-1 leading-9 border-0 rounded-lg cursor-pointer text-center text-body font-medium text-sme";
+const ELEM_CLASSES: &str = "hover:bg-oa-gray block flex-1 leading-9 border-0 cursor-pointer text-center text-body font-medium text-sme";
 
 const MONTHS: [Month; 12] = [
     Month::January,
@@ -153,8 +156,9 @@ where
 #[component]
 fn DayPickerMenu(
     weekdays: Signal<Vec<usize>>,
+    #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     dates: Signal<Vec<CalendarDate>>,
-    value: RwSignal<NaiveDate>,
+    value: RwSignal<Option<NaiveDate>>,
 ) -> impl IntoView {
     view! {
         <div class="days">
@@ -181,18 +185,16 @@ fn DayPickerMenu(
                     .get()
                     .into_iter()
                     .map(|date| {
-                        let is_selected = move || { *date == value.get() };
+                        // let is_selected = move || { Some(*date) == value.get() };
                         view! {
                             <div
                                 class=class_list!(
                                     ELEM_CLASSES,
-                                    (SELECTED_ELEM_CLASSES, move || is_selected()),
-                                    ("text-gray-500", date.is_other_month()),
-                                    ("text-oa-blue", move || date.is_today())
+                                    highlighter.get().map(|it| it(DateMenuOption::Day(date))).unwrap_or_else(String::new)
                                 )
 
-                                class:border-transparent=move || !is_selected()
-                                on:click=move |_| value.set(*date)
+                                // class:border-transparent=move || !is_selected()
+                                on:click=move |_| value.set(Some(*date))
                             >
 
                                 {date.day()}
@@ -250,6 +252,7 @@ where
 #[component]
 fn MonthPickerMenu<MonthByDateFn>(
     month_by_date: MonthByDateFn,
+    #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     current_date: Memo<NaiveDate>,
     picker_state: RwSignal<DatePickerState>,
 ) -> impl IntoView
@@ -266,7 +269,10 @@ where
                         view! {
                             <div
                                 class=class_list!(
-                                    (SELECTED_ELEM_CLASSES, current_date.get().month() == month.number_from_month()),
+                                    // (SELECTED_ELEM_CLASSES, current_date.get().month() == month.number_from_month()),
+                                    highlighter.get()
+                                        .map(|it| it(DateMenuOption::Month(month.number_from_month())))
+                                        .unwrap_or_else(String::new),
                                     ELEM_CLASSES
                                 )
                                 on:click={
@@ -342,6 +348,7 @@ where
 #[component]
 fn YearPickerMenu<MonthByDateFn>(
     month_by_date: MonthByDateFn,
+    #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     current_date: Memo<NaiveDate>,
     picker_state: RwSignal<DatePickerState>,
 ) -> impl IntoView
@@ -363,7 +370,9 @@ where
                         view! {
                             <div
                                 class=class_list!(
-                                    (SELECTED_ELEM_CLASSES, current_date.get().year() == year),
+                                    highlighter.get()
+                                        .map(|it| it(DateMenuOption::Year(year)))
+                                        .unwrap_or_else(String::new),
                                     ELEM_CLASSES
                                 )
                                 on:click={
@@ -390,13 +399,12 @@ where
     }
 }
 
-
 // Navigation component for the month picking view of the date-picker.
 // Looks like: [<] [Millenium] [>]
 #[component]
 fn DeceniumPickerMenuNav<MonthByDateFn>(
     month_by_date: MonthByDateFn,
-    current_date: Memo<NaiveDate>
+    current_date: Memo<NaiveDate>,
 ) -> impl IntoView
 where
     MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
@@ -437,6 +445,7 @@ where
 #[component]
 fn DeceniumPickerMenu<MonthByDateFn>(
     month_by_date: MonthByDateFn,
+    #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     current_date: Memo<NaiveDate>,
     picker_state: RwSignal<DatePickerState>,
 ) -> impl IntoView
@@ -459,7 +468,9 @@ where
                         view! {
                             <div
                                 class=class_list!(
-                                    (SELECTED_ELEM_CLASSES, decenium_from_naive_date(&current_date.get()) == decenium),
+                                    highlighter.get()
+                                        .map(|it| it(DateMenuOption::Decenium(decenium)))
+                                        .unwrap_or_else(String::new),
                                     ELEM_CLASSES
                                 )
                                 on:click={
@@ -484,6 +495,70 @@ where
     }
 }
 
+#[derive(Clone, Copy)]
+pub enum DateMenuOption {
+    Day(CalendarDate),
+    Month(u32),
+    Year(i32),
+    Decenium(i32),
+}
+
+impl DateMenuOption {
+    pub fn matches_date(&self, date: NaiveDate) -> bool {
+        match self {
+            DateMenuOption::Day(calendar_date) => date == **calendar_date,
+            DateMenuOption::Month(month) => date.month() == *month,
+            DateMenuOption::Year(year) => date.year() == *year,
+            DateMenuOption::Decenium(decenium) => date.year() - date.year() % 10 == *decenium,
+        }
+    }
+
+    /// returns that [self] is %Ordering% than/to [date]
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use std::cmp::Ordering;
+    /// 
+    /// let date = NaiveDate::from_str("2025-11-01").unwrap();
+    ///
+    /// let month_option = DateMenuOption::Month(10);
+    /// let year_option = DateMenuOption::Year(2025);
+    /// let decenium_option = DateMenuOption::Decenium(2030);
+    /// 
+    /// assert_eq!(month_option.compare_against(date), Ordering::Less);
+    /// assert_eq!(year_option.cmp(date), Ordering::Equal);
+    /// assert_eq!(decenium_option.cmp(date), Ordering::Greater);
+    /// ```
+    pub fn compare_against(&self, date: NaiveDate) -> Ordering {
+        match self {
+            DateMenuOption::Day(calendar_date) => (**calendar_date).cmp(&date),
+            DateMenuOption::Month(month) => month.cmp(&date.month()),
+            DateMenuOption::Year(year) => year.cmp(&date.year()),
+            DateMenuOption::Decenium(decenium) => decenium.cmp(&(date.year() - date.year() % 10)),
+        }
+    }
+}
+
+// Default single-calendar highlighter.
+// Highlights the selected day. Days from other months are grayer.
+pub fn day_highlighter(
+    value: RwSignal<Option<NaiveDate>>,
+) -> ArcOneCallback<DateMenuOption, String> {
+    ArcOneCallback::new(move |date: DateMenuOption| {
+        if let Some(value) = value.get()
+            && date.matches_date(value)
+        {
+            SELECTED_ELEM_CLASSES.to_string() + " rounded-lg"
+        } else if let DateMenuOption::Day(date) = date
+            && date.is_other_month()
+        {
+            "text-gray-500".to_string()
+        } else {
+            "rounded-lg".to_string()
+        }
+    })
+}
 
 #[component]
 pub fn DatePicker(
@@ -492,7 +567,10 @@ pub fn DatePicker(
     #[prop(optional, into)] class: MaybeProp<String>,
     #[prop(default = "yyyy-mm-dd".into(), into)] placeholder: MaybeProp<String>,
 
-    #[prop(into)] value: RwSignal<NaiveDate>,
+    #[prop(into)] value: RwSignal<Option<NaiveDate>>,
+    #[prop(default = day_highlighter(value).into(), into)] highlighter: MaybeProp<
+        ArcOneCallback<DateMenuOption, String>,
+    >,
     #[prop(optional, into)] label: MaybeProp<String>,
 ) -> impl IntoView {
     // Extra internal state for hiding and which menu is active.
@@ -500,22 +578,33 @@ pub fn DatePicker(
 
     // Input parser
     let parser = Some(ArcOneCallback::new(|to_parse: String| {
-        NaiveDate::from_str(to_parse.as_str()).map_err(|s| {
-            match s.kind() {
-                ParseErrorKind::OutOfRange => "input is out of range".to_string(),
-                ParseErrorKind::Impossible => "no possible date matching input".to_string(),
-                ParseErrorKind::NotEnough => "input is not enough for unique date".to_string(),
-                // This error can be triggered by one too many 0's
-                ParseErrorKind::Invalid => "try to format as: yyyy-mm-dd".to_string(),
-                ParseErrorKind::TooShort => "too little input".to_string(),
-                ParseErrorKind::TooLong => "too much input".to_string(),
-                ParseErrorKind::BadFormat => "try to format as: yyyy-mm-dd".to_string(),
-                _ => "Unknown error, try to format as: yyyy-mm-dd".to_string(),
-            }
-        })
+        if to_parse == "" {
+            return Ok(None);
+        }
+        NaiveDate::from_str(to_parse.as_str())
+            .map(Option::Some)
+            .map_err(|s| {
+                match s.kind() {
+                    ParseErrorKind::OutOfRange => "input is out of range".to_string(),
+                    ParseErrorKind::Impossible => "no possible date matching input".to_string(),
+                    ParseErrorKind::NotEnough => "input is not enough for unique date".to_string(),
+                    // This error can be triggered by one too many 0's
+                    ParseErrorKind::Invalid => "try to format as: yyyy-mm-dd".to_string(),
+                    ParseErrorKind::TooShort => "too little input".to_string(),
+                    ParseErrorKind::TooLong => "too much input".to_string(),
+                    ParseErrorKind::BadFormat => "try to format as: yyyy-mm-dd".to_string(),
+                    _ => "Unknown error, try to format as: yyyy-mm-dd".to_string(),
+                }
+            })
     }));
     // Input formatter
-    let format = Some(BoxOneCallback::new(|date: NaiveDate| date.to_string()));
+    let format = Some(BoxOneCallback::new(|date: Option<NaiveDate>| {
+        if let Some(date) = date {
+            date.to_string()
+        } else {
+            String::new()
+        }
+    }));
 
     // Calendar helper object which backs the calendar view
     let UseCalendarReturn {
@@ -549,8 +638,10 @@ pub fn DatePicker(
         move || value.get(),
         {
             let month_by_date = month_by_date.clone();
-            move |new, old, _| {
-                if Some(new) != old {
+            move |new: &Option<NaiveDate>, old, _| {
+                if let Some(new) = new
+                    && Some(new) != old.flatten()
+                {
                     picker_state.update(|state| state.hide());
                     month_by_date(new);
                 }
@@ -562,32 +653,24 @@ pub fn DatePicker(
     // Presents the items the user can pick depending on which menu is active.
     let body_picker = {
         let month_by_date = month_by_date.clone();
-        move || match picker_state.get().menu {
-            DatePickerMenu::DayPicker => view! { <DayPickerMenu weekdays dates value/> }.into_any(),
+        move || {
+            match picker_state.get().menu {
+            DatePickerMenu::DayPicker => view! { <DayPickerMenu weekdays dates value highlighter /> }.into_any(),
             DatePickerMenu::MonthPicker => view! {
-                <MonthPickerMenu
-                    month_by_date=month_by_date.clone()
-                    current_date
-                    picker_state
-                />
+                <MonthPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state />
             }
             .into_any(),
             DatePickerMenu::YearPicker => view! {
-                <YearPickerMenu
-                    month_by_date=month_by_date.clone()
-                    current_date
-                    picker_state
+                <YearPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
                 />
             }
             .into_any(),
             DatePickerMenu::DeceniaPicker => view! {
-                <DeceniumPickerMenu
-                    month_by_date=month_by_date.clone()
-                    current_date
-                    picker_state
+                <DeceniumPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
                 />
             }
             .into_any(),
+        }
         }
     };
 
@@ -620,17 +703,18 @@ pub fn DatePicker(
         }
         .into_any(),
     };
-    
+
     let target = NodeRef::<Div>::new();
-    
+
     // Magic
     on_click_outside(target, move |event| {
         picker_state.update(|state| state.hide());
     });
 
+    type OptDate = Option<NaiveDate>;
     view! {
         <div node_ref=target>
-            <GenericInput<NaiveDate, String> name class placeholder label parser format value 
+            <GenericInput<OptDate, String> name class placeholder label parser format value
                 on:focus=move |_| {
                     picker_state.update(|state| state.show());
                 }

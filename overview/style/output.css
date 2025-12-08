@@ -1638,6 +1638,11 @@ input:checked + .toggle-bg {
   background-color: rgb(50 166 211 / var(--tw-bg-opacity, 1));
 }
 
+.bg-oa-gray-darker {
+  --tw-bg-opacity: 1;
+  background-color: rgb(195 195 195 / var(--tw-bg-opacity, 1));
+}
+
 .bg-oa-red {
   --tw-bg-opacity: 1;
   background-color: rgb(229 35 35 / var(--tw-bg-opacity, 1));
@@ -1711,10 +1716,6 @@ input:checked + .toggle-bg {
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
-}
-
-.pl-2 {
-  padding-left: 0.5rem;
 }
 
 .pt-2 {
@@ -1971,11 +1972,6 @@ input:checked + .toggle-bg {
 .hover\:bg-gray-50:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:bg-oa-blue:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(50 166 211 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-oa-blue-darker:hover {

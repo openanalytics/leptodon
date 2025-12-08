@@ -12,12 +12,12 @@ fn main() -> Result<(), Error> {
         match entry {
             Ok(entry) => {
                 let path = entry.path();
-                println!(
-                    "cargo::warning=path: {} is_file: {}, is_rust: {}",
-                    path.display(),
-                    path.is_file(),
-                    path.ends_with("rs")
-                );
+                // println!(
+                //     "cargo::warning=path: {} is_file: {}, is_rust: {}",
+                //     path.display(),
+                //     path.is_file(),
+                //     path.ends_with("rs")
+                // );
                 if path.is_file() {
                     let contents = fs::read_to_string(path)?;
                     all_src += contents.as_str();

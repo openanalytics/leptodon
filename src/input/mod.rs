@@ -117,10 +117,11 @@ pub fn GenericInput<T, E>(
     /// Binds to the value of the input, has to be a string.
     #[prop(optional, into)]
     value: RwSignal<T>,
-    /// Modifies the user input before assigning it to the value.
+    /// Maps the user input to [T], not ran on empty inputs unless [required] is true
     #[prop(optional, into)]
     parser: OptionalProp<ArcOneCallback<String, Result<T, E>>>,
-    /// Formats the value to be shown to the user.
+    /// Formats the value to be shown to the user, only happens when the user indicates they are done inputting.
+    /// E.g. via Enter, Escape or leaving the input
     #[prop(optional, into)]
     format: OptionalProp<BoxOneCallback<T, String>>,
     /// Whether the input is required.
@@ -157,8 +158,8 @@ where
                 match parsed_value {
                     Ok(parsed_success) => {
                         // Changing the parsed value causes a format
+                        // the blur handler will want to format while input handling does not.
                         if should_format {
-                            // Value will be updated by on_blur
                             value.set(parsed_success);
                         }
                         invalid_reason.set(None);
@@ -167,6 +168,8 @@ where
                         invalid_reason.set(Some(err));
                     }
                 }
+            } else if internal_value.is_empty() && !required.get() {
+                invalid_reason.set(None);
             }
         }
     };
