@@ -53,7 +53,7 @@ pub fn DateRangePicker(
         },
         true,
     );
-    
+
     let range_highlighter = move |date: DateMenuOption| {
         if let Some(start) = start_date.get()
             && let Some(end) = end_date.get()
@@ -103,13 +103,7 @@ pub fn DateRangePicker(
         {
             all_classes.push("text-gray-500".to_string());
         }
-        // if date.is_today() {
-        //     all_classes += "oa-text-blue";
-        // } else if date.is_other_month() {
-        //     all_classes += "text-gray-500";
-        // }
 
-        // console_log(format!("highlighting as {all_classes}").as_str());
         all_classes.join(" ")
     });
 

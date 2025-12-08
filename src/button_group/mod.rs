@@ -9,7 +9,9 @@ use leptos::slot;
 use leptos::{IntoView, component, prelude::Children, view};
 
 #[derive(Clone)]
-pub struct InGroupContext { pub in_group: bool }
+pub struct InGroupContext {
+    pub in_group: bool,
+}
 
 #[slot]
 pub struct First {
@@ -23,9 +25,11 @@ pub struct Last {
 
 /// Blocked on passing context to first and last child.
 #[component]
-pub fn ButtonGroup(first: First,  
-    #[prop(default=Box::new(move || { view!{}.into_any()}))]
-    children: Children, last: Last) -> impl IntoView {
+pub fn ButtonGroup(
+    first: First,
+    #[prop(default=Box::new(move || { view!{}.into_any()}))] children: Children,
+    last: Last,
+) -> impl IntoView {
     view! {
         <div class="inline-flex rounded-lg shadow-xs -space-x-px" role="group">
             <Provider<InGroupContext, _> value=InGroupContext { in_group: true }>

@@ -1,11 +1,21 @@
 pub mod include_generated;
 
 #[cfg(feature = "leptos")]
+pub mod accordion;
+#[cfg(feature = "leptos")]
+pub mod avatar;
+#[cfg(feature = "leptos")]
 pub mod button;
+#[cfg(feature = "leptos")]
+pub mod button_group;
+#[cfg(feature = "leptos")]
+pub mod checkbox;
 #[cfg(feature = "leptos")]
 pub mod class_list;
 #[cfg(feature = "leptos")]
 pub mod darkmode;
+#[cfg(feature = "leptos")]
+pub mod date_picker;
 #[cfg(feature = "leptos")]
 pub mod dropdown;
 #[cfg(feature = "leptos")]
@@ -22,13 +32,3 @@ pub mod spinner;
 pub mod toggle;
 #[cfg(feature = "leptos")]
 pub mod util;
-#[cfg(feature = "leptos")]
-pub mod accordion;
-#[cfg(feature = "leptos")]
-pub mod avatar;
-#[cfg(feature = "leptos")]
-pub mod button_group;
-#[cfg(feature = "leptos")]
-pub mod checkbox;
-#[cfg(feature = "leptos")]
-pub mod date_picker;

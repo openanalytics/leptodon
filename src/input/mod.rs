@@ -1,6 +1,6 @@
-use crate::util::callback::ArcOneCallback;
 use crate::class_list;
 use crate::input_group::GroupItemClassContext;
+use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
 use crate::util::option_comp::OptionComp;
 use crate::util::optional_prop::OptionalProp;
@@ -173,15 +173,15 @@ where
             }
         }
     };
-    
+
     // When the Input loses focus, try parsing the new value
-    let on_blur = { 
+    let on_blur = {
         let try_parse = try_parse.clone();
         move |_| {
             try_parse(true);
         }
     };
-    
+
     // If there is an error, try parsing on each key to transition in real time to a good state.
     let on_input = move |_| {
         if invalid_reason.get().is_some() {

@@ -19,8 +19,8 @@ use leptos::{
 mod variations;
 
 // Re-exports
-pub use crate::button::variations::ControllButton;
 pub use crate::button::variations::AddButton;
+pub use crate::button::variations::ControllButton;
 pub use crate::button::variations::DeleteButton;
 pub use crate::button::variations::DownloadButton;
 pub use crate::button::variations::DropdownButton;

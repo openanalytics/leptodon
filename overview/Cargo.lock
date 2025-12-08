@@ -1657,7 +1657,6 @@ checksum = "8c04f5d74368e4d0dfe06c45c8627c81bd7c317d52762d118fb9b3076f6420fd"
 name = "overview"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "axum 0.8.7",
  "axum-extra 0.12.2",
  "cfg-if",

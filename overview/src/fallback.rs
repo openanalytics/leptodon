@@ -15,22 +15,19 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use leptos::error::Errors;
 use axum::{
     body::Body,
     http::{Request, Response, StatusCode, Uri},
     response::{IntoResponse, Response as AxumResponse},
 };
+use leptos::error::Errors;
 use leptos::view;
 use tower::ServiceExt;
 use tower_http::services::ServeDir;
 
 use crate::errors::{AppError, ErrorTemplate};
 
-pub async fn file_and_error_handler(
-    uri: Uri,
-    request: Request<Body>,
-) -> AxumResponse {
+pub async fn file_and_error_handler(uri: Uri, request: Request<Body>) -> AxumResponse {
     let response = get_asset(uri.clone(), "/").await;
 
     if let Ok(ok_response) = response {
@@ -40,8 +37,7 @@ pub async fn file_and_error_handler(
     }
     let mut errors = Errors::default();
     errors.insert_with_default_key(AppError::NotFound);
-    let handler
-        = leptos_axum::render_app_to_stream(
+    let handler = leptos_axum::render_app_to_stream(
         move || view! { <ErrorTemplate outside_errors=errors.clone() /> },
     );
     handler(request).await.into_response()
