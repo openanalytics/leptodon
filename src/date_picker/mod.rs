@@ -22,7 +22,6 @@ use leptos_use::use_calendar;
 use num_traits::FromPrimitive;
 use std::cmp::Ordering;
 use std::str::FromStr;
-use web_sys::FocusEvent;
 use web_sys::KeyboardEvent;
 
 use crate::button::Button;
@@ -52,7 +51,7 @@ const DECENIA_IN_MONTHS: Months = Months::new(12 * 10);
 const YEAR_IN_MONTHS: Months = Months::new(12);
 
 /// Elements refer to the date-picker elements like individual days, months, years.
-const SELECTED_ELEM_CLASSES: &str = "!hover:bg-oa-blue bg-oa-blue text-white";
+const SELECTED_ELEM_CLASSES: &str = "hover:!bg-oa-blue-lighter bg-oa-blue text-white ";
 const ELEM_CLASSES: &str = "hover:bg-oa-gray block flex-1 leading-9 border-0 cursor-pointer text-center text-body font-medium text-sme";
 
 const MONTHS: [Month; 12] = [
@@ -144,11 +143,11 @@ where
     });
 
     view! {
-        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { previous_month() }></ControllButton>
+        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { previous_month() } {..} tabindex="-1"></ControllButton>
         <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
             picker_state.update(|state| state.set_menu(DatePickerMenu::MonthPicker))
-        }>{ move || current_month_year.get() }</Button>
-        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_month() }></ControllButton>
+        } {..} tabindex="-1">{ move || current_month_year.get() }</Button>
+        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_month() } {..} tabindex="-1"></ControllButton>
     }
 }
 
@@ -241,11 +240,11 @@ where
     };
 
     view! {
-        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_year() }></ControllButton>
+        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_year() } {..} tabindex="-1"></ControllButton>
         <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
             picker_state.update(|state| state.set_menu(DatePickerMenu::YearPicker))
-        }>{ move || current_date.get().format("%Y").to_string() }</Button>
-        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_year() }></ControllButton>
+        } {..} tabindex="-1">{ move || current_date.get().format("%Y").to_string() }</Button>
+        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_year() } {..} tabindex="-1"></ControllButton>
     }
 }
 
@@ -331,17 +330,17 @@ where
     };
 
     view! {
-        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_decenia() }></ControllButton>
+        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_decenia() } {..} tabindex="-1"></ControllButton>
         <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
             picker_state.update(|state| state.set_menu(DatePickerMenu::DeceniaPicker))
-        }>
+        } {..} tabindex="-1">
         { move || {
             let current_year = current_date.get().year();
             let current_decenia = current_year - current_year % 10;
             let decenia_end = current_decenia+9;
             format!("{} - {}", current_decenia, decenia_end)
         }}</Button>
-        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_decenia() }></ControllButton>
+        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_decenia() } {..} tabindex="-1"></ControllButton>
     }
 }
 
@@ -430,7 +429,7 @@ where
     };
 
     view! {
-        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_millenium() }></ControllButton>
+        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_millenium() } {..} tabindex="-1"></ControllButton>
         <Button appearance=ButtonAppearance::Transparent>
         { move || {
             let current_year = current_date.get().year();
@@ -438,7 +437,7 @@ where
             let millenia_end = current_millenia + 90;
             format!("{} - {}", current_millenia, millenia_end)
         }}</Button>
-        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_millenium() }></ControllButton>
+        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_millenium() } {..} tabindex="-1"></ControllButton>
     }
 }
 
@@ -514,18 +513,18 @@ impl DateMenuOption {
     }
 
     /// returns that [self] is %Ordering% than/to [date]
-    /// 
+    ///
     /// # Examples
     ///
     /// ```
     /// use std::cmp::Ordering;
-    /// 
+    ///
     /// let date = NaiveDate::from_str("2025-11-01").unwrap();
     ///
     /// let month_option = DateMenuOption::Month(10);
     /// let year_option = DateMenuOption::Year(2025);
     /// let decenium_option = DateMenuOption::Decenium(2030);
-    /// 
+    ///
     /// assert_eq!(month_option.compare_against(date), Ordering::Less);
     /// assert_eq!(year_option.cmp(date), Ordering::Equal);
     /// assert_eq!(decenium_option.cmp(date), Ordering::Greater);
@@ -706,7 +705,7 @@ pub fn DatePicker(
 
     let target = NodeRef::<Div>::new();
 
-    // Magic
+    // Not sure what this warning is about, it seems to work perfectly.
     on_click_outside(target, move |event| {
         picker_state.update(|state| state.hide());
     });
@@ -720,7 +719,7 @@ pub fn DatePicker(
                 }
                 on:keydown=move |key: KeyboardEvent| {
                     console_log(key.code().as_str());
-                    if key.code() == "Escape" {
+                    if key.code() == "Escape" || key.code() == "Tab" {
                         picker_state.update(|state| state.hide());
                     }
                     if key.code() == "Enter" {
@@ -728,7 +727,7 @@ pub fn DatePicker(
                     }
                 }
                 {..}
-                role="combobox" // Makes vimium like plugins pass specia keys through
+                role="combobox" // Makes vimium like plugins pass special keys through
             />
             // Picker-Dropdown
             <div class=class_list!(

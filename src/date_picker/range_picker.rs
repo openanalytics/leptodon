@@ -2,9 +2,11 @@ use std::cmp::Ordering;
 
 use crate::date_picker::DateMenuOption;
 use crate::date_picker::DatePicker;
+use crate::date_picker::SELECTED_ELEM_CLASSES;
 use crate::util::callback::ArcOneCallback;
 use chrono::NaiveDate;
 use leptos::prelude::ClassAttribute;
+use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos_use::CalendarDate;
@@ -38,43 +40,54 @@ pub fn DateRangePicker(
     highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     #[prop(optional, into)] label: MaybeProp<String>,
 ) -> impl IntoView {
-    let start_date = RwSignal::new(None);
-    let end_date = RwSignal::new(None);
-
+    // Swap start and end if the user inputs an end that lays before start.
+    Effect::watch(
+        move || (start_date.get(), end_date.get()),
+        move |new, old, a| {
+            if let (Some(start_date_value), Some(end_date_value)) = new
+                && end_date_value < start_date_value
+            {
+                start_date.set(Some(*end_date_value));
+                end_date.set(Some(*start_date_value))
+            }
+        },
+        true,
+    );
+    
     let range_highlighter = move |date: DateMenuOption| {
         if let Some(start) = start_date.get()
             && let Some(end) = end_date.get()
         {
             if date.matches_date(start) {
-                return "rounded-l-lg bg-oa-blue text-white".to_string();
-            }   
-            if date.matches_date(end) {
-                return "rounded-r-lg bg-oa-blue text-white".to_string();
+                return "rounded-l-lg ".to_string() + SELECTED_ELEM_CLASSES;
             }
-            
+            if date.matches_date(end) {
+                return "rounded-r-lg ".to_string() + SELECTED_ELEM_CLASSES;
+            }
+
             // !These matches_date are fuzzy and can work on any [DateMenuOption] supported granularity.
             // They need to happy before the range check.
             if date.compare_against(end) == Ordering::Less
-               && date.compare_against(start) == Ordering::Greater
-           {
-               return "bg-oa-gray-darker".to_string();
-           } else {
-               return "rounded-lg".to_string();
-           }
+                && date.compare_against(start) == Ordering::Greater
+            {
+                return "bg-oa-gray-mid".to_string();
+            } else {
+                return "rounded-lg".to_string();
+            }
         } else {
             if let Some(start) = start_date.get() {
                 if date.matches_date(start) {
-                    return "rounded-lg bg-oa-blue text-white".to_string();
+                    return "rounded-lg ".to_string() + SELECTED_ELEM_CLASSES;
                 }
             }
-            
+
             if let Some(end) = end_date.get() {
                 if date.matches_date(end) {
-                    return "rounded-lg bg-oa-blue text-white".to_string();
+                    return "rounded-lg ".to_string() + SELECTED_ELEM_CLASSES;
                 }
             }
         }
-       
+
         return "rounded-lg".to_string();
     };
 

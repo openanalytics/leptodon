@@ -1638,9 +1638,9 @@ input:checked + .toggle-bg {
   background-color: rgb(50 166 211 / var(--tw-bg-opacity, 1));
 }
 
-.bg-oa-gray-darker {
+.bg-oa-gray-mid {
   --tw-bg-opacity: 1;
-  background-color: rgb(195 195 195 / var(--tw-bg-opacity, 1));
+  background-color: rgb(214 214 214 / var(--tw-bg-opacity, 1));
 }
 
 .bg-oa-red {
@@ -1979,6 +1979,11 @@ input:checked + .toggle-bg {
   background-color: rgb(0 114 156 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-oa-blue-lighter:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(91 184 220 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:bg-oa-gray:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(230 230 230 / var(--tw-bg-opacity, 1));
@@ -1997,6 +2002,11 @@ input:checked + .toggle-bg {
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:\!bg-oa-blue-lighter:hover {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(91 184 220 / var(--tw-bg-opacity, 1)) !important;
 }
 
 .hover\:text-blue-600:hover {
