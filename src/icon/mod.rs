@@ -63,7 +63,8 @@ pub fn Icon(
             inner_html=icon.data
             on:click=on_click
         ></svg>
-    }.into_any()
+    }
+    .into_any()
 }
 
 /// Creates a [LazyLock] around a rendered version of the passed `html! {...}`.

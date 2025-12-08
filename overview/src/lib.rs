@@ -1,8 +1,8 @@
 pub mod app;
-pub mod gen_icons;
+pub mod errors;
 #[cfg(feature = "ssr")]
 pub mod fallback;
-pub mod errors;
+pub mod gen_icons;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

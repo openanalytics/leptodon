@@ -20,6 +20,10 @@ opt-level = 'z'
 opt-level = 1
 incremental = true
 
+[profile.dev.package.leptos-components]
+opt-level = 1
+incremental = true
+
 [profile.dev.package."*"]
 opt-level = 3
 debug = 2
@@ -53,6 +57,7 @@ tracing = { version = "0.1", optional = true }
 log = "0.4"
 cfg-if = "1.0.4"
 derive_more = { version = "2.0.1", features = ["display"] }
+chrono = "0.4.42"
 
 [build-dependencies]
 leptos-components = { path = "../../leptos-components", default-features = false, features = [] }

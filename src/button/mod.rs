@@ -20,6 +20,7 @@ mod variations;
 
 // Re-exports
 pub use crate::button::variations::AddButton;
+pub use crate::button::variations::ControllButton;
 pub use crate::button::variations::DeleteButton;
 pub use crate::button::variations::DownloadButton;
 pub use crate::button::variations::DropdownButton;
@@ -38,6 +39,8 @@ const OA_DANGER_BUTTON_CLASSES: &str = const_str::concat!(
     " ",
     SHARED_BUTTON_CLASSES
 );
+
+const OA_TRANSPARENT_BUTTON_CLASSES: &str = "text-sm rounded-lg text-heading font-medium py-2.5 px-5 hover:bg-oa-gray focus:outline-none focus:ring-2 focus:ring-oa-gray view-switch";
 
 const OA_SECONDARY_BUTTON_CLASSES: &str = const_str::join!(
     &[
@@ -111,6 +114,7 @@ where
     view! {
         <button
             class=class_list![
+                class,
                 if let Some(group_classes) = group_classes { group_classes } else { String::new() },
                 if in_group.in_group { "rounded-none border-r-0 !mr-0" } else { "" },
                 match appearance.get() {
@@ -118,9 +122,8 @@ where
                     ButtonAppearance::Primary => OA_PRIMARY_BUTTON_CLASSES,
                     ButtonAppearance::Danger => OA_DANGER_BUTTON_CLASSES,
                     ButtonAppearance::Subtle => todo!(),
-                    ButtonAppearance::Transparent => todo!(),
-                },
-                class
+                    ButtonAppearance::Transparent => OA_TRANSPARENT_BUTTON_CLASSES,
+                }
             ]
             type=move || button_type.get().map(|t| t.as_str())
             aria-disabled=aria_disabled

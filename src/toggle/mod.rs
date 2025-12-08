@@ -22,21 +22,18 @@ pub fn Toggle(
     #[prop(optional, into)] id: MaybeProp<String>,
     #[prop(optional, into)] name: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeProp<String>,
-    
-    #[prop(into)]
-    value: Signal<bool>,
-    #[prop(optional, into)]
-    label: String,
 
-    #[prop(optional, into)] checked: RwSignal<bool>
+    #[prop(into)] value: Signal<bool>,
+    #[prop(optional, into)] label: String,
+
+    #[prop(optional, into)] checked: RwSignal<bool>,
 ) -> impl IntoView {
-    
     let input_ref = NodeRef::<html::element::Input>::new();
     let on_change = move |_| {
         let input = input_ref.get_untracked().unwrap();
         checked.set(input.checked());
     };
-    
+
     view! {
         <label class=class_list!("relative inline-flex items-center mb-4 cursor-pointer", class)>
             <input

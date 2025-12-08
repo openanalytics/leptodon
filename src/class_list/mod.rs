@@ -10,6 +10,8 @@ use std::sync::Arc;
 
 #[derive(Clone, Default)]
 pub struct ClassList {
+    // Css classes are applied by the order they are defined in the .css file, ordering of classes in `class="classes.."` does not affect the outcome.
+    // Hence a set is fitting
     value: RwSignal<HashSet<Oco<'static, str>>>,
     #[cfg(not(feature = "ssr"))]
     effects_oco: Vec<Arc<RenderEffect<Oco<'static, str>>>>,

@@ -16,7 +16,12 @@
 use cfg_if::cfg_if;
 use derive_more::Display;
 use http::status::StatusCode;
-use leptos::{error::Errors, html::ElementChild, prelude::{For, Get, RwSignal}, *};
+use leptos::{
+    error::Errors,
+    html::ElementChild,
+    prelude::{For, Get, RwSignal},
+    *,
+};
 #[cfg(feature = "ssr")]
 use leptos_axum::ResponseOptions;
 use thiserror::Error;

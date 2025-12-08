@@ -6,10 +6,8 @@ use crate::class_list;
 
 #[component]
 pub fn Avatar(
-    #[prop(optional, into)]
-    src: MaybeProp<String>,
-    #[prop(optional, into)]
-    extra_classes: MaybeProp<String>
+    #[prop(optional, into)] src: MaybeProp<String>,
+    #[prop(optional, into)] extra_classes: MaybeProp<String>,
 ) -> impl IntoView {
     if let Some(src) = src.into_option_getter().run() {
         view! {
