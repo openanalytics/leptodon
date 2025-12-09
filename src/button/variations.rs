@@ -1,27 +1,30 @@
-use leptos::prelude::ElementChild;
 use crate::button::ButtonProps;
 use crate::button::{Button, ButtonAppearance, ButtonRef, ButtonSize, ButtonType};
 use crate::dropdown::Dropdown;
 use crate::icon;
 use crate::icon::icon_data::IconRef;
+use crate::modal::{Modal, ModalFooterChildren};
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
 use leptos::prelude::{Children, Get, MaybeProp, Signal, Write, provide_context, signal};
+use leptos::prelude::{ElementChild, RwSignal, TypedChildren, Update};
 use leptos::{IntoView, component, view};
 use leptos::{ev, slot};
 
 /// An icon only button meant for controlling another view (e.g. < > << >>)
 #[component]
-pub fn ControllButton(
+pub fn ControlButton(
     /// The icon of the button.
     #[prop(into)]
     icon: IconRef,
     #[prop(into)] on_click: BoxOneCallback<ev::MouseEvent>,
+    #[prop(optional)] comp_ref: ComponentRef<ButtonRef>,
 ) -> impl IntoView {
     view! {
         <Button
             icon
             on_click
+            comp_ref
             appearance=ButtonAppearance::Transparent
             class="!px-3"
         >
@@ -93,6 +96,9 @@ pub struct DropdownButtonChildren {
 /// A button triggers an action or event when activated.
 #[component]
 pub fn DropdownButton(
+    /// Button ID, dropdown ID is derived by "{button_id}-dropdown"
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
     /// Extra classes appened to the button's default style
     #[prop(optional, into)]
     class: MaybeProp<String>,
@@ -117,6 +123,7 @@ pub fn DropdownButton(
     /// Most likely a label
     button_children: DropdownButtonChildren,
     /// Dropdown items
+    /// e.g. <DropdownItem/>
     children: Children,
     /// comp_ref will be filled with a reference to the DOM element.
     #[prop(optional)]
@@ -127,6 +134,7 @@ where
     let (is_visible, set_visible) = signal(false);
 
     let button = Button(ButtonProps {
+        id,
         class,
         appearance,
         size,
@@ -141,12 +149,92 @@ where
     });
     provide_context::<crate::dropdown::SetVisibleCallback>(set_visible);
     provide_context::<crate::dropdown::AutoClose>(should_autoclose);
+    let dropdown_id = id.get().map(|id| format!("{id}-modal"));
+    
     view! {
         <div>
             {button}
-            <Dropdown is_visible=is_visible>
+            <Dropdown id=dropdown_id is_visible=is_visible>
                 {children()}
             </Dropdown>
+        </div>
+    }
+}
+
+#[slot]
+pub struct ModalButtonChildren {
+    children: Children,
+}
+
+/// A button to toggle a modal
+#[component]
+pub fn ModalButton(
+    /// Button ID, modal ID is derived by "{button_id}-modal"
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
+    /// Extra classes appened to the button's default style
+    #[prop(optional, into)]
+    class: MaybeProp<String>,
+    /// A button can have its content and borders styled for greater emphasis or to be subtle.
+    #[prop(optional, into)]
+    appearance: Signal<ButtonAppearance>,
+    /// A button supports different sizes.
+    #[prop(optional, into)]
+    size: MaybeProp<Signal<ButtonSize>>,
+    /// The default behavior of the button.
+    #[prop(optional, into)]
+    button_type: MaybeProp<ButtonType>,
+    /// The icon of the button.
+    #[prop(optional, into)]
+    icon: MaybeProp<IconRef>,
+    /// Whether the button shows the loading status.
+    #[prop(optional, into)]
+    loading: Signal<bool>,
+    /// Most likely a label
+    button_children: ModalButtonChildren,
+    /// comp_ref will be filled with a reference to the DOM element.
+    #[prop(optional)]
+    comp_ref: ComponentRef<ButtonRef>,
+
+    /// Title shown in the modal heading
+    #[prop(optional, into)]
+    modal_title: MaybeProp<String>,
+    /// True shows the modal, false hides it.
+    #[prop(default = RwSignal::new(false), into)]
+    modal_visible: RwSignal<bool>,
+    /// Modal content
+    children: Children,
+    /// Modal footer (e.g. Ok and Cancel buttons)
+    modal_footer: ModalFooterChildren,
+) -> impl IntoView
+where
+{
+    
+    let button = Button(ButtonProps {
+        id,
+        class,
+        appearance,
+        size,
+        button_type,
+        icon,
+        loading,
+        on_click: Some(BoxOneCallback::new(move |_e| {
+            modal_visible.update(|inner_visible| *inner_visible = !*inner_visible);
+        })),
+        children: Some(button_children.children),
+        comp_ref,
+    });
+    let modal_id = id.get().map(|id| format!("{id}-modal"));
+
+    view! {
+        <div>
+            {button}
+            <Modal id=modal_id title=modal_title visible=modal_visible>
+                {children()}
+                <ModalFooterChildren slot:footer>
+                    {(modal_footer.children)()}
+                </ModalFooterChildren>
+            </Modal>
         </div>
     }
 }

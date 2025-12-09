@@ -1,0 +1,98 @@
+use leptos::children::Children;
+use leptos::leptos_dom::logging::console_log;
+use leptos::prelude::AriaAttributes;
+use leptos::prelude::ClassAttribute;
+use leptos::prelude::ElementChild;
+use leptos::prelude::Get;
+use leptos::prelude::GlobalAttributes;
+use leptos::prelude::IntoAny;
+use leptos::prelude::NodeRef;
+use leptos::prelude::NodeRefAttribute;
+use leptos::prelude::OnAttribute;
+use leptos::prelude::RwSignal;
+use leptos::prelude::Set;
+use leptos::slot;
+use leptos::tachys::html;
+use leptos::{IntoView, component, prelude::MaybeProp, view};
+use leptos_use::UseTimeoutFnReturn;
+use leptos_use::use_timeout_fn;
+use web_sys::HtmlDivElement;
+
+use crate::button::ButtonRef;
+use crate::button::ControlButton;
+use crate::class_list;
+use crate::icon::CloseIcon;
+use crate::util::signals::ComponentRef;
+
+const MODAL_CLASSES: &str =
+    "relative bg-white rounded-lg shadow dark:bg-gray-700 px-4 m-4 w-full max-w-2xl max-h-full";
+const MODAL_BACKDROP_CLASSES: &str = "overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-full max-h-full flex bg-black/50";
+
+#[slot]
+pub struct ModalFooterChildren {
+    children: Children,
+}
+
+#[component]
+pub fn Modal(
+    /// Modal id
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
+    /// Extra modal classes
+    #[prop(optional, into)]
+    class: MaybeProp<String>,
+    /// Title shown in the modal heading
+    #[prop(optional, into)]
+    title: MaybeProp<String>,
+    /// True shows the modal, false hides it.
+    #[prop(optional, into)]
+    visible: RwSignal<bool>,
+    /// Modal content
+    children: Children,
+    /// Modal footer (e.g. Ok and Cancel buttons)
+    footer: ModalFooterChildren,
+) -> impl IntoView {
+    let reference = ComponentRef::new();
+
+    view! {
+        <div tabindex="-1" class=class_list!(MODAL_BACKDROP_CLASSES, ("hidden", move || !visible.get())) on:click=move |_| visible.set(false)>
+            // Modal content
+            <div 
+                id=move || id.get() 
+                class=class_list!(MODAL_CLASSES, class)
+                on:click=move |e| e.stop_propagation()
+                role="dialog"
+                aria-label=move || title.get()
+                aria-modal=true
+            >
+                // Modal header
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                    <h3 class="text-lg font-medium text-heading">
+                        { title.get() }
+                    </h3>
+                    <ControlButton icon=CloseIcon() comp_ref=reference on_click=move |_| visible.set(false) />
+                </div>
+
+                // Modal body
+                <div class="p-4 md:p-5 space-y-4">
+                    {children()}
+                </div>
+
+                // Modal footer
+                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                    {(footer.children)().into_any()}
+                </div>
+
+                <span tabindex="0" on:focus=move |_| {
+                    let Some(first_button): Option<ButtonRef> = reference.get() else {
+                        console_log(format!("Internal modal first-div reference is not mounted!").as_str());
+                        return;
+                    };
+                    let UseTimeoutFnReturn { start, .. } = use_timeout_fn(move |_| { first_button.focus(); }, 0.0);
+                    start(());
+                    console_log("successfully focused first-div");
+                } aria-hidden="true"></span>
+            </div>
+        </div>
+    }
+}

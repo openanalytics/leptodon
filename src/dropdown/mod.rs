@@ -2,25 +2,27 @@ use crate::class_list;
 use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
 use leptos::either::Either;
-use leptos::logging::log;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
 use web_sys::MouseEvent;
 
-const DROPDOWN_STYLE: &str = "absolute translate-y-1 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700";
+const DROPDOWN_STYLE: &str = "absolute translate-y-1 z-30 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700";
 const DROPDOWN_LIST_STYLE: &str = "py-2 text-sm text-gray-700 dark:text-gray-200";
 const DROPDOWN_ITEM_STYLE: &str =
     "block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white";
 
 #[component]
 pub fn Dropdown(
+    /// Dropdown id
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
     /// Write true to display the dropdown, false to hide.
     #[prop(into)]
     is_visible: ReadSignal<bool>,
     children: Children,
 ) -> impl IntoView {
     view! {
-        <div class=class_list![
+        <div id class=class_list![
             DROPDOWN_STYLE, ("hidden", move || !*is_visible.read())
         ]>
             <ul class=DROPDOWN_LIST_STYLE aria-labelledby="dropdownDefaultButton">

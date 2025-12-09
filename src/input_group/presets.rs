@@ -22,7 +22,6 @@ use num_traits::Bounded;
 use num_traits::ConstOne;
 use num_traits::SaturatingAdd;
 use num_traits::SaturatingSub;
-use web_sys::js_sys::JSON::parse;
 
 use crate::{button::Button, input::Input};
 

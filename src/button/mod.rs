@@ -8,7 +8,6 @@ use crate::{
     spinner::{Spinner, SpinnerSize},
     util::callback::BoxOneCallback,
 };
-use leptos::html::div;
 use leptos::{IntoView, component, view};
 use leptos::{
     either::{Either, EitherOf3},
@@ -20,14 +19,16 @@ mod variations;
 
 // Re-exports
 pub use crate::button::variations::AddButton;
-pub use crate::button::variations::ControllButton;
+pub use crate::button::variations::ControlButton;
 pub use crate::button::variations::DeleteButton;
 pub use crate::button::variations::DownloadButton;
 pub use crate::button::variations::DropdownButton;
 pub use crate::button::variations::DropdownButtonChildren;
 pub use crate::button::variations::EditButton;
+pub use crate::button::variations::ModalButton;
+pub use crate::button::variations::ModalButtonChildren;
 
-const SHARED_BUTTON_CLASSES: &str = "relative hover:z-50 focus:z-50 shadow-sm dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2";
+const SHARED_BUTTON_CLASSES: &str = "relative hover:z-20 focus:z-10 shadow-sm dark:focus:ring-gray-800 outline-offset-[-1px] outline-[5px] focus:outline font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2";
 const OA_PRIMARY_BUTTON_CLASSES: &str = const_str::concat!(
     "focus:outline-oa-blue hover:bg-oa-blue-darker bg-oa-blue text-white",
     " ",
@@ -52,11 +53,11 @@ const OA_SECONDARY_BUTTON_CLASSES: &str = const_str::join!(
     " "
 );
 
-// "shadow-sm border-solid border border-gray-400 dark:focus:ring-gray-800 outline-offset-[-1px] outline-5 focus:outline focus:ring-4  font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2 bg-gray-200 hover:bg-oa-gray-darker text-gray-700 dark:bg-gray-700 dark:text-gray-400";
-
-/// A button triggers an action or event when activated.
 #[component]
 pub fn Button(
+    /// Button ID
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
     /// Extra classes appened to the button's default style
     #[prop(optional, into)]
     class: MaybeProp<String>,
@@ -113,6 +114,7 @@ where
 
     view! {
         <button
+            id=move || id.get()
             class=class_list![
                 class,
                 if let Some(group_classes) = group_classes { group_classes } else { String::new() },

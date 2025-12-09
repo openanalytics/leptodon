@@ -1,8 +1,4 @@
-use crate::icon::DownIcon;
-use crate::icon::Icon;
-use crate::util::signals::Model;
 use leptos::children::Children;
-use leptos::html;
 use leptos::prelude::BindAttribute;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;

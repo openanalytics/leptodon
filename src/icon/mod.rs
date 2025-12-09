@@ -5,7 +5,6 @@ use crate::icon::icon_data::*;
 use crate::icon_data;
 use leptos::IntoView;
 use leptos::component;
-use leptos::leptos_dom::logging::console_log;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::CustomAttribute;
 use leptos::prelude::Get;

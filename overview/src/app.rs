@@ -1,4 +1,3 @@
-use chrono::prelude::*;
 use leptos::logging::log;
 use leptos::prelude::*;
 use leptos_components::accordion::Accordion;
@@ -10,6 +9,8 @@ use leptos_components::button::DownloadButton;
 use leptos_components::button::DropdownButton;
 use leptos_components::button::DropdownButtonChildren;
 use leptos_components::button::EditButton;
+use leptos_components::button::ModalButton;
+use leptos_components::button::ModalButtonChildren;
 use leptos_components::button_group::ButtonGroup;
 use leptos_components::button_group::First;
 use leptos_components::button_group::Last;
@@ -19,7 +20,7 @@ use leptos_components::date_picker::DatePicker;
 use leptos_components::date_picker::range_picker::DateRangePicker;
 use leptos_components::dropdown::DropdownItem;
 use leptos_components::input::InputType;
-use leptos_components::input_group::InputGroup;
+use leptos_components::modal::ModalFooterChildren;
 use leptos_components::toggle::Toggle;
 use leptos_components::{
     button::{Button, ButtonAppearance},
@@ -76,6 +77,7 @@ pub fn App() -> impl IntoView {
 fn Home() -> impl IntoView {
     let (count, set_count) = signal(0);
     let double_count = move || count.get() * 2;
+    let modal_visible = RwSignal::new(false);
 
     view! {
         <Title text="Leptos components" />
@@ -88,6 +90,20 @@ fn Home() -> impl IntoView {
                 // <li>hi</li>
                 <DropdownItem label="Entry-1" on_click=move |e| { log!("{:?}", e); } {..} data-testid="test-dropdown-item1" />
             </DropdownButton>
+            <ModalButton id="modal-button1" modal_title="Example modal" modal_visible>
+                <ModalButtonChildren slot:button_children>Toggle Modal</ModalButtonChildren>
+
+                <p class="leading-relaxed text-body">
+                    Adipisci deserunt officia omnis. Et velit et consequatur sed porro minus unde expedita. Similique distinctio dolorem sunt voluptate laboriosam aut autem.
+                </p>
+                <p class="leading-relaxed text-body">
+                    Officiis qui id delectus quia sunt quisquam voluptatem modi. Velit iste quia asperiores alias. Modi aut enim nostrum nihil laudantium sit perferendis delectus. Voluptatem repudiandae culpa doloribus aut. Cupiditate quisquam iusto illum quo rem cum. Vitae soluta est pariatur ut.
+                </p>
+
+                <ModalFooterChildren slot:modal_footer>
+                    <Button on_click=move |_| modal_visible.set(false)>"Dispose modal"</Button>
+                </ModalFooterChildren>
+            </ModalButton>
             <div>
                 <leptos_components::input_group::ControlledNumberInput<i32> class="w-96" min=-1 max=15 />
             </div>

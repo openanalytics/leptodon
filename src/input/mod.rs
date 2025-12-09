@@ -2,7 +2,6 @@ use crate::class_list;
 use crate::input_group::GroupItemClassContext;
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
-use crate::util::option_comp::OptionComp;
 use crate::util::optional_prop::OptionalProp;
 use crate::util::signals::ComponentRef;
 use leptos::either::Either;
@@ -19,7 +18,6 @@ use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
-use leptos::prelude::Show;
 use leptos::prelude::Signal;
 use leptos::prelude::use_context;
 use leptos::{IntoView, component, view};
@@ -97,6 +95,9 @@ pub fn Input(
 
 #[component]
 pub fn GenericInput<T, E>(
+    /// Id for the input.
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
     /// Extra classes added to augment the default style.
     #[prop(optional, into)]
     class: MaybeProp<String>,
@@ -203,7 +204,7 @@ where
     );
 
     let standalone_input = view! {
-        <input type=input_type.get().as_str()
+        <input id type=input_type.get().as_str()
             inputmode=input_mode.get().as_str()
             name={name.get()}
             bind:value=internal_value_signal

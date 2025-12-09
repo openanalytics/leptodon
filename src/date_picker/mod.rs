@@ -26,7 +26,7 @@ use web_sys::KeyboardEvent;
 
 use crate::button::Button;
 use crate::button::ButtonAppearance;
-use crate::button::ControllButton;
+use crate::button::ControlButton;
 use crate::class_list;
 use crate::icon;
 use crate::input::GenericInput;
@@ -143,11 +143,11 @@ where
     });
 
     view! {
-        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { previous_month() } {..} tabindex="-1"></ControllButton>
+        <ControlButton icon=icon::PreviousIcon() on_click=move |_| { previous_month() } {..} tabindex="-1"></ControlButton>
         <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
             picker_state.update(|state| state.set_menu(DatePickerMenu::MonthPicker))
         } {..} tabindex="-1">{ move || current_month_year.get() }</Button>
-        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_month() } {..} tabindex="-1"></ControllButton>
+        <ControlButton icon=icon::NextIcon() on_click=move |_| { next_month() } {..} tabindex="-1"></ControlButton>
     }
 }
 
@@ -240,11 +240,11 @@ where
     };
 
     view! {
-        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_year() } {..} tabindex="-1"></ControllButton>
+        <ControlButton icon=icon::PreviousIcon() on_click=move |_| { prev_year() } {..} tabindex="-1"></ControlButton>
         <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
             picker_state.update(|state| state.set_menu(DatePickerMenu::YearPicker))
         } {..} tabindex="-1">{ move || current_date.get().format("%Y").to_string() }</Button>
-        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_year() } {..} tabindex="-1"></ControllButton>
+        <ControlButton icon=icon::NextIcon() on_click=move |_| { next_year() } {..} tabindex="-1"></ControlButton>
     }
 }
 
@@ -330,7 +330,7 @@ where
     };
 
     view! {
-        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_decenia() } {..} tabindex="-1"></ControllButton>
+        <ControlButton icon=icon::PreviousIcon() on_click=move |_| { prev_decenia() } {..} tabindex="-1"></ControlButton>
         <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
             picker_state.update(|state| state.set_menu(DatePickerMenu::DeceniaPicker))
         } {..} tabindex="-1">
@@ -340,7 +340,7 @@ where
             let decenia_end = current_decenia+9;
             format!("{} - {}", current_decenia, decenia_end)
         }}</Button>
-        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_decenia() } {..} tabindex="-1"></ControllButton>
+        <ControlButton icon=icon::NextIcon() on_click=move |_| { next_decenia() } {..} tabindex="-1"></ControlButton>
     }
 }
 
@@ -429,7 +429,7 @@ where
     };
 
     view! {
-        <ControllButton icon=icon::PreviousIcon() on_click=move |_| { prev_millenium() } {..} tabindex="-1"></ControllButton>
+        <ControlButton icon=icon::PreviousIcon() on_click=move |_| { prev_millenium() } {..} tabindex="-1"></ControlButton>
         <Button appearance=ButtonAppearance::Transparent>
         { move || {
             let current_year = current_date.get().year();
@@ -437,7 +437,7 @@ where
             let millenia_end = current_millenia + 90;
             format!("{} - {}", current_millenia, millenia_end)
         }}</Button>
-        <ControllButton icon=icon::NextIcon() on_click=move |_| { next_millenium() } {..} tabindex="-1"></ControllButton>
+        <ControlButton icon=icon::NextIcon() on_click=move |_| { next_millenium() } {..} tabindex="-1"></ControlButton>
     }
 }
 
@@ -612,9 +612,9 @@ pub fn DatePicker(
 
         // vv Functions to mutate the above 2 signals.
         previous_month,
-        today,
         month_by_date,
         next_month,
+        ..
     } = use_calendar();
 
     // Current date fetched from the calendar helper
@@ -706,14 +706,14 @@ pub fn DatePicker(
     let target = NodeRef::<Div>::new();
 
     // Not sure what this warning is about, it seems to work perfectly.
-    on_click_outside(target, move |event| {
+    on_click_outside(target, move |_event| {
         picker_state.update(|state| state.hide());
     });
 
     type OptDate = Option<NaiveDate>;
     view! {
         <div node_ref=target>
-            <GenericInput<OptDate, String> name class placeholder label parser format value
+            <GenericInput<OptDate, String> id name class placeholder label parser format value
                 on:focus=move |_| {
                     picker_state.update(|state| state.show());
                 }

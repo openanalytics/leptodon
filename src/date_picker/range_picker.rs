@@ -9,13 +9,11 @@ use leptos::prelude::ClassAttribute;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
-use leptos_use::CalendarDate;
-
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::{
     IntoView, component,
-    prelude::{MaybeProp, Signal},
+    prelude::MaybeProp,
     view,
 };
 
@@ -43,7 +41,7 @@ pub fn DateRangePicker(
     // Swap start and end if the user inputs an end that lays before start.
     Effect::watch(
         move || (start_date.get(), end_date.get()),
-        move |new, old, a| {
+        move |new, _old, _| {
             if let (Some(start_date_value), Some(end_date_value)) = new
                 && end_date_value < start_date_value
             {
