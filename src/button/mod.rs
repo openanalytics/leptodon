@@ -8,6 +8,7 @@ use crate::{
     spinner::{Spinner, SpinnerSize},
     util::callback::BoxOneCallback,
 };
+use leptos::leptos_dom::logging::{console_debug_error, console_debug_log};
 use leptos::{IntoView, component, view};
 use leptos::{
     either::{Either, EitherOf3},
@@ -127,6 +128,7 @@ where
                     ButtonAppearance::Transparent => OA_TRANSPARENT_BUTTON_CLASSES,
                 }
             ]
+            node_ref=button_ref
             type=move || button_type.get().map(|t| t.as_str())
             aria-disabled=aria_disabled
             on:click=move |e| on_click(e)
@@ -283,7 +285,12 @@ impl ButtonRef {
     /// Focus the button element.
     pub fn focus(&self) {
         if let Some(button_el) = self.button_ref.get_untracked() {
-            _ = button_el.focus();
+            if let Err(err) = button_el.focus() {
+                console_debug_error(format!("{:?}", err).as_str());
+            }
+            console_debug_log(format!("Focused button").as_str());
+        } else {
+            console_debug_log(format!("Button is missing! can't focus").as_str());
         }
     }
 
