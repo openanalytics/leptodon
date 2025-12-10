@@ -1,4 +1,5 @@
 use crate::button::ButtonProps;
+use crate::button::ButtonShape;
 use crate::button::{Button, ButtonAppearance, ButtonRef, ButtonSize, ButtonType};
 use crate::dropdown::Dropdown;
 use crate::icon;
@@ -94,6 +95,14 @@ pub struct DropdownButtonChildren {
 }
 
 /// A button triggers an action or event when activated.
+///
+/// Example
+/// ```
+/// <DropdownButton>
+///     <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>
+///     <DropdownItem label="Entry-1" on_click=move |e| { debug_log!("{e:?}"); } />
+/// </DropdownButton>
+/// ```
 #[component]
 pub fn DropdownButton(
     /// Button ID, dropdown ID is derived by "{button_id}-dropdown"
@@ -111,6 +120,9 @@ pub fn DropdownButton(
     /// The default behavior of the button.
     #[prop(optional, into)]
     button_type: MaybeProp<ButtonType>,
+    /// The shape of the button.
+    #[prop(default = ButtonShape::default(), into)]
+    shape: ButtonShape,
     /// The icon of the button.
     #[prop(optional, into)]
     icon: MaybeProp<IconRef>,
@@ -139,6 +151,7 @@ where
         appearance,
         size,
         button_type,
+        shape,
         icon,
         loading,
         on_click: Some(BoxOneCallback::new(move |_e| {
@@ -150,7 +163,7 @@ where
     provide_context::<crate::dropdown::SetVisibleCallback>(set_visible);
     provide_context::<crate::dropdown::AutoClose>(should_autoclose);
     let dropdown_id = id.get().map(|id| format!("{id}-modal"));
-    
+
     view! {
         <div>
             {button}
@@ -184,6 +197,9 @@ pub fn ModalButton(
     /// The default behavior of the button.
     #[prop(optional, into)]
     button_type: MaybeProp<ButtonType>,
+    /// The shape of the button.
+    #[prop(default = ButtonShape::default(), into)]
+    shape: ButtonShape,
     /// The icon of the button.
     #[prop(optional, into)]
     icon: MaybeProp<IconRef>,
@@ -209,13 +225,13 @@ pub fn ModalButton(
 ) -> impl IntoView
 where
 {
-    
     let button = Button(ButtonProps {
         id,
         class,
         appearance,
         size,
         button_type,
+        shape,
         icon,
         loading,
         on_click: Some(BoxOneCallback::new(move |_e| {

@@ -16,6 +16,7 @@ use leptos_components::button_group::First;
 use leptos_components::button_group::Last;
 use leptos_components::checkbox::Checkbox;
 use leptos_components::darkmode::ThemeSelector;
+use leptos_components::navbar::SideNavbar;
 use leptos_components::date_picker::DatePicker;
 use leptos_components::date_picker::range_picker::DateRangePicker;
 use leptos_components::dropdown::DropdownItem;
@@ -81,7 +82,9 @@ fn Home() -> impl IntoView {
 
     view! {
         <Title text="Leptos components" />
+        <SideNavbar>
         <main class="px-3">
+        
             <Settings>
                 <ThemeSelector />
             </Settings>
@@ -196,6 +199,7 @@ fn Home() -> impl IntoView {
             <br/>
             <crate::gen_icons::IconList />
         </main>
+        </SideNavbar>
     }
 }
 

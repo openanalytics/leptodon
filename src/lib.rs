@@ -34,3 +34,7 @@ pub mod toggle;
 pub mod util;
 #[cfg(feature = "leptos")]
 pub mod modal;
+#[cfg(feature = "leptos")]
+pub mod navbar;
+#[cfg(feature = "leptos")]
+pub mod link;

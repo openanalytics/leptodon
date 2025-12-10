@@ -25,7 +25,7 @@ module.exports = {
     },
     extend: {
       aria: {
-        currentPage: 'current="page"',
+        "current-page": 'current="page"',
       },
     },
   },

@@ -9,6 +9,7 @@ use crate::{
     util::callback::BoxOneCallback,
 };
 use leptos::leptos_dom::logging::{console_debug_error, console_debug_log};
+use leptos::logging::debug_log;
 use leptos::{IntoView, component, view};
 use leptos::{
     either::{Either, EitherOf3},
@@ -29,27 +30,64 @@ pub use crate::button::variations::EditButton;
 pub use crate::button::variations::ModalButton;
 pub use crate::button::variations::ModalButtonChildren;
 
-const SHARED_BUTTON_CLASSES: &str = "relative hover:z-20 focus:z-10 shadow-sm dark:focus:ring-gray-800 outline-offset-[-1px] outline-[5px] focus:outline font-medium inline-flex items-center text-center text-sm rounded-lg px-5 py-2.5 mr-2";
-const OA_PRIMARY_BUTTON_CLASSES: &str = const_str::concat!(
-    "focus:outline-oa-blue hover:bg-oa-blue-darker bg-oa-blue text-white",
-    " ",
-    SHARED_BUTTON_CLASSES
+const BUTTON_SHADOW_CLASSES: &str = "shadow-sm";
+const BUTTON_SPACING_CLASSES: &str = " px-5 py-2.5 mr-2";
+const SHARED_BUTTON_CLASSES: &str = "relative hover:z-20 focus:z-10 dark:focus:ring-gray-800 outline-offset-[-1px] outline-[5px] focus:outline font-medium inline-flex items-center text-center text-sm";
+
+const BUTTON_GRAY_FOCUS_CLASSES: &str =
+    "!active:outline-oa-gray-darker focus:outline-oa-gray-darker hover:focus:outline-oa-gray ";
+// Light theme: dark text on light button; Dark theme: light text on dark button.
+const BUTTON_DEFAULT_TEXT: &str = "text-gray-700 dark:text-gray-300";
+
+const OA_PRIMARY_BUTTON_CLASSES: &str = const_str::join!(
+    &[
+        "focus:outline-oa-blue hover:bg-oa-blue-darker bg-oa-blue text-white",
+        SHARED_BUTTON_CLASSES,
+        BUTTON_SHADOW_CLASSES,
+        BUTTON_SPACING_CLASSES
+    ],
+    " "
 );
 
-const OA_DANGER_BUTTON_CLASSES: &str = const_str::concat!(
-    "focus:outline-oa-red hover:bg-oa-red-darker bg-oa-red text-white",
-    " ",
-    SHARED_BUTTON_CLASSES
+const OA_DANGER_BUTTON_CLASSES: &str = const_str::join!(
+    &[
+        "focus:outline-oa-red hover:bg-oa-red-darker bg-oa-red text-white",
+        SHARED_BUTTON_CLASSES,
+        BUTTON_SHADOW_CLASSES,
+        BUTTON_SPACING_CLASSES
+    ],
+    " "
 );
-
-const OA_TRANSPARENT_BUTTON_CLASSES: &str = "text-sm rounded-lg text-heading font-medium py-2.5 px-5 hover:bg-oa-gray focus:outline-none focus:ring-2 focus:ring-oa-gray view-switch";
 
 const OA_SECONDARY_BUTTON_CLASSES: &str = const_str::join!(
     &[
-        "!active:outline-oa-gray-darker focus:outline-oa-gray-darker hover:focus:outline-oa-gray text-gray-700 dark:text-gray-400",
         "border-solid border border-gray-400",
-        "!active:bg-oa-gray-darker bg-gray-200 hover:bg-oa-gray-darker !dark:active:bg-gray-800 dark:bg-gray-700 hover:dark:bg-gray-800",
-        SHARED_BUTTON_CLASSES
+        "!active:bg-oa-gray-darker bg-gray-200 hover:bg-oa-gray-darker !dark:active:bg-gray-600 dark:bg-gray-700 hover:dark:bg-gray-600",
+        BUTTON_GRAY_FOCUS_CLASSES,
+        BUTTON_DEFAULT_TEXT,
+        SHARED_BUTTON_CLASSES,
+        BUTTON_SHADOW_CLASSES,
+        BUTTON_SPACING_CLASSES
+    ],
+    " "
+);
+
+pub const OA_TRANSPARENT_BUTTON_CLASSES: &str = const_str::join!(
+    &[
+        "hover:bg-oa-gray active:bg-oa-gray hover:dark:bg-gray-600 active:dark:bg-gray-600",
+        SHARED_BUTTON_CLASSES,
+        BUTTON_DEFAULT_TEXT,
+        BUTTON_GRAY_FOCUS_CLASSES,
+        BUTTON_SPACING_CLASSES
+    ],
+    " "
+);
+
+pub const OA_MINIMAL_BUTTON_CLASSES: &str = const_str::join!(
+    &[
+        SHARED_BUTTON_CLASSES,
+        BUTTON_DEFAULT_TEXT,
+        BUTTON_GRAY_FOCUS_CLASSES
     ],
     " "
 );
@@ -71,6 +109,9 @@ pub fn Button(
     /// The default behavior of the button.
     #[prop(optional, into)]
     button_type: MaybeProp<ButtonType>,
+    /// The shape of the button.
+    #[prop(default = ButtonShape::default(), into)]
+    shape: ButtonShape,
     /// The icon of the button.
     #[prop(optional, into)]
     icon: MaybeProp<IconRef>,
@@ -126,6 +167,12 @@ where
                     ButtonAppearance::Danger => OA_DANGER_BUTTON_CLASSES,
                     ButtonAppearance::Subtle => todo!(),
                     ButtonAppearance::Transparent => OA_TRANSPARENT_BUTTON_CLASSES,
+                    ButtonAppearance::Minimal => OA_MINIMAL_BUTTON_CLASSES,
+                },
+                match shape {
+                    ButtonShape::Square => "rounded-none",
+                    ButtonShape::Rounded => "rounded-lg",
+                    ButtonShape::Circular => "rounded-full",
                 }
             ]
             node_ref=button_ref
@@ -172,6 +219,8 @@ pub enum ButtonAppearance {
     Subtle,
     /// Removes background and border styling.
     Transparent,
+    /// Removes padding, margin, background and border styling.
+    Minimal,
 }
 
 impl ButtonAppearance {
@@ -182,6 +231,7 @@ impl ButtonAppearance {
             ButtonAppearance::Subtle => "subtle",
             ButtonAppearance::Transparent => "transparent",
             ButtonAppearance::Danger => "danger",
+            ButtonAppearance::Minimal => "minimal",
         }
     }
 }
@@ -189,8 +239,12 @@ impl ButtonAppearance {
 #[derive(Default, PartialEq, Clone, Copy)]
 pub enum ButtonShape {
     #[default]
+    /// Slightly rounded corners.
     Rounded,
+    /// Fully rounded, will make a half-circle on the shortest side.
+    /// Looks like a circle when all sides are equal.
     Circular,
+    /// Pointy corners.
     Square,
 }
 
@@ -278,7 +332,9 @@ impl ButtonRef {
     /// Click the button element.
     pub fn click(&self) {
         if let Some(button_el) = self.button_ref.get_untracked() {
-            _ = button_el.click();
+            button_el.click();
+        } else {
+            debug_log!("Button is missing! can't click");
         }
     }
 
@@ -286,18 +342,23 @@ impl ButtonRef {
     pub fn focus(&self) {
         if let Some(button_el) = self.button_ref.get_untracked() {
             if let Err(err) = button_el.focus() {
-                console_debug_error(format!("{:?}", err).as_str());
+                debug_log!("{err:?}");
             }
-            console_debug_log(format!("Focused button").as_str());
+            debug_log!("Focused button");
         } else {
-            console_debug_log(format!("Button is missing! can't focus").as_str());
+            debug_log!("Button is missing! can't focus");
         }
     }
 
     /// Blur the button element
     pub fn blur(&self) {
         if let Some(button_el) = self.button_ref.get_untracked() {
-            _ = button_el.blur()
+            if let Err(err) = button_el.blur() {
+                debug_log!("{err:?}");
+            }
+            debug_log!("Blurred button");
+        } else {
+            debug_log!("Button is missing! can't blur");
         }
     }
 }
