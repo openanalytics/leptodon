@@ -401,6 +401,14 @@ macro_rules! class_list {
     };
 }
 
+impl From<ClassList> for MaybeProp<std::string::String> {
+    fn from(value: ClassList) -> Self {
+        let mut result = String::new();
+        value.write_class_string(&mut result);
+        MaybeProp::from(result)
+    }
+}
+
 // TODO
 // #[cfg(test)]
 // mod tests {

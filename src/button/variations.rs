@@ -1,12 +1,15 @@
 use crate::button::ButtonProps;
 use crate::button::ButtonShape;
 use crate::button::{Button, ButtonAppearance, ButtonRef, ButtonSize, ButtonType};
+use crate::class_list;
+use crate::dropdown::AlignmentAnchor;
 use crate::dropdown::Dropdown;
 use crate::icon;
 use crate::icon::icon_data::IconRef;
 use crate::modal::{Modal, ModalFooterChildren};
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
+use leptos::prelude::ClassAttribute;
 use leptos::prelude::{Children, Get, MaybeProp, Signal, Write, provide_context, signal};
 use leptos::prelude::{ElementChild, RwSignal, TypedChildren, Update};
 use leptos::{IntoView, component, view};
@@ -15,6 +18,12 @@ use leptos::{ev, slot};
 /// An icon only button meant for controlling another view (e.g. < > << >>)
 #[component]
 pub fn ControlButton(
+    /// Button ID
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
+    /// Extra classes appened to the button's default style
+    #[prop(optional, into)]
+    class: MaybeProp<String>,
     /// The icon of the button.
     #[prop(into)]
     icon: IconRef,
@@ -23,11 +32,12 @@ pub fn ControlButton(
 ) -> impl IntoView {
     view! {
         <Button
+            id
             icon
             on_click
             comp_ref
             appearance=ButtonAppearance::Transparent
-            class="!px-3"
+            class=class_list!("!px-3", class)
         >
         </Button>
     }
@@ -111,6 +121,9 @@ pub fn DropdownButton(
     /// Extra classes appened to the button's default style
     #[prop(optional, into)]
     class: MaybeProp<String>,
+    /// How the dropdown aligns to its parent.
+    #[prop(default = AlignmentAnchor::default(), into)]
+    alignment: AlignmentAnchor,
     /// A button can have its content and borders styled for greater emphasis or to be subtle.
     #[prop(optional, into)]
     appearance: Signal<ButtonAppearance>,
@@ -165,9 +178,9 @@ where
     let dropdown_id = id.get().map(|id| format!("{id}-modal"));
 
     view! {
-        <div>
+        <div class="fit-content relative">
             {button}
-            <Dropdown id=dropdown_id is_visible=is_visible>
+            <Dropdown id=dropdown_id is_visible=is_visible alignment>
                 {children()}
             </Dropdown>
         </div>

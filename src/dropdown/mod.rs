@@ -1,3 +1,5 @@
+use std::default;
+
 use crate::class_list;
 use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
@@ -16,6 +18,9 @@ pub fn Dropdown(
     /// Dropdown id
     #[prop(optional, into)]
     id: MaybeProp<String>,
+    /// How the dropdown aligns to its parent.
+    #[prop(default = AlignmentAnchor::default(), into)]
+    alignment: AlignmentAnchor,
     /// Write true to display the dropdown, false to hide.
     #[prop(into)]
     is_visible: ReadSignal<bool>,
@@ -23,7 +28,11 @@ pub fn Dropdown(
 ) -> impl IntoView {
     view! {
         <div id class=class_list![
-            DROPDOWN_STYLE, ("hidden", move || !*is_visible.read())
+            DROPDOWN_STYLE, ("hidden", move || !*is_visible.read()),
+            match alignment {
+                AlignmentAnchor::BottomLeft => "left-0 right-auto",
+                AlignmentAnchor::BottomRight => "right-0 left-auto",
+            }
         ]>
             <ul class=DROPDOWN_LIST_STYLE aria-labelledby="dropdownDefaultButton">
                 {children()}
@@ -77,4 +86,17 @@ pub fn DropdownItem(
             </a>
         </li>
     }
+}
+
+/// Points at which the dropdown can be aligned
+#[derive(Default, Clone, Copy)]
+pub enum AlignmentAnchor {
+    #[default]
+    BottomLeft,
+    BottomRight,
+    // Unsupported by firefox currently:
+    //   https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Anchor_positioning
+    //   https://bugzilla.mozilla.org/show_bug.cgi?id=1838746
+    //   It offers fallback rendering positions when a position causes an overflow.
+    // Auto
 }

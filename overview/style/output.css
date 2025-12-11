@@ -1143,6 +1143,14 @@ input:checked + .toggle-bg {
   top: 0px;
 }
 
+.left-auto {
+  left: auto;
+}
+
+.right-auto {
+  right: auto;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -1161,6 +1169,10 @@ input:checked + .toggle-bg {
 
 .z-50 {
   z-index: 50;
+}
+
+.z-\[500\] {
+  z-index: 500;
 }
 
 .m-0 {
@@ -2224,11 +2236,6 @@ input:checked + .toggle-bg {
   --tw-ring-color: rgb(50 166 211 / var(--tw-ring-opacity, 1));
 }
 
-.aria-current-page\:bg-gray-300[aria-current="page"] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 213 219 / var(--tw-bg-opacity, 1));
-}
-
 .aria-current-page\:bg-oa-gray[aria-current="page"] {
   --tw-bg-opacity: 1;
   background-color: rgb(230 230 230 / var(--tw-bg-opacity, 1));
@@ -2237,6 +2244,14 @@ input:checked + .toggle-bg {
 @media (min-width: 640px) {
   .sm\:ml-64 {
     margin-left: 16rem;
+  }
+
+  .sm\:block {
+    display: block;
+  }
+
+  .sm\:hidden {
+    display: none;
   }
 
   .sm\:translate-x-0 {
@@ -2447,21 +2462,6 @@ input:checked + .toggle-bg {
   background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:dark\:bg-gray-800:where(.dark, .dark *):hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:dark\:bg-oa-gray-darker:where(.dark, .dark *):hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(195 195 195 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:dark\:bg-gray-700:where(.dark, .dark *):hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
-}
-
 .hover\:dark\:bg-gray-600:where(.dark, .dark *):hover {
   --tw-bg-opacity: 1;
   background-color: rgb(75 85 99 / var(--tw-bg-opacity, 1));
@@ -2500,11 +2500,6 @@ input:checked + .toggle-bg {
 .dark\:focus\:ring-gray-800:focus:where(.dark, .dark *) {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(31 41 55 / var(--tw-ring-opacity, 1));
-}
-
-.active\:dark\:bg-oa-gray-darker:where(.dark, .dark *):active {
-  --tw-bg-opacity: 1;
-  background-color: rgb(195 195 195 / var(--tw-bg-opacity, 1));
 }
 
 .active\:dark\:bg-gray-600:where(.dark, .dark *):active {

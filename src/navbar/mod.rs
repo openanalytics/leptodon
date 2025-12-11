@@ -1,5 +1,5 @@
 use leptos::logging::debug_log;
-use leptos::prelude::{AddAnyAttr, RwSignal, Update};
+use leptos::prelude::{AddAnyAttr, OnAttribute, RwSignal, Set, Update};
 use leptos::prelude::{AriaAttributes, Children};
 use leptos::prelude::{ClassAttribute, ElementChild, GlobalAttributes};
 use leptos::prelude::{CustomAttribute, Get};
@@ -12,7 +12,7 @@ use crate::button::{
     Button, ButtonAppearance, ButtonShape, ControlButton, DropdownButton, DropdownButtonChildren,
     OA_TRANSPARENT_BUTTON_CLASSES,
 };
-use crate::dropdown::DropdownItem;
+use crate::dropdown::{AlignmentAnchor, DropdownItem};
 use crate::icon::Icon;
 use crate::icon::icon_data::{IconData, IconRef};
 use crate::link::Link;
@@ -38,20 +38,22 @@ pub fn SideNavbar(children: Children) -> impl IntoView {
     let visible = RwSignal::new(false);
 
     view! {
-        <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+        <nav class="fixed top-0 z-[500] w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div class="px-3 py-3 lg:px-5 lg:pl-3">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center justify-start rtl:justify-end">
                         <ControlButton icon=icon::HamburgerIcon() on_click=move |_| {
-                            visible.update(|is_visible| *is_visible = !*is_visible);
-                        } {..} data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" />
+                                visible.update(|is_visible| *is_visible = !*is_visible);
+                            } class="sm:hidden" {..}
+                            data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
+                        />
                         <a href="https://www.openanalytics.eu/" class="flex ms-2 md:me-24">
                             <img src="https://www.openanalytics.eu/img/logo.png" class="h-8 me-3" alt="FlowBite Logo"/>
                         </a>
                     </div>
                     <div class="flex items-center">
                         <div class="flex items-center ms-3">
-                            <DropdownButton appearance=ButtonAppearance::Minimal shape=ButtonShape::Circular>
+                            <DropdownButton alignment=AlignmentAnchor::BottomRight appearance=ButtonAppearance::Minimal shape=ButtonShape::Circular>
                                 <DropdownButtonChildren slot:button_children>
                                     <Avatar src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" />
                                 </DropdownButtonChildren>
@@ -66,11 +68,12 @@ pub fn SideNavbar(children: Children) -> impl IntoView {
         </nav>
 
         <aside
-               class=class_list!(
-                   SIDEBAR_CLASSES,
-                   ("-translate-x-full", move || !visible.get())
-               )
-               aria-label="Sidebar">
+            class=class_list!(
+                SIDEBAR_CLASSES,
+                ("-translate-x-full", move || !visible.get())
+            )
+            aria-label="Sidebar"
+        >
             <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
                 <ul class="space-y-2 font-medium mt-2">
                     <li><SideBarLink href="#" icon=icon::CalendarIcon()>Calendar</SideBarLink></li>
@@ -79,7 +82,12 @@ pub fn SideNavbar(children: Children) -> impl IntoView {
                 </ul>
             </div>
         </aside>
-
+        <div class=class_list![
+                "sm:hidden fixed top-0 left-0 w-full h-full bg-gray-900/50 z-10",
+                ("hidden", move || !visible.get())
+            ]
+            on:click=move |_| visible.set(false)
+        />
         <div class="p-4 sm:ml-64">
             <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
                 {children()}
