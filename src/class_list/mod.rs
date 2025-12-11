@@ -1,6 +1,5 @@
 // MIT License, taken from https://github.com/thaw-ui/thaw at 69bc65d
 use leptos::prelude::{Get, MaybeProp, Memo};
-use leptos::server::ArcOnceResource;
 use leptos::{
     prelude::{Oco, RenderEffect, RwSignal, Update, With, WithUntracked},
     tachys::renderer::{Rndr, types},
@@ -8,8 +7,6 @@ use leptos::{
 use std::collections::HashSet;
 #[cfg(not(feature = "ssr"))]
 use std::sync::Arc;
-
-use crate::util::callback::{ArcOneCallback, BoxOneCallback};
 
 #[derive(Clone, Default)]
 pub struct ClassList {
@@ -147,23 +144,6 @@ impl ClassList {
         }
 
         self
-    }
-    
-    fn reactive_string(&self) -> ArcOneCallback<(), String> {
-        ArcOneCallback::new(move |_| {
-            let internal_set = self.value.get();
-            let class = String::new();
-            internal_set.iter().enumerate().for_each(|(index, name)| {
-                if name.is_empty() {
-                    return;
-                }
-                if index != 0 {
-                    class.push(' ');
-                }
-                class.push_str(name);
-            });
-            class
-        })
     }
 
     fn write_class_string(&self, class: &mut String) {

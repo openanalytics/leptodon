@@ -1175,6 +1175,14 @@ input:checked + .toggle-bg {
   z-index: 500;
 }
 
+.z-\[50\] {
+  z-index: 50;
+}
+
+.z-\[1000\] {
+  z-index: 1000;
+}
+
 .m-0 {
   margin: 0px;
 }

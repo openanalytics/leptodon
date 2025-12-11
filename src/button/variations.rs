@@ -38,7 +38,7 @@ pub fn ControlButton(
             on_click
             comp_ref
             appearance=ButtonAppearance::Transparent
-            class=class_list!("!px-3", class)
+            class=class_list!["!px-3", class]
         >
         </Button>
     }

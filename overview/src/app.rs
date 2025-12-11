@@ -16,6 +16,7 @@ use leptos_components::button_group::First;
 use leptos_components::button_group::Last;
 use leptos_components::checkbox::Checkbox;
 use leptos_components::darkmode::ThemeSelector;
+use leptos_components::link::Link;
 use leptos_components::navbar::SideNavbar;
 use leptos_components::date_picker::DatePicker;
 use leptos_components::date_picker::range_picker::DateRangePicker;
@@ -27,7 +28,10 @@ use leptos_components::{
     button::{Button, ButtonAppearance},
     input::Input,
 };
-use leptos_meta::*;
+use leptos_meta::MetaTags;
+use leptos_meta::Stylesheet;
+use leptos_meta::Title;
+use leptos_meta::provide_meta_context;
 use leptos_router::{
     StaticSegment,
     components::{Route, Router, Routes},
@@ -87,6 +91,7 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
+            <Link href="https://www.openanalytics.eu/">"Click here"</Link>
             <DropdownButton {..} data-testid="test-dropdown">
                 <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>
                 // <li>hi</li>
