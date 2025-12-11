@@ -25,6 +25,12 @@ pub mod input;
 #[cfg(feature = "leptos")]
 pub mod input_group;
 #[cfg(feature = "leptos")]
+pub mod link;
+#[cfg(feature = "leptos")]
+pub mod modal;
+#[cfg(feature = "leptos")]
+pub mod navbar;
+#[cfg(feature = "leptos")]
 pub mod select;
 #[cfg(feature = "leptos")]
 pub mod spinner;
@@ -32,9 +38,3 @@ pub mod spinner;
 pub mod toggle;
 #[cfg(feature = "leptos")]
 pub mod util;
-#[cfg(feature = "leptos")]
-pub mod modal;
-#[cfg(feature = "leptos")]
-pub mod navbar;
-#[cfg(feature = "leptos")]
-pub mod link;

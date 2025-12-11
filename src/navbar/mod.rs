@@ -1,11 +1,12 @@
 use leptos::logging::debug_log;
-use leptos::prelude::{AddAnyAttr, OnAttribute, RwSignal, Set, Update};
+use leptos::prelude::{AddAnyAttr, IntoAny, OnAttribute, RwSignal, Set, Update};
 use leptos::prelude::{AriaAttributes, Children};
 use leptos::prelude::{ClassAttribute, ElementChild, GlobalAttributes};
 use leptos::prelude::{CustomAttribute, Get};
 use leptos::view;
 use leptos::{IntoView, component};
 use leptos_router::components::{A, ToHref};
+use leptos::prelude::IntoAnyAttribute;
 
 use crate::avatar::Avatar;
 use crate::button::{
@@ -90,7 +91,7 @@ pub fn SideNavbar(children: Children) -> impl IntoView {
         />
         <div class="p-4 sm:ml-64">
             <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
-                {children()}
+                {children().into_any()}
             </div>
         </div>
     }

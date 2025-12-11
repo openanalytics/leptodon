@@ -1,3 +1,5 @@
+#![recursion_limit = "256"]
+
 use cfg_if::cfg_if;
 
 // boilerplate to run in different modes

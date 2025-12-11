@@ -57,8 +57,8 @@ pub fn Modal(
     view! {
         <div tabindex="-1" class=class_list!(MODAL_BACKDROP_CLASSES, ("hidden", move || !visible.get())) on:click=move |_| visible.set(false)>
             // Modal content
-            <div 
-                id=move || id.get() 
+            <div
+                id=move || id.get()
                 class=class_list!(MODAL_CLASSES, class)
                 on:click=move |e| e.stop_propagation()
                 role="dialog"

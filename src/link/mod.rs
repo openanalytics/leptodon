@@ -1,7 +1,8 @@
-use leptos::prelude::AddAnyAttr;
-use leptos_router::components::ToHref;
+use leptos::prelude::IntoAnyAttribute;
+use leptos::prelude::{AddAnyAttr, IntoAny};
 use leptos::{IntoView, component, oco::Oco, prelude::Children, view};
 use leptos_router::components::A;
+use leptos_router::components::ToHref;
 
 const LINK_CLASSES: &str = "text-oa-blue";
 
@@ -33,7 +34,7 @@ where
 {
     view! {
         <A href target exact strict_trailing_slash scroll {..} class=LINK_CLASSES>
-            {children()}
+            {children().into_any()}
         </A>
     }
 }

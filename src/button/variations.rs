@@ -10,6 +10,7 @@ use crate::modal::{Modal, ModalFooterChildren};
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
 use leptos::prelude::ClassAttribute;
+use leptos::prelude::IntoAny;
 use leptos::prelude::{Children, Get, MaybeProp, Signal, Write, provide_context, signal};
 use leptos::prelude::{ElementChild, RwSignal, TypedChildren, Update};
 use leptos::{IntoView, component, view};
@@ -181,7 +182,7 @@ where
         <div class="fit-content relative">
             {button}
             <Dropdown id=dropdown_id is_visible=is_visible alignment>
-                {children()}
+                {children().into_any()}
             </Dropdown>
         </div>
     }

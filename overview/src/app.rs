@@ -84,7 +84,6 @@ fn Home() -> impl IntoView {
         <Title text="Leptos components" />
         <SideNavbar>
         <main class="px-3">
-        
             <Settings>
                 <ThemeSelector />
             </Settings>
@@ -110,26 +109,17 @@ fn Home() -> impl IntoView {
             <div>
                 <leptos_components::input_group::ControlledNumberInput<i32> class="w-96" min=-1 max=15 />
             </div>
-            <DatePicker value=RwSignal::new(None) />
-            <DateRangePicker />
+            {
+                view! {
+                    <DatePicker value=RwSignal::new(None) />
+                    <DateRangePicker />
+                }.into_any() 
+            }
             <br/>
             <Toggle label="Lightswitch" value=Signal::derive(move || false) />
             <Avatar src="/favicon.ico" />
             <Avatar />
-            <Accordion>
-                <AccordionEntry title="What is Flowbite?">
-                    <p class="mb-2 text-body">Flowbite is an open - source library of interactive components built on top of
-                    Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
-                    <p class="mb-2 text-body">Check out this guide to learn how to<a href="/docs/getting-started/introduction/" class="text-fg-brand hover:underline">get started</a>and start developing websites even faster with components on top of Tailwind
-                    CSS.</p>
-
-                    <Accordion>
-                        <AccordionEntry title="What about version 2.7.2?">
-                            <p class="mb-2 text-body">Version 2.7.2 is available at <a href="https://web.archive.org/web/20240328025144/https://flowbite.com/docs/components/dropdowns/">this location</a></p>
-                        </AccordionEntry>
-                    </Accordion>
-                </AccordionEntry>
-            </Accordion>
+            <AnyAccordion />
 
             <br/>
             <button
@@ -204,7 +194,27 @@ fn Home() -> impl IntoView {
 }
 
 #[component]
-pub fn Settings(children: Children) -> impl IntoView {
+pub fn AnyAccordion() -> AnyView {
+    view!{
+        <Accordion>
+            <AccordionEntry title="What is Flowbite?">
+                <p class="mb-2 text-body">Flowbite is an open - source library of interactive components built on top of
+                Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
+                <p class="mb-2 text-body">Check out this guide to learn how to<a href="/docs/getting-started/introduction/" class="text-fg-brand hover:underline">get started</a>and start developing websites even faster with components on top of Tailwind
+                CSS.</p>
+    
+                <Accordion>
+                    <AccordionEntry title="What about version 2.7.2?">
+                        <p class="mb-2 text-body">Version 2.7.2 is available at <a href="https://web.archive.org/web/20240328025144/https://flowbite.com/docs/components/dropdowns/">this location</a></p>
+                    </AccordionEntry>
+                </Accordion>
+            </AccordionEntry>
+        </Accordion>
+    }.into_any()
+}
+
+#[component]
+pub fn Settings(children: Children) -> AnyView {
     view! {
         <section class="bg-white dark:bg-gray-900">
             <div class="grid max-w-screen-xl px-4 py-4 mx-auto lg:gap-8 xl:gap-0">
@@ -219,7 +229,7 @@ pub fn Settings(children: Children) -> impl IntoView {
                 </div>
             </div>
         </section>
-    }
+    }.into_any()
 }
 
 // An html progress bar component

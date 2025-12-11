@@ -1256,6 +1256,7 @@ version = "0.1.0"
 dependencies = [
  "axum 0.8.7",
  "axum-extra 0.9.6",
+ "base64",
  "cfg-if",
  "chrono",
  "const-str 0.7.0",
@@ -1672,7 +1673,6 @@ dependencies = [
  "leptos_meta",
  "leptos_router",
  "log",
- "syn",
  "thiserror 1.0.69",
  "tokio",
  "tower",

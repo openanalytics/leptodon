@@ -59,11 +59,6 @@ cfg-if = "1.0.4"
 derive_more = { version = "2.0.1", features = ["display"] }
 chrono = "0.4.42"
 
-[build-dependencies]
-leptos-components = { path = "../../leptos-components", default-features = false, features = [] }
-syn = "2.0.110"
-
-
 [features]
 default = ["ssr"]
 ssr = [
@@ -104,7 +99,6 @@ panic = "abort"
 [package.metadata.leptos]
 # # https://github.com/leptos-rs/leptos/issues/3813#issuecomment-3563904837
 # Disabling (thus enabling this option) the erasure of components causes large linker errors in this project.
-disable-erase-components = true
 
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
 output-name = "overview"

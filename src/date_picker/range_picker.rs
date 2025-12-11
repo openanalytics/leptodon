@@ -11,11 +11,7 @@ use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
-use leptos::{
-    IntoView, component,
-    prelude::MaybeProp,
-    view,
-};
+use leptos::{IntoView, component, prelude::MaybeProp, view};
 
 #[component]
 pub fn DateRangePicker(

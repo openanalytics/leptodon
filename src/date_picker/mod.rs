@@ -1,3 +1,5 @@
+use leptos::prelude::GlobalAttributes;
+use leptos::prelude::IntoAnyAttribute;
 use chrono::Datelike;
 use chrono::Local;
 use chrono::Month;
@@ -32,6 +34,7 @@ use crate::icon;
 use crate::input::GenericInput;
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
+use crate::util::shared_id::shared_id;
 use chrono::NaiveDate;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -710,10 +713,12 @@ pub fn DatePicker(
         picker_state.update(|state| state.hide());
     });
 
+    let id = shared_id();
+    
     type OptDate = Option<NaiveDate>;
     view! {
         <div node_ref=target>
-            <GenericInput<OptDate, String> id name class placeholder label parser format value
+            <GenericInput<OptDate, String> id=id.clone() name class placeholder label parser format value
                 on:focus=move |_| {
                     picker_state.update(|state| state.show());
                 }
@@ -728,9 +733,11 @@ pub fn DatePicker(
                 }
                 {..}
                 role="combobox" // Makes vimium like plugins pass special keys through
+                aria-expanded=move || picker_state.get().visible
+                aria-controls=id.clone()
             />
             // Picker-Dropdown
-            <div class=class_list!(
+            <div id=id.into_inner() class=class_list!(
                 ("hidden", move || !picker_state.get().visible),
                 "absolute bg-white z-50 ml-2 mt-px active block"
             )>
@@ -745,13 +752,6 @@ pub fn DatePicker(
                     <div class="datepicker-main p-1">
                         <div class="datepicker-view flex">
                             { body_picker }
-                        </div>
-                    </div>
-
-                    <div class="datepicker-footer">
-                        <div class="datepicker-controls flex space-x-2 rtl:space-x-reverse mt-2">
-                            <button type="button" class="button today-btn text-white bg-brand hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium font-medium rounded-base text-sm px-5 py-2 text-center w-1/2 hidden">Today</button>
-                            <button type="button" class="button clear-btn text-body bg-neutral-secondary-medium border border-default-medium hover:bg-neutral-tertiary-medium focus:ring-4 focus:ring-neutral-tertiary font-medium rounded-base text-sm px-5 py-2 text-center w-1/2 hidden">Clear</button>
                         </div>
                     </div>
                 </div>

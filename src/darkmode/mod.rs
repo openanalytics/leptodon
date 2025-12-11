@@ -19,6 +19,7 @@
 use std::fmt::Display;
 use std::str::FromStr;
 
+use leptos::prelude::IntoAnyAttribute;
 use leptos::leptos_dom::logging::console_log;
 use leptos::logging::debug_log;
 use leptos::prelude::AddAnyAttr;
