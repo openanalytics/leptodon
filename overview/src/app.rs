@@ -1,3 +1,4 @@
+use crate::web_calendar::PopulatedCalendar;
 use leptos::logging::log;
 use leptos::prelude::*;
 use leptos_components::accordion::Accordion;
@@ -91,6 +92,7 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
+            <PopulatedCalendar />
             <Link href="https://www.openanalytics.eu/">"Click here"</Link>
             <DropdownButton {..} data-testid="test-dropdown">
                 <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>

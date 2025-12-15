@@ -4,8 +4,10 @@
 **/target
 **/node_modules
 */.dist
-.idea
+.!ea
+*.ics
 .zed
+.idea
 
 overview/.idea
 overview/dist

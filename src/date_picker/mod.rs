@@ -271,7 +271,6 @@ where
                         view! {
                             <div
                                 class=class_list!(
-                                    // (SELECTED_ELEM_CLASSES, current_date.get().month() == month.number_from_month()),
                                     highlighter.get()
                                         .map(|it| it(DateMenuOption::Month(month.number_from_month())))
                                         .unwrap_or_else(String::new),

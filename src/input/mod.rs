@@ -12,6 +12,7 @@ use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
+use leptos::prelude::IntoAny;
 use leptos::prelude::MaybeProp;
 use leptos::prelude::NodeRef;
 use leptos::prelude::NodeRefAttribute;
@@ -238,7 +239,13 @@ where
         Either::Left(view! {
             <div>
                 <label class="block mb-2.5 text-sm font-medium text-heading">
-                    {label}
+                    {label}{
+                        if required.get() {
+                            view!{ <span class="color-red-500">*</span> }.into_any()
+                        } else {
+                            view!{}.into_any()
+                        } 
+                    }
                     {standalone_input}
                 </label>
             </div>

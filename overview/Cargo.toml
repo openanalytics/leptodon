@@ -58,7 +58,7 @@ log = "0.4"
 cfg-if = "1.0.4"
 derive_more = { version = "2.0.1", features = ["display"] }
 chrono = "0.4.42"
-
+icalendar = { version = "0.17.6", features = ["serde"] }
 [features]
 default = ["ssr"]
 ssr = [

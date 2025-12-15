@@ -595,7 +595,7 @@ pub fn InfoIcon() -> IconRef {
     return_lazified_icon!(icon_data!(&HTML, 20).filled());
 }
 
-pub fn AutoFillIcon() -> IconRef {
+fn ArrowIconPath() -> &'static str {
     lazy_path!(
         HTML,
         html! {
@@ -608,7 +608,18 @@ pub fn AutoFillIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    &HTML
+}
+pub fn RightArrowIcon() -> IconRef {
+    return_lazified_icon!(icon_data!(ArrowIconPath(), 24).filled());
+}
+
+pub fn LeftArrowIcon() -> IconRef {
+    return_lazified_icon!(
+        icon_data!(ArrowIconPath(), 24)
+            .filled()
+            .set_class(Some("-scale-x-100"))
+    );
 }
 
 pub fn SaveIcon() -> IconRef {

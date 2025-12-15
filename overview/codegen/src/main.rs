@@ -2,6 +2,8 @@ use std::fs;
 use std::io::Error;
 use std::path::Path;
 
+use syn::Visibility;
+
 fn gen_icons() -> Result<(), Error> {
     let icons = Path::new("../src").join("gen_icons.rs");
     let leptos_components_icons = syn::parse_file(
@@ -22,7 +24,7 @@ fn gen_icons() -> Result<(), Error> {
 
     let icon_html = functions
         .map(|func| match func {
-            syn::Item::Fn(item_fn) => {
+            syn::Item::Fn(item_fn) if matches!(item_fn.vis, Visibility::Public(_)) => {
                 format!(
                     r#"
             <p>
@@ -32,7 +34,7 @@ fn gen_icons() -> Result<(), Error> {
                     item_fn.sig.ident.to_string()
                 )
             }
-            _ => todo!(),
+            _ => String::new(),
         })
         .collect::<Vec<_>>()
         .join("");

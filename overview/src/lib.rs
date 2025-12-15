@@ -1,6 +1,7 @@
 #![recursion_limit = "256"]
 
 pub mod app;
+pub mod web_calendar;
 pub mod errors;
 #[cfg(feature = "ssr")]
 pub mod fallback;

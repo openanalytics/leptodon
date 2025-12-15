@@ -142,7 +142,11 @@ pub fn IconList() -> impl IntoView {
             </p>
 
             <p>
-                <Icon icon=leptos_components::icon::AutoFillIcon() class="border-2 border-solid w-24 h-24"/>
+                <Icon icon=leptos_components::icon::RightArrowIcon() class="border-2 border-solid w-24 h-24"/>
+            </p>
+
+            <p>
+                <Icon icon=leptos_components::icon::LeftArrowIcon() class="border-2 border-solid w-24 h-24"/>
             </p>
 
             <p>
@@ -219,4 +223,4 @@ pub fn IconList() -> impl IntoView {
     }
 }
 
-// 73
+// 75
