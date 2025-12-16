@@ -31,7 +31,7 @@ pub fn ButtonGroup(
     last: Last,
 ) -> impl IntoView {
     view! {
-        <div class="inline-flex rounded-lg shadow-xs -space-x-px" role="group">
+        <div class="inline-flex rounded-lg shadow-sm -space-x-px" role="group">
             <Provider<InGroupContext, _> value=InGroupContext { in_group: true }>
                 <Provider<GroupItemClassContext, _> value=GroupItemClassContext{ class: "rounded-l-lg".to_string() }>
                     {(first.children)().into_any()}

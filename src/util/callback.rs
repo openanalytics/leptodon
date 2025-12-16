@@ -1,6 +1,9 @@
 // MIT License, taken from https://github.com/thaw-ui/thaw at 69bc65d
 use std::{ops::Deref, sync::Arc};
 
+use chrono::NaiveDate;
+use leptos::prelude::AnyView;
+
 pub struct BoxCallback(Box<dyn Fn() + Send + Sync + 'static>);
 
 impl BoxCallback {
@@ -86,8 +89,13 @@ where
     }
 }
 
-#[derive(Clone)]
 pub struct ArcOneCallback<A, Return = ()>(Arc<dyn Fn(A) -> Return + Send + Sync + 'static>);
+
+impl<K, V> Clone for ArcOneCallback<K, V> {
+    fn clone(&self) -> Self {
+        Self(self.0.clone())
+    }
+}
 
 impl<A, Return> ArcOneCallback<A, Return> {
     pub fn new<F>(f: F) -> Self

@@ -40,7 +40,7 @@ tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
 console_log = "1"
 console_error_panic_hook = "0.1"
 
-leptos = { version = "0.8.5" }
+leptos = { version = "0.8.5", features = ["rkyv"] }
 leptos_axum = { version = "0.8.5", optional = true }
 leptos_meta = { version = "0.8.5" }
 leptos_router = { version = "0.8.5" }
@@ -57,8 +57,16 @@ tracing = { version = "0.1", optional = true }
 log = "0.4"
 cfg-if = "1.0.4"
 derive_more = { version = "2.0.1", features = ["display"] }
-chrono = "0.4.42"
-icalendar = { version = "0.17.6", features = ["serde"] }
+chrono = { version = "0.4.42", features = ["serde"] }
+ical = { git = "https://github.com/lennart-k/ical-rs.git", features = ["serde-derive"] }
+
+regex = { version = "1.12", optional = true }
+anyhow = { version = "1.0.100", optional = true }
+dateparser = { version = "0.2.1", optional = true }
+rrule = { version = "0.14", features = ["serde"] }
+
+serde = "1"
+
 [features]
 default = ["ssr"]
 ssr = [
@@ -71,6 +79,9 @@ ssr = [
     "dep:tokio",
     "dep:axum",
     "dep:axum-extra",
+    "dep:regex",
+    "dep:anyhow",
+    "dep:dateparser",
     "dep:tower",
     "dep:tower-http"
 ]

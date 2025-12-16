@@ -1211,6 +1211,10 @@ input:checked + .toggle-bg {
   margin: 0px;
 }
 
+.m-0\.5 {
+  margin: 0.125rem;
+}
+
 .m-2 {
   margin: 0.5rem;
 }
@@ -1272,6 +1276,10 @@ input:checked + .toggle-bg {
   margin-right: 0.5rem;
 }
 
+.mr-\[0\.5ch\] {
+  margin-right: 0.5ch;
+}
+
 .mr-auto {
   margin-right: auto;
 }
@@ -1294,6 +1302,13 @@ input:checked + .toggle-bg {
 
 .mt-px {
   margin-top: 1px;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 .block {
@@ -1372,8 +1387,16 @@ input:checked + .toggle-bg {
   height: 2.25rem;
 }
 
+.h-\[6lh\] {
+  height: 6lh;
+}
+
 .h-\[720px\] {
   height: 720px;
+}
+
+.h-\[810px\] {
+  height: 810px;
 }
 
 .h-fit {
@@ -1827,6 +1850,11 @@ input:checked + .toggle-bg {
   border-color: rgb(230 230 230 / var(--tw-border-opacity, 1));
 }
 
+.border-oa-gray-mid {
+  --tw-border-opacity: 1;
+  border-color: rgb(214 214 214 / var(--tw-border-opacity, 1));
+}
+
 .border-oa-red {
   --tw-border-opacity: 1;
   border-color: rgb(229 35 35 / var(--tw-border-opacity, 1));
@@ -1840,11 +1868,6 @@ input:checked + .toggle-bg {
 .border-yellow-400 {
   --tw-border-opacity: 1;
   border-color: rgb(227 160 8 / var(--tw-border-opacity, 1));
-}
-
-.border-oa-gray-mid {
-  --tw-border-opacity: 1;
-  border-color: rgb(214 214 214 / var(--tw-border-opacity, 1));
 }
 
 .\!bg-gray-50 {
@@ -1920,6 +1943,11 @@ input:checked + .toggle-bg {
   background-color: rgb(253 232 232 / var(--tw-bg-opacity, 1));
 }
 
+.bg-teal-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(213 245 246 / var(--tw-bg-opacity, 1));
+}
+
 .bg-transparent {
   background-color: transparent;
 }
@@ -1961,11 +1989,6 @@ input:checked + .toggle-bg {
 .\!px-3 {
   padding-left: 0.75rem !important;
   padding-right: 0.75rem !important;
-}
-
-.px-1\.5 {
-  padding-left: 0.375rem;
-  padding-right: 0.375rem;
 }
 
 .px-2 {
@@ -2041,6 +2064,10 @@ input:checked + .toggle-bg {
 
 .text-right {
   text-align: right;
+}
+
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .text-lg {
@@ -2253,26 +2280,6 @@ input:checked + .toggle-bg {
 
 .ease-out {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
-}
-
-.before\:absolute::before {
-  content: var(--tw-content);
-  position: absolute;
-}
-
-.before\:start-\[-1px\]::before {
-  content: var(--tw-content);
-  inset-inline-start: -1px;
-}
-
-.before\:content-\[\]::before {
-  --tw-content: ;
-  content: var(--tw-content);
-}
-
-.before\:content-\[\'\'\]::before {
-  --tw-content: '';
-  content: var(--tw-content);
 }
 
 .after\:absolute::after {
@@ -2537,6 +2544,11 @@ input:checked + .toggle-bg {
   .md\:text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
+  }
+
+  .md\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 }
 

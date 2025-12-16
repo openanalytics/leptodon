@@ -4,20 +4,12 @@ use crate::{
     button_group::{ButtonGroup, First, Last},
     class_list,
     icon::{self, NextIcon, PreviousIcon},
-    util::signals::{OptionModel, OptionModelWithValue},
+    util::callback::ArcOneCallback,
 };
-use chrono::{DateTime, Datelike, Days, Local, Month, Months, NaiveDate, NaiveTime, Weekday};
-use const_str::join;
-use leptos::{
-    logging::{debug_error, error},
-    prelude::*,
-    tachys::view::any_view::AnyView,
-};
-use leptos_use::{
-    CalendarDate, UseCalendarOptions, UseCalendarReturn, use_calendar, use_calendar_with_options,
-};
-use num_traits::FromPrimitive;
-use std::{fmt, iter, ops::Deref, sync::Arc};
+use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveTime, Weekday};
+use leptos::{either::Either, logging::error, prelude::*, tachys::view::any_view::AnyView};
+use leptos_use::{CalendarDate, UseCalendarOptions, UseCalendarReturn, use_calendar_with_options};
+use std::{fmt, iter, ops::Deref};
 
 const WORK_WEEK: [Weekday; 5] = [
     Weekday::Mon,
@@ -28,16 +20,16 @@ const WORK_WEEK: [Weekday; 5] = [
 ];
 
 /// Will show weeks where at least 1 day is visible of the current month.
-/// 
+///
 /// [date] date for which this week is checked, contains info on whether this date is of the current month.
 /// [show_days] days visible in the calendar, non visible days are skipped
-/// 
+///
 /// Returns whether the week should be shown.
 fn should_show_week(date: &CalendarDate, show_days: &[Weekday]) -> bool {
     if !date.is_other_month() {
         return true;
     }
-    
+
     let wrong_month = date.month();
     let Some(monday) = date.week(Weekday::Mon).checked_first_day() else {
         return false;
@@ -54,12 +46,15 @@ fn should_show_week(date: &CalendarDate, show_days: &[Weekday]) -> bool {
     return false;
 }
 
+/// Calendar component.
+///   Displays a full-month view, shown days can be configured.
+///   Custom content is possible via [children]
 #[component]
 pub fn Calendar(
     #[prop(optional, into)] class: MaybeProp<String>,
-    /// selected date.
-    #[prop(optional, into)]
-    value: OptionModel<NaiveDate>,
+    /// Get notified of the visible calendar month.
+    #[prop(optional)]
+    presented_month_writer: Option<WriteSignal<NaiveDate>>,
     #[prop(default = Signal::derive(|| Local::now()), into)] local_date_time: Signal<
         DateTime<Local>,
     >,
@@ -98,6 +93,11 @@ pub fn Calendar(
             .unwrap_or(local_date_time.get().date_naive())
     });
 
+    // Notify the outside of a change of calendar month.
+    Effect::new(move || {
+        presented_month_writer.inspect(|writer| writer.set(current_calendar_date.get()));
+    });
+
     let is_current_month = Memo::new(move |_| {
         let local_date_time = local_date_time.get();
         current_calendar_date.get().month() == local_date_time.month()
@@ -114,7 +114,7 @@ pub fn Calendar(
     });
 
     view! {
-        <div class=class_list!["flex flex-col h-[720px]", class]>
+        <div class=class_list!["flex flex-col h-[810px]", class]>
             <div class="flex items-center justify-between pb-4">
                 <span class="text-lg inline-flex">
                     <span class="w-[13ch] text-right">
@@ -165,7 +165,7 @@ pub fn Calendar(
                     </ButtonGroup>
                 </span>
             </div>
-            <div class="flex grid border border-oa-gray-mid bg-oa-gray-mid gap-px grid-cols-5 grid-rows-[1lh_minmax(0,_1fr)]">
+            <div class="flex grid border border-oa-gray-mid bg-oa-gray-mid gap-px grid-cols-5 grid-rows-[1lh_minmax(0,_1fr)] rounded-lg shadow-sm overflow-auto">
                 <For each=move || show_days.get().iter() key=|idx| *idx let:idx>
                     <div class="text-right bg-oa-gray font-bold h-fit">
                         <span class="mr-2">
@@ -186,13 +186,10 @@ pub fn Calendar(
                             // Decide if this week should be shown at all.
                             should_show_week(date, *show_days)
                         })
-                        .enumerate()
-                        .map(|(index, date)| {
+                        .map(|date| {
                             view! {
                                 <CalendarItem
-                                    value
-                                    index=index
-                                    date=date
+                                    date
                                     children=children.clone()
                                 />
                             }
@@ -206,28 +203,7 @@ pub fn Calendar(
 }
 
 #[component]
-fn CalendarItem(
-    value: OptionModel<NaiveDate>,
-    index: usize,
-    date: CalendarDate,
-    children: Option<CalendarChildrenFn>,
-) -> impl IntoView {
-    let is_selected = Memo::new({
-        let date = date.clone();
-        move |_| {
-            value.with(|value_date| match value_date {
-                OptionModelWithValue::T(v) => v == date.deref(),
-                OptionModelWithValue::Option(v) => v.as_ref() == Some(date.deref()),
-            })
-        }
-    });
-    let on_click = {
-        let date = date.clone();
-        move |_| {
-            value.set(Some(*date.deref()));
-        }
-    };
-
+fn CalendarItem(date: CalendarDate, children: Option<CalendarChildrenFn>) -> impl IntoView {
     // Some months start in the middle of a week, we then need to manually align calendar items at the correct column.
     let col_idx = date.weekday() as usize; // 0-indexed
     let col_class = [
@@ -236,26 +212,30 @@ fn CalendarItem(
     if date.is_other_month() {
         view! {
             <div class="bg-gray-100 w-full h-full" />
-        }.into_any()
+        }
+        .into_any()
     } else {
         view! {
             <div
-                class=class_list!("flex flex-col pointer hover:bg-oa-gray bg-white overflow-auto", col_class[col_idx])
+                class=class_list!("flex flex-col pointer hover:bg-oa-gray bg-white overflow-auto h-[6lh]", col_class[col_idx])
                 class=("text-oa-gray", date.is_other_month())
-                on:click=on_click
             >
                 <div class="self-end">
                     <span class="flex justify-center items-center mr-2 text-oa-gray-darker font-bold">{date.day()}</span>
                 </div>
-                {children.map(|c| c(*date))}
+                {if let Some(children) = children {
+                    let children = children.clone();
+                    Either::Left(move || (*children).get()(*date))
+                } else {
+                    Either::Right(())
+                }}
             </div>
         }.into_any()
     }
-
 }
 
 struct CalendarDay {
-    events: Vec<CalendarEvent>
+    events: Vec<CalendarEvent>,
 }
 
 struct CalendarEvent {
@@ -267,10 +247,10 @@ struct CalendarEvent {
 }
 
 #[derive(Clone)]
-pub struct CalendarChildrenFn(Arc<dyn Fn(NaiveDate) -> AnyView + Send + Sync>);
+pub struct CalendarChildrenFn(RwSignal<ArcOneCallback<NaiveDate, AnyView>>);
 
 impl Deref for CalendarChildrenFn {
-    type Target = Arc<dyn Fn(NaiveDate) -> AnyView + Send + Sync>;
+    type Target = RwSignal<ArcOneCallback<NaiveDate, AnyView>>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -283,6 +263,8 @@ where
     C: RenderHtml + Send + 'static,
 {
     fn from(f: F) -> Self {
-        Self(Arc::new(move |date| f(date).into_any()))
+        Self(RwSignal::new(ArcOneCallback::new(move |date| {
+            f(date).into_any()
+        })))
     }
 }

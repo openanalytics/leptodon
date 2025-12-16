@@ -2,6 +2,7 @@
 
 pub mod app;
 pub mod web_calendar;
+pub mod ical_property;
 pub mod errors;
 #[cfg(feature = "ssr")]
 pub mod fallback;
