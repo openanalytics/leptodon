@@ -1151,6 +1151,10 @@ input:checked + .toggle-bg {
   top: 0px;
 }
 
+.-z-\[1000\] {
+  z-index: -1000;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -1177,6 +1181,10 @@ input:checked + .toggle-bg {
 
 .z-\[500\] {
   z-index: 500;
+}
+
+.z-\[1001\] {
+  z-index: 1001;
 }
 
 .col-\[1\] {
@@ -1412,6 +1420,10 @@ input:checked + .toggle-bg {
   height: 100vh;
 }
 
+.max-h-\[50vw\] {
+  max-height: 50vw;
+}
+
 .max-h-full {
   max-height: 100%;
 }
@@ -1484,6 +1496,10 @@ input:checked + .toggle-bg {
   max-width: 42rem;
 }
 
+.max-w-\[40vw\] {
+  max-width: 40vw;
+}
+
 .max-w-screen-xl {
   max-width: 1280px;
 }
@@ -1536,6 +1552,11 @@ input:checked + .toggle-bg {
 
 .rotate-180 {
   --tw-rotate: 180deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.rotate-45 {
+  --tw-rotate: 45deg;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -1687,6 +1708,10 @@ input:checked + .toggle-bg {
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.overflow-scroll {
+  overflow: scroll;
 }
 
 .overflow-y-auto {
@@ -1972,6 +1997,10 @@ input:checked + .toggle-bg {
 
 .p-1 {
   padding: 0.25rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
 }
 
 .p-2\.5 {
@@ -2287,6 +2316,11 @@ input:checked + .toggle-bg {
   position: absolute;
 }
 
+.after\:-right-\[4px\]::after {
+  content: var(--tw-content);
+  right: -4px;
+}
+
 .after\:left-\[2px\]::after {
   content: var(--tw-content);
   left: 2px;
@@ -2302,9 +2336,25 @@ input:checked + .toggle-bg {
   height: 1.25rem;
 }
 
+.after\:h-3::after {
+  content: var(--tw-content);
+  height: 0.75rem;
+}
+
 .after\:w-5::after {
   content: var(--tw-content);
   width: 1.25rem;
+}
+
+.after\:w-3::after {
+  content: var(--tw-content);
+  width: 0.75rem;
+}
+
+.after\:rotate-45::after {
+  content: var(--tw-content);
+  --tw-rotate: 45deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .after\:rounded-full::after {
@@ -2315,6 +2365,16 @@ input:checked + .toggle-bg {
 .after\:border::after {
   content: var(--tw-content);
   border-width: 1px;
+}
+
+.after\:border-r::after {
+  content: var(--tw-content);
+  border-right-width: 1px;
+}
+
+.after\:border-t::after {
+  content: var(--tw-content);
+  border-top-width: 1px;
 }
 
 .after\:border-gray-300::after {

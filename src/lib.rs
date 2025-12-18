@@ -42,3 +42,5 @@ pub mod toggle;
 pub mod util;
 #[cfg(feature = "leptos")]
 pub mod badge;
+#[cfg(feature = "leptos")]
+pub mod popover;

@@ -10,7 +10,7 @@ leptos = { version = "0.8.5", optional = true }
 leptos_meta = { version = "0.8.5", optional = true }
 leptos_router = { version = "0.8.5", optional = true }
 leptos_axum = { version = "0.8.5", optional = true }
-leptos-use = { version = "0.16.3", features = ["use_calendar", "on_click_outside"], optional = true }
+leptos-use = { version = "0.16.3", features = ["use_calendar", "on_click_outside", "math"], optional = true }
 
 reactive_stores = { version = "0.2.5", optional = true }
 uuid = { version = "1.18.1",  features = ["v4", "js"], optional = true }
@@ -28,6 +28,7 @@ http1 = { version = "1", package = "http", optional = true }
 const-str = "0.7.0"
 chrono = "0.4.42"
 base64 = "0.22.1"
+send_wrapper = "0.6.0"
 
 [build-dependencies]
 walkdir = "2.5.0"

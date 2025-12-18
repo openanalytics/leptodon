@@ -1,3 +1,6 @@
+use leptos_components::popover::Popover;
+use leptos_components::popover::PopoverPosition;
+use leptos_components::popover::PopoverTrigger;
 use chrono::Datelike;
 use chrono::Local;
 use leptos::either::Either;
@@ -114,21 +117,60 @@ pub fn PopulatedCalendar() -> impl IntoView {
                             }
                             crate::ical_property::DateMaybeTime::Date(_) => None,
                         };
-                        let end_time = event_today.end.as_ref().cloned();
+                        let end_time = match event_today
+                            .end
+                            .as_ref()
+                            .expect("Checked to be some during filter")
+                        {
+                            crate::ical_property::DateMaybeTime::DateTime(date_time) => {
+                                Some(date_time.with_timezone(&tz))
+                            }
+                            crate::ical_property::DateMaybeTime::Date(_) => None,
+                        };
                         let title = event_today.summary.as_ref().cloned();
+                        let popup_title = title.as_ref().cloned();
+                        let popup_desc = event_today.description.as_ref().cloned();
+                        let popup_loc = event_today.location.as_ref().cloned();
+                        
+                        let popup_start = start_time.as_ref().cloned();
+                        let popup_end = end_time.as_ref().cloned();
+                        let popup_duration = event_today.duration.as_ref().cloned();
                         view! {
-                            <div class=class_list!("self-stretch p-0.5 bg-teal-100 m-0.5 shadow-sm text-xs md:text-sm line-clamp-3 shrink-0", ("grow", start_time.is_none()))>
-                                <OptionComp value=start_time let:start_time>
-                                    <strong class="mr-[0.5ch] font-mono">
-                                        {start_time.time().format("%H:%M").to_string()}
-                                    </strong>
-                                </OptionComp>
-                                <OptionComp value=title let:title>
-                                    <span>
-                                        {title.to_string()}
-                                    </span>
-                                </OptionComp>
-                            </div>
+                            <Popover preferred_pos=PopoverPosition::Right>
+                                <PopoverTrigger slot>
+                                    <div class=class_list!("self-stretch p-0.5 bg-teal-100 m-0.5 shadow-sm text-xs md:text-sm line-clamp-3 shrink-0", ("grow", start_time.is_none()))>
+                                        <OptionComp value=start_time let:start_time>
+                                            <strong class="mr-[0.5ch] font-mono">
+                                                {start_time.time().format("%H:%M").to_string()}
+                                            </strong>
+                                        </OptionComp>
+                                        <OptionComp value=title.clone() let:title>
+                                            <span>
+                                                {title.to_string()}
+                                            </span>
+                                        </OptionComp>
+                                    </div>
+                                </PopoverTrigger>
+                                <div>
+                                    <OptionComp value=start_time let:start_time>
+                                        <OptionComp value=end_time let:end_time>
+                                            <strong class="mr-[0.5ch] font-mono">
+                                                {start_time.time().format("%H:%M").to_string()} - {end_time.time().format("%H:%M").to_string()}
+                                            </strong>
+                                        </OptionComp>
+                                    </OptionComp>
+                                    <OptionComp value=popup_title let:title>
+                                        <p><strong>
+                                            {title.to_string()}
+                                        </strong></p>
+                                    </OptionComp>
+                                    <OptionComp value=popup_desc let:desc>
+                                        <p>
+                                            {desc.to_string()}
+                                        </p>
+                                    </OptionComp>
+                                </div>
+                            </Popover>
                         }
                         .into_any()
                     })

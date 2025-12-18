@@ -8,7 +8,6 @@ use crate::{
     spinner::{Spinner, SpinnerSize},
     util::callback::BoxOneCallback,
 };
-use leptos::leptos_dom::logging::{console_debug_error, console_debug_log};
 use leptos::logging::debug_log;
 use leptos::{IntoView, component, view};
 use leptos::{

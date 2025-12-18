@@ -169,7 +169,7 @@ where
         icon,
         loading,
         on_click: Some(BoxOneCallback::new(move |_e| {
-            *set_visible.write() = !is_visible.get();
+            set_visible.update(|setter| *setter = !*setter);
         })),
         children: Some(button_children.children),
         comp_ref,
@@ -181,7 +181,7 @@ where
     view! {
         <div class="fit-content relative">
             {button}
-            <Dropdown id=dropdown_id is_visible=is_visible alignment>
+            <Dropdown id=dropdown_id is_visible alignment>
                 {children().into_any()}
             </Dropdown>
         </div>
