@@ -188,10 +188,22 @@ where
                     {content_children}
                 </div>
             </div>
+
+            // The arrow part of the popover.
+            // Both divs are angled 45 deg so it points right by default, inner white square overflow is clipped off
+
             <div class=class_list!(
-                "absolute bg-white border-t border-r rotate-45 h-3 w-3",
+                // top-right-bordered transparent square
+                "absolute border-t border-r rotate-45 h-3 w-3 overflow-hidden",
                 ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
-                ("z-[1001]", move || popover_visible.get())) node_ref=arrow_ref/>
+                ("z-[1001]", move || popover_visible.get())) node_ref=arrow_ref>
+
+                <div
+                    // A clipped white square such that it becomes a bg between top-left, top-right and bottom-right corners.
+                    class="relative w-5 h-3 -translate-y-1 rotate-45 bg-white"
+                />
+
+            </div>
         </div>
     }
 }
