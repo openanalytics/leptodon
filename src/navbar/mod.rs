@@ -1,21 +1,21 @@
 use leptos::logging::debug_log;
 use leptos::prelude::{AddAnyAttr, IntoAny, OnAttribute, RwSignal, Set, Update};
 use leptos::prelude::{AriaAttributes, Children};
-use leptos::prelude::{ClassAttribute, ElementChild, GlobalAttributes};
-use leptos::prelude::{CustomAttribute, Get};
+use leptos::prelude::{ClassAttribute, ElementChild};
+use leptos::prelude::Get;
 use leptos::view;
 use leptos::{IntoView, component};
-use leptos_router::components::{A, ToHref};
+use leptos_router::components::{ToHref};
+// Do not remove until leptos is upgraded above 0.8.14
 use leptos::prelude::IntoAnyAttribute;
-
 use crate::avatar::Avatar;
 use crate::button::{
-    Button, ButtonAppearance, ButtonShape, ControlButton, DropdownButton, DropdownButtonChildren,
+    ButtonAppearance, ButtonShape, ControlButton, DropdownButton, DropdownButtonChildren,
     OA_TRANSPARENT_BUTTON_CLASSES,
 };
 use crate::dropdown::{AlignmentAnchor, DropdownItem};
 use crate::icon::Icon;
-use crate::icon::icon_data::{IconData, IconRef};
+use crate::icon::icon_data::{IconRef};
 use crate::link::Link;
 use crate::{class_list, icon};
 

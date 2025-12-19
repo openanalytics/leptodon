@@ -1,4 +1,5 @@
 use leptos::prelude::GlobalAttributes;
+// Do not remove until leptos is upgraded above 0.8.14
 use leptos::prelude::IntoAnyAttribute;
 use chrono::Datelike;
 use chrono::Local;
@@ -708,7 +709,7 @@ pub fn DatePicker(
     let target = NodeRef::<Div>::new();
 
     // Not sure what this warning is about, it seems to work perfectly.
-    on_click_outside(target, move |_event| {
+    let _ = on_click_outside(target, move |_event| {
         picker_state.update(|state| state.hide());
     });
 

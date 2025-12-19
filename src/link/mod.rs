@@ -1,5 +1,7 @@
 use leptos::prelude::{AddAnyAttr, IntoAny};
-use leptos::prelude::{IntoAnyAttribute, MaybeProp};
+use leptos::prelude::MaybeProp;
+// Do not remove until leptos is upgraded above 0.8.14
+use leptos::prelude::IntoAnyAttribute;
 use leptos::{IntoView, component, oco::Oco, prelude::Children, view};
 use leptos_router::components::A;
 use leptos_router::components::ToHref;

@@ -1,4 +1,3 @@
-use std::default;
 
 use crate::class_list;
 use crate::icon::Icon;

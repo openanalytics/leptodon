@@ -6,17 +6,13 @@ use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::IntoAny;
-use leptos::prelude::NodeRef;
-use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::slot;
-use leptos::tachys::html;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
 use leptos_use::UseTimeoutFnReturn;
 use leptos_use::use_timeout_fn;
-use web_sys::HtmlDivElement;
 
 use crate::button::ButtonRef;
 use crate::button::ControlButton;
