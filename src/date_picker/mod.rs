@@ -1,6 +1,6 @@
+use leptos::logging::debug_log;
 use leptos::prelude::GlobalAttributes;
 // Do not remove until leptos is upgraded above 0.8.14
-use leptos::prelude::IntoAnyAttribute;
 use chrono::Datelike;
 use chrono::Local;
 use chrono::Month;
@@ -14,13 +14,16 @@ use leptos::prelude::CollectView;
 use leptos::prelude::Effect;
 use leptos::prelude::FlattenOptionRefOption;
 use leptos::prelude::IntoAny;
+use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Memo;
 use leptos::prelude::NodeRef;
 use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::Update;
 use leptos_use::CalendarDate;
+use leptos_use::OnClickOutsideOptions;
 use leptos_use::UseCalendarReturn;
 use leptos_use::on_click_outside;
+use leptos_use::on_click_outside_with_options;
 use leptos_use::use_calendar;
 use num_traits::FromPrimitive;
 use std::cmp::Ordering;
@@ -708,13 +711,14 @@ pub fn DatePicker(
 
     let target = NodeRef::<Div>::new();
 
-    // Not sure what this warning is about, it seems to work perfectly.
-    let _ = on_click_outside(target, move |_event| {
+    // could be optimized as to only add the listener when the date_picker is visible.
+    // listener can be removed by calling the returned closure.
+    let _ = on_click_outside_with_options(target, move |_event| {
+        debug_log!("clicked outside date_picker, closing.");
         picker_state.update(|state| state.hide());
-    });
+    }, OnClickOutsideOptions::default());
 
     let id = shared_id();
-    
     type OptDate = Option<NaiveDate>;
     view! {
         <div node_ref=target>

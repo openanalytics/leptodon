@@ -81,7 +81,7 @@ pub fn App() -> impl IntoView {
 
 #[component]
 fn Home() -> impl IntoView {
-    let (count, set_count) = signal(0);
+    let (count, set_count) = signal(1);
     let double_count = move || count.get() * 2;
     let modal_visible = RwSignal::new(false);
 
@@ -143,12 +143,12 @@ fn Home() -> impl IntoView {
             <ProgressBar progress=count />
 
             <Button
-                on_click=move |_| {}
+                on_click=move |_| { set_count.set(count.get()*2) }
                 appearance=ButtonAppearance::Primary
                 class="m-2"
                 {..}
                 id="5">
-                5
+                {move || count.get()*2}
             </Button>
             <br/>
             <ButtonGroup>
