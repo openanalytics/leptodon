@@ -4,14 +4,17 @@ use crate::{
     class_list,
     util::{callback::BoxCallback, element::Element},
 };
-use leptos::{ev::{mouseenter, mouseleave, on}, html::Div, prelude::*};
+use leptos::{
+    ev::{mouseenter, mouseleave, on},
+    html::Div,
+    prelude::*,
+};
 use leptos::{
     logging::{debug_log, debug_warn, error, warn},
     tachys::{html::node_ref::node_ref, renderer::dom::CssStyleDeclaration},
 };
 use leptos_use::{
-    OnClickOutsideOptions, UseScrollReturn, math::use_or, on_click_outside_with_options,
-    use_element_hover, use_scroll,
+    OnClickOutsideOptions, math::use_or, on_click_outside_with_options, use_window_scroll,
 };
 use web_sys::{DomRect, HtmlDivElement};
 
@@ -63,7 +66,11 @@ where
 
     let popover_visible = use_or(show_by_hover, popover_clicked_open);
 
-    let UseScrollReturn { x, y, .. } = use_scroll(trigger_ref);
+    let (x, y) = use_window_scroll();
+
+    Effect::new(move || {
+        debug_log!("{}", y.get());
+    });
 
     Effect::new(move || {
         let popover_visible = popover_visible.get();
@@ -164,7 +171,7 @@ where
             <div class=class_list!(
                 "absolute bg-white border shadow-sm rounded-lg",
               //  "after:content-[''] after:absolute after:top-0.5 after:-right-[4px] after:bg-white after:border-t after:border-r after:rotate-45 after:h-3 after:w-3",
-                ("-z-[1000] opacity-0", move || !popover_visible.get()),
+                ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
                 ("z-[1000]", move || popover_visible.get())
             ) node_ref=popover_ref>
                 <div class="overflow-scroll max-w-[40vw] max-h-[50vw] h-full w-full p-2">
@@ -173,7 +180,7 @@ where
             </div>
             <div class=class_list!(
                 "absolute bg-white border-t border-r rotate-45 h-3 w-3",
-                ("-z-[1000] opacity-0", move || !popover_visible.get()),
+                ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
                 ("z-[1001]", move || popover_visible.get())) node_ref=arrow_ref/>
         </div>
     }
