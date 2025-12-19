@@ -16,7 +16,7 @@ use leptos::{
 use leptos_use::{
     OnClickOutsideOptions, math::use_or, on_click_outside_with_options, use_window_scroll,
 };
-use web_sys::{DomRect, HtmlDivElement};
+use web_sys::{DomRect, HtmlDivElement, MouseEvent};
 
 // TODO: Resize observer ?
 #[component]
@@ -134,8 +134,14 @@ where
         });
         show_by_hover.set(true);
     };
-    let on_mouse_leave = move |_| {
+    let on_mouse_leave = move |e| {
         if trigger_type != PopoverTriggerType::Hover {
+            return;
+        }
+        // Workaround for scrollbars otherwise closing the popup
+        if let Some(popover) = popover_ref.get()
+            && element_contains_pointer(&popover, e)
+        {
             return;
         }
         show_popover_handle.update_value(|handle| {
@@ -167,14 +173,18 @@ where
     view! {
         <div class=class_list!(class)>
             {trigger_children}
-            // Can't be hidden, because then the size is 0.
-            <div class=class_list!(
-                "absolute bg-white border shadow-sm rounded-lg",
-              //  "after:content-[''] after:absolute after:top-0.5 after:-right-[4px] after:bg-white after:border-t after:border-r after:rotate-45 after:h-3 after:w-3",
-                ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
-                ("z-[1000]", move || popover_visible.get())
-            ) node_ref=popover_ref>
-                <div class="overflow-scroll max-w-[40vw] max-h-[50vw] h-full w-full p-2">
+            // Can't be hidden, because then the size is 0, bypass via opacity-0 and z-index.
+            <div
+                class=class_list![
+                    "absolute bg-white border shadow-sm rounded-lg",
+                    ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
+                    ("z-[1000]", move || popover_visible.get())
+                ]
+                node_ref=popover_ref
+                on:mouseenter=on_mouse_enter
+                on:mouseleave=on_mouse_leave
+            >
+                <div class="overflow-auto max-w-[40vw] max-h-[50vw] h-full w-full p-2">
                     {content_children}
                 </div>
             </div>
@@ -184,6 +194,25 @@ where
                 ("z-[1001]", move || popover_visible.get())) node_ref=arrow_ref/>
         </div>
     }
+}
+
+/// To test if the mouse is still on the element, like when hovering a scrollbar.
+fn element_contains_pointer(popover_ref: &HtmlDivElement, e: MouseEvent) -> bool {
+    let rect = (*popover_ref).get_bounding_client_rect();
+    let x = e.x();
+    let y = e.y();
+    let rect_x_min = rect.x() as i32;
+    let rect_y_min = rect.y() as i32;
+    let rect_x_max = (rect.x() + rect.width()) as i32;
+    let rect_y_max = (rect.y() + rect.height()) as i32;
+    debug_log!(
+        "{x} {y} in {} {} {} {}",
+        rect.x(),
+        rect.x() + rect.width(),
+        rect.y(),
+        rect.y() + rect.height()
+    );
+    return rect_x_min < x && rect_x_max > x && rect_y_min < y && rect_y_max > y;
 }
 
 fn set_popover_property(popover_style: &CssStyleDeclaration, property: &str, value: String) {
