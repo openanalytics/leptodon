@@ -40,10 +40,10 @@ tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
 console_log = "1"
 console_error_panic_hook = "0.1"
 
-leptos = { version = "0.8.5", features = ["rkyv"] }
-leptos_axum = { version = "0.8.5", optional = true }
+leptos = { version = "0.8.14", features = ["rkyv"] }
+leptos_axum = { version = "0.8.7", optional = true }
 leptos_meta = { version = "0.8.5" }
-leptos_router = { version = "0.8.5" }
+leptos_router = { version = "0.8.10" }
 
 wasm-bindgen = { version = "=0.2.105", optional = true }
 
