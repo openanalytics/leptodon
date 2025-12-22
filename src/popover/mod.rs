@@ -69,10 +69,6 @@ where
     let (x, y) = use_window_scroll();
 
     Effect::new(move || {
-        debug_log!("{}", y.get());
-    });
-
-    Effect::new(move || {
         let popover_visible = popover_visible.get();
 
         // update on scroll

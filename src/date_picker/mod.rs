@@ -22,6 +22,7 @@ use leptos::prelude::Update;
 use leptos_use::CalendarDate;
 use leptos_use::OnClickOutsideOptions;
 use leptos_use::UseCalendarReturn;
+use leptos_use::core::IntoElementMaybeSignal;
 use leptos_use::on_click_outside;
 use leptos_use::on_click_outside_with_options;
 use leptos_use::use_calendar;
@@ -580,7 +581,8 @@ pub fn DatePicker(
 ) -> impl IntoView {
     // Extra internal state for hiding and which menu is active.
     let picker_state = RwSignal::new(DatePickerState::default());
-
+    let date_picker_id = id;
+    
     // Input parser
     let parser = Some(ArcOneCallback::new(|to_parse: String| {
         if to_parse == "" {
@@ -719,10 +721,20 @@ pub fn DatePicker(
     }, OnClickOutsideOptions::default());
 
     let id = shared_id();
+    
+    let id = Signal::derive(move || {
+        let provided_id = date_picker_id.get();
+        if let Some(provided_id) = provided_id {
+            format!("{}-popup", provided_id)
+        } else {
+            id.clone()
+        }
+    });
+    
     type OptDate = Option<NaiveDate>;
     view! {
         <div node_ref=target>
-            <GenericInput<OptDate, String> id=id.clone() name class placeholder label parser format value
+            <GenericInput<OptDate, String> id=date_picker_id.get() name class placeholder label parser format value
                 on:focus=move |_| {
                     picker_state.update(|state| state.show());
                 }
@@ -741,7 +753,7 @@ pub fn DatePicker(
                 aria-controls=id.clone()
             />
             // Picker-Dropdown
-            <div id=id.into_inner() class=class_list!(
+            <div id=id class=class_list!(
                 ("hidden", move || !picker_state.get().visible),
                 "absolute bg-white z-50 ml-2 mt-px active block"
             )>

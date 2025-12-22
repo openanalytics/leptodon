@@ -205,7 +205,7 @@ where
     );
 
     let standalone_input = view! {
-        <input id type=input_type.get().as_str()
+        <input id=id.get() type=input_type.get().as_str()
             inputmode=input_mode.get().as_str()
             name={name.get()}
             bind:value=internal_value_signal

@@ -17,14 +17,15 @@ use leptos_components::button_group::First;
 use leptos_components::button_group::Last;
 use leptos_components::checkbox::Checkbox;
 use leptos_components::darkmode::ThemeSelector;
-use leptos_components::link::Link;
-use leptos_components::navbar::SideNavbar;
 use leptos_components::date_picker::DatePicker;
 use leptos_components::date_picker::range_picker::DateRangePicker;
 use leptos_components::dropdown::DropdownItem;
 use leptos_components::input::InputType;
+use leptos_components::link::Link;
 use leptos_components::modal::ModalFooterChildren;
+use leptos_components::navbar::SideNavbar;
 use leptos_components::toggle::Toggle;
+use leptos_components::util::shared_id::shared_id;
 use leptos_components::{
     button::{Button, ButtonAppearance},
     input::Input,
@@ -118,9 +119,9 @@ fn Home() -> impl IntoView {
             </div>
             {
                 view! {
-                    <DatePicker value=RwSignal::new(None) />
-                    <DateRangePicker />
-                }.into_any() 
+                    <DatePicker id="date_picker" value=RwSignal::new(None) />
+                    <DateRangePicker id="date_range_picker" />
+                }.into_any()
             }
             <br/>
             <Toggle label="Lightswitch" value=Signal::derive(move || false) />
@@ -209,7 +210,7 @@ pub fn AnyAccordion() -> AnyView {
                 Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
                 <p class="mb-2 text-body">Check out this guide to learn how to<a href="/docs/getting-started/introduction/" class="text-fg-brand hover:underline">get started</a>and start developing websites even faster with components on top of Tailwind
                 CSS.</p>
-    
+
                 <Accordion>
                     <AccordionEntry title="What about version 2.7.2?">
                         <p class="mb-2 text-body">Version 2.7.2 is available at <a href="https://web.archive.org/web/20240328025144/https://flowbite.com/docs/components/dropdowns/">this location</a></p>

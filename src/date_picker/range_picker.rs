@@ -100,12 +100,15 @@ pub fn DateRangePicker(
 
         all_classes.join(" ")
     });
+    
+    let id_left = MaybeProp::derive(move || id.get().map(|id| format!("{id}-left")));
+    let id_right = MaybeProp::derive(move || id.get().map(|id| format!("{id}-right")));
 
     view! {
         <div class="inline-flex">
-            <DatePicker placeholder value=start_date highlighter=combined_highlighter.clone() />
+            <DatePicker placeholder id=id_left value=start_date highlighter=combined_highlighter.clone() />
             "Until"
-            <DatePicker placeholder value=end_date highlighter=combined_highlighter/>
+            <DatePicker placeholder id=id_right value=end_date highlighter=combined_highlighter/>
         </div>
     }
 }
