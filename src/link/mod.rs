@@ -1,5 +1,5 @@
-use leptos::prelude::{AddAnyAttr, IntoAny};
 use leptos::prelude::MaybeProp;
+use leptos::prelude::{AddAnyAttr, IntoAny};
 // Do not remove until leptos is upgraded above 0.8.14
 use leptos::prelude::IntoAnyAttribute;
 use leptos::{IntoView, component, oco::Oco, prelude::Children, view};

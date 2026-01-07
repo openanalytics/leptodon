@@ -21,5 +21,5 @@ where
         EitherOf3::B((fallback.children)())
     } else {
         EitherOf3::C(())
-    } 
+    }
 }

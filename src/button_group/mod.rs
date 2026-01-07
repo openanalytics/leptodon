@@ -8,6 +8,9 @@ use leptos::prelude::IntoAny;
 use leptos::slot;
 use leptos::{IntoView, component, prelude::Children, view};
 
+mod variations;
+pub use crate::button_group::variations::*;
+
 #[derive(Clone)]
 pub struct InGroupContext {
     pub in_group: bool,

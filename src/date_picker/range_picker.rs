@@ -100,7 +100,7 @@ pub fn DateRangePicker(
 
         all_classes.join(" ")
     });
-    
+
     let id_left = MaybeProp::derive(move || id.get().map(|id| format!("{id}-left")));
     let id_right = MaybeProp::derive(move || id.get().map(|id| format!("{id}-right")));
 

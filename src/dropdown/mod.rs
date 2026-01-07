@@ -1,4 +1,3 @@
-
 use crate::class_list;
 use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;

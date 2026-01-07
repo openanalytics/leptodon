@@ -582,7 +582,7 @@ pub fn DatePicker(
     // Extra internal state for hiding and which menu is active.
     let picker_state = RwSignal::new(DatePickerState::default());
     let date_picker_id = id;
-    
+
     // Input parser
     let parser = Some(ArcOneCallback::new(|to_parse: String| {
         if to_parse == "" {
@@ -715,13 +715,17 @@ pub fn DatePicker(
 
     // could be optimized as to only add the listener when the date_picker is visible.
     // listener can be removed by calling the returned closure.
-    let _ = on_click_outside_with_options(target, move |_event| {
-        debug_log!("clicked outside date_picker, closing.");
-        picker_state.update(|state| state.hide());
-    }, OnClickOutsideOptions::default());
+    let _ = on_click_outside_with_options(
+        target,
+        move |_event| {
+            debug_log!("clicked outside date_picker, closing.");
+            picker_state.update(|state| state.hide());
+        },
+        OnClickOutsideOptions::default(),
+    );
 
     let id = shared_id();
-    
+
     let id = Signal::derive(move || {
         let provided_id = date_picker_id.get();
         if let Some(provided_id) = provided_id {
@@ -730,7 +734,7 @@ pub fn DatePicker(
             id.clone()
         }
     });
-    
+
     type OptDate = Option<NaiveDate>;
     view! {
         <div node_ref=target>

@@ -19,13 +19,13 @@
 use std::fmt::Display;
 use std::str::FromStr;
 // Do not remove until leptos is upgraded above 0.8.14
-use leptos::prelude::IntoAnyAttribute;
 use leptos::leptos_dom::logging::console_log;
 use leptos::logging::debug_log;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
+use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Memo;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Signal;

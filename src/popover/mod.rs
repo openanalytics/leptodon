@@ -333,6 +333,7 @@ fn set_arrow_position(
             "-45deg",
         ),
     };
+
     arrow_style.set_property("left", format!("{left}px").as_str());
     arrow_style.set_property("top", format!("{top}px").as_str());
     arrow_style.set_property("transform", format!("rotate({rotation})").as_str());

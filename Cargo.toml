@@ -29,6 +29,10 @@ const-str = "0.7.0"
 chrono = "0.4.42"
 base64 = "0.22.1"
 send_wrapper = "0.6.0"
+leptos-struct-table = { path = "../leptos-struct-table", features = ["chrono"] }
+
+[dev-dependencies]
+polars = { version = "0.52", features = ["lazy", "timezones"] }
 
 [build-dependencies]
 walkdir = "2.5.0"

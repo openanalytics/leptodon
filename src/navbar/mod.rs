@@ -1,13 +1,12 @@
 use leptos::logging::debug_log;
+use leptos::prelude::Get;
 use leptos::prelude::{AddAnyAttr, IntoAny, OnAttribute, RwSignal, Set, Update};
 use leptos::prelude::{AriaAttributes, Children};
 use leptos::prelude::{ClassAttribute, ElementChild};
-use leptos::prelude::Get;
 use leptos::view;
 use leptos::{IntoView, component};
-use leptos_router::components::{ToHref};
+use leptos_router::components::ToHref;
 // Do not remove until leptos is upgraded above 0.8.14
-use leptos::prelude::IntoAnyAttribute;
 use crate::avatar::Avatar;
 use crate::button::{
     ButtonAppearance, ButtonShape, ControlButton, DropdownButton, DropdownButtonChildren,
@@ -15,9 +14,10 @@ use crate::button::{
 };
 use crate::dropdown::{AlignmentAnchor, DropdownItem};
 use crate::icon::Icon;
-use crate::icon::icon_data::{IconRef};
+use crate::icon::icon_data::IconRef;
 use crate::link::Link;
 use crate::{class_list, icon};
+use leptos::prelude::IntoAnyAttribute;
 
 const SIDEBAR_CLASSES: &str = "fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700";
 

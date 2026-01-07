@@ -244,7 +244,7 @@ where
                             view!{ <span class="color-red-500">*</span> }.into_any()
                         } else {
                             view!{}.into_any()
-                        } 
+                        }
                     }
                     {standalone_input}
                 </label>

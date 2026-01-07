@@ -24,8 +24,9 @@ use leptos_components::input::InputType;
 use leptos_components::link::Link;
 use leptos_components::modal::ModalFooterChildren;
 use leptos_components::navbar::SideNavbar;
+use leptos_components::table::DemoTable;
+use leptos_components::table::grouping::GroupedTable;
 use leptos_components::toggle::Toggle;
-use leptos_components::util::shared_id::shared_id;
 use leptos_components::{
     button::{Button, ButtonAppearance},
     input::Input,
@@ -93,6 +94,8 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
+            <GroupedTable />
+            <DemoTable />
             <PopulatedCalendar />
             <Link href="https://www.openanalytics.eu/">"Click here"</Link>
             <DropdownButton {..} data-testid="test-dropdown">

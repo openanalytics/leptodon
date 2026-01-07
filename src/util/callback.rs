@@ -1,8 +1,6 @@
 // MIT License, taken from https://github.com/thaw-ui/thaw at 69bc65d
 use std::{ops::Deref, sync::Arc};
 
-
-
 pub struct BoxCallback(Box<dyn Fn() + Send + Sync + 'static>);
 
 impl BoxCallback {

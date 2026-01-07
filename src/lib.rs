@@ -5,6 +5,8 @@ pub mod accordion;
 #[cfg(feature = "leptos")]
 pub mod avatar;
 #[cfg(feature = "leptos")]
+pub mod badge;
+#[cfg(feature = "leptos")]
 pub mod button;
 #[cfg(feature = "leptos")]
 pub mod button_group;
@@ -33,14 +35,14 @@ pub mod modal;
 #[cfg(feature = "leptos")]
 pub mod navbar;
 #[cfg(feature = "leptos")]
+pub mod popover;
+#[cfg(feature = "leptos")]
 pub mod select;
 #[cfg(feature = "leptos")]
 pub mod spinner;
 #[cfg(feature = "leptos")]
+pub mod table;
+#[cfg(feature = "leptos")]
 pub mod toggle;
 #[cfg(feature = "leptos")]
 pub mod util;
-#[cfg(feature = "leptos")]
-pub mod badge;
-#[cfg(feature = "leptos")]
-pub mod popover;
