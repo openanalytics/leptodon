@@ -2,6 +2,7 @@
 
 pub mod app;
 pub mod web_calendar;
+pub mod group_table;
 pub mod ical_property;
 pub mod errors;
 #[cfg(feature = "ssr")]

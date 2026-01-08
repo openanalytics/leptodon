@@ -49,6 +49,7 @@ wasm-bindgen = { version = "=0.2.105", optional = true }
 
 itertools = "0.14.0"
 leptos-components = { path = "..", default-features = false, features = ["leptos"] }
+leptos-struct-table = { path = "../../leptos-struct-table", features = ["chrono"] }
 
 axum-extra = { version = "0.12.2", optional = true, features = ["cookie"] }
 
@@ -64,6 +65,7 @@ regex = { version = "1.12", optional = true }
 anyhow = { version = "1.0.100", optional = true }
 dateparser = { version = "0.2.1", optional = true }
 rrule = { version = "0.14", features = ["serde"] }
+
 
 serde = "1"
 

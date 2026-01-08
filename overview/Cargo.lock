@@ -1929,6 +1929,7 @@ dependencies = [
  "itertools",
  "leptos",
  "leptos-components",
+ "leptos-struct-table",
  "leptos_axum",
  "leptos_meta",
  "leptos_router",
