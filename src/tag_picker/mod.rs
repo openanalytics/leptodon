@@ -1,0 +1,170 @@
+use std::fmt::Display;
+use std::hash::Hash;
+
+use fuzzy_search::automata::LevenshteinAutomata;
+use leptos::prelude::ClassAttribute;
+use leptos::prelude::ElementChild;
+use leptos::prelude::For;
+use leptos::prelude::Get;
+use leptos::prelude::IntoAny;
+use leptos::prelude::NodeRef;
+use leptos::prelude::OnAttribute;
+use leptos::prelude::RwSignal;
+use leptos::prelude::Update;
+use leptos::{
+    IntoView, component,
+    prelude::{MaybeProp, Signal},
+    view,
+};
+use web_sys::HtmlInputElement;
+
+use crate::checkbox::Checkbox;
+use crate::class_list;
+use crate::icon::Icon;
+use crate::input::Input;
+use crate::popover::Popover;
+use crate::popover::PopoverPosition;
+use crate::popover::PopoverTrigger;
+use crate::popover::PopoverTriggerType;
+const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
+const TAG_LIST_ITEM_CLASSES: &str =
+    "hover:bg-oa-gray p-2 rounded-lg flex items-center cursor-pointer";
+
+trait TagOption<T>: Display {
+    // identifier of the tag
+    fn id() -> String;
+    // backing value for the tag
+    fn value() -> T;
+}
+
+#[component]
+pub fn TagPicker<T>(
+    /// Shown when no tags are selected.
+    #[prop(optional, into)]
+    placeholder: MaybeProp<String>,
+    #[prop(optional, into)] selected: RwSignal<Vec<T>>,
+    #[prop(optional, into)] tags: RwSignal<Vec<T>>,
+) -> impl IntoView
+where
+    T: Display + From<String> + std::iter::Extend<T> + Eq + Hash + Clone + Send + Sync + 'static,
+{
+    let search_filter = RwSignal::new(String::new());
+    let search_ref = NodeRef::new();
+    let tags_sorted = move || {
+        let selected = selected.get();
+        let search = search_filter.get().to_ascii_lowercase();
+        let mut selected_tags = vec![];
+        let mut unselected_tags = vec![];
+        for tag in tags.get() {
+            if !tag.to_string().to_ascii_lowercase().contains(&search) {
+                continue;
+            }
+            if selected.contains(&tag) {
+                selected_tags.push((tag, true));
+            } else {
+                unselected_tags.push((tag, false));
+            }
+        }
+        selected_tags.splice(selected_tags.len().., unselected_tags.into_iter());
+        selected_tags
+            .into_iter()
+            .enumerate()
+            .collect::<Vec<(usize, (T, bool))>>()
+    };
+    view! {
+        <Popover show_arrow=false preferred_pos=PopoverPosition::BottomStart trigger_type=PopoverTriggerType::Click on_open=move || {
+            let Some(input): Option<HtmlInputElement> = search_ref.get() else { return; };
+            input.focus().expect("Tag picker search box should be focusable upon opening.");
+        }>
+            <PopoverTrigger slot>
+                <div class=class_list!(SELECT_CLASSES, "cursor-default flex justify-between items-center")>
+                    <div class="flex gap-2 overflow-scroll">
+                        // Selected tags
+                        <For
+                            each=move || selected.get()
+                            key=|tag| tag.clone()
+                            let:tag
+                            >
+                            <div class="p-1.5 bg-oa-gray rounded-lg flex items-center gap-1.5">
+                                <span>{tag.to_string()}</span>
+                                <div class="p-1 hover:bg-oa-gray-mid hover:cursor-pointer rounded" on:click=move |ev| {
+                                    ev.stop_propagation();
+                                    selected.update(|vec| {
+                                        vec.iter()
+                                            .position(|e| e == &tag)
+                                            .and_then(|pos| { Some(vec.remove(pos)) });
+                                    });
+                                }>
+                                    <Icon class="w-3 h-3" icon=crate::icon::CloseIcon() />
+                                </div>
+                            </div>
+                        </For>
+                        // Placeholder, shown when empty
+                        <div class="p-1.5 text-gray-600">
+                        {move || {
+                            if selected.get().is_empty() {
+                                view! { {placeholder.get()} }.into_any()
+                            } else {
+                                view! { <> }.into_any()
+                            }
+                        }}
+                        </div>
+                    </div>
+                    <Icon class="text-oa-gray-darker w-4 h-4 ml-2" icon=crate::icon::DownIcon() />
+                </div>
+            </PopoverTrigger>
+
+            // Popover Contents VV
+            <ul>
+                <Input class="mb-2" placeholder="Search..." value=search_filter input_ref=search_ref/>
+                // Tags
+                <For
+                    each=tags_sorted
+                    key=|tag| {
+                        tag.clone()
+                    }
+                    let((i, (tag, is_selected)))
+                    >
+                    <li
+                        class=class_list!(
+                            TAG_LIST_ITEM_CLASSES,
+                            ("border", i == 0 && !search_filter.get().is_empty())
+                        )
+                        on:click={ move |_| {
+                            // Toggle selection
+                            selected.update(|vec| {
+                                if is_selected {
+                                    vec.iter()
+                                        .position(|e| e == &tag)
+                                        .and_then(|pos| { Some(vec.remove(pos)) });
+                                } else {
+                                    vec.push(tag.clone());
+                                }
+                            });
+                        }}
+                    >
+                        <Checkbox label=tag.to_string() value=move || is_selected/>
+                    </li>
+                </For>
+            </ul>
+        </Popover>
+    }
+}
+
+#[derive(Debug, Default, PartialEq, Clone, Copy)]
+pub enum SelectSize {
+    Small,
+    #[default]
+    Medium,
+    Large,
+}
+
+impl SelectSize {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Small => "small",
+            Self::Medium => "medium",
+            Self::Large => "large",
+        }
+    }
+}

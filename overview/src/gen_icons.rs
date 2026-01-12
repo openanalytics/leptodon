@@ -5,221 +5,275 @@ use leptos_components::icon::Icon;
 #[component]
 pub fn IconList() -> impl IntoView {
     view! {
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::HamburgerIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                HamburgerIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::UserIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                UserIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::CalendarIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                CalendarIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::ProjectsIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                ProjectsIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::ProjectsIconFilled() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                ProjectsIconFilled
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::CustomersIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                CustomersIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::ContractsIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                ContractsIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::ConsultantsIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                ConsultantsIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::BillingIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                BillingIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::TaskIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                TaskIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::ReportingIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                ReportingIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::ApproveIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                ApproveIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::RejectIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                RejectIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::CloseIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                CloseIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::SearchIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                SearchIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::PreviousIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                PreviousIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::NextIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                NextIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::DownIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                DownIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::RefreshIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                RefreshIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::DecrementIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                DecrementIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::IncrementIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                IncrementIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::NoteFilledIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                NoteFilledIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::NoteIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                NoteIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::ProjectAssignmentsIconFilled() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                ProjectAssignmentsIconFilled
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::ProjectAssignmentsIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                ProjectAssignmentsIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::LockOpenIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                LockOpenIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::LockIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                LockIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::ApprovedIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                ApprovedIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::RejectedIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                RejectedIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::PendingApprovalIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                PendingApprovalIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::SavedIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                SavedIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::EmptyIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                EmptyIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::OpenIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                OpenIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::InfoIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                InfoIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::RightArrowIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                RightArrowIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::LeftArrowIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                LeftArrowIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::SaveIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                SaveIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::DateIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                DateIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::TableSearchIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                TableSearchIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::UnsortedIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                UnsortedIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::SortedAscendingIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                SortedAscendingIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::SortedDescendingIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                SortedDescendingIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::HideIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                HideIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::ShowIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                ShowIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::MoveIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                MoveIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::EditIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                EditIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::DeleteIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                DeleteIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::WarningIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                WarningIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::CancelIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                CancelIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::AddIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                AddIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::FirstIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                FirstIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::LastIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                LastIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::DownloadIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                DownloadIcon
+            </span>
 
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::ClearIcon() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                ClearIcon
+            </span>
     }
 }
 

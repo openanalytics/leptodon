@@ -34,7 +34,7 @@ pub fn Checkbox(
     };
 
     view! {
-        <label class=class_list!["relative inline-flex items-center mb-4 cursor-pointer", class]>
+        <label class=class_list!["relative inline-flex items-center cursor-pointer", class]>
             <input
                 name=name.get()
                 type="checkbox"

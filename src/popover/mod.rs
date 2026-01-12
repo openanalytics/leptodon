@@ -5,7 +5,7 @@ use crate::{
     util::{callback::BoxCallback, element::Element},
 };
 use leptos::{
-    ev::{mouseenter, mouseleave, on},
+    ev::{click, mouseenter, mouseleave, on},
     html::Div,
     prelude::*,
 };
@@ -30,17 +30,13 @@ pub fn Popover<Trigger, Content>(
     /// Configures the position of the Popover.
     #[prop(optional)]
     preferred_pos: PopoverPosition,
-    /// A popover can appear styled with brand or inverted.
-    /// When not specified, the default style is used.
-    #[prop(optional, into)]
-    appearance: MaybeProp<PopoverAppearance>,
-    /// TODO
-    #[prop(optional, into)]
-    size: Signal<PopoverSize>,
-    /// TODO
+    /// Wether or not to render and position the popup for a connector arrow between the popover and trigger element.
+    #[prop(default = true, optional)]
+    show_arrow: bool,
+    /// Called when the popover becomes visible
     #[prop(optional, into)]
     on_open: Option<BoxCallback>,
-    /// TODO
+    /// Called when the popover becomes invisible
     #[prop(optional, into)]
     on_close: Option<BoxCallback>,
     children: TypedChildren<Content>,
@@ -67,6 +63,24 @@ where
     let popover_visible = use_or(show_by_hover, popover_clicked_open);
 
     let (x, y) = use_window_scroll();
+    Effect::watch(
+        move || popover_visible.get(),
+        move |new_visible, old, w| {
+            if Some(new_visible) == old {
+                return;
+            }
+            if let Some(on_open) = &on_open
+                && *new_visible
+            {
+                on_open();
+            } else if let Some(on_close) = &on_close
+                && !*new_visible
+            {
+                on_close();
+            }
+        },
+        false,
+    );
 
     Effect::new(move || {
         let popover_visible = popover_visible.get();
@@ -78,15 +92,15 @@ where
         // Skip recalculate when invisible.
         if let Some(popover) = popover_ref.get()
             && let Some(trigger) = trigger_ref.get()
-            && let Some(arrow) = arrow_ref.get()
             && popover_visible
         {
             debug_log!("recalculating style");
             let (chosen_popover_position, abs_position) =
-                find_popover_abs_position(preferred_pos, &popover, &trigger);
+                find_popover_abs_position(preferred_pos, &popover, &trigger, show_arrow);
             if let Some(chosen_popover_position) = chosen_popover_position
                 && let Some(HorizontalOffset::Left(x)) = abs_position.horizontal_offset
                 && let Some(VerticalOffset::Top(y)) = abs_position.vertical_offset
+                && let Some(arrow) = arrow_ref.get()
             {
                 set_arrow_position(arrow, &popover, (x, y), chosen_popover_position);
             }
@@ -153,11 +167,18 @@ where
             .ok();
         });
     };
+    let on_click = move |_| {
+        if trigger_type != PopoverTriggerType::Click {
+            return;
+        }
+        popover_clicked_open.update(|old| *old = !*old);
+    };
 
     let trigger_children = popover_trigger.children.into_inner()()
         .into_inner()
         .add_any_attr(on(mouseenter, on_mouse_enter))
         .add_any_attr(on(mouseleave, on_mouse_leave))
+        .add_any_attr(on(click, on_click))
         .add_any_attr(node_ref(trigger_ref));
 
     // Incase I need to add attrs in the future
@@ -185,21 +206,22 @@ where
                 </div>
             </div>
 
-            // The arrow part of the popover.
-            // Both divs are angled 45 deg so it points right by default, inner white square overflow is clipped off
+            <Show when=move || show_arrow fallback=|| view!{ <> }>
+                // The arrow part of the popover.
+                // Both divs are angled 45 deg so it points right by default, inner white square overflow is clipped off
+                <div class=class_list!(
+                    // top-right-bordered transparent square
+                    "absolute border-t border-r rotate-45 h-3 w-3 overflow-hidden",
+                    ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
+                    ("z-[1001]", move || popover_visible.get())) node_ref=arrow_ref>
 
-            <div class=class_list!(
-                // top-right-bordered transparent square
-                "absolute border-t border-r rotate-45 h-3 w-3 overflow-hidden",
-                ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
-                ("z-[1001]", move || popover_visible.get())) node_ref=arrow_ref>
+                    <div
+                        // A clipped white square such that it becomes a bg between top-left, top-right and bottom-right corners.
+                        class="relative w-5 h-3 -translate-y-1 rotate-45 bg-white"
+                    />
 
-                <div
-                    // A clipped white square such that it becomes a bg between top-left, top-right and bottom-right corners.
-                    class="relative w-5 h-3 -translate-y-1 rotate-45 bg-white"
-                />
-
-            </div>
+                </div>
+            </Show>
         </div>
     }
 }
@@ -345,6 +367,7 @@ fn find_popover_abs_position(
     preferred_position: PopoverPosition,
     popover: &web_sys::Element,
     trigger: &web_sys::Element,
+    show_arrow: bool,
 ) -> (Option<PopoverPosition>, RelativePosition) {
     let fallback = (
         None,
@@ -371,7 +394,7 @@ fn find_popover_abs_position(
     debug_log!("popover_width: {popover_width:?}");
     debug_log!("popover_height: {popover_height:?}");
 
-    let arrow_bump = 6.0;
+    let arrow_bump = if show_arrow { 6.0 } else { 0.0 };
 
     let Some(window_width) = window_inner_width() else {
         debug_warn!("No window width, falling back");

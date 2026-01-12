@@ -1,5 +1,4 @@
 use leptos::component;
-use leptos_struct_table::TableClassesProvider;
 use leptos::either::Either;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
@@ -9,9 +8,11 @@ use leptos::prelude::Set;
 use leptos::{IntoView, logging::debug_log, view};
 use leptos_components::button_group::Pagination;
 use leptos_components::table::grouping::{GroupRow, GroupTableRowRenderer, GroupingInfo};
+use leptos_components::tag_picker::TagPicker;
 use leptos_struct_table::ColumnSort;
 use leptos_struct_table::DisplayStrategy;
 use leptos_struct_table::PaginationController;
+use leptos_struct_table::TableClassesProvider;
 use leptos_struct_table::TailwindClassesPreset;
 use leptos_struct_table::{PaginatedTableDataProvider, TableContent, TableRow};
 use std::sync::Arc;
@@ -41,14 +42,13 @@ impl GroupRow<FlowerColumn> for Flower {
     }
 }
 
-
 #[component]
 pub fn GroupedTableExample() -> impl IntoView {
-    let rows = HardcodedFlowers;
+    let rows = ServerFlowers;
     let pagination_controller = PaginationController::default();
 
     let strat = DisplayStrategy::Pagination {
-        row_count: 15,
+        row_count: 10,
         controller: pagination_controller,
     };
 
@@ -58,9 +58,13 @@ pub fn GroupedTableExample() -> impl IntoView {
         debug_log!("Moving to table page {visible_page}");
         pagination_controller.current_page.set(visible_page - 1);
     });
-
+    let column_tags = Flower::columns()
+        .iter()
+        .map(|c| Flower::col_name(*c).to_string())
+        .collect::<Vec<_>>();
     view! {
-        <div> hello </div>
+        <div>Group on: </div>
+        <TagPicker placeholder="Selects columns to group on" tags=RwSignal::new(column_tags)/>
         <table>
             <TableContent rows row_renderer=GroupTableRowRenderer display_strategy=strat scroll_container="html"></TableContent>
         </table>
@@ -79,8 +83,8 @@ pub fn GroupedTableExample() -> impl IntoView {
 }
 
 // Paginated Data provider
-struct HardcodedFlowers;
-impl PaginatedTableDataProvider<Flower, FlowerColumn> for HardcodedFlowers {
+struct ServerFlowers;
+impl PaginatedTableDataProvider<Flower, FlowerColumn> for ServerFlowers {
     const PAGE_ROW_COUNT: usize = 10;
 
     // 0-indexed
@@ -89,7 +93,8 @@ impl PaginatedTableDataProvider<Flower, FlowerColumn> for HardcodedFlowers {
         let flowers = &get_flowers();
         let end_row = std::cmp::min(flowers.len(), start_row + Self::PAGE_ROW_COUNT);
         let flowers = &flowers[start_row..end_row];
-        Ok(Vec::from(flowers))
+        // Ok(Vec::from(flowers));
+        Ok(vec![])
     }
 
     async fn row_count(&self) -> Option<usize> {
@@ -116,1808 +121,1066 @@ impl PaginatedTableDataProvider<Flower, FlowerColumn> for HardcodedFlowers {
     }
 }
 
+pub struct DBFlower {
+    species: String,
+    sepal_width: f64,
+    sepal_length: f64,
+    petal_width: f64,
+    petal_length: f64,
+}
+
 // Table Data
-fn get_flowers() -> Vec<Flower> {
+fn get_flowers() -> Vec<DBFlower> {
     vec![
-        Flower {
+        DBFlower {
             sepal_length: 6.0,
             sepal_width: 2.2,
             petal_length: 5.0,
             petal_width: 1.5,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 0,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.9,
             sepal_width: 2.5,
             petal_length: 4.5,
             petal_width: 1.7,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 1,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.7,
             sepal_width: 2.5,
             petal_length: 5.8,
             petal_width: 1.8,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 2,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.3,
             sepal_width: 2.5,
             petal_length: 5.0,
             petal_width: 1.9,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 3,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.7,
             sepal_width: 2.5,
             petal_length: 5.0,
             petal_width: 2.0,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 4,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.1,
             sepal_width: 2.6,
             petal_length: 5.6,
             petal_width: 1.4,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 5,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.7,
             sepal_width: 2.6,
             petal_length: 6.9,
             petal_width: 2.3,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 6,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.3,
             sepal_width: 2.7,
             petal_length: 4.9,
             petal_width: 1.8,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 7,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.4,
             sepal_width: 2.7,
             petal_length: 5.3,
             petal_width: 1.9,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 8,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.8,
             sepal_width: 2.7,
             petal_length: 5.1,
             petal_width: 1.9,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 9,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.8,
             sepal_width: 2.7,
             petal_length: 5.1,
             petal_width: 1.9,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 10,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.3,
             sepal_width: 2.8,
             petal_length: 5.1,
             petal_width: 1.5,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 11,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.2,
             sepal_width: 2.8,
             petal_length: 4.8,
             petal_width: 1.8,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 12,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.4,
             sepal_width: 2.8,
             petal_length: 6.1,
             petal_width: 1.9,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 13,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.7,
             sepal_width: 2.8,
             petal_length: 6.7,
             petal_width: 2.0,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 14,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.6,
             sepal_width: 2.8,
             petal_length: 4.9,
             petal_width: 2.0,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 15,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.4,
             sepal_width: 2.8,
             petal_length: 5.6,
             petal_width: 2.1,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 16,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.4,
             sepal_width: 2.8,
             petal_length: 5.6,
             petal_width: 2.2,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 17,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.8,
             sepal_width: 2.8,
             petal_length: 5.1,
             petal_width: 2.4,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 18,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.3,
             sepal_width: 2.9,
             petal_length: 5.6,
             petal_width: 1.8,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 19,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.3,
             sepal_width: 2.9,
             petal_length: 6.3,
             petal_width: 1.8,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 20,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.2,
             sepal_width: 3.0,
             petal_length: 5.8,
             petal_width: 1.6,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 21,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.5,
             sepal_width: 3.0,
             petal_length: 5.5,
             petal_width: 1.8,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 22,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.1,
             sepal_width: 3.0,
             petal_length: 4.9,
             petal_width: 1.8,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 23,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.0,
             sepal_width: 3.0,
             petal_length: 4.8,
             petal_width: 1.8,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 24,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.9,
             sepal_width: 3.0,
             petal_length: 5.1,
             petal_width: 1.8,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 25,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.5,
             sepal_width: 3.0,
             petal_length: 5.2,
             petal_width: 2.0,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 26,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.8,
             sepal_width: 3.0,
             petal_length: 5.5,
             petal_width: 2.1,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 27,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.6,
             sepal_width: 3.0,
             petal_length: 6.6,
             petal_width: 2.1,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 28,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.1,
             sepal_width: 3.0,
             petal_length: 5.9,
             petal_width: 2.1,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 29,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.5,
             sepal_width: 3.0,
             petal_length: 5.8,
             petal_width: 2.2,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 30,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.7,
             sepal_width: 3.0,
             petal_length: 6.1,
             petal_width: 2.3,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 31,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.7,
             sepal_width: 3.0,
             petal_length: 5.2,
             petal_width: 2.3,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 32,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.4,
             sepal_width: 3.1,
             petal_length: 5.5,
             petal_width: 1.8,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 33,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.9,
             sepal_width: 3.1,
             petal_length: 5.4,
             petal_width: 2.1,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 34,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.9,
             sepal_width: 3.1,
             petal_length: 5.1,
             petal_width: 2.3,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 35,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.7,
             sepal_width: 3.1,
             petal_length: 5.6,
             petal_width: 2.4,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 36,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.2,
             sepal_width: 3.2,
             petal_length: 6.0,
             petal_width: 1.8,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 37,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.5,
             sepal_width: 3.2,
             petal_length: 5.1,
             petal_width: 2.0,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 38,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.4,
             sepal_width: 3.2,
             petal_length: 5.3,
             petal_width: 2.3,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 39,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.9,
             sepal_width: 3.2,
             petal_length: 5.7,
             petal_width: 2.3,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 40,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.8,
             sepal_width: 3.2,
             petal_length: 5.9,
             petal_width: 2.3,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 41,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.7,
             sepal_width: 3.3,
             petal_length: 5.7,
             petal_width: 2.1,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 42,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.3,
             sepal_width: 3.3,
             petal_length: 6.0,
             petal_width: 2.5,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 43,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.7,
             sepal_width: 3.3,
             petal_length: 5.7,
             petal_width: 2.5,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 44,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.2,
             sepal_width: 3.4,
             petal_length: 5.4,
             petal_width: 2.3,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 45,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.3,
             sepal_width: 3.4,
             petal_length: 5.6,
             petal_width: 2.4,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 46,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.2,
             sepal_width: 3.6,
             petal_length: 6.1,
             petal_width: 2.5,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 47,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.9,
             sepal_width: 3.8,
             petal_length: 6.4,
             petal_width: 2.0,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 48,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.7,
             sepal_width: 3.8,
             petal_length: 6.7,
             petal_width: 2.2,
             species: "Virginica".into(),
-            grouping_info: GroupingInfo {
-                row_index: 49,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.0,
             sepal_width: 2.0,
             petal_length: 3.5,
             petal_width: 1.0,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 0,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.0,
             sepal_width: 2.2,
             petal_length: 4.0,
             petal_width: 1.0,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 1,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.2,
             sepal_width: 2.2,
             petal_length: 4.5,
             petal_width: 1.5,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 2,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.0,
             sepal_width: 2.3,
             petal_length: 3.3,
             petal_width: 1.0,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 3,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.3,
             sepal_width: 2.3,
             petal_length: 4.4,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 4,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.5,
             sepal_width: 2.3,
             petal_length: 4.0,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 5,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.5,
             sepal_width: 2.4,
             petal_length: 3.7,
             petal_width: 1.0,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 6,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.9,
             sepal_width: 2.4,
             petal_length: 3.3,
             petal_width: 1.0,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 7,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.5,
             sepal_width: 2.4,
             petal_length: 3.8,
             petal_width: 1.1,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 8,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.6,
             sepal_width: 2.5,
             petal_length: 3.9,
             petal_width: 1.1,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 9,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.1,
             sepal_width: 2.5,
             petal_length: 3.0,
             petal_width: 1.1,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 10,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.5,
             sepal_width: 2.5,
             petal_length: 4.0,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 11,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.3,
             sepal_width: 2.5,
             petal_length: 4.9,
             petal_width: 1.5,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 12,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.7,
             sepal_width: 2.6,
             petal_length: 3.5,
             petal_width: 1.0,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 13,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.8,
             sepal_width: 2.6,
             petal_length: 4.0,
             petal_width: 1.2,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 14,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.5,
             sepal_width: 2.6,
             petal_length: 4.4,
             petal_width: 1.2,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 15,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.8,
             sepal_width: 2.7,
             petal_length: 4.1,
             petal_width: 1.0,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 16,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.8,
             sepal_width: 2.7,
             petal_length: 3.9,
             petal_width: 1.2,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 17,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.6,
             sepal_width: 2.7,
             petal_length: 4.2,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 18,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.2,
             sepal_width: 2.7,
             petal_length: 3.9,
             petal_width: 1.4,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 19,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.0,
             sepal_width: 2.7,
             petal_length: 5.1,
             petal_width: 1.6,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 20,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.1,
             sepal_width: 2.8,
             petal_length: 4.7,
             petal_width: 1.2,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 21,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.1,
             sepal_width: 2.8,
             petal_length: 4.0,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 22,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.7,
             sepal_width: 2.8,
             petal_length: 4.1,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 23,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.7,
             sepal_width: 2.8,
             petal_length: 4.5,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 24,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.8,
             sepal_width: 2.8,
             petal_length: 4.8,
             petal_width: 1.4,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 25,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.5,
             sepal_width: 2.8,
             petal_length: 4.6,
             petal_width: 1.5,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 26,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.4,
             sepal_width: 2.9,
             petal_length: 4.3,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 27,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.6,
             sepal_width: 2.9,
             petal_length: 3.6,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 28,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.7,
             sepal_width: 2.9,
             petal_length: 4.2,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 29,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.2,
             sepal_width: 2.9,
             petal_length: 4.3,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 30,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.6,
             sepal_width: 2.9,
             petal_length: 4.6,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 31,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.1,
             sepal_width: 2.9,
             petal_length: 4.7,
             petal_width: 1.4,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 32,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.0,
             sepal_width: 2.9,
             petal_length: 4.5,
             petal_width: 1.5,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 33,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.7,
             sepal_width: 3.0,
             petal_length: 4.2,
             petal_width: 1.2,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 34,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.6,
             sepal_width: 3.0,
             petal_length: 4.1,
             petal_width: 1.3,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 35,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.1,
             sepal_width: 3.0,
             petal_length: 4.6,
             petal_width: 1.4,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 36,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.6,
             sepal_width: 3.0,
             petal_length: 4.4,
             petal_width: 1.4,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 37,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.9,
             sepal_width: 3.0,
             petal_length: 4.2,
             petal_width: 1.5,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 38,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.4,
             sepal_width: 3.0,
             petal_length: 4.5,
             petal_width: 1.5,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 39,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.6,
             sepal_width: 3.0,
             petal_length: 4.5,
             petal_width: 1.5,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 40,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.7,
             sepal_width: 3.0,
             petal_length: 5.0,
             petal_width: 1.7,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 41,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.7,
             sepal_width: 3.1,
             petal_length: 4.4,
             petal_width: 1.4,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 42,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.7,
             sepal_width: 3.1,
             petal_length: 4.7,
             petal_width: 1.5,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 43,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.9,
             sepal_width: 3.1,
             petal_length: 4.9,
             petal_width: 1.5,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 44,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 7.0,
             sepal_width: 3.2,
             petal_length: 4.7,
             petal_width: 1.4,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 45,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.4,
             sepal_width: 3.2,
             petal_length: 4.5,
             petal_width: 1.5,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 46,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.9,
             sepal_width: 3.2,
             petal_length: 4.8,
             petal_width: 1.8,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 47,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.3,
             sepal_width: 3.3,
             petal_length: 4.7,
             petal_width: 1.6,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 48,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 6.0,
             sepal_width: 3.4,
             petal_length: 4.5,
             petal_width: 1.6,
             species: "Versicolor".into(),
-            grouping_info: GroupingInfo {
-                row_index: 49,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.5,
             sepal_width: 2.3,
             petal_length: 1.3,
             petal_width: 0.3,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 0,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.4,
             sepal_width: 2.9,
             petal_length: 1.4,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 1,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.3,
             sepal_width: 3.0,
             petal_length: 1.1,
             petal_width: 0.1,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 2,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.8,
             sepal_width: 3.0,
             petal_length: 1.4,
             petal_width: 0.1,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 3,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.9,
             sepal_width: 3.0,
             petal_length: 1.4,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 4,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.0,
             sepal_width: 3.0,
             petal_length: 1.6,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 5,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.4,
             sepal_width: 3.0,
             petal_length: 1.3,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 6,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.8,
             sepal_width: 3.0,
             petal_length: 1.4,
             petal_width: 0.3,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 7,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.9,
             sepal_width: 3.1,
             petal_length: 1.5,
             petal_width: 0.1,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 8,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.6,
             sepal_width: 3.1,
             petal_length: 1.5,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 9,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.8,
             sepal_width: 3.1,
             petal_length: 1.6,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 10,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.9,
             sepal_width: 3.1,
             petal_length: 1.5,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 11,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.6,
             sepal_width: 3.2,
             petal_length: 1.4,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 12,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.4,
             sepal_width: 3.2,
             petal_length: 1.3,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 13,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.7,
             sepal_width: 3.2,
             petal_length: 1.6,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 14,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.7,
             sepal_width: 3.2,
             petal_length: 1.3,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 15,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.0,
             sepal_width: 3.2,
             petal_length: 1.2,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 16,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.0,
             sepal_width: 3.3,
             petal_length: 1.4,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 17,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.1,
             sepal_width: 3.3,
             petal_length: 1.7,
             petal_width: 0.5,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 18,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.0,
             sepal_width: 3.4,
             petal_length: 1.5,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 19,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.2,
             sepal_width: 3.4,
             petal_length: 1.4,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 20,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.8,
             sepal_width: 3.4,
             petal_length: 1.9,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 21,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.4,
             sepal_width: 3.4,
             petal_length: 1.7,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 22,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.1,
             sepal_width: 3.4,
             petal_length: 1.5,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 23,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.8,
             sepal_width: 3.4,
             petal_length: 1.6,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 24,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.6,
             sepal_width: 3.4,
             petal_length: 1.4,
             petal_width: 0.3,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 25,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.4,
             sepal_width: 3.4,
             petal_length: 1.5,
             petal_width: 0.4,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 26,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.0,
             sepal_width: 3.4,
             petal_length: 1.6,
             petal_width: 0.4,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 27,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.5,
             sepal_width: 3.5,
             petal_length: 1.3,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 28,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.2,
             sepal_width: 3.5,
             petal_length: 1.5,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 29,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.1,
             sepal_width: 3.5,
             petal_length: 1.4,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 30,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.0,
             sepal_width: 3.5,
             petal_length: 1.3,
             petal_width: 0.3,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 31,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.1,
             sepal_width: 3.5,
             petal_length: 1.4,
             petal_width: 0.3,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 32,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.0,
             sepal_width: 3.5,
             petal_length: 1.6,
             petal_width: 0.6,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 33,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.9,
             sepal_width: 3.6,
             petal_length: 1.4,
             petal_width: 0.1,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 34,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.0,
             sepal_width: 3.6,
             petal_length: 1.4,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 35,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 4.6,
             sepal_width: 3.6,
             petal_length: 1.0,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 36,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.4,
             sepal_width: 3.7,
             petal_length: 1.5,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 37,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.3,
             sepal_width: 3.7,
             petal_length: 1.5,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 38,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.1,
             sepal_width: 3.7,
             petal_length: 1.5,
             petal_width: 0.4,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 39,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.1,
             sepal_width: 3.8,
             petal_length: 1.6,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 40,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.7,
             sepal_width: 3.8,
             petal_length: 1.7,
             petal_width: 0.3,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 41,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.1,
             sepal_width: 3.8,
             petal_length: 1.5,
             petal_width: 0.3,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 42,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.1,
             sepal_width: 3.8,
             petal_length: 1.9,
             petal_width: 0.4,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 43,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.4,
             sepal_width: 3.9,
             petal_length: 1.3,
             petal_width: 0.4,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 44,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.4,
             sepal_width: 3.9,
             petal_length: 1.7,
             petal_width: 0.4,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 45,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.8,
             sepal_width: 4.0,
             petal_length: 1.2,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 46,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.2,
             sepal_width: 4.1,
             petal_length: 1.5,
             petal_width: 0.1,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 47,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.5,
             sepal_width: 4.2,
             petal_length: 1.4,
             petal_width: 0.2,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 48,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
-        Flower {
+        DBFlower {
             sepal_length: 5.7,
             sepal_width: 4.4,
             petal_length: 1.5,
             petal_width: 0.4,
             species: "Setosa".into(),
-            grouping_info: GroupingInfo {
-                row_index: 49,
-                nb_entries: 50,
-                grouped_by: Arc::new(vec![FlowerColumn::Species]),
-            },
         },
     ]
 }

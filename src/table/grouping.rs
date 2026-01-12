@@ -48,24 +48,28 @@ where
                     let temp_row = row.get();
                     let grouping_info = temp_row.group_info();
                     if !grouping_info.grouped_by.is_empty() {
+                        let class = if grouping_info.grouped_by.contains(&column) {
+                            "font-bold".into()
+                        } else {
+                            String::new()
+                        };
                         if grouping_info.nb_entries > 1 {
                             if grouping_info.row_index == 0 {
                                 // Group-heading-row
                                 // Split rendering into 2 rows, first one below
                                 if grouping_info.grouped_by.contains(&column) {
-                                    return Row::cell_renderer_for_column(row, column).into_any()
+                                    return Row::cell_renderer_for_column(row, column, class).into_any()
                                 }
                             } else {
                                 // Content-row
                                 // Skip rendering of grouped columns
                                 if !grouping_info.grouped_by.contains(&column) {
-                                    return Row::cell_renderer_for_column(row, column).into_any()
+                                    return Row::cell_renderer_for_column(row, column, class).into_any()
                                 }
                             }
                         } else {
                             // Single row in the group
-                            // TODO: highlight cells in the grouped columns
-                            return Row::cell_renderer_for_column(row, column).into_any()
+                            return Row::cell_renderer_for_column(row, column, class).into_any()
                         }
                     }
                     return view!{ <td/>}.into_any()
@@ -80,18 +84,21 @@ where
             }
             fallback=|| ()
         >
-            <For
-                each=move || columns.get().into_iter()
-                key=|column| column.clone()
-                children=move |column| {
-                    let temp_row = row.get();
-                    let grouping_info = temp_row.group_info();
-                    if !grouping_info.grouped_by.contains(&column) {
-                        return Row::cell_renderer_for_column(row, column).into_any()
-                    }
-                    return view!{ <td/>}.into_any()
-                }>
-            </For>
+            // TODO: Fix on_click listener here
+            <tr class=class>
+                <For
+                    each=move || columns.get().into_iter()
+                    key=|column| column.clone()
+                    children=move |column| {
+                        let temp_row = row.get();
+                        let grouping_info = temp_row.group_info();
+                        if !grouping_info.grouped_by.contains(&column) {
+                            return Row::cell_renderer_for_column(row, column, String::new()).into_any()
+                        }
+                        return view!{ <td/>}.into_any()
+                    }>
+                </For>
+            </tr>
         </Show>
     }
 }

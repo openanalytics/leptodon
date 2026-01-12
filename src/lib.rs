@@ -43,6 +43,8 @@ pub mod spinner;
 #[cfg(feature = "leptos")]
 pub mod table;
 #[cfg(feature = "leptos")]
+pub mod tag_picker;
+#[cfg(feature = "leptos")]
 pub mod toggle;
 #[cfg(feature = "leptos")]
 pub mod util;

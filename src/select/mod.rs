@@ -11,7 +11,7 @@ use leptos::{
 };
 
 use crate::class_list;
-const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
+pub const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 
 #[component]
 pub fn Select(
@@ -25,7 +25,6 @@ pub fn Select(
     /// Whether the select is disabled.
     #[prop(optional, into)]
     disabled: Signal<bool>,
-    /// Matches the Input sizes.
     #[prop(optional, into)]
     size: Signal<SelectSize>,
     children: Children,

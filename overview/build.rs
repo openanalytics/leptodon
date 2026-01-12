@@ -1,5 +1,5 @@
+use std::io::Error;
 use std::process::Command;
- use std::io::Error;
 
 fn main() -> Result<(), Error> {
     println!("cargo:rustc-env=RUSTFLAGS=--cfg=erase_components");

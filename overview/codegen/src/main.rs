@@ -27,10 +27,12 @@ fn gen_icons() -> Result<(), Error> {
             syn::Item::Fn(item_fn) if matches!(item_fn.vis, Visibility::Public(_)) => {
                 format!(
                     r#"
-            <p>
+            <span>
                 <Icon icon=leptos_components::icon::{}() class="border-2 border-solid w-24 h-24"/>
-            </p>
+                {}
+            </span>
 "#,
+                    item_fn.sig.ident.to_string(),
                     item_fn.sig.ident.to_string()
                 )
             }

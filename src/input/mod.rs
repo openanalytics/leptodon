@@ -1,3 +1,4 @@
+use crate::button_group::InGroupContext;
 use crate::class_list;
 use crate::input_group::GroupItemClassContext;
 use crate::util::callback::ArcOneCallback;
@@ -21,9 +22,10 @@ use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::prelude::Signal;
 use leptos::prelude::use_context;
+use leptos::tachys::html::node_ref::NodeRefContainer;
 use leptos::{IntoView, component, view};
 
-const OA_READONLY_INPUT_CLASSES: &str = "border-0 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
+pub const OA_READONLY_INPUT_CLASSES: &str = "border-0 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
 const OA_INPUT_CLASSES: &str = "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
 
 #[component]
@@ -31,7 +33,7 @@ pub fn Input(
     /// Extra classes added to augment the default style.
     #[prop(optional, into)]
     class: MaybeProp<String>,
-    #[prop(optional)] comp_ref: ComponentRef<InputRef>,
+    #[prop(optional)] input_ref: NodeRef<html::Input>,
     /// Text above the input that informs the user what to type.
     #[prop(optional, into)]
     label: MaybeProp<String>,
@@ -55,8 +57,6 @@ pub fn Input(
     #[prop(optional, into)]
     placeholder: MaybeProp<String>,
 ) -> impl IntoView {
-    let input_ref = NodeRef::<html::Input>::new();
-    comp_ref.load(InputRef { input_ref });
     let group_context = use_context::<GroupItemClassContext>();
     let group_classes = group_context.map(|item| item.class);
 
@@ -144,6 +144,8 @@ where
     comp_ref.load(InputRef { input_ref });
     let group_context = use_context::<GroupItemClassContext>();
     let group_classes = group_context.map(|item| item.class);
+    let in_group =
+        use_context::<InGroupContext>().unwrap_or_else(|| InGroupContext { in_group: false });
 
     // String value bound to <input>
     let internal_value_signal = RwSignal::new("".to_string());
@@ -212,6 +214,7 @@ where
             class=class_list![
                 ("border-oa-red", move || invalid_reason.get().is_some()),
                 if let Some(group_classes) = group_classes { group_classes } else { String::new() },
+                if in_group.in_group { "rounded-none border-r-0 !mr-0" } else { "" },
                 (OA_READONLY_INPUT_CLASSES, move || readonly.get()),
                 (OA_INPUT_CLASSES, move || !readonly.get()),
                 class
