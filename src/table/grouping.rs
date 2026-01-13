@@ -45,7 +45,7 @@ where
                     let temp_row = row.get();
                     let grouping_info = temp_row.group_info();
                     if !grouping_info.grouped_by.is_empty() {
-                        let class = if grouping_info.grouped_by.contains(&column) {
+                        let class = if grouping_info.grouped_by.contains(&column) && grouping_info.row_index == 0 {
                             "font-bold".into()
                         } else {
                             String::new()
@@ -54,20 +54,28 @@ where
                             if grouping_info.row_index == 0 {
                                 // Group-heading-row
                                 // Split rendering into 2 rows, first one below
+                                
                                 if grouping_info.grouped_by.contains(&column) {
                                     return Row::cell_renderer_for_column(row, column, class).into_any()
+                                } else {
+                                    debug_log!("WE'RE HIT #1");
                                 }
                             } else {
                                 // Content-row
                                 // Skip rendering of grouped columns
-                                if !grouping_info.grouped_by.contains(&column) {
+                                if !grouping_info.grouped_by.contains(&column) ||
+                                    grouping_info.grouped_by.len() == Row::columns().len() {
                                     return Row::cell_renderer_for_column(row, column, class).into_any()
+                                } else {
+                                    debug_log!("WE'RE HIT #2");
                                 }
                             }
                         } else {
                             // Single row in the group
                             return Row::cell_renderer_for_column(row, column, class).into_any()
                         }
+                    } else {
+                        return Row::cell_renderer_for_column(row, column, String::new()).into_any()
                     }
                     return view!{ <td/>}.into_any()
                 }>
@@ -77,7 +85,12 @@ where
             when=move || {
                 let temp_row = row.get();
                 let grouping_info = temp_row.group_info();
-                grouping_info.row_index == 0 && grouping_info.nb_entries > 1 && !grouping_info.grouped_by.is_empty()
+                
+                grouping_info.row_index == 0 && 
+                    grouping_info.nb_entries > 1 &&
+                    !grouping_info.grouped_by.is_empty() &&
+                    // Edge-case: when grouping on all columns, don't render content rows.
+                    grouping_info.grouped_by.len() != Row::columns().len()
             }
             fallback=|| ()
         >

@@ -163,6 +163,7 @@ impl PaginatedTableDataProvider<Flower, FlowerColumn> for LocalFlowers {
     }
 }
 
+#[derive(Debug)]
 pub struct DBFlower {
     species: String,
     sepal_width: f64,
@@ -203,15 +204,17 @@ fn group_flowers(flowers: Vec<DBFlower>, group_on: Arc<Vec<FlowerColumn>>) -> Ve
                     flower.species.hash(&mut hasher);
                     cur_values.push(hasher.finish())
                 }
-                FlowerColumn::SepalWidth => cur_values.push(flower.sepal_width as u64),
-                FlowerColumn::SepalLength => cur_values.push(flower.sepal_length as u64),
-                FlowerColumn::PetalWidth => cur_values.push(flower.petal_width as u64),
-                FlowerColumn::PetalLength => cur_values.push(flower.petal_length as u64),
+                FlowerColumn::SepalWidth => cur_values.push(flower.sepal_width.to_bits()),
+                FlowerColumn::SepalLength => cur_values.push(flower.sepal_length.to_bits()),
+                FlowerColumn::PetalWidth => cur_values.push(flower.petal_width.to_bits()),
+                FlowerColumn::PetalLength => cur_values.push(flower.petal_length.to_bits()),
             }
         }
         if prev_values == cur_values && row_index != last_row_idx {
-            group_builder.push(flower)
+            debug_log!("Pushing a flower {flower:?} onto an existing group {cur_values:?} == {prev_values:?}");
+            group_builder.push(flower);
         } else {
+            debug_log!("New group {flower:?} {cur_values:?} != {prev_values:?}");
             groups.push(group_builder);
             group_builder = vec![flower];
         }
