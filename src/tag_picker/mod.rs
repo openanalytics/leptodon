@@ -52,7 +52,7 @@ where
 {
     let search_filter = RwSignal::new(String::new());
     let search_ref = NodeRef::new();
-    
+
     // Also filterered
     let tags_sorted = Memo::new(move |_old| {
         let selected = selected.get();

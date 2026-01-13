@@ -1,14 +1,11 @@
+use crate::button_group::Pagination;
 use leptos::prelude::{ElementChild, RwSignal, Signal};
 use leptos::{
     either::Either,
     logging::debug_log,
-    prelude::{
-        ClassAttribute, Effect, For, Get, IntoAny, OnAttribute, Set,
-        Show,
-    },
+    prelude::{ClassAttribute, Effect, For, Get, IntoAny, OnAttribute, Set, Show},
 };
 use std::{hash::Hash, sync::Arc};
-use crate::button_group::Pagination;
 
 use leptos::{IntoView, component, view};
 use leptos_struct_table::*;

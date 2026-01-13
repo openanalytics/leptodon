@@ -79,7 +79,6 @@ cfg_if! {
                 .unwrap();
         }
 
-
         #[cfg(feature = "ssr")]
         #[axum::debug_handler]
         async fn leptos_routes_handler(

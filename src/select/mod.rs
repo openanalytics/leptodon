@@ -25,8 +25,7 @@ pub fn Select(
     /// Whether the select is disabled.
     #[prop(optional, into)]
     disabled: Signal<bool>,
-    #[prop(optional, into)]
-    size: Signal<SelectSize>,
+    #[prop(optional, into)] size: Signal<SelectSize>,
     children: Children,
 ) -> impl IntoView {
     view! {

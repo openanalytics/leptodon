@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use leptos::component;
 use leptos::either::Either;
 use leptos::prelude::Effect;
@@ -15,6 +16,10 @@ use leptos_struct_table::PaginationController;
 use leptos_struct_table::TableClassesProvider;
 use leptos_struct_table::TailwindClassesPreset;
 use leptos_struct_table::{PaginatedTableDataProvider, TableContent, TableRow};
+use std::hash::DefaultHasher;
+use std::hash::Hash;
+use std::hash::Hasher;
+use std::ops::Deref;
 use std::sync::Arc;
 
 // Define row type
@@ -44,7 +49,6 @@ impl GroupRow<FlowerColumn> for Flower {
 
 #[component]
 pub fn GroupedTableExample() -> impl IntoView {
-    let rows = ServerFlowers;
     let pagination_controller = PaginationController::default();
 
     let strat = DisplayStrategy::Pagination {
@@ -58,15 +62,24 @@ pub fn GroupedTableExample() -> impl IntoView {
         debug_log!("Moving to table page {visible_page}");
         pagination_controller.current_page.set(visible_page - 1);
     });
+
     let column_tags = Flower::columns()
         .iter()
         .map(|c| Flower::col_name(*c).to_string())
         .collect::<Vec<_>>();
+    let group_on = RwSignal::new(vec![]);
+
     view! {
         <div>Group on: </div>
-        <TagPicker placeholder="Selects columns to group on" tags=RwSignal::new(column_tags)/>
+        <TagPicker placeholder="Selects columns to group on" tags=RwSignal::new(column_tags) selected=group_on />
         <table>
-            <TableContent rows row_renderer=GroupTableRowRenderer display_strategy=strat scroll_container="html"></TableContent>
+            {move || {
+                let group_on = group_on.get();
+                let rows = LocalFlowers::new(group_on);
+                view! {
+                    <TableContent rows row_renderer=GroupTableRowRenderer display_strategy=strat scroll_container="html"></TableContent>
+                }
+            }}
         </table>
         { move || {
             let opt_pg_count = pagination_controller.page_count().get();
@@ -83,30 +96,59 @@ pub fn GroupedTableExample() -> impl IntoView {
 }
 
 // Paginated Data provider
-struct ServerFlowers;
-impl PaginatedTableDataProvider<Flower, FlowerColumn> for ServerFlowers {
+struct LocalFlowers {
+    group_on: Arc<Vec<FlowerColumn>>,
+    rows: Vec<Flower>,
+}
+impl LocalFlowers {
+    fn new(group_on: Vec<String>) -> Self {
+        let group_on = group_on
+            .iter()
+            .filter_map(|column_name| {
+                for col in Flower::columns() {
+                    if column_name == Flower::col_name(*col) {
+                        return Some(*col);
+                    }
+                }
+                None
+            })
+            .collect_vec();
+        let group_on = Arc::new(group_on);
+        let grouped_flowers = group_flowers(get_flowers(), group_on.clone());
+        debug_log!("Flower table contains {} flowers.", grouped_flowers.len());
+        return LocalFlowers {
+            group_on,
+            rows: grouped_flowers,
+        };
+    }
+}
+
+impl PaginatedTableDataProvider<Flower, FlowerColumn> for LocalFlowers {
     const PAGE_ROW_COUNT: usize = 10;
 
     // 0-indexed
     async fn get_page(&self, page_index: usize) -> Result<Vec<Flower>, String> {
         let start_row = Self::PAGE_ROW_COUNT * page_index;
-        let flowers = &get_flowers();
+        let flowers = &self.rows;
         let end_row = std::cmp::min(flowers.len(), start_row + Self::PAGE_ROW_COUNT);
         let flowers = &flowers[start_row..end_row];
-        // Ok(Vec::from(flowers));
-        Ok(vec![])
+        Ok(Vec::from(flowers))
     }
 
     async fn row_count(&self) -> Option<usize> {
-        debug_log!("Flowers table has {} rows", get_flowers().len());
-        Some(get_flowers().len())
+        debug_log!(
+            "Flowers table has {} rows",
+            &self.rows.len()
+        );
+        Some(self.rows.len())
     }
 
     async fn page_count(&self) -> Option<usize> {
-        let pages = (get_flowers().len() + Self::PAGE_ROW_COUNT - 1) / Self::PAGE_ROW_COUNT;
+        let pages =
+            (&self.rows.len() + Self::PAGE_ROW_COUNT - 1) / Self::PAGE_ROW_COUNT;
         debug_log!(
             "Flowers table has {} rows and {} pages",
-            get_flowers().len(),
+            &self.rows.len(),
             pages
         );
         Some(pages)
@@ -127,6 +169,74 @@ pub struct DBFlower {
     sepal_length: f64,
     petal_width: f64,
     petal_length: f64,
+}
+
+fn group_flowers(flowers: Vec<DBFlower>, group_on: Arc<Vec<FlowerColumn>>) -> Vec<Flower> {
+    // Grouping requires we are sorted first
+    let mut flowers = flowers;
+    for column in group_on.deref() {
+        match column {
+            FlowerColumn::Species => {
+                flowers.sort_by(|flower1, flower2| flower1.species.cmp(&flower2.species));
+            }
+            FlowerColumn::SepalWidth => flowers.sort_by(|flower1, flower2| flower1.sepal_width.total_cmp(&flower2.sepal_width)),
+            FlowerColumn::SepalLength => flowers.sort_by(|flower1, flower2| flower1.sepal_length.total_cmp(&flower2.sepal_length)),
+            FlowerColumn::PetalWidth => flowers.sort_by(|flower1, flower2| flower1.petal_width.total_cmp(&flower2.petal_width)),
+            FlowerColumn::PetalLength => flowers.sort_by(|flower1, flower2| flower1.petal_length.total_cmp(&flower2.petal_length)),
+        }
+    }
+    
+    
+    let mut groups = vec![];
+    let mut group_builder = vec![];
+
+    let mut prev_values = vec![];
+    let last_row_idx = flowers.len() -1;
+    // Naive attempt at a grouping algorithm.
+    for (row_index, flower) in flowers.into_iter().enumerate() {
+        let mut cur_values = vec![];
+        
+        for column in group_on.deref() {
+            match column {
+                FlowerColumn::Species => {
+                    let mut hasher = DefaultHasher::new();
+                    flower.species.hash(&mut hasher);
+                    cur_values.push(hasher.finish())
+                }
+                FlowerColumn::SepalWidth => cur_values.push(flower.sepal_width as u64),
+                FlowerColumn::SepalLength => cur_values.push(flower.sepal_length as u64),
+                FlowerColumn::PetalWidth => cur_values.push(flower.petal_width as u64),
+                FlowerColumn::PetalLength => cur_values.push(flower.petal_length as u64),
+            }
+        }
+        if prev_values == cur_values && row_index != last_row_idx {
+            group_builder.push(flower)
+        } else {
+            groups.push(group_builder);
+            group_builder = vec![flower];
+        }
+        
+        prev_values = cur_values;
+    }
+    let mut mapped = vec![];
+    for group in groups {
+        let group_size = group.len();
+        for (row_index, flower) in group.into_iter().enumerate() {
+            mapped.push(Flower {
+                sepal_width: flower.sepal_width,
+                sepal_length: flower.sepal_length,
+                petal_width: flower.petal_width,
+                petal_length: flower.petal_length,
+                species: flower.species,
+                grouping_info: GroupingInfo { 
+                    row_index: row_index as u32,
+                    nb_entries: group_size as u32,
+                    grouped_by: group_on.clone()
+                },
+            });
+        }
+    }
+    mapped
 }
 
 // Table Data

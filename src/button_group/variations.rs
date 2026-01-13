@@ -1,11 +1,3 @@
-use crate::icon::icon_data::IconData;
-use crate::input::GenericInput;
-use crate::input::Input;
-use crate::input::InputMode;
-use crate::input::InputType;
-use leptos::prelude::AriaAttributes;
-use leptos::prelude::Effect;
-use leptos::prelude::Set;
 use crate::button::ButtonProps;
 use crate::button::ButtonShape;
 use crate::button::{Button, ButtonAppearance, ButtonRef, ButtonSize, ButtonType};
@@ -16,13 +8,21 @@ use crate::class_list;
 use crate::dropdown::AlignmentAnchor;
 use crate::dropdown::Dropdown;
 use crate::icon;
+use crate::icon::icon_data::IconData;
 use crate::icon::icon_data::IconRef;
+use crate::input::GenericInput;
+use crate::input::Input;
+use crate::input::InputMode;
+use crate::input::InputType;
 use crate::modal::{Modal, ModalFooterChildren};
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
 use crate::util::signals::Model;
+use leptos::prelude::AriaAttributes;
 use leptos::prelude::ClassAttribute;
+use leptos::prelude::Effect;
 use leptos::prelude::IntoAny;
+use leptos::prelude::Set;
 use leptos::prelude::{Children, Get, MaybeProp, Signal, provide_context, signal};
 use leptos::prelude::{ElementChild, RwSignal, Update};
 use leptos::{IntoView, component, view};
@@ -37,7 +37,7 @@ pub fn Pagination(
     /// Target page is clamped to (1..*nb_pages*).
     /// Read for intial page position
     current_page: RwSignal<usize>,
-    jumper: bool
+    jumper: bool,
 ) -> impl IntoView {
     let read_only = Signal::derive(move || !jumper);
     let last_icon = crate::icon::LastIcon();
