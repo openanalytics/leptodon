@@ -26,6 +26,8 @@ pub use crate::button::variations::DownloadButton;
 pub use crate::button::variations::DropdownButton;
 pub use crate::button::variations::DropdownButtonChildren;
 pub use crate::button::variations::EditButton;
+pub use crate::button::variations::DialogButton;
+pub use crate::button::variations::DialogButtonChildren;
 pub use crate::button::variations::ModalButton;
 pub use crate::button::variations::ModalButtonChildren;
 

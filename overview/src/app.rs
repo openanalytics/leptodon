@@ -12,7 +12,9 @@ use leptos_components::button::DropdownButton;
 use leptos_components::button::DropdownButtonChildren;
 use leptos_components::button::EditButton;
 use leptos_components::button::ModalButton;
+use leptos_components::button::DialogButton;
 use leptos_components::button::ModalButtonChildren;
+use leptos_components::button::DialogButtonChildren;
 use leptos_components::button_group::ButtonGroup;
 use leptos_components::button_group::First;
 use leptos_components::button_group::Last;
@@ -23,6 +25,7 @@ use leptos_components::date_picker::range_picker::DateRangePicker;
 use leptos_components::dropdown::DropdownItem;
 use leptos_components::input::InputType;
 use leptos_components::link::Link;
+use leptos_components::dialog::Dialog;
 use leptos_components::modal::ModalFooterChildren;
 use leptos_components::navbar::SideNavbar;
 use leptos_components::table::DemoTable;
@@ -86,6 +89,7 @@ fn Home() -> impl IntoView {
     let (count, set_count) = signal(1);
     let double_count = move || count.get() * 2;
     let modal_visible = RwSignal::new(false);
+    let dialog_visible = RwSignal::new(false);
 
     view! {
         <Title text="Leptos components" />
@@ -117,6 +121,16 @@ fn Home() -> impl IntoView {
                     <Button on_click=move |_| modal_visible.set(false)>"Dispose modal"</Button>
                 </ModalFooterChildren>
             </ModalButton>
+            <DialogButton id="dialog-button1" dialog_title="Example dialog" dialog_visible>
+                <DialogButtonChildren slot:button_children>Toggle Dialog</DialogButtonChildren>
+
+                <p class="leading-relaxed text-body">
+                    Adipisci deserunt officia omnis. Et velit et consequatur sed porro minus unde expedita. Similique distinctio dolorem sunt voluptate laboriosam aut autem.
+                </p>
+                <p class="leading-relaxed text-body">
+                    Officiis qui id delectus quia sunt quisquam voluptatem modi. Velit iste quia asperiores alias. Modi aut enim nostrum nihil laudantium sit perferendis delectus. Voluptatem repudiandae culpa doloribus aut. Cupiditate quisquam iusto illum quo rem cum. Vitae soluta est pariatur ut.
+                </p>
+            </DialogButton>
             <div>
                 <leptos_components::input_group::ControlledNumberInput<i32> class="w-96" min=-1 max=15 />
             </div>

@@ -2,11 +2,13 @@ use crate::button::ButtonProps;
 use crate::button::ButtonShape;
 use crate::button::{Button, ButtonAppearance, ButtonRef, ButtonSize, ButtonType};
 use crate::class_list;
+use crate::dialog::Dialog;
 use crate::dropdown::AlignmentAnchor;
 use crate::dropdown::Dropdown;
 use crate::icon;
 use crate::icon::icon_data::IconRef;
 use crate::modal::{Modal, ModalFooterChildren};
+use crate::util::callback::BoxCallback;
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
 use leptos::prelude::ClassAttribute;
@@ -265,6 +267,94 @@ where
                     {(modal_footer.children)()}
                 </ModalFooterChildren>
             </Modal>
+        </div>
+    }
+}
+
+#[slot]
+pub struct DialogButtonChildren {
+    children: Children,
+}
+
+/// A button to toggle a dialog
+#[component]
+pub fn DialogButton(
+    /// Button ID, dialog ID is derived by "{button_id}-dialog"
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
+    /// Extra classes appened to the button's default style
+    #[prop(optional, into)]
+    class: MaybeProp<String>,
+    /// A button can have its content and borders styled for greater emphasis or to be subtle.
+    #[prop(optional, into)]
+    appearance: Signal<ButtonAppearance>,
+    /// A button supports different sizes.
+    #[prop(optional, into)]
+    size: MaybeProp<Signal<ButtonSize>>,
+    /// The default behavior of the button.
+    #[prop(optional, into)]
+    button_type: MaybeProp<ButtonType>,
+    /// The shape of the button.
+    #[prop(default = ButtonShape::default(), into)]
+    shape: ButtonShape,
+    /// The icon of the button.
+    #[prop(optional, into)]
+    icon: MaybeProp<IconRef>,
+    /// Whether the button shows the loading status.
+    #[prop(optional, into)]
+    loading: Signal<bool>,
+    /// comp_ref will be filled with a reference to the DOM element.
+    #[prop(optional)]
+    comp_ref: ComponentRef<ButtonRef>,
+    /// Most likely a label
+    button_children: DialogButtonChildren,
+    /// Title shown in the dialog heading
+    #[prop(optional, into)]
+    dialog_title: MaybeProp<String>,
+    /// True shows the dialog, false hides it.
+    #[prop(default = RwSignal::new(false), into)]
+    dialog_visible: RwSignal<bool>,
+    /// Dialog primary-button
+    #[prop(default = "Ok".into(), into)]
+    primary_text: String,
+    /// Click handler primary-button
+    #[prop(default = BoxCallback::new(|| ()), into)]
+    on_click_primary: BoxCallback,  
+    /// Dialog secondary-button
+    #[prop(default = "Cancel".into(), into)]
+    secondary_text: String,
+    /// Click handler secondary-button
+    #[prop(default = BoxCallback::new(|| ()), into)]
+    on_click_secondary: BoxCallback,
+    /// Dialog content
+    children: Children,
+    
+) -> impl IntoView
+where
+{
+    let button = Button(ButtonProps {
+        id,
+        class,
+        appearance,
+        size,
+        button_type,
+        shape,
+        icon,
+        loading,
+        on_click: Some(BoxOneCallback::new(move |_e| {
+            dialog_visible.update(|inner_visible| *inner_visible = !*inner_visible);
+        })),
+        children: Some(button_children.children),
+        comp_ref,
+    });
+    let dialog_id = id.get().map(|id| format!("{id}-dialog"));
+
+    view! {
+        <div>
+            {button}
+            <Dialog id=dialog_id title=dialog_title visible=dialog_visible primary_text secondary_text on_click_primary on_click_secondary>
+                {children()}
+            </Dialog>
         </div>
     }
 }

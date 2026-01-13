@@ -21,6 +21,8 @@ pub mod darkmode;
 #[cfg(feature = "leptos")]
 pub mod date_picker;
 #[cfg(feature = "leptos")]
+pub mod dialog;
+#[cfg(feature = "leptos")]
 pub mod dropdown;
 #[cfg(feature = "leptos")]
 pub mod icon;
