@@ -1,28 +1,30 @@
-use std::fmt::Display;
-use std::hash::Hash;
-
-use fuzzy_search::automata::LevenshteinAutomata;
+use leptos::leptos_dom::logging::console_log;
+use leptos::prelude::AddAnyAttr;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::For;
 use leptos::prelude::Get;
 use leptos::prelude::IntoAny;
+use leptos::prelude::IntoAnyAttribute;
+use leptos::prelude::Memo;
 use leptos::prelude::NodeRef;
+use leptos::prelude::Notify;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
+use leptos::prelude::Trigger;
 use leptos::prelude::Update;
-use leptos::{
-    IntoView, component,
-    prelude::{MaybeProp, Signal},
-    view,
-};
+use leptos::{IntoView, component, prelude::MaybeProp, view};
+use std::fmt::Display;
+use std::hash::Hash;
 use web_sys::HtmlInputElement;
+use web_sys::KeyboardEvent;
 
 use crate::checkbox::Checkbox;
 use crate::class_list;
 use crate::icon::Icon;
 use crate::input::Input;
 use crate::popover::Popover;
+use crate::popover::PopoverController;
 use crate::popover::PopoverPosition;
 use crate::popover::PopoverTrigger;
 use crate::popover::PopoverTriggerType;
@@ -50,7 +52,9 @@ where
 {
     let search_filter = RwSignal::new(String::new());
     let search_ref = NodeRef::new();
-    let tags_sorted = move || {
+    
+    // Also filterered
+    let tags_sorted = Memo::new(move |_old| {
         let selected = selected.get();
         let search = search_filter.get().to_ascii_lowercase();
         let mut selected_tags = vec![];
@@ -70,12 +74,24 @@ where
             .into_iter()
             .enumerate()
             .collect::<Vec<(usize, (T, bool))>>()
+    });
+    let on_popover_open = move || {
+        let Some(input): Option<HtmlInputElement> = search_ref.get() else {
+            return;
+        };
+        input
+            .focus()
+            .expect("Tag picker search box should be focusable upon opening.");
     };
+    let close_popover = Trigger::new();
+    let popover_controller = PopoverController {
+        close: close_popover,
+        on_open: Some(on_popover_open.into()),
+        on_close: None,
+    };
+
     view! {
-        <Popover show_arrow=false preferred_pos=PopoverPosition::BottomStart trigger_type=PopoverTriggerType::Click on_open=move || {
-            let Some(input): Option<HtmlInputElement> = search_ref.get() else { return; };
-            input.focus().expect("Tag picker search box should be focusable upon opening.");
-        }>
+        <Popover show_arrow=false preferred_pos=PopoverPosition::BottomStart trigger_type=PopoverTriggerType::Click popover_controller>
             <PopoverTrigger slot>
                 <div class=class_list!(SELECT_CLASSES, "cursor-default flex justify-between items-center")>
                     <div class="flex gap-2 overflow-scroll">
@@ -116,10 +132,33 @@ where
 
             // Popover Contents VV
             <ul>
-                <Input class="mb-2" placeholder="Search..." value=search_filter input_ref=search_ref/>
+                <Input class="mb-2" placeholder="Search..." value=search_filter input_ref=search_ref
+                    on:keydown=move |key: KeyboardEvent| {
+                        console_log(key.code().as_str());
+                        if key.code() == "Escape" || key.code() == "Tab" {
+                            close_popover.notify();
+                        }
+                        if key.code() == "Enter" {
+                            let Some((_, (tag, is_selected))) = tags_sorted.get().first().cloned() else {
+                                return;
+                            };
+                            selected.update(|vec| {
+                                if is_selected {
+                                    vec.iter()
+                                        .position(|e| e == &tag)
+                                        .and_then(|pos| { Some(vec.remove(pos)) });
+                                } else {
+                                    vec.push(tag.clone());
+                                }
+                            });
+                        }
+                    }
+                    {..}
+                    role="combobox" // Makes vimium like plugins pass special keys through
+                />
                 // Tags
                 <For
-                    each=tags_sorted
+                    each=move || tags_sorted.get()
                     key=|tag| {
                         tag.clone()
                     }
@@ -128,7 +167,7 @@ where
                     <li
                         class=class_list!(
                             TAG_LIST_ITEM_CLASSES,
-                            ("border", i == 0 && !search_filter.get().is_empty())
+                            ("outline outline-black outline-2", move || i == 0 && !search_filter.get().is_empty())
                         )
                         on:click={ move |_| {
                             // Toggle selection
@@ -143,7 +182,7 @@ where
                             });
                         }}
                     >
-                        <Checkbox label=tag.to_string() value=move || is_selected/>
+                        <Checkbox label=tag.to_string() value=move || is_selected disable_tab=true/>
                     </li>
                 </For>
             </ul>

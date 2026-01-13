@@ -18,6 +18,16 @@ use leptos_use::{
 };
 use web_sys::{DomRect, HtmlDivElement, MouseEvent};
 
+#[derive(Default)]
+pub struct PopoverController {
+    /// Closes the popover.
+    pub close: Trigger,
+    /// Called when the popover becomes visible
+    pub on_open: Option<BoxCallback>,
+    /// Called when the popover becomes invisible
+    pub on_close: Option<BoxCallback>,
+}
+
 // TODO: Resize observer ?
 #[component]
 pub fn Popover<Trigger, Content>(
@@ -33,12 +43,9 @@ pub fn Popover<Trigger, Content>(
     /// Wether or not to render and position the popup for a connector arrow between the popover and trigger element.
     #[prop(default = true, optional)]
     show_arrow: bool,
-    /// Called when the popover becomes visible
-    #[prop(optional, into)]
-    on_open: Option<BoxCallback>,
-    /// Called when the popover becomes invisible
-    #[prop(optional, into)]
-    on_close: Option<BoxCallback>,
+    /// Collection of callbacks and triggers to control this popover.
+    #[prop(optional)]
+    popover_controller: Option<PopoverController>,
     children: TypedChildren<Content>,
 ) -> impl IntoView
 where
@@ -63,24 +70,34 @@ where
     let popover_visible = use_or(show_by_hover, popover_clicked_open);
 
     let (x, y) = use_window_scroll();
-    Effect::watch(
-        move || popover_visible.get(),
-        move |new_visible, old, w| {
-            if Some(new_visible) == old {
-                return;
-            }
-            if let Some(on_open) = &on_open
-                && *new_visible
-            {
-                on_open();
-            } else if let Some(on_close) = &on_close
-                && !*new_visible
-            {
-                on_close();
-            }
-        },
-        false,
-    );
+    if let Some(popover_controller) = popover_controller {
+        Effect::watch(
+            move || popover_visible.get(),
+            move |new_visible, old, w| {
+                if Some(new_visible) == old {
+                    return;
+                }
+                if let Some(on_open) = &popover_controller.on_open
+                    && *new_visible
+                {
+                    on_open();
+                } else if let Some(on_close) = &popover_controller.on_close
+                    && !*new_visible
+                {
+                    on_close();
+                }
+            },
+            false,
+        );
+        Effect::watch(
+            move || popover_controller.close.track(),
+            move |_, _, _| {
+                show_by_hover.set(false);
+                popover_clicked_open.set(false);
+            },
+            false,
+        );
+    }
 
     Effect::new(move || {
         let popover_visible = popover_visible.get();

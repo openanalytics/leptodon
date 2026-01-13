@@ -22,8 +22,6 @@ use leptos::prelude::Update;
 use leptos_use::CalendarDate;
 use leptos_use::OnClickOutsideOptions;
 use leptos_use::UseCalendarReturn;
-use leptos_use::core::IntoElementMaybeSignal;
-use leptos_use::on_click_outside;
 use leptos_use::on_click_outside_with_options;
 use leptos_use::use_calendar;
 use num_traits::FromPrimitive;
