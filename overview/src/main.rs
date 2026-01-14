@@ -6,22 +6,22 @@ use cfg_if::cfg_if;
 cfg_if! {
     if #[cfg(feature = "ssr")] {
 
-        use axum::routing::post;
-        use leptos_components::darkmode::update_theme;
+        // use axum::routing::post;
+        // use leptos_components::darkmode::update_theme;
 
-        use tower_http::services::ServeDir;
-        use axum::{
-            response::{Response, IntoResponse},
-            routing::get,
-            extract::{Request, State},
-        };
-        use axum_extra::extract::cookie::CookieJar;
-        use overview::app::*;
+        // use tower_http::services::ServeDir;
+        // use axum::{
+            // response::{Response, IntoResponse},
+            // routing::get,
+            // extract::{Request, State},
+        // };
+        // use axum_extra::extract::cookie::CookieJar;
+        // use overview::app::*;
 
-        use leptos_axum::LeptosRoutes;
-        use leptos::prelude::{LeptosOptions, provide_context};
-        use axum::extract::FromRef;
-        use overview::fallback::file_and_error_handler;
+        // use leptos_axum::LeptosRoutes;
+        // use leptos::prelude::{LeptosOptions, provide_context};
+        // use axum::extract::FromRef;
+        // use overview::fallback::file_and_error_handler;
 
 
 
@@ -41,8 +41,8 @@ cfg_if! {
             let conf = get_configuration(None).unwrap();
             let addr = conf.leptos_options.site_addr;
             let leptos_options = conf.leptos_options;
-            let site_root = &leptos_options.site_root;
-            let pkg_dir = &leptos_options.site_pkg_dir;
+            // let site_root = &leptos_options.site_root;
+            // let pkg_dir = &leptos_options.site_pkg_dir;
 
             // The URL path of the generated JS/WASM bundle from cargo-leptos
             // let bundle_path = format!("/{site_root}/{pkg_dir}");
@@ -79,23 +79,23 @@ cfg_if! {
                 .unwrap();
         }
 
-        #[cfg(feature = "ssr")]
-        #[axum::debug_handler]
-        async fn leptos_routes_handler(
-            State(leptos_options): State<LeptosOptions>,
-            cookies: CookieJar,
-            request: Request
-        ) -> Response {
-            let handler = leptos_axum::render_app_to_stream_with_context(
-                move || {
-                    provide_context(cookies.clone());
-                },
-                move || {
-                    overview::app::shell(leptos_options.clone())
-                }
-            );
-            handler(request).await.into_response()
-        }
+        // #[cfg(feature = "ssr")]
+        // #[axum::debug_handler]
+        // async fn leptos_routes_handler(
+        //     State(leptos_options): State<LeptosOptions>,
+        //     cookies: CookieJar,
+        //     request: Request
+        // ) -> Response {
+        //     let handler = leptos_axum::render_app_to_stream_with_context(
+        //         move || {
+        //             provide_context(cookies.clone());
+        //         },
+        //         move || {
+        //             overview::app::shell(leptos_options.clone())
+        //         }
+        //     );
+        //     handler(request).await.into_response()
+        // }
     } else {
         pub fn main() {
             // no client-side main function

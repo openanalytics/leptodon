@@ -130,11 +130,7 @@ pub fn PopulatedCalendar() -> impl IntoView {
                         let title = event_today.summary.as_ref().cloned();
                         let popup_title = title.as_ref().cloned();
                         let popup_desc = event_today.description.as_ref().cloned();
-                        let popup_loc = event_today.location.as_ref().cloned();
-                        
-                        let popup_start = start_time.as_ref().cloned();
-                        let popup_end = end_time.as_ref().cloned();
-                        let popup_duration = event_today.duration.as_ref().cloned();
+                      
                         view! {
                             <Popover preferred_pos=PopoverPosition::Right>
                                 <PopoverTrigger slot>

@@ -44,7 +44,6 @@ version = "3.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5fd03604047cee9b6ce9de9f70c6cd540a0520c813cbd49bae61f33ab80ed1dc"
 dependencies = [
-pub mod search;
  "event-listener",
  "event-listener-strategy",
  "pin-project-lite",
