@@ -30,6 +30,7 @@ chrono = "0.4.42"
 base64 = "0.22.1"
 send_wrapper = "0.6.0"
 leptos-struct-table = { path = "../leptos-struct-table", features = ["chrono"] }
+nucleo-matcher = "0.3.1"
 
 [dev-dependencies]
 polars = { version = "0.52", features = ["lazy", "timezones"] }

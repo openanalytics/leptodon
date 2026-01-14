@@ -14,8 +14,16 @@ use leptos::prelude::RwSignal;
 use leptos::prelude::Trigger;
 use leptos::prelude::Update;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
+use nucleo_matcher::Config;
+use nucleo_matcher::Matcher;
+use nucleo_matcher::pattern::CaseMatching;
+use nucleo_matcher::pattern::Normalization;
+use nucleo_matcher::pattern::Pattern;
+use std::cell::LazyCell;
+use std::fmt::Debug;
 use std::fmt::Display;
 use std::hash::Hash;
+use std::sync::Mutex;
 use web_sys::HtmlInputElement;
 use web_sys::KeyboardEvent;
 
@@ -28,41 +36,54 @@ use crate::popover::PopoverController;
 use crate::popover::PopoverPosition;
 use crate::popover::PopoverTrigger;
 use crate::popover::PopoverTriggerType;
+
 const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 const TAG_LIST_ITEM_CLASSES: &str =
     "hover:bg-oa-gray p-2 rounded-lg flex items-center cursor-pointer";
 
-trait TagOption<T>: Display {
-    // identifier of the tag
-    fn id() -> String;
-    // backing value for the tag
-    fn value() -> T;
-}
+// Nucleo matcher allocates 135kb memory, so we want to reuse this.
+// Try to not run multiple fuzzy matchers at the same time.
+const NUCLEO_MATCHER: LazyCell<Mutex<Matcher>> =
+    LazyCell::new(|| Mutex::new(Matcher::new(Config::DEFAULT)));
 
 #[component]
 pub fn TagPicker<T>(
     /// Shown when no tags are selected.
     #[prop(optional, into)]
     placeholder: MaybeProp<String>,
-    #[prop(optional, into)] selected: RwSignal<Vec<T>>,
-    #[prop(optional, into)] tags: RwSignal<Vec<T>>,
+    /// Subset of tags, containing the selected tags
+    #[prop(optional, into)]
+    selected: RwSignal<Vec<T>>,
+    /// All tags
+    #[prop(optional, into)]
+    tags: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
-    T: Display + From<String> + std::iter::Extend<T> + Eq + Hash + Clone + Send + Sync + 'static,
+    T: AsRef<str> + Display + Eq + Hash + Clone + Send + Sync + 'static,
 {
     let search_filter = RwSignal::new(String::new());
-    let search_ref = NodeRef::new();
+    let search_ref: NodeRef<leptos::html::Input> = NodeRef::new();
 
-    // Also filterered
-    let tags_sorted = Memo::new(move |_old| {
+    // Fuzzy search applier
+    let tags_filtersorted: Memo<Vec<T>> = Memo::new(move |_old| {
+        let search: String = search_filter.get().to_ascii_lowercase();
+        let tags: Vec<T> = tags.get();
+
+        let pattern = Pattern::parse(search.as_str(), CaseMatching::Smart, Normalization::Smart);
+        let matcher_holder = NUCLEO_MATCHER; // prevent inline drop
+        let mut matcher = matcher_holder.lock().expect("Unpoisoned lock");
+        let sorted_tags = pattern.match_list(tags, &mut matcher);
+
+        sorted_tags.into_iter().map(|(tag, _score)| tag).collect()
+    });
+
+    // Partitioned into selected and unselected.
+    // (Idx -> (T, is_selected))
+    let tags_grouped = Memo::new(move |_old| {
         let selected = selected.get();
-        let search = search_filter.get().to_ascii_lowercase();
         let mut selected_tags = vec![];
         let mut unselected_tags = vec![];
-        for tag in tags.get() {
-            if !tag.to_string().to_ascii_lowercase().contains(&search) {
-                continue;
-            }
+        for tag in tags_filtersorted.get() {
             if selected.contains(&tag) {
                 selected_tags.push((tag, true));
             } else {
@@ -75,6 +96,7 @@ where
             .enumerate()
             .collect::<Vec<(usize, (T, bool))>>()
     });
+
     let on_popover_open = move || {
         let Some(input): Option<HtmlInputElement> = search_ref.get() else {
             return;
@@ -83,6 +105,7 @@ where
             .focus()
             .expect("Tag picker search box should be focusable upon opening.");
     };
+
     let close_popover = Trigger::new();
     let popover_controller = PopoverController {
         close: close_popover,
@@ -139,7 +162,7 @@ where
                             close_popover.notify();
                         }
                         if key.code() == "Enter" {
-                            let Some((_, (tag, is_selected))) = tags_sorted.get().first().cloned() else {
+                            let Some((_, (tag, is_selected))) = tags_grouped.get().first().cloned() else {
                                 return;
                             };
                             selected.update(|vec| {
@@ -158,7 +181,7 @@ where
                 />
                 // Tags
                 <For
-                    each=move || tags_sorted.get()
+                    each=move || tags_grouped.get()
                     key=|tag| {
                         tag.clone()
                     }
