@@ -97,7 +97,6 @@ pub fn GroupedTableExample() -> impl IntoView {
 
 // Paginated Data provider
 struct LocalFlowers {
-    group_on: Arc<Vec<FlowerColumn>>,
     rows: Vec<Flower>,
 }
 impl LocalFlowers {
@@ -117,7 +116,6 @@ impl LocalFlowers {
         let grouped_flowers = group_flowers(get_flowers(), group_on.clone());
         debug_log!("Flower table contains {} flowers.", grouped_flowers.len());
         return LocalFlowers {
-            group_on,
             rows: grouped_flowers,
         };
     }
@@ -150,7 +148,7 @@ impl PaginatedTableDataProvider<Flower, FlowerColumn> for LocalFlowers {
         Some(pages)
     }
 
-    fn set_sorting(&mut self, sorting: &std::collections::VecDeque<(FlowerColumn, ColumnSort)>) {
+    fn set_sorting(&mut self, _sorting: &std::collections::VecDeque<(FlowerColumn, ColumnSort)>) {
         // by default do nothing
     }
 

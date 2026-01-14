@@ -22,7 +22,6 @@ use leptos_components::checkbox::Checkbox;
 use leptos_components::darkmode::ThemeSelector;
 use leptos_components::date_picker::DatePicker;
 use leptos_components::date_picker::range_picker::DateRangePicker;
-use leptos_components::dialog::Dialog;
 use leptos_components::dropdown::DropdownItem;
 use leptos_components::input::InputType;
 use leptos_components::link::Link;
