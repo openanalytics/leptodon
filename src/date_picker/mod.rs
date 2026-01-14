@@ -14,6 +14,7 @@ use leptos::prelude::CollectView;
 use leptos::prelude::Effect;
 use leptos::prelude::FlattenOptionRefOption;
 use leptos::prelude::IntoAny;
+#[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Memo;
 use leptos::prelude::NodeRef;

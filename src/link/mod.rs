@@ -1,6 +1,7 @@
 use leptos::prelude::MaybeProp;
 use leptos::prelude::{AddAnyAttr, IntoAny};
 // Do not remove until leptos is upgraded above 0.8.14
+#[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
 use leptos::{IntoView, component, oco::Oco, prelude::Children, view};
 use leptos_router::components::A;

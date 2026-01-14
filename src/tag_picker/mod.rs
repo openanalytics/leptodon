@@ -5,6 +5,7 @@ use leptos::prelude::ElementChild;
 use leptos::prelude::For;
 use leptos::prelude::Get;
 use leptos::prelude::IntoAny;
+#[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Memo;
 use leptos::prelude::NodeRef;

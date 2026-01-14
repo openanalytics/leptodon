@@ -25,6 +25,7 @@ use leptos::prelude::AddAnyAttr;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
+#[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Memo;
 use leptos::prelude::RwSignal;

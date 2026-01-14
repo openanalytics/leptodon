@@ -17,6 +17,7 @@ use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
 use crate::link::Link;
 use crate::{class_list, icon};
+#[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
 
 const SIDEBAR_CLASSES: &str = "fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700";
