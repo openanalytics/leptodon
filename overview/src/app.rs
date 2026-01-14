@@ -1,3 +1,4 @@
+use crate::demo_table::DemoTable;
 use crate::group_table::GroupedTableExample;
 use crate::web_calendar::PopulatedCalendar;
 use leptos::logging::log;
@@ -27,7 +28,6 @@ use leptos_components::input::InputType;
 use leptos_components::link::Link;
 use leptos_components::modal::ModalFooterChildren;
 use leptos_components::navbar::SideNavbar;
-use leptos_components::table::DemoTable;
 use leptos_components::toggle::Toggle;
 use leptos_components::{
     button::{Button, ButtonAppearance},

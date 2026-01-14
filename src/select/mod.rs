@@ -21,11 +21,13 @@ pub fn Select(
     #[prop(optional, into)]
     name: MaybeProp<String>,
     #[prop(optional, into)] value: RwSignal<String>,
-    #[prop(optional, into)] default_value: Option<String>,
+    // TODO:
+    // #[prop(optional, into)] default_value: Option<String>,
     /// Whether the select is disabled.
     #[prop(optional, into)]
     disabled: Signal<bool>,
-    #[prop(optional, into)] size: Signal<SelectSize>,
+    // TODO: Implement size
+    #[prop(optional, into)] _size: Signal<SelectSize>,
     children: Children,
 ) -> impl IntoView {
     view! {

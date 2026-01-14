@@ -5,6 +5,7 @@ pub mod errors;
 #[cfg(feature = "ssr")]
 pub mod fallback;
 pub mod gen_icons;
+pub mod demo_table;
 pub mod group_table;
 pub mod ical_property;
 pub mod web_calendar;

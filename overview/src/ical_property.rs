@@ -1,17 +1,19 @@
 #[cfg(feature = "ssr")]
 use anyhow::{Error, anyhow};
-use chrono::{DateTime, Duration, Local, NaiveDate, NaiveDateTime, Utc};
-use ical::parser::ical::component::IcalEvent;
+use chrono::{DateTime, Duration, NaiveDate, Utc};
 #[cfg(feature = "ssr")]
-use regex::Regex;
+use ical::parser::ical::component::IcalEvent;
 use rrule::RRuleSet;
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "ssr")]
 use std::str::FromStr;
 
+#[cfg(feature = "ssr")]
 trait OptionVecPush<T> {
     fn push(&mut self, t: T);
 }
 
+#[cfg(feature = "ssr")]
 impl<T> OptionVecPush<T> for Option<Vec<T>> {
     fn push(&mut self, element: T) {
         if self.is_none() {
@@ -103,7 +105,7 @@ impl FromStr for EventTransparency {
 
 #[cfg(feature = "ssr")]
 fn parse_duration(s: &str) -> Result<Duration, Error> {
-    let re = Regex::new(
+    let re = regex::Regex::new(
                 r"^P(?:(?P<days>\d+)D)?(?:T(?:(?P<hours>\d+)H)?(?:(?P<minutes>\d+)M)?(?:(?P<seconds>\d+)S)?)?$",
             ).unwrap();
 
@@ -136,6 +138,9 @@ fn parse_duration(s: &str) -> Result<Duration, Error> {
 
 #[cfg(feature = "ssr")]
 fn parse_datetime(s: &str) -> Result<DateMaybeTime, Error> {
+    use chrono::Local;
+    use chrono::NaiveDateTime;
+
     if let Ok(d) = NaiveDate::parse_from_str(s, "%Y%m%d") {
         return Ok(d.into());
     }
@@ -147,6 +152,7 @@ fn parse_datetime(s: &str) -> Result<DateMaybeTime, Error> {
     let naive_datetime_res = NaiveDateTime::parse_from_str(s, "%Y%m%dT%H%M%S");
     if let Ok(dt) = naive_datetime_res {
         // TODO: does this work?
+
         let dt = dt.and_local_timezone(Local).unwrap();
         return Ok(dt.to_utc().into());
     }

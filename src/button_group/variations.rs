@@ -1,33 +1,17 @@
-use crate::button::ButtonProps;
-use crate::button::ButtonShape;
-use crate::button::{Button, ButtonAppearance, ButtonRef, ButtonSize, ButtonType};
+use crate::button::{Button, ButtonAppearance};
 use crate::button_group::ButtonGroup;
 use crate::button_group::First;
 use crate::button_group::Last;
-use crate::class_list;
-use crate::dropdown::AlignmentAnchor;
-use crate::dropdown::Dropdown;
-use crate::icon;
-use crate::icon::icon_data::IconData;
-use crate::icon::icon_data::IconRef;
 use crate::input::GenericInput;
-use crate::input::Input;
 use crate::input::InputMode;
 use crate::input::InputType;
-use crate::modal::{Modal, ModalFooterChildren};
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
-use crate::util::signals::ComponentRef;
-use crate::util::signals::Model;
 use leptos::prelude::AriaAttributes;
-use leptos::prelude::ClassAttribute;
-use leptos::prelude::Effect;
-use leptos::prelude::IntoAny;
 use leptos::prelude::Set;
-use leptos::prelude::{Children, Get, MaybeProp, Signal, provide_context, signal};
+use leptos::prelude::{Get, Signal};
 use leptos::prelude::{ElementChild, RwSignal, Update};
 use leptos::{IntoView, component, view};
-use leptos::{ev, slot};
 
 /// Shows a `<< < 1 ... 2 ... 32 > >>`-like button group, allowing for user navigation of paged content.
 #[component]

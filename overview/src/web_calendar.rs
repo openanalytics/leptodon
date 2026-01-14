@@ -1,7 +1,6 @@
 use chrono::Datelike;
 use chrono::Local;
 use leptos::logging::error;
-use leptos::logging::log;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::CollectView;
 use leptos::prelude::Effect;
@@ -17,9 +16,6 @@ use leptos_components::popover::Popover;
 use leptos_components::popover::PopoverPosition;
 use leptos_components::popover::PopoverTrigger;
 use leptos_components::util::option_comp::OptionComp;
-use std::fs;
-use std::fs::File;
-use std::io::BufReader;
 
 use leptos::{IntoView, component, view};
 use leptos_components::calendar::Calendar;
@@ -33,6 +29,10 @@ pub async fn read_calendar<'a>(
 }
 #[cfg(feature = "ssr")]
 fn ics_events(month: u32, year: i32) -> Option<Vec<crate::ical_property::Event>> {
+    use std::fs;
+    use std::fs::File;
+    use std::io::BufReader;
+
     let entries = fs::read_dir("assets");
 
     let Ok(entries) = entries else {
@@ -62,7 +62,7 @@ fn ics_events(month: u32, year: i32) -> Option<Vec<crate::ical_property::Event>>
                         .into_iter()
                         .filter_map(|event|
                             crate::ical_property::Event::try_from(&event)
-                                .inspect_err(|err| log!("Could not parse calendar event {:?}: {err}. Most likely malformed.", &event))
+                                .inspect_err(|err| error!("Could not parse calendar event {:?}: {err}. Most likely malformed.", &event))
                                 .ok()
                     )
                 )
@@ -128,7 +128,7 @@ pub fn PopulatedCalendar() -> impl IntoView {
                         let title = event_today.summary.as_ref().cloned();
                         let popup_title = title.as_ref().cloned();
                         let popup_desc = event_today.description.as_ref().cloned();
-                      
+
                         view! {
                             <Popover preferred_pos=PopoverPosition::Right>
                                 <PopoverTrigger slot>

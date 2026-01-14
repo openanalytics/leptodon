@@ -16,8 +16,9 @@ use leptos::{IntoView, component, prelude::MaybeProp, view};
 #[component]
 pub fn DateRangePicker(
     #[prop(optional, into)] id: MaybeProp<String>,
-    #[prop(optional, into)] name: MaybeProp<String>,
-    #[prop(optional, into)] class: MaybeProp<String>,
+    // TODO: name, class and label
+    #[prop(optional, into)] _name: MaybeProp<String>,
+    #[prop(optional, into)] _class: MaybeProp<String>,
     #[prop(default = "yyyy-mm-dd".into(), into)] placeholder: MaybeProp<String>,
 
     /// Picked start date of the date-range
@@ -32,7 +33,7 @@ pub fn DateRangePicker(
     /// Can be used to highlight specific days, e.g. festive days and weekends.
     #[prop(optional, into)]
     highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
-    #[prop(optional, into)] label: MaybeProp<String>,
+    #[prop(optional, into)] _label: MaybeProp<String>,
 ) -> impl IntoView {
     // Swap start and end if the user inputs an end that lays before start.
     Effect::watch(

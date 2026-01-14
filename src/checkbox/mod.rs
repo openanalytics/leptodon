@@ -44,6 +44,7 @@ pub fn Checkbox(
     view! {
         <label class=class_list!["relative inline-flex items-center cursor-pointer", class]>
             <input
+                id=id.get()
                 name=name.get()
                 type="checkbox"
                 value=move || (!value.get()).to_string()

@@ -25,7 +25,7 @@ pub fn Dropdown(
     children: Children,
 ) -> impl IntoView {
     view! {
-        <div id class=class_list![
+        <div id=move || id.get() class=class_list![
             DROPDOWN_STYLE, ("hidden", move || !*is_visible.read()),
             match alignment {
                 AlignmentAnchor::BottomLeft => "left-0 right-auto",

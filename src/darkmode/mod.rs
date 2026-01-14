@@ -30,7 +30,6 @@ use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Memo;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Signal;
-use leptos::prelude::use_context;
 use leptos::server::ServerAction;
 use leptos::{prelude::ServerFnError, *};
 use leptos_meta::Html;
@@ -215,9 +214,9 @@ pub fn initial_theme_from_cookie() -> Theme {
 
 #[cfg(feature = "ssr")]
 pub fn initial_theme_from_cookie() -> Theme {
-    use std::borrow::Cow;
-
     use axum_extra::extract::cookie::Cookie;
+    use leptos::prelude::use_context;
+    use std::borrow::Cow;
 
     let Some(headers) = use_context::<http1::request::Parts>().map(|parts| parts.headers) else {
         return Theme::FollowSystem;

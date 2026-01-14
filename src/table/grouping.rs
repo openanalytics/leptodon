@@ -1,13 +1,11 @@
-use crate::button_group::Pagination;
 use leptos::prelude::{ElementChild, RwSignal, Signal};
 use leptos::{
-    either::Either,
     logging::debug_log,
-    prelude::{ClassAttribute, Effect, For, Get, IntoAny, OnAttribute, Set, Show},
+    prelude::{ClassAttribute, For, Get, IntoAny, OnAttribute, Show},
 };
 use std::{hash::Hash, sync::Arc};
 
-use leptos::{IntoView, component, view};
+use leptos::{IntoView, view};
 use leptos_struct_table::*;
 
 /// Rows which are groupable need to implement this trait in order to use the [GroupTableRowRenderer]

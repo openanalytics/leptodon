@@ -73,7 +73,7 @@ where
     if let Some(popover_controller) = popover_controller {
         Effect::watch(
             move || popover_visible.get(),
-            move |new_visible, old, w| {
+            move |new_visible, old, _| {
                 if Some(new_visible) == old {
                     return;
                 }
@@ -127,10 +127,10 @@ where
 
             match abs_position.horizontal_offset {
                 Some(HorizontalOffset::Left(px)) => {
-                    set_popover_property(&popover_style, "left", format!("{px}px"));
+                    set_style_property(&popover_style, "left", format!("{px}px"));
                 }
                 Some(HorizontalOffset::Right(px)) => {
-                    set_popover_property(&popover_style, "right", format!("{px}px"));
+                    set_style_property(&popover_style, "right", format!("{px}px"));
                 }
                 _ => {
                     warn!("No horizontal position provided for popover");
@@ -138,10 +138,10 @@ where
             }
             match abs_position.vertical_offset {
                 Some(VerticalOffset::Top(px)) => {
-                    set_popover_property(&popover_style, "top", format!("{px}px"));
+                    set_style_property(&popover_style, "top", format!("{px}px"));
                 }
                 Some(VerticalOffset::Bot(px)) => {
-                    set_popover_property(&popover_style, "bot", format!("{px}px"));
+                    set_style_property(&popover_style, "bot", format!("{px}px"));
                 }
                 _ => {
                     warn!("No vertical position provided for popover");
@@ -161,6 +161,7 @@ where
         });
         show_by_hover.set(true);
     };
+    
     let on_mouse_leave = move |e| {
         if trigger_type != PopoverTriggerType::Hover {
             return;
@@ -184,6 +185,7 @@ where
             .ok();
         });
     };
+    
     let on_click = move |_| {
         if trigger_type != PopoverTriggerType::Click {
             return;
@@ -207,7 +209,8 @@ where
     view! {
         <div class=class_list!(class)>
             {trigger_children}
-            // Can't be hidden, because then the size is 0, bypass via opacity-0 and z-index.
+            // Can't be hidden, because then the size is 0 and offset calculations are wrong.
+            // Worked around via opacity-0 and z-index.
             <div
                 class=class_list![
                     "absolute bg-white border shadow-sm rounded-lg",
@@ -236,7 +239,6 @@ where
                         // A clipped white square such that it becomes a bg between top-left, top-right and bottom-right corners.
                         class="relative w-5 h-3 -translate-y-1 rotate-45 bg-white"
                     />
-
                 </div>
             </Show>
         </div>
@@ -262,9 +264,13 @@ fn element_contains_pointer(popover_ref: &HtmlDivElement, e: MouseEvent) -> bool
     return rect_x_min < x && rect_x_max > x && rect_y_min < y && rect_y_max > y;
 }
 
-fn set_popover_property(popover_style: &CssStyleDeclaration, property: &str, value: String) {
-    if let Err(err) = popover_style.set_property(property, value.as_str()) {
-        error!("{:?}", err);
+/// CssStyleDeclaration::set_property wrapper with some error logging.
+fn set_style_property(css_style: &CssStyleDeclaration, property: &str, value: String) {
+    if let Err(err) = css_style.set_property(property, value.as_str()) {
+        error!(
+            "Failed to set a css property `{property:?}={value:?}` in the style attribute: {:?}",
+            err
+        );
     }
 }
 
@@ -304,6 +310,10 @@ struct RelativePosition {
     vertical_offset: Option<VerticalOffset>,
 }
 
+/// Positions the html **arrow_ref** relative to the popover.
+///  - **popover_ref** used to get the popover size.
+///  - **popover_coords** x and y position of the popover.
+///  - **position** How the popover is positioned relative to it's trigger element. The arrow is placed at PopoverPosition::mirrored(*position*).
 fn set_arrow_position(
     arrow_ref: HtmlDivElement,
     popover_ref: &web_sys::Element,
@@ -373,9 +383,9 @@ fn set_arrow_position(
         ),
     };
 
-    arrow_style.set_property("left", format!("{left}px").as_str());
-    arrow_style.set_property("top", format!("{top}px").as_str());
-    arrow_style.set_property("transform", format!("rotate({rotation})").as_str());
+    set_style_property(&arrow_style, "left", format!("{left}px"));
+    set_style_property(&arrow_style, "top", format!("{top}px"));
+    set_style_property(&arrow_style, "transform", format!("rotate({rotation})"));
 }
 
 /// Finds an ideal collision-free area next to [trigger] to place [popover].

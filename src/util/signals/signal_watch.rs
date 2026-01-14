@@ -18,7 +18,7 @@ where
     ///
     /// ```rust,no_run
     /// use leptos::prelude::*;
-    /// use thaw_utils::SignalWatch;
+    /// use leptos_components::util::signals::SignalWatch;
     ///
     /// let count = RwSignal::new(0);
     /// let stop = count.watch(|count| {
