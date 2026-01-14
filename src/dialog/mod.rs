@@ -30,7 +30,7 @@ pub fn Dialog(
     primary_text: String,
     /// Click handler primary-button
     #[prop(default = BoxCallback::new(|| ()), into)]
-    on_click_primary: BoxCallback,  
+    on_click_primary: BoxCallback,
     /// Dialog secondary-button
     #[prop(default = "Cancel".into(), into)]
     secondary_text: String,

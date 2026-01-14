@@ -54,7 +54,7 @@ where
                             if grouping_info.row_index == 0 {
                                 // Group-heading-row
                                 // Split rendering into 2 rows, first one below
-                                
+
                                 if grouping_info.grouped_by.contains(&column) {
                                     return Row::cell_renderer_for_column(row, column, class).into_any()
                                 } else {
@@ -85,8 +85,8 @@ where
             when=move || {
                 let temp_row = row.get();
                 let grouping_info = temp_row.group_info();
-                
-                grouping_info.row_index == 0 && 
+
+                grouping_info.row_index == 0 &&
                     grouping_info.nb_entries > 1 &&
                     !grouping_info.grouped_by.is_empty() &&
                     // Edge-case: when grouping on all columns, don't render content rows.

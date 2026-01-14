@@ -582,7 +582,7 @@ pub fn DatePicker(
     let date_picker_id = id;
 
     // Input parser
-    let parser = Some(ArcOneCallback::new(|to_parse: String| {
+    let parser = ArcOneCallback::new(|to_parse: String| {
         if to_parse == "" {
             return Ok(None);
         }
@@ -601,15 +601,15 @@ pub fn DatePicker(
                     _ => "Unknown error, try to format as: yyyy-mm-dd".to_string(),
                 }
             })
-    }));
+    });
     // Input formatter
-    let format = Some(BoxOneCallback::new(|date: Option<NaiveDate>| {
+    let format = BoxOneCallback::new(|date: Option<NaiveDate>| {
         if let Some(date) = date {
             date.to_string()
         } else {
             String::new()
         }
-    }));
+    });
 
     // Calendar helper object which backs the calendar view
     let UseCalendarReturn {

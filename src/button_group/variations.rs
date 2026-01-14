@@ -15,6 +15,7 @@ use crate::input::Input;
 use crate::input::InputMode;
 use crate::input::InputType;
 use crate::modal::{Modal, ModalFooterChildren};
+use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
 use crate::util::signals::Model;
@@ -45,15 +46,33 @@ pub fn Pagination(
     let prev_icon = crate::icon::PreviousIcon();
     let next_icon = crate::icon::NextIcon();
     let appearance = ButtonAppearance::Secondary;
+    let format = BoxOneCallback::new(|s: usize| format!("{s}"));
+    let parser = ArcOneCallback::new(|string: String| {
+        string.parse::<usize>().map_err(|err| {
+            format!("Could not parse input to a positive number because of: {err:?}")
+        })
+    });
     view! {
         <nav aria-label="Page navigation example">
             <ButtonGroup>
                 <First slot:first>
                     <Button class="mr-0" on_click=move |_| { current_page.set(1); } appearance icon=first_icon></Button>
                 </First>
-                <Button on_click=move |_| { current_page.update(|old| *old = std::cmp::max(*old-1, 1)); } appearance icon=prev_icon></Button>
-                <GenericInput<usize, String> name="pagination page" input_mode=InputMode::Numeric input_type=InputType::Number value=current_page readonly=read_only/>
-                <Button on_click=move |_| { current_page.update(|old| *old = std::cmp::min(*old+1, page_count.get())); } appearance icon=next_icon></Button>
+                <Button appearance icon=prev_icon on_click=move |_| {
+                    current_page.update(|old| *old = std::cmp::max(*old-1, 1));
+                }></Button>
+                <GenericInput<usize, String>
+                    name="pagination page"
+                    input_mode=InputMode::Numeric
+                    input_type=InputType::Number
+                    value=current_page
+                    readonly=read_only
+                    format
+                    parser
+                />
+                <Button appearance icon=next_icon on_click=move |_| {
+                    current_page.update(|old| *old = std::cmp::min(*old+1, page_count.get()));
+                } ></Button>
                 <Last slot:last>
                     <Button on_click=move |_| { current_page.set(page_count.get()); } appearance icon=last_icon></Button>
                 </Last>

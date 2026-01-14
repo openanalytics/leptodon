@@ -136,16 +136,12 @@ impl PaginatedTableDataProvider<Flower, FlowerColumn> for LocalFlowers {
     }
 
     async fn row_count(&self) -> Option<usize> {
-        debug_log!(
-            "Flowers table has {} rows",
-            &self.rows.len()
-        );
+        debug_log!("Flowers table has {} rows", &self.rows.len());
         Some(self.rows.len())
     }
 
     async fn page_count(&self) -> Option<usize> {
-        let pages =
-            (&self.rows.len() + Self::PAGE_ROW_COUNT - 1) / Self::PAGE_ROW_COUNT;
+        let pages = (&self.rows.len() + Self::PAGE_ROW_COUNT - 1) / Self::PAGE_ROW_COUNT;
         debug_log!(
             "Flowers table has {} rows and {} pages",
             &self.rows.len(),
@@ -180,23 +176,26 @@ fn group_flowers(flowers: Vec<DBFlower>, group_on: Arc<Vec<FlowerColumn>>) -> Ve
             FlowerColumn::Species => {
                 flowers.sort_by(|flower1, flower2| flower1.species.cmp(&flower2.species));
             }
-            FlowerColumn::SepalWidth => flowers.sort_by(|flower1, flower2| flower1.sepal_width.total_cmp(&flower2.sepal_width)),
-            FlowerColumn::SepalLength => flowers.sort_by(|flower1, flower2| flower1.sepal_length.total_cmp(&flower2.sepal_length)),
-            FlowerColumn::PetalWidth => flowers.sort_by(|flower1, flower2| flower1.petal_width.total_cmp(&flower2.petal_width)),
-            FlowerColumn::PetalLength => flowers.sort_by(|flower1, flower2| flower1.petal_length.total_cmp(&flower2.petal_length)),
+            FlowerColumn::SepalWidth => flowers
+                .sort_by(|flower1, flower2| flower1.sepal_width.total_cmp(&flower2.sepal_width)),
+            FlowerColumn::SepalLength => flowers
+                .sort_by(|flower1, flower2| flower1.sepal_length.total_cmp(&flower2.sepal_length)),
+            FlowerColumn::PetalWidth => flowers
+                .sort_by(|flower1, flower2| flower1.petal_width.total_cmp(&flower2.petal_width)),
+            FlowerColumn::PetalLength => flowers
+                .sort_by(|flower1, flower2| flower1.petal_length.total_cmp(&flower2.petal_length)),
         }
     }
-    
-    
+
     let mut groups = vec![];
     let mut group_builder = vec![];
 
     let mut prev_values = vec![];
-    let last_row_idx = flowers.len() -1;
+    let last_row_idx = flowers.len() - 1;
     // Naive attempt at a grouping algorithm.
     for (row_index, flower) in flowers.into_iter().enumerate() {
         let mut cur_values = vec![];
-        
+
         for column in group_on.deref() {
             match column {
                 FlowerColumn::Species => {
@@ -211,14 +210,16 @@ fn group_flowers(flowers: Vec<DBFlower>, group_on: Arc<Vec<FlowerColumn>>) -> Ve
             }
         }
         if prev_values == cur_values && row_index != last_row_idx {
-            debug_log!("Pushing a flower {flower:?} onto an existing group {cur_values:?} == {prev_values:?}");
+            debug_log!(
+                "Pushing a flower {flower:?} onto an existing group {cur_values:?} == {prev_values:?}"
+            );
             group_builder.push(flower);
         } else {
             debug_log!("New group {flower:?} {cur_values:?} != {prev_values:?}");
             groups.push(group_builder);
             group_builder = vec![flower];
         }
-        
+
         prev_values = cur_values;
     }
     let mut mapped = vec![];
@@ -231,10 +232,10 @@ fn group_flowers(flowers: Vec<DBFlower>, group_on: Arc<Vec<FlowerColumn>>) -> Ve
                 petal_width: flower.petal_width,
                 petal_length: flower.petal_length,
                 species: flower.species,
-                grouping_info: GroupingInfo { 
+                grouping_info: GroupingInfo {
                     row_index: row_index as u32,
                     nb_entries: group_size as u32,
-                    grouped_by: group_on.clone()
+                    grouped_by: group_on.clone(),
                 },
             });
         }

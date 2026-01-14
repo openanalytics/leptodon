@@ -3,7 +3,6 @@ use crate::class_list;
 use crate::input_group::GroupItemClassContext;
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
-use crate::util::optional_prop::OptionalProp;
 use crate::util::signals::ComponentRef;
 use leptos::either::Either;
 use leptos::html;
@@ -22,7 +21,6 @@ use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::prelude::Signal;
 use leptos::prelude::use_context;
-use leptos::tachys::html::node_ref::NodeRefContainer;
 use leptos::{IntoView, component, view};
 
 pub const OA_READONLY_INPUT_CLASSES: &str = "border-0 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
@@ -94,6 +92,7 @@ pub fn Input(
     }
 }
 
+/// If the input is empty but you supplied **value** then check if you supplied a **format** handler
 #[component]
 pub fn GenericInput<T, E>(
     /// Id for the input.
@@ -116,16 +115,16 @@ pub fn GenericInput<T, E>(
     /// An input can have different modes, useful for mobile devices to bring up the correct virtual keyboard. More fine-grained than type.
     #[prop(optional, into)]
     input_mode: Signal<InputMode>,
-    /// Binds to the value of the input, has to be a string.
+    /// Binds to the value of the input.
     #[prop(optional, into)]
     value: RwSignal<T>,
     /// Maps the user input to [T], not ran on empty inputs unless [required] is true
     #[prop(optional, into)]
-    parser: OptionalProp<ArcOneCallback<String, Result<T, E>>>,
+    parser: Option<ArcOneCallback<String, Result<T, E>>>,
     /// Formats the value to be shown to the user, only happens when the user indicates they are done inputting.
     /// E.g. via Enter, Escape or leaving the input
     #[prop(optional, into)]
-    format: OptionalProp<BoxOneCallback<T, String>>,
+    format: Option<BoxOneCallback<T, String>>,
     /// Whether the input is required.
     #[prop(optional, into)]
     required: Signal<bool>,
@@ -203,7 +202,7 @@ where
                 internal_value_signal.set(format(value.clone()));
             }
         },
-        false,
+        true,
     );
 
     let standalone_input = view! {

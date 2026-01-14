@@ -1,13 +1,13 @@
 #![recursion_limit = "256"]
 
 pub mod app;
-pub mod web_calendar;
-pub mod group_table;
-pub mod ical_property;
 pub mod errors;
 #[cfg(feature = "ssr")]
 pub mod fallback;
 pub mod gen_icons;
+pub mod group_table;
+pub mod ical_property;
+pub mod web_calendar;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

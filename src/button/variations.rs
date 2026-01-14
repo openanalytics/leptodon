@@ -319,7 +319,7 @@ pub fn DialogButton(
     primary_text: String,
     /// Click handler primary-button
     #[prop(default = BoxCallback::new(|| ()), into)]
-    on_click_primary: BoxCallback,  
+    on_click_primary: BoxCallback,
     /// Dialog secondary-button
     #[prop(default = "Cancel".into(), into)]
     secondary_text: String,
@@ -328,7 +328,6 @@ pub fn DialogButton(
     on_click_secondary: BoxCallback,
     /// Dialog content
     children: Children,
-    
 ) -> impl IntoView
 where
 {
