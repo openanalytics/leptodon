@@ -9,8 +9,8 @@ use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
 use leptos::prelude::AriaAttributes;
 use leptos::prelude::Set;
-use leptos::prelude::{Get, Signal};
 use leptos::prelude::{ElementChild, RwSignal, Update};
+use leptos::prelude::{Get, Signal};
 use leptos::{IntoView, component, view};
 
 /// Shows a `<< < 1 ... 2 ... 32 > >>`-like button group, allowing for user navigation of paged content.

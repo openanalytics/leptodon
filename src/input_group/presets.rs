@@ -95,7 +95,7 @@ where
                     "User inputted a non-number {new_value:?} resetting their input to {prev_value:?}"
                 );
 
-                value_binder.set(format!("{}", prev_value.unwrap_or(&text)));
+                value_binder.set(prev_value.unwrap_or(&text).to_string());
                 return;
             };
             if new_value != clamp::<T>(new_value, min.get(), max.get()) {
@@ -105,12 +105,12 @@ where
                     max.get()
                 );
                 let text = String::new();
-                value_binder.set(format!("{}", prev_value.unwrap_or(&text)));
+                value_binder.set(prev_value.unwrap_or(&text).to_string());
             };
         },
         false,
     );
-    let inc_step = step.clone();
+    let inc_step = step;
     let inc_handler = move |_| {
         let unparsed = value_binder.get();
         let old_value = unparsed.parse::<T>();
@@ -120,7 +120,7 @@ where
                 clamp(old_value.saturating_add(&inc_step), min.get(), max.get())
             ));
         } else if unparsed.is_empty() {
-            value_binder.set(format!("1"));
+            value_binder.set("1".to_string());
         }
     };
     let dec_handler = move |_| {
@@ -132,7 +132,7 @@ where
                 clamp(old_value.saturating_sub(&step), min.get(), max.get())
             ));
         } else if unparsed.is_empty() {
-            value_binder.set(format!("1"));
+            value_binder.set("1".to_string());
         }
     };
     view! {

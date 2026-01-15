@@ -1,5 +1,6 @@
 use leptos::children::Children;
 use leptos::leptos_dom::logging::console_log;
+use leptos::logging::error;
 use leptos::prelude::AriaAttributes;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -51,7 +52,7 @@ pub fn Modal(
     let first_button = ComponentRef::new();
     let warp_focus = move |_| {
         let Some(first_button): Option<ButtonRef> = first_button.get() else {
-            console_log(format!("Internal modal first-div reference is not mounted!").as_str());
+            error!("Internal modal first-div reference is not mounted!");
             return;
         };
         let UseTimeoutFnReturn { start, .. } = use_timeout_fn(

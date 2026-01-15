@@ -23,7 +23,7 @@ pub fn Badge(
     children: Children,
 ) -> impl IntoView {
     let prefix_classes = move |prefix: MaybeProp<BadgePrefix>| {
-        prefix.get().map(|prefix| *&prefix.class()).unwrap_or("")
+        prefix.get().map(|prefix| prefix.class()).unwrap_or("")
     };
     let id = shared_id();
     let target_id = format!("#{}", id.clone());
@@ -32,13 +32,13 @@ pub fn Badge(
             {move || if let Some(prefix) = prefix.get() {
                 prefix.view()
             } else {
-                view!{}.into_any()
+                ().into_any()
             }}
             <span>{children()}</span>
             {move || if let Some(postfix) = postfix.get() {
                 postfix.view()
             } else {
-                view!{}.into_any()
+                ().into_any()
             }}
             {if dismissable {
                 Either::Left(view!{
@@ -126,7 +126,7 @@ impl BadgePrefix {
     }
 
     pub fn view(&self) -> AnyView {
-        return match self {
+        match self {
             BadgePrefix::Icon(icon_data) => view! {
                 <Icon class="!w-5 !h-5" icon=*icon_data/>
             }.into_any(),
@@ -139,6 +139,6 @@ impl BadgePrefix {
             BadgePrefix::Avatar { src } => view! {
                 <Avatar src=src.to_string() />
             }.into_any()
-        };
+        }
     }
 }

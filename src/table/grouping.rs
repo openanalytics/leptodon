@@ -38,7 +38,7 @@ where
         <tr class=class on:click=move |mouse_event| on_select.run(mouse_event)>
             <For
                 each=move || columns.get().into_iter()
-                key=|column| column.clone()
+                key=|column| *column
                 children=move |column| {
                     let temp_row = row.get();
                     let grouping_info = temp_row.group_info();
@@ -75,7 +75,8 @@ where
                     } else {
                         return Row::cell_renderer_for_column(row, column, String::new()).into_any()
                     }
-                    return view!{ <td/>}.into_any()
+                    
+                    view!{ <td/> }.into_any()
                 }>
             </For>
         </tr>
@@ -96,14 +97,14 @@ where
             <tr class=class>
                 <For
                     each=move || columns.get().into_iter()
-                    key=|column| column.clone()
+                    key=|column| *column
                     children=move |column| {
                         let temp_row = row.get();
                         let grouping_info = temp_row.group_info();
                         if !grouping_info.grouped_by.contains(&column) {
                             return Row::cell_renderer_for_column(row, column, String::new()).into_any()
                         }
-                        return view!{ <td/>}.into_any()
+                        view!{ <td/> }.into_any()
                     }>
                 </For>
             </tr>

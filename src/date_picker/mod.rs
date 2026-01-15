@@ -196,7 +196,7 @@ fn DayPickerMenu(
                             <div
                                 class=class_list!(
                                     ELEM_CLASSES,
-                                    highlighter.get().map(|it| it(DateMenuOption::Day(date))).unwrap_or_else(String::new)
+                                    highlighter.get().map(|it| it(DateMenuOption::Day(date))).unwrap_or_default()
                                 )
 
                                 // class:border-transparent=move || !is_selected()
@@ -277,7 +277,7 @@ where
                                 class=class_list!(
                                     highlighter.get()
                                         .map(|it| it(DateMenuOption::Month(month.number_from_month())))
-                                        .unwrap_or_else(String::new),
+                                        .unwrap_or_default(),
                                     ELEM_CLASSES
                                 )
                                 on:click={
@@ -377,7 +377,7 @@ where
                                 class=class_list!(
                                     highlighter.get()
                                         .map(|it| it(DateMenuOption::Year(year)))
-                                        .unwrap_or_else(String::new),
+                                        .unwrap_or_default(),
                                     ELEM_CLASSES
                                 )
                                 on:click={
@@ -475,7 +475,7 @@ where
                                 class=class_list!(
                                     highlighter.get()
                                         .map(|it| it(DateMenuOption::Decenium(decenium)))
-                                        .unwrap_or_else(String::new),
+                                        .unwrap_or_default(),
                                     ELEM_CLASSES
                                 )
                                 on:click={
@@ -586,7 +586,7 @@ pub fn DatePicker(
 
     // Input parser
     let parser = ArcOneCallback::new(|to_parse: String| {
-        if to_parse == "" {
+        if to_parse.is_empty() {
             return Ok(None);
         }
         NaiveDate::from_str(to_parse.as_str())
@@ -755,7 +755,7 @@ pub fn DatePicker(
                 {..}
                 role="combobox" // Makes vimium like plugins pass special keys through
                 aria-expanded=move || picker_state.get().visible
-                aria-controls=id.clone()
+                aria-controls=id
             />
             // Picker-Dropdown
             <div id=id class=class_list!(

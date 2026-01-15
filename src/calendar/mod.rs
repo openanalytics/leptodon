@@ -126,7 +126,7 @@ pub fn Calendar(
                         }.into_any()
                     } else {
                         let local_date_time = local_date_time.get();
-                        let badge_label = format!("back to {}", local_date_time.format("%B %Y").to_string());
+                        let badge_label = format!("back to {}", local_date_time.format("%B %Y"));
                         if current_calendar_date.get() < local_date_time.date_naive() {
                             // Viewing the past
                             view! {

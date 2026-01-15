@@ -64,7 +64,7 @@ pub fn Input(
             name={name.get()}
             bind:value=value
             class=class_list![
-                if let Some(group_classes) = group_classes { group_classes } else { String::new() },
+                group_classes.unwrap_or_default(),
                 if readonly.get() {
                     OA_READONLY_INPUT_CLASSES
                 } else {
@@ -143,8 +143,7 @@ where
     comp_ref.load(InputRef { input_ref });
     let group_context = use_context::<GroupItemClassContext>();
     let group_classes = group_context.map(|item| item.class);
-    let in_group =
-        use_context::<InGroupContext>().unwrap_or_else(|| InGroupContext { in_group: false });
+    let in_group = use_context::<InGroupContext>().unwrap_or(InGroupContext { in_group: false });
 
     // String value bound to <input>
     let internal_value_signal = RwSignal::new("".to_string());
@@ -245,7 +244,7 @@ where
                         if required.get() {
                             view!{ <span class="color-red-500">*</span> }.into_any()
                         } else {
-                            view!{}.into_any()
+                            ().into_any()
                         }
                     }
                     {standalone_input}

@@ -129,8 +129,7 @@ where
     let size = size
         .get()
         .unwrap_or_else(|| Signal::stored(size_injection.unwrap_or_default()));
-    let in_group =
-        use_context::<InGroupContext>().unwrap_or_else(|| InGroupContext { in_group: false });
+    let in_group = use_context::<InGroupContext>().unwrap_or(InGroupContext { in_group: false });
     let aria_disabled = move || {
         if loading.get() { Some("true") } else { None }
     };
@@ -160,7 +159,7 @@ where
             id=move || id.get()
             class=class_list![
                 class,
-                if let Some(group_classes) = group_classes { group_classes } else { String::new() },
+                group_classes.unwrap_or_default(),
                 if in_group.in_group { "rounded-none border-r-0 !mr-0" } else { "" },
                 match appearance.get() {
                     ButtonAppearance::Secondary => OA_SECONDARY_BUTTON_CLASSES,
@@ -179,7 +178,7 @@ where
             node_ref=button_ref
             type=move || button_type.get().map(|t| t.as_str())
             aria-disabled=aria_disabled
-            on:click=move |e| on_click(e)
+            on:click=on_click
         >
             {move || {
                 if loading.get() {

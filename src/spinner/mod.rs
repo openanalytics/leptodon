@@ -43,7 +43,7 @@ pub fn Spinner(
 ) -> impl IntoView {
     let id = StoredValue::new(uuid::Uuid::new_v4().to_string());
 
-    let spinner_label = label.clone();
+    let spinner_label = label;
     let children_flag = children.is_some();
     let labelledby = move || {
         spinner_label.with(|label| {

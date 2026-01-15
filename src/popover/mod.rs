@@ -161,7 +161,7 @@ where
         });
         show_by_hover.set(true);
     };
-    
+
     let on_mouse_leave = move |e| {
         if trigger_type != PopoverTriggerType::Hover {
             return;
@@ -185,7 +185,7 @@ where
             .ok();
         });
     };
-    
+
     let on_click = move |_| {
         if trigger_type != PopoverTriggerType::Click {
             return;
@@ -261,7 +261,8 @@ fn element_contains_pointer(popover_ref: &HtmlDivElement, e: MouseEvent) -> bool
         rect.y(),
         rect.y() + rect.height()
     );
-    return rect_x_min < x && rect_x_max > x && rect_y_min < y && rect_y_max > y;
+    
+    rect_x_min < x && rect_x_max > x && rect_y_min < y && rect_y_max > y
 }
 
 /// CssStyleDeclaration::set_property wrapper with some error logging.
@@ -324,7 +325,7 @@ fn set_arrow_position(
     let base_x = base_x as f64;
     let base_y = base_y as f64;
     let arrow_style = (*arrow_ref).style();
-    let popover_rect = get_true_bb(&popover_ref);
+    let popover_rect = get_true_bb(popover_ref);
     let arrow_size = 12.0;
     let corner_offset = 12.0;
     let arrow_middle = arrow_size / 2.0;
@@ -403,8 +404,8 @@ fn find_popover_abs_position(
             vertical_offset: None,
         },
     );
-    let popover_rect = get_true_bb(&popover);
-    let trigger_rect = get_true_bb(&trigger);
+    let popover_rect = get_true_bb(popover);
+    let trigger_rect = get_true_bb(trigger);
 
     // Popover trigger element, we normally display next to it.
     let trigger_x = trigger_rect.x();
@@ -461,7 +462,7 @@ fn find_popover_abs_position(
     // * Popovers should not be wider than the page_width.
     // * Assumes the trigger is not half-onscreen.
     let possible_positions = POPOVER_POSITIONS
-        .into_iter()
+        .iter()
         .filter(|position| match position {
             // Collision checks
             PopoverPosition::TopStart => top_top_is_open && horizontal_start_is_open,
@@ -562,7 +563,7 @@ fn find_popover_abs_position(
         );
     };
 
-    return fallback;
+    fallback
 }
 
 fn window_inner_width() -> Option<f64> {

@@ -20,10 +20,10 @@ use nucleo_matcher::Matcher;
 use nucleo_matcher::pattern::CaseMatching;
 use nucleo_matcher::pattern::Normalization;
 use nucleo_matcher::pattern::Pattern;
-use std::cell::LazyCell;
 use std::fmt::Debug;
 use std::fmt::Display;
 use std::hash::Hash;
+use std::sync::LazyLock;
 use std::sync::Mutex;
 use web_sys::HtmlInputElement;
 use web_sys::KeyboardEvent;
@@ -44,8 +44,8 @@ const TAG_LIST_ITEM_CLASSES: &str =
 
 // Nucleo matcher allocates 135kb memory, so we want to reuse this.
 // Try to not run multiple fuzzy matchers at the same time.
-const NUCLEO_MATCHER: LazyCell<Mutex<Matcher>> =
-    LazyCell::new(|| Mutex::new(Matcher::new(Config::DEFAULT)));
+static NUCLEO_MATCHER: LazyLock<Mutex<Matcher>> =
+    LazyLock::new(|| Mutex::new(Matcher::new(Config::DEFAULT)));
 
 #[component]
 pub fn TagPicker<T>(
@@ -71,8 +71,7 @@ where
         let tags: Vec<T> = tags.get();
 
         let pattern = Pattern::parse(search.as_str(), CaseMatching::Smart, Normalization::Smart);
-        let matcher_holder = NUCLEO_MATCHER; // prevent inline drop
-        let mut matcher = matcher_holder.lock().expect("Unpoisoned lock");
+        let mut matcher = NUCLEO_MATCHER.lock().expect("Unpoised");
         let sorted_tags = pattern.match_list(tags, &mut matcher);
 
         sorted_tags.into_iter().map(|(tag, _score)| tag).collect()
@@ -91,7 +90,7 @@ where
                 unselected_tags.push((tag, false));
             }
         }
-        selected_tags.splice(selected_tags.len().., unselected_tags.into_iter());
+        selected_tags.splice(selected_tags.len().., unselected_tags);
         selected_tags
             .into_iter()
             .enumerate()
@@ -145,7 +144,7 @@ where
                             if selected.get().is_empty() {
                                 view! { {placeholder.get()} }.into_any()
                             } else {
-                                view! { <> }.into_any()
+                                ().into_any()
                             }
                         }}
                         </div>
@@ -170,7 +169,7 @@ where
                                 if is_selected {
                                     vec.iter()
                                         .position(|e| e == &tag)
-                                        .and_then(|pos| { Some(vec.remove(pos)) });
+                                        .map(|pos| { vec.remove(pos); });
                                 } else {
                                     vec.push(tag.clone());
                                 }
@@ -199,7 +198,7 @@ where
                                 if is_selected {
                                     vec.iter()
                                         .position(|e| e == &tag)
-                                        .and_then(|pos| { Some(vec.remove(pos)) });
+                                        .map(|pos| { vec.remove(pos); });
                                 } else {
                                     vec.push(tag.clone());
                                 }
