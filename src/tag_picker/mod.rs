@@ -1,3 +1,4 @@
+use leptos::ev::EventCallback;
 use leptos::leptos_dom::logging::console_log;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::ClassAttribute;
@@ -23,6 +24,7 @@ use nucleo_matcher::pattern::Pattern;
 use std::fmt::Debug;
 use std::fmt::Display;
 use std::hash::Hash;
+use std::ops::Deref;
 use std::sync::LazyLock;
 use std::sync::Mutex;
 use web_sys::HtmlInputElement;
@@ -81,20 +83,20 @@ where
     // (Idx -> (T, is_selected))
     let tags_grouped = Memo::new(move |_old| {
         let selected = selected.get();
-        let mut selected_tags = vec![];
-        let mut unselected_tags = vec![];
+        let search = search_filter.get();
+        let mut group_1 = vec![];
+        let mut group_2 = vec![];
+        // Group/parition by selected status, unless there is a filter
         for tag in tags_filtersorted.get() {
-            if selected.contains(&tag) {
-                selected_tags.push((tag, true));
+            if selected.contains(&tag) || !search.is_empty() {
+                group_1.push(tag);
             } else {
-                unselected_tags.push((tag, false));
+                group_2.push(tag);
             }
         }
-        selected_tags.splice(selected_tags.len().., unselected_tags);
-        selected_tags
-            .into_iter()
-            .enumerate()
-            .collect::<Vec<(usize, (T, bool))>>()
+
+        group_1.append(&mut group_2);
+        group_1.into_iter().enumerate().collect::<Vec<(usize, T)>>()
     });
 
     let on_popover_open = move || {
@@ -162,18 +164,14 @@ where
                             close_popover.notify();
                         }
                         if key.code() == "Enter" {
-                            let Some((_, (tag, is_selected))) = tags_grouped.get().first().cloned() else {
+                            if search_filter.get().is_empty() {
+                                return;
+                            }
+                            let Some((_, tag)) = tags_grouped.get().first().cloned() else {
                                 return;
                             };
-                            selected.update(|vec| {
-                                if is_selected {
-                                    vec.iter()
-                                        .position(|e| e == &tag)
-                                        .map(|pos| { vec.remove(pos); });
-                                } else {
-                                    vec.push(tag.clone());
-                                }
-                            });
+                            
+                            toggle_tag(selected, tag).invoke(());
                         }
                     }
                     {..}
@@ -185,31 +183,47 @@ where
                     key=|tag| {
                         tag.clone()
                     }
-                    let((i, (tag, is_selected)))
+                    let((i, tag))
                     >
                     <li
                         class=class_list!(
                             TAG_LIST_ITEM_CLASSES,
                             ("outline outline-black outline-2", move || i == 0 && !search_filter.get().is_empty())
                         )
-                        on:click={ move |_| {
-                            // Toggle selection
-                            selected.update(|vec| {
-                                if is_selected {
-                                    vec.iter()
-                                        .position(|e| e == &tag)
-                                        .map(|pos| { vec.remove(pos); });
-                                } else {
-                                    vec.push(tag.clone());
-                                }
-                            });
-                        }}
+                        on:click={
+                            let tag = tag.clone();
+                            toggle_tag(selected, tag)
+                        }
                     >
-                        <Checkbox label=tag.to_string() value=move || is_selected disable_tab=true/>
+                        <Checkbox label=tag.to_string() disable_tab=true value={
+                            let tag = tag.clone();
+                            move || selected.get().contains(&tag)
+                        } />
                     </li>
                 </For>
             </ul>
         </Popover>
+    }
+}
+
+fn toggle_tag<T, Event>(selected: RwSignal<Vec<T>>, tag: T) -> impl FnMut(Event) + 'static
+where
+    T: Eq + Clone + Send + Sync + 'static,
+{
+    move |_| {
+        // Toggle selection
+        selected.update(|old_sel| {
+            if old_sel.contains(&tag) {
+                old_sel
+                    .iter()
+                    .position(|sel_tag| sel_tag == &tag)
+                    .map(|pos| {
+                        old_sel.remove(pos);
+                    });
+            } else {
+                old_sel.push(tag.clone());
+            }
+        });
     }
 }
 

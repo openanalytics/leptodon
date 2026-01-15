@@ -22,6 +22,7 @@ use leptos::prelude::Set;
 use leptos::prelude::Signal;
 use leptos::prelude::use_context;
 use leptos::{IntoView, component, view};
+use web_sys::KeyboardEvent;
 
 pub const OA_READONLY_INPUT_CLASSES: &str = "border-0 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
 const OA_INPUT_CLASSES: &str = "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
@@ -185,11 +186,14 @@ where
     };
 
     // If there is an error, try parsing on each key to transition in real time to a good state.
-    let on_input = move |_| {
-        if invalid_reason.get().is_some() {
-            // Formatting should only be done when the user indicates they are done, e.g. by leaving the field (on_blur).
-            // Otherwise a format can disrupt the input
-            try_parse(false);
+    let on_input = {
+        let try_parse = try_parse.clone();
+        move |_| {
+            if invalid_reason.get().is_some() {
+                // Formatting should only be done when the user indicates they are done, e.g. by leaving the field (on_blur).
+                // Otherwise a format can disrupt the input
+                try_parse(false);
+            }
         }
     };
 
@@ -224,6 +228,14 @@ where
             required=""
             on:blur=on_blur
             on:input=on_input
+            on:keydown={       
+                let try_parse = try_parse.clone();
+                move |key: KeyboardEvent| {
+                    if key.code() == "Enter" {
+                        try_parse(true);
+                    }
+                }
+            }
         />
         {
             move || {
