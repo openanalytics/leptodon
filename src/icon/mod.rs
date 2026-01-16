@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 pub mod icon_data;
 
+use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::icon::icon_data::*;
 use crate::icon_data;
 use leptos::IntoView;
@@ -34,8 +35,8 @@ pub fn Icon(
     #[prop(into, default = "1em".into())]
     height: MaybeProp<String>,
     /// HTML class attribute.
-    #[prop(into, default = "w-6 h-6".into())]
-    class: MaybeProp<String>,
+    #[prop(default = "w-6 h-6".into(), into)]
+    class: MaybeReactiveClass,
     /// Callback when clicking on the icon.
     #[prop(optional, into)]
     on_click: Option<ArcOneCallback<ev::MouseEvent>>,
@@ -45,10 +46,9 @@ pub fn Icon(
             click(ev);
         }
     };
-
     view! {
         <svg
-            class=class_list![icon.class.unwrap_or_default(), class]
+            class=class_list!(icon.class.unwrap_or_default(), class)
             x=icon.x
             y=icon.y
             width=move || width.get()

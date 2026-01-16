@@ -1,5 +1,6 @@
 use crate::button_group::InGroupContext;
 use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
 use crate::input_group::GroupItemClassContext;
@@ -100,7 +101,7 @@ pub fn Button(
     id: MaybeProp<String>,
     /// Extra classes appened to the button's default style
     #[prop(optional, into)]
-    class: MaybeProp<String>,
+    class: MaybeReactiveClass,
     /// A button can have its content and borders styled for greater emphasis or to be subtle.
     #[prop(optional, into)]
     appearance: Signal<ButtonAppearance>,

@@ -5,19 +5,21 @@ use leptos::{
     tachys::renderer::{Rndr, types},
 };
 use std::collections::HashSet;
-#[cfg(not(feature = "ssr"))]
+#[cfg(feature = "hydrate")]
 use std::sync::Arc;
+
+pub mod reactive_class;
 
 #[derive(Clone, Default)]
 pub struct ClassList {
     // Css classes are applied by the order they are defined in the .css file, ordering of classes in `class="classes.."` does not affect the outcome.
     // Hence a set is fitting
     value: RwSignal<HashSet<Oco<'static, str>>>,
-    #[cfg(not(feature = "ssr"))]
+    #[cfg(feature = "hydrate")]
     effects_oco: Vec<Arc<RenderEffect<Oco<'static, str>>>>,
-    #[cfg(not(feature = "ssr"))]
+    #[cfg(feature = "hydrate")]
     effects_option_oco: Vec<Arc<RenderEffect<Option<Oco<'static, str>>>>>,
-    #[cfg(not(feature = "ssr"))]
+    #[cfg(feature = "hydrate")]
     effects_bool: Vec<Arc<RenderEffect<bool>>>,
 }
 
@@ -44,7 +46,7 @@ impl ClassList {
                         set.insert(name);
                     });
                 }
-                #[cfg(not(feature = "ssr"))]
+                #[cfg(feature = "hydrate")]
                 {
                     let effect = RenderEffect::new(move |old_name| {
                         let name = f();
@@ -74,7 +76,7 @@ impl ClassList {
                         });
                     }
                 }
-                #[cfg(not(feature = "ssr"))]
+                #[cfg(feature = "hydrate")]
                 {
                     let effect = RenderEffect::new(move |old_name| {
                         let name = f();
@@ -399,14 +401,6 @@ macro_rules! class_list {
             ClassList::new()$(.add($name))+
         }
     };
-}
-
-impl From<ClassList> for MaybeProp<std::string::String> {
-    fn from(value: ClassList) -> Self {
-        let mut result = String::new();
-        value.write_class_string(&mut result);
-        MaybeProp::from(result)
-    }
 }
 
 // TODO

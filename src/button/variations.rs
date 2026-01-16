@@ -163,7 +163,7 @@ where
 
     let button = Button(ButtonProps {
         id,
-        class,
+        class: class.into(),
         appearance,
         size,
         button_type,
@@ -243,7 +243,7 @@ where
 {
     let button = Button(ButtonProps {
         id,
-        class,
+        class: class.into(),
         appearance,
         size,
         button_type,
@@ -333,7 +333,7 @@ where
 {
     let button = Button(ButtonProps {
         id,
-        class,
+        class: class.into(),
         appearance,
         size,
         button_type,
