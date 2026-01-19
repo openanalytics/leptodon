@@ -28,6 +28,7 @@ use leptos_components::input::InputType;
 use leptos_components::link::Link;
 use leptos_components::modal::ModalFooterChildren;
 use leptos_components::navbar::SideNavbar;
+use leptos_components::textarea::TextArea;
 use leptos_components::toggle::Toggle;
 use leptos_components::{
     button::{Button, ButtonAppearance},
@@ -89,7 +90,7 @@ fn Home() -> impl IntoView {
     let double_count = move || count.get() * 2;
     let modal_visible = RwSignal::new(false);
     let dialog_visible = RwSignal::new(false);
-
+    let text_area_input = RwSignal::new("Hi,\nMultiline".to_string());
     view! {
         <Title text="Leptos components" />
         <SideNavbar>
@@ -97,6 +98,7 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
+            <TextArea input=text_area_input label="Notes" placeholder="Time for text" />
             <GroupedTableExample />
             <DemoTable />
             <PopulatedCalendar />

@@ -10,7 +10,7 @@ leptos = { version = "0.8.14", optional = true }
 leptos_meta = { version = "0.8.5", optional = true }
 leptos_router = { version = "0.8.5", optional = true }
 leptos_axum = { version = "0.8.5", optional = true }
-leptos-use = { version = "0.17", features = ["use_calendar", "on_click_outside", "math"], optional = true }
+leptos-use = { version = "0.18", features = ["use_calendar", "on_click_outside", "math"], optional = true }
 
 reactive_stores = { version = "0.2.5", optional = true }
 uuid = { version = "1.18.1",  features = ["v4", "js"], optional = true }

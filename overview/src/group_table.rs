@@ -97,7 +97,7 @@ pub fn GroupedTableExample() -> impl IntoView {
             if let Some(page_count) = opt_pg_count {
                 debug_log!("Table pagination enabled: {page_count} pages");
                 Either::Left(view! {
-                    <Pagination page_count=Signal::derive(move || page_count) current_page=visible_current_page jumper=true />
+                    <Pagination page_count=Signal::derive(move || page_count) current_page=visible_current_page jumper=false />
                 })
             } else {
                 Either::Right(())

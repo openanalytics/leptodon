@@ -1,8 +1,6 @@
-use std::fmt::Debug;
+use leptos::prelude::{ClassAttribute, For, Get, IntoAny, OnAttribute, Show};
 use leptos::prelude::{ElementChild, RwSignal, Signal};
-use leptos::{
-    prelude::{ClassAttribute, For, Get, IntoAny, OnAttribute, Show},
-};
+use std::fmt::Debug;
 use std::{hash::Hash, sync::Arc};
 
 use leptos::{IntoView, view};
@@ -72,7 +70,7 @@ where
                     } else {
                         return Row::cell_renderer_for_column(row, column, String::new()).into_any()
                     }
-                    
+
                     view!{ <td/> }.into_any()
                 }>
             </For>

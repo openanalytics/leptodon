@@ -24,7 +24,6 @@ use nucleo_matcher::pattern::Pattern;
 use std::fmt::Debug;
 use std::fmt::Display;
 use std::hash::Hash;
-use std::ops::Deref;
 use std::sync::LazyLock;
 use std::sync::Mutex;
 use web_sys::HtmlInputElement;
