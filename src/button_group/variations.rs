@@ -7,8 +7,8 @@ use crate::input::InputMode;
 use crate::input::InputType;
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
-use leptos::prelude::AriaAttributes;
 use leptos::prelude::Set;
+use leptos::prelude::{AriaAttributes, IntoAny};
 use leptos::prelude::{ElementChild, RwSignal, Update};
 use leptos::prelude::{Get, Signal};
 use leptos::{IntoView, component, view};
@@ -24,7 +24,6 @@ pub fn Pagination(
     current_page: RwSignal<usize>,
     jumper: bool,
 ) -> impl IntoView {
-    let read_only = Signal::derive(move || !jumper);
     let last_icon = crate::icon::LastIcon();
     let first_icon = crate::icon::FirstIcon();
     let prev_icon = crate::icon::PreviousIcon();
@@ -45,15 +44,22 @@ pub fn Pagination(
                 <Button appearance icon=prev_icon on_click=move |_| {
                     current_page.update(|old| *old = std::cmp::max(*old-1, 1));
                 }></Button>
-                <GenericInput<usize, String>
-                    name="pagination page"
-                    input_mode=InputMode::Numeric
-                    input_type=InputType::Number
-                    value=current_page
-                    readonly=read_only
-                    format
-                    parser
-                />
+                
+                {if jumper {
+                    view! {
+                        <GenericInput<usize, String>
+                            name="pagination page"
+                            input_mode=InputMode::Numeric
+                            input_type=InputType::Number
+                            value=current_page
+                            format
+                            parser
+                        />
+                    }.into_any()
+                } else {
+                    ().into_any()
+                }}
+
                 <Button appearance icon=next_icon on_click=move |_| {
                     current_page.update(|old| *old = std::cmp::min(*old+1, page_count.get()));
                 } ></Button>
