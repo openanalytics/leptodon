@@ -3,10 +3,13 @@ use leptos::leptos_dom::logging::console_log;
 use leptos::logging::error;
 use leptos::prelude::AriaAttributes;
 use leptos::prelude::ClassAttribute;
+use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::IntoAny;
+#[allow(unused_imports)]
+use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
@@ -14,6 +17,7 @@ use leptos::slot;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
 use leptos_use::UseTimeoutFnReturn;
 use leptos_use::use_timeout_fn;
+use web_sys::KeyboardEvent;
 
 use crate::button::ButtonRef;
 use crate::button::ControlButton;
@@ -49,12 +53,14 @@ pub fn Modal(
     /// Modal footer (e.g. Ok and Cancel buttons)
     footer: ModalFooterChildren,
 ) -> impl IntoView {
-    let first_button = ComponentRef::new();
-    let warp_focus = move |_| {
+    let first_button: ComponentRef<ButtonRef> = ComponentRef::new();
+
+    let warp_focus = move || {
         let Some(first_button): Option<ButtonRef> = first_button.get() else {
             error!("Internal modal first-div reference is not mounted!");
             return;
         };
+        // Somehow this hack makes focus work..
         let UseTimeoutFnReturn { start, .. } = use_timeout_fn(
             move |_| {
                 first_button.focus();
@@ -64,8 +70,30 @@ pub fn Modal(
         start(());
         console_log("successfully focused first-div");
     };
+
+    Effect::watch(
+        move || visible.get(),
+        move |new, old, _| {
+            if *new && Some(new) != old {
+                warp_focus();
+            }
+        },
+        false,
+    );
+
     view! {
-        <div tabindex="-1" class=class_list!(MODAL_BACKDROP_CLASSES, ("hidden", move || !visible.get())) on:click=move |_| visible.set(false)>
+        <div tabindex="-1"
+            class=class_list!(
+                MODAL_BACKDROP_CLASSES,
+                ("hidden", move || !visible.get())
+            )
+            on:click=move |_| visible.set(false)
+            on:keydown=move |key: KeyboardEvent| {
+                if key.code() == "Escape"{
+                    visible.set(false);
+                }
+            }
+        >
             // Modal content
             <div
                 id=move || id.get()
@@ -76,14 +104,18 @@ pub fn Modal(
                 aria-modal=true
             >
                 // Backward Focus Blocker, Preferably this would loop to the last_button but last_button is unknown.
-                <span tabindex="0" on:focus=warp_focus aria-hidden="true"></span>
+                <span tabindex="0" aria-hidden="true" on:focus=move |_| warp_focus()></span>
 
                 // Modal header
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-lg font-medium text-heading">
                         { title.get() }
                     </h3>
-                    <ControlButton icon=CloseIcon() comp_ref=first_button on_click=move |_| visible.set(false) />
+                    <ControlButton
+                        icon=CloseIcon()
+                        comp_ref=first_button
+                        on_click=move |_| visible.set(false)
+                    />
                 </div>
 
                 // Modal body
@@ -92,12 +124,13 @@ pub fn Modal(
                 </div>
 
                 // Modal footer
-                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                <div
+                    class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                     {(footer.children)().into_any()}
                 </div>
 
                 // Forward Focus Redirector
-                <span tabindex="0" on:focus=warp_focus aria-hidden="true"></span>
+                <span tabindex="0" on:focus=move |_| warp_focus() aria-hidden="true"></span>
             </div>
         </div>
     }
