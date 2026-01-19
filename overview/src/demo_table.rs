@@ -19,16 +19,16 @@ use leptos_struct_table::*;
 // Tables are implemented in the leptos-struct-table crate
 // This file contains an example table for demonstrative purposes.
 
+#[derive(Clone, Copy, Default, Debug)]
+struct AdminEditButtonCell {
+    is_admin: bool,
+}
+
 /// Arbitrary detail data
 #[derive(Debug, Clone, Default)]
 struct DetailData {
     show: bool,
     text: String,
-}
-
-#[derive(Clone, Copy, Default, Debug)]
-struct AdminEditButtonCell {
-    is_admin: bool,
 }
 
 #[derive(TableRow, Clone, Default, Debug)]
@@ -46,24 +46,6 @@ pub struct Person {
     date: NaiveDate,
     #[table(renderer = "AdminEditButtonCellRenderer", skip_sort)]
     _admin_editable: FieldGetter<AdminEditButtonCell>,
-}
-
-impl Person {
-    fn _admin_editable(&self) -> AdminEditButtonCell {
-        AdminEditButtonCell { is_admin: true }
-    }
-}
-
-impl TableDataProvider<Person, PersonColumn> for RwSignal<Vec<Person>> {
-    async fn get_rows(&self, _: Range<usize>) -> Result<(Vec<Person>, Range<usize>), String> {
-        let books = self.get_untracked().to_vec();
-        let len = books.len();
-        Ok((books, 0..len))
-    }
-
-    async fn row_count(&self) -> Option<usize> {
-        Some(self.get_untracked().len())
-    }
 }
 
 #[component]
@@ -88,26 +70,24 @@ fn DetailCellRenderer(
     }
 }
 
-#[component]
-fn AdminEditButtonCellRenderer(
-    class: String,
-    value: Signal<AdminEditButtonCell>,
-    row: RwSignal<Person>,
-    index: PersonColumn,
-) -> impl IntoView {
-    let (_, _) = (row, index);
-    view! {
-        <td class=class>
-            {move || if value.get().is_admin {
-                Either::Left(view! {
-                    <ControlButton icon=EditIcon() on_click=move |_| {}/>
-                })
-            } else {
-                Either::Right(())
-            }}
-        </td>
+impl Person {
+    fn _admin_editable(&self) -> AdminEditButtonCell {
+        AdminEditButtonCell { is_admin: true }
     }
 }
+
+impl TableDataProvider<Person, PersonColumn> for RwSignal<Vec<Person>> {
+    async fn get_rows(&self, _: Range<usize>) -> Result<(Vec<Person>, Range<usize>), String> {
+        let books = self.get_untracked().to_vec();
+        let len = books.len();
+        Ok((books, 0..len))
+    }
+
+    async fn row_count(&self) -> Option<usize> {
+        Some(self.get_untracked().len())
+    }
+}
+
 
 #[allow(unused_variables, non_snake_case)]
 pub fn DetailRowRenderer(
@@ -239,6 +219,28 @@ pub fn DemoTable() -> impl IntoView {
         </table>
     }
 }
+
+#[component]
+fn AdminEditButtonCellRenderer(
+    class: String,
+    value: Signal<AdminEditButtonCell>,
+    row: RwSignal<Person>,
+    index: PersonColumn,
+) -> impl IntoView {
+    let (_, _) = (row, index);
+    view! {
+        <td class=class>
+            {move || if value.get().is_admin {
+                Either::Left(view! {
+                    <ControlButton icon=EditIcon() on_click=move |_| {}/>
+                })
+            } else {
+                Either::Right(())
+            }}
+        </td>
+    }
+}
+
 
 #[derive(Clone, Copy)]
 pub struct TailwindClassesPreset;
