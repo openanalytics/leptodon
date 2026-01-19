@@ -8,10 +8,12 @@ use leptos::prelude::IntoAny;
 use leptos::prelude::Set;
 use leptos::{IntoView, logging::debug_log, view};
 use leptos_components::button_group::Pagination;
+use leptos_components::table::StyledHeadDragHandler;
 use leptos_components::table::grouping::{GroupRow, GroupTableRowRenderer, GroupingInfo};
 use leptos_components::tag_picker::TagPicker;
 use leptos_struct_table::ColumnSort;
 use leptos_struct_table::DisplayStrategy;
+use leptos_struct_table::HeadDragHandler;
 use leptos_struct_table::PaginationController;
 use leptos_struct_table::TableClassesProvider;
 use leptos_struct_table::TailwindClassesPreset;
@@ -71,13 +73,22 @@ pub fn GroupedTableExample() -> impl IntoView {
 
     view! {
         <div>Group on: </div>
-        <TagPicker placeholder="Selects columns to group on" tags=RwSignal::new(column_tags) selected=group_on />
+        <TagPicker 
+            placeholder="Selects columns to group on" 
+            tags=RwSignal::new(column_tags) 
+            selected=group_on
+        />
         <table>
             {move || {
                 let group_on = group_on.get();
                 let rows = LocalFlowers::new(group_on);
                 view! {
-                    <TableContent rows row_renderer=GroupTableRowRenderer display_strategy=strat scroll_container="html"></TableContent>
+                    <TableContent rows
+                        row_renderer=GroupTableRowRenderer 
+                        display_strategy=strat 
+                        scroll_container="html" 
+                        drag_handler=HeadDragHandler::new(StyledHeadDragHandler)
+                    ></TableContent>
                 }
             }}
         </table>
@@ -208,9 +219,9 @@ fn group_flowers(flowers: Vec<DBFlower>, group_on: Arc<Vec<FlowerColumn>>) -> Ve
             }
         }
         if prev_values == cur_values && row_index != last_row_idx {
-            debug_log!(
-                "Pushing a flower {flower:?} onto an existing group {cur_values:?} == {prev_values:?}"
-            );
+            // debug_log!(
+            //     "Pushing a flower {flower:?} onto an existing group {cur_values:?} == {prev_values:?}"
+            // );
             group_builder.push(flower);
         } else {
             debug_log!("New group {flower:?} {cur_values:?} != {prev_values:?}");

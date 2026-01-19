@@ -1581,6 +1581,16 @@ input:checked + .toggle-bg {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
+.rotate-90 {
+  --tw-rotate: 90deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.-rotate-90 {
+  --tw-rotate: -90deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .-scale-x-100 {
   --tw-scale-x: -1;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -1861,6 +1871,14 @@ input:checked + .toggle-bg {
   border-top-width: 0px;
 }
 
+.border-l-2 {
+  border-left-width: 2px;
+}
+
+.border-r-2 {
+  border-right-width: 2px;
+}
+
 .border-solid {
   border-style: solid;
 }
@@ -1932,6 +1950,11 @@ input:checked + .toggle-bg {
 .border-yellow-400 {
   --tw-border-opacity: 1;
   border-color: rgb(227 160 8 / var(--tw-border-opacity, 1));
+}
+
+.border-blue-500 {
+  --tw-border-opacity: 1;
+  border-color: rgb(63 131 248 / var(--tw-border-opacity, 1));
 }
 
 .\!bg-gray-50 {
@@ -2030,6 +2053,10 @@ input:checked + .toggle-bg {
   background-color: rgb(253 246 178 / var(--tw-bg-opacity, 1));
 }
 
+.bg-blue-500\/10 {
+  background-color: rgb(63 131 248 / 0.1);
+}
+
 .p-0\.5 {
   padding: 0.125rem;
 }
@@ -2120,10 +2147,6 @@ input:checked + .toggle-bg {
 
 .pb-4 {
   padding-bottom: 1rem;
-}
-
-.pl-2 {
-  padding-left: 0.5rem;
 }
 
 .pt-2 {
@@ -2309,10 +2332,6 @@ input:checked + .toggle-bg {
   opacity: 1;
 }
 
-.opacity-80 {
-  opacity: 0.8;
-}
-
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
@@ -2335,6 +2354,10 @@ input:checked + .toggle-bg {
   outline-style: solid;
 }
 
+.outline-dashed {
+  outline-style: dashed;
+}
+
 .outline-2 {
   outline-width: 2px;
 }
@@ -2347,8 +2370,16 @@ input:checked + .toggle-bg {
   outline-offset: -1px;
 }
 
+.-outline-offset-1 {
+  outline-offset: -1px;
+}
+
 .outline-black {
   outline-color: #000000;
+}
+
+.outline-blue-500 {
+  outline-color: #3F83F8;
 }
 
 .blur {
@@ -2424,14 +2455,51 @@ input:checked + .toggle-bg {
   top: 0.125rem;
 }
 
+.after\:left-0::after {
+  content: var(--tw-content);
+  left: 0px;
+}
+
+.after\:right-0::after {
+  content: var(--tw-content);
+  right: 0px;
+}
+
+.after\:top-0::after {
+  content: var(--tw-content);
+  top: 0px;
+}
+
 .after\:h-5::after {
   content: var(--tw-content);
   height: 1.25rem;
 }
 
+.after\:h-0::after {
+  content: var(--tw-content);
+  height: 0px;
+}
+
 .after\:w-5::after {
   content: var(--tw-content);
   width: 1.25rem;
+}
+
+.after\:w-0::after {
+  content: var(--tw-content);
+  width: 0px;
+}
+
+.after\:-translate-x-\[7px\]::after {
+  content: var(--tw-content);
+  --tw-translate-x: -7px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.after\:translate-x-\[7px\]::after {
+  content: var(--tw-content);
+  --tw-translate-x: 7px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .after\:rounded-full::after {
@@ -2444,10 +2512,41 @@ input:checked + .toggle-bg {
   border-width: 1px;
 }
 
+.after\:border-l-\[6px\]::after {
+  content: var(--tw-content);
+  border-left-width: 6px;
+}
+
+.after\:border-r-\[6px\]::after {
+  content: var(--tw-content);
+  border-right-width: 6px;
+}
+
+.after\:border-t-\[8px\]::after {
+  content: var(--tw-content);
+  border-top-width: 8px;
+}
+
 .after\:border-gray-300::after {
   content: var(--tw-content);
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
+}
+
+.after\:border-l-transparent::after {
+  content: var(--tw-content);
+  border-left-color: transparent;
+}
+
+.after\:border-r-transparent::after {
+  content: var(--tw-content);
+  border-right-color: transparent;
+}
+
+.after\:border-t-blue-500::after {
+  content: var(--tw-content);
+  --tw-border-opacity: 1;
+  border-top-color: rgb(63 131 248 / var(--tw-border-opacity, 1));
 }
 
 .after\:bg-white::after {
