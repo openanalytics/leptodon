@@ -23,7 +23,7 @@ use num_traits::ConstOne;
 use num_traits::SaturatingAdd;
 use num_traits::SaturatingSub;
 
-use crate::{button::Button, input::Input};
+use crate::{button::Button, input::TextInput};
 
 fn clamp<T>(some: T, min: T, max: T) -> T
 where
@@ -138,7 +138,7 @@ where
     view! {
         <div class=class_list!(class, "relative flex items-center mb-2")>
             <GroupItemContextProvider class="rounded-none rounded-l-lg">
-                <Input name placeholder input_type=InputType::Text input_mode=InputMode::Numeric value=value_binder />
+                <TextInput name placeholder input_type=InputType::Text input_mode=InputMode::Numeric value=value_binder />
             </GroupItemContextProvider>
             <GroupItemContextProvider class="rounded-none border-x-0 !mr-0">
                 <Button icon=icon::DecrementIcon() on_click=dec_handler />

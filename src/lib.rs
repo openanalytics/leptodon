@@ -25,6 +25,8 @@ pub mod dialog;
 #[cfg(feature = "leptos")]
 pub mod dropdown;
 #[cfg(feature = "leptos")]
+pub mod radio;
+#[cfg(feature = "leptos")]
 pub mod icon;
 #[cfg(feature = "leptos")]
 pub mod input;

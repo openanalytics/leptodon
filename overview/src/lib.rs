@@ -9,6 +9,7 @@ pub mod gen_icons;
 pub mod group_table;
 pub mod ical_property;
 pub mod web_calendar;
+pub mod forms;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

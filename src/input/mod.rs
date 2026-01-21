@@ -1,9 +1,9 @@
+use std::u32;
 use crate::button_group::InGroupContext;
 use crate::class_list;
 use crate::input_group::GroupItemClassContext;
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
-use crate::util::signals::ComponentRef;
 use leptos::either::Either;
 use leptos::html;
 use leptos::prelude::BindAttribute;
@@ -28,15 +28,29 @@ pub const OA_READONLY_INPUT_CLASSES: &str = "border-0 text-gray-900 text-sm roun
 const OA_INPUT_CLASSES: &str = "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
 
 #[component]
-pub fn Input(
+#[allow(unused)] // Generated propsbuilder is used.
+pub fn TextInputConfig(
+    #[prop(optional, into)]
+    max_len: MaybeProp<u32>,
+    // A min-len of 1 should be provided via the "required" property instead.
+    #[prop(optional, into)]
+    min_len: MaybeProp<u32>,
+    // Whether or not to trim surrounding whitespace "  My name " -> "My name"
+    #[prop(default = true)]
+    trim: bool
+) -> impl IntoView { () }
+
+#[component]
+pub fn TextInput(
     /// Extra classes added to augment the default style.
     #[prop(optional, into)]
     class: MaybeProp<String>,
-    #[prop(optional)] input_ref: NodeRef<html::Input>,
+    /// Will be initialised with a DOM reference to the backing <input> element.
+    #[prop(optional)]
+    input_ref: NodeRef<html::Input>,
     /// Text above the input that informs the user what to type.
     #[prop(optional, into)]
     label: MaybeProp<String>,
-    /// A string specifying a name for the input control.
     /// This name is submitted along with the control's value when the form data is submitted.
     #[prop(optional, into)]
     name: MaybeProp<String>,
@@ -46,51 +60,67 @@ pub fn Input(
     /// An input can have different modes, useful for mobile devices to bring up the correct virtual keyboard. More fine-grained than type.
     #[prop(optional, into)]
     input_mode: Signal<InputMode>,
+    #[prop(default = TextInputConfigProps::builder().build())]
+    text_config: TextInputConfigProps,
     /// Binds to the value of the input, has to be a string.
     #[prop(optional, into)]
     value: RwSignal<String>,
     /// Whether the input is readonly.
     #[prop(optional, into)]
     readonly: Signal<bool>,
+    /// Whether the input is required.
+    #[prop(optional, into)]
+    required: Signal<bool>,
     /// Placeholder text for the input.
     #[prop(optional, into)]
     placeholder: MaybeProp<String>,
 ) -> impl IntoView {
-    let group_context = use_context::<GroupItemClassContext>();
-    let group_classes = group_context.map(|item| item.class);
-
-    let standalone_input = view! {
-        <input type=input_type.get().as_str()
-            inputmode=input_mode.get().as_str()
-            name={name.get()}
-            bind:value=value
-            class=class_list![
-                group_classes.unwrap_or_default(),
-                if readonly.get() {
-                    OA_READONLY_INPUT_CLASSES
-                } else {
-                    OA_INPUT_CLASSES
-                },
-                class
-            ]
-            disabled={readonly.get()}
-            readonly={readonly.get()}
-            node_ref=input_ref
-            placeholder={placeholder.get()} required=""/>
+    
+    let parser = move |input: String| {
+        // Trim first if configured, so we do not count whitespace characters.
+        let input = if text_config.trim {
+            input.trim()
+        } else {
+            input.as_str()
+        };
+        
+        // != input.len()
+        // emojis and other special characters are counted as only 1 extra length using the String::chars(&self) iterator.
+        let input_len = input.chars().count() as u32;
+        
+        if let Some(max_len) = text_config.max_len.get() && 
+            let Some(min_len) = text_config.min_len.get() {
+            if input_len > max_len || input_len < min_len {
+                return Err(format!("Input Length must be >{min_len} and <{max_len}"));
+            } 
+        } else if let Some(max_len) = text_config.max_len.get()  {
+            if input_len > max_len {
+                return Err(format!("Input Length must be <{max_len}"));
+            } 
+        } else if let Some(min_len) = text_config.min_len.get() {
+            if input_len < min_len {
+                return Err(format!("Input Length must be >{min_len}"));
+            } 
+        }
+        
+        Ok(String::from(input))
     };
-
-    if let Some(label) = label.get() {
-        Either::Left(view! {
-            <div>
-                <label class="block mb-2.5 text-sm font-medium text-heading">
-                    {label}
-                    {standalone_input}
-                </label>
-            </div>
-        })
-    } else {
-        Either::Right(standalone_input)
-    }
+    
+    return view!{
+        <GenericInput<String, String>
+            class
+            input_ref
+            label
+            name
+            input_type
+            input_mode
+            value
+            readonly
+            required
+            placeholder
+            parser
+        />
+    };
 }
 
 /// If the input is empty but you supplied **value** then check if you supplied a **format** handler
@@ -102,7 +132,9 @@ pub fn GenericInput<T, E>(
     /// Extra classes added to augment the default style.
     #[prop(optional, into)]
     class: MaybeProp<String>,
-    #[prop(optional)] comp_ref: ComponentRef<InputRef>,
+    /// Will be initialised with a DOM reference to the backing <input> element.
+    #[prop(optional)]
+    input_ref: NodeRef<html::Input>,
     /// Text above the input that informs the user what to type.
     #[prop(optional, into)]
     label: MaybeProp<String>,
@@ -140,8 +172,8 @@ where
     T: Clone + Default + Sync + Send + 'static,
     E: Clone + Send + Sync + std::fmt::Display + 'static,
 {
-    let input_ref = NodeRef::<html::Input>::new();
-    comp_ref.load(InputRef { input_ref });
+    // let input_ref = NodeRef::<html::Input>::new();
+    // comp_ref.load(InputRef { input_ref });
     let group_context = use_context::<GroupItemClassContext>();
     let group_classes = group_context.map(|item| item.class);
     let in_group = use_context::<InGroupContext>().unwrap_or(InGroupContext { in_group: false });
@@ -225,7 +257,7 @@ where
             readonly={readonly.get()}
             node_ref=input_ref
             placeholder={placeholder.get()}
-            required=""
+            required={required.get()}
             on:blur=on_blur
             on:input=on_input
             on:keydown={       

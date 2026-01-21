@@ -32,7 +32,7 @@ use web_sys::KeyboardEvent;
 use crate::checkbox::Checkbox;
 use crate::class_list;
 use crate::icon::Icon;
-use crate::input::Input;
+use crate::input::TextInput;
 use crate::popover::Popover;
 use crate::popover::PopoverController;
 use crate::popover::PopoverPosition;
@@ -156,7 +156,7 @@ where
 
             // Popover Contents VV
             <ul>
-                <Input class="mb-2" placeholder="Search..." value=search_filter input_ref=search_ref
+                <TextInput class="mb-2" placeholder="Search..." value=search_filter input_ref=search_ref
                     on:keydown=move |key: KeyboardEvent| {
                         console_log(key.code().as_str());
                         if key.code() == "Escape" || key.code() == "Tab" {

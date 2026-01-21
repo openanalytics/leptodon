@@ -32,7 +32,7 @@ use leptos_components::textarea::TextArea;
 use leptos_components::toggle::Toggle;
 use leptos_components::{
     button::{Button, ButtonAppearance},
-    input::Input,
+    input::TextInput,
 };
 use leptos_meta::MetaTags;
 use leptos_meta::Stylesheet;
@@ -72,6 +72,7 @@ pub fn App() -> impl IntoView {
         <Router>
             <Routes fallback=|| "Page not found.">
                 <Route path=StaticSegment("") view=Home/>
+                <Route path=StaticSegment("/forms") view=crate::forms::Forms/>
             </Routes>
         </Router>
     }
@@ -207,11 +208,11 @@ fn Home() -> impl IntoView {
             <DeleteButton/>
             <DownloadButton/>
             <br/>
-            <Input/>
+            <TextInput/>
             <br/>
-            <Input label="Username" name="username" placeholder="Username" input_type=InputType::Text  />
-            <Input label="Email" name="email" placeholder="Email" input_type=InputType::Email readonly=true />
-            <Input label="Password" name="pass" placeholder="Password" input_type=InputType::Password />
+            <TextInput label="Username" name="username" placeholder="Username" input_type=InputType::Text  />
+            <TextInput label="Email" name="email" placeholder="Email" input_type=InputType::Email readonly=true />
+            <TextInput label="Password" name="pass" placeholder="Password" input_type=InputType::Password />
             <br/>
             <crate::gen_icons::IconList />
         </main>

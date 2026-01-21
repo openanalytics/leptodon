@@ -80,6 +80,7 @@ pub fn SideNavbar(children: Children) -> impl IntoView {
                 <ul class="space-y-2 font-medium mt-2">
                     <li><SideBarLink href="#" icon=icon::CalendarIcon()>Calendar</SideBarLink></li>
                     <li><SideBarLink href="users" icon=icon::UserIcon()>Users</SideBarLink></li>
+                    <li><SideBarLink href="forms" icon=icon::PendingApprovalIcon()>Users</SideBarLink></li>
                     <li><SideBarLink href="security" icon=icon::LockOpenIcon()>Security</SideBarLink></li>
                 </ul>
             </div>
