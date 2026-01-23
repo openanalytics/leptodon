@@ -25,7 +25,7 @@ pub mod dialog;
 #[cfg(feature = "leptos")]
 pub mod dropdown;
 #[cfg(feature = "leptos")]
-pub mod radio;
+pub mod form_input;
 #[cfg(feature = "leptos")]
 pub mod icon;
 #[cfg(feature = "leptos")]
@@ -40,6 +40,8 @@ pub mod modal;
 pub mod navbar;
 #[cfg(feature = "leptos")]
 pub mod popover;
+#[cfg(feature = "leptos")]
+pub mod radio;
 #[cfg(feature = "leptos")]
 pub mod select;
 #[cfg(feature = "leptos")]

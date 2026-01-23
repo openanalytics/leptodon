@@ -110,13 +110,13 @@ pub fn Button(
     size: MaybeProp<Signal<ButtonSize>>,
     /// The default behavior of the button.
     #[prop(optional, into)]
-    button_type: MaybeProp<ButtonType>,
+    button_type: ButtonType,
     /// The shape of the button.
     #[prop(default = ButtonShape::default(), into)]
     shape: ButtonShape,
     /// The icon of the button.
     #[prop(optional, into)]
-    icon: MaybeProp<IconRef>,
+    icon: MaybeProp<Signal<IconRef>>,
     /// Whether the button shows the loading status.
     #[prop(optional, into)]
     loading: Signal<bool>,
@@ -177,7 +177,7 @@ where
                 }
             ]
             node_ref=button_ref
-            type=move || button_type.get().map(|t| t.as_str())
+            type=button_type.as_str()
             aria-disabled=aria_disabled
             on:click=on_click
         >
@@ -192,7 +192,7 @@ where
                     )
                 } else if let Some(icon) = icon.get() {
                     EitherOf3::B(view!{
-                        <Icon icon=icon class="w-5 h-5"/>
+                        <Icon icon=icon.get() class="w-5 h-5"/>
                     })
                 } else {
                     EitherOf3::C(())
@@ -299,18 +299,15 @@ impl ButtonSizeInjection {
 /// The default behavior of the button.
 ///
 /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type)
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub enum ButtonType {
     /// The button submits the form data to the server.
-    /// This is the default if the attribute is not specified for buttons associated with a <form>,
-    /// or if the attribute is an empty or invalid value.
     Submit,
-    /// The button resets all the controls to their initial values,
+    /// The button resets all the form-controls to their initial values,
     /// like <input type="reset">. (This behavior tends to annoy users.)
     Reset,
     /// The button has no default behavior, and does nothing when pressed by default.
-    /// It can have client-side scripts listen to the element's events,
-    /// which are triggered when the events occur.
+    #[default]
     Button,
 }
 

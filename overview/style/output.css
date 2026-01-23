@@ -1317,6 +1317,10 @@ input:checked + .toggle-bg {
   margin-top: 1px;
 }
 
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
 .line-clamp-3 {
   overflow: hidden;
   display: -webkit-box;
@@ -2317,6 +2321,11 @@ input:checked + .toggle-bg {
 .text-oa-red {
   --tw-text-opacity: 1;
   color: rgb(229 35 35 / var(--tw-text-opacity, 1));
+}
+
+.text-red-500 {
+  --tw-text-opacity: 1;
+  color: rgb(240 82 82 / var(--tw-text-opacity, 1));
 }
 
 .text-red-600 {

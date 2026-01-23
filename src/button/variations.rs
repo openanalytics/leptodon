@@ -6,6 +6,7 @@ use crate::dialog::Dialog;
 use crate::dropdown::AlignmentAnchor;
 use crate::dropdown::Dropdown;
 use crate::icon;
+use crate::icon::icon_data::IconData;
 use crate::icon::icon_data::IconRef;
 use crate::modal::{Modal, ModalFooterChildren};
 use crate::util::callback::BoxCallback;
@@ -102,6 +103,12 @@ pub fn DownloadButton() -> impl IntoView {
     }
 }
 
+impl From<&'static IconData> for MaybeProp<Signal<&'static IconData>> {
+    fn from(value: &'static IconData) -> Self {
+        MaybeProp::from(Signal::<&'static IconData>::from(value))
+    }
+}
+
 #[slot]
 pub struct DropdownButtonChildren {
     children: Children,
@@ -135,13 +142,13 @@ pub fn DropdownButton(
     size: MaybeProp<Signal<ButtonSize>>,
     /// The default behavior of the button.
     #[prop(optional, into)]
-    button_type: MaybeProp<ButtonType>,
+    button_type: ButtonType,
     /// The shape of the button.
     #[prop(default = ButtonShape::default(), into)]
     shape: ButtonShape,
     /// The icon of the button.
     #[prop(optional, into)]
-    icon: MaybeProp<IconRef>,
+    icon: MaybeProp<Signal<IconRef>>,
     /// Whether the button shows the loading status.
     #[prop(optional, into)]
     loading: Signal<bool>,
@@ -212,13 +219,13 @@ pub fn ModalButton(
     size: MaybeProp<Signal<ButtonSize>>,
     /// The default behavior of the button.
     #[prop(optional, into)]
-    button_type: MaybeProp<ButtonType>,
+    button_type: ButtonType,
     /// The shape of the button.
     #[prop(default = ButtonShape::default(), into)]
     shape: ButtonShape,
     /// The icon of the button.
     #[prop(optional, into)]
-    icon: MaybeProp<IconRef>,
+    icon: MaybeProp<Signal<IconRef>>,
     /// Whether the button shows the loading status.
     #[prop(optional, into)]
     loading: Signal<bool>,
@@ -293,13 +300,13 @@ pub fn DialogButton(
     size: MaybeProp<Signal<ButtonSize>>,
     /// The default behavior of the button.
     #[prop(optional, into)]
-    button_type: MaybeProp<ButtonType>,
+    button_type: ButtonType,
     /// The shape of the button.
     #[prop(default = ButtonShape::default(), into)]
     shape: ButtonShape,
     /// The icon of the button.
     #[prop(optional, into)]
-    icon: MaybeProp<IconRef>,
+    icon: MaybeProp<Signal<IconRef>>,
     /// Whether the button shows the loading status.
     #[prop(optional, into)]
     loading: Signal<bool>,

@@ -13,6 +13,7 @@ use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
+use leptos::prelude::Show;
 use leptos::{IntoView, component, view};
 use std::fmt::Display;
 use std::hash::Hash;
@@ -52,15 +53,19 @@ where
 {
     let id = Arc::new(shared_id());
     view! {
-        <div class=class_list!(class)> 
+        <div class=class_list!(class)>
             {if !label.is_empty() {
                 view!{
-                    <h3 class="mb-4 font-semibold text-heading">{label}</h3>
+                    <h3 class="mb-1 mt-3 font-semibold text-heading">
+                    <Show
+                        when=move || required
+                        fallback=|| ()><span class="text-red-500">*</span>
+                    </Show> {label}</h3>
                 }.into_any()
             } else {
                 ().into_any()
             }}
-    
+
             <ul class=class_list!(
                 "w-48 bg-neutral-primary-soft",
                 match appearance {
@@ -97,7 +102,7 @@ where
                                             move || {
                                                 if let Some(input) = node_ref.get() && input.checked() {
                                                     let select = option.clone();
-    
+
                                                     debug_log!("selecting radio opt {select}");
                                                     // Updating selected is not handled via the click handler in order to support the standard radio-keyboard navigation.
                                                     selected.set(Some(select));

@@ -21,6 +21,7 @@ use std::str::FromStr;
 // Do not remove until leptos is upgraded above 0.8.14
 use leptos::leptos_dom::logging::console_log;
 use leptos::logging::debug_log;
+use leptos::oco::Oco;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
@@ -36,14 +37,25 @@ use leptos_meta::Html;
 use leptos_meta::Meta;
 use leptos_use::use_preferred_dark;
 
+use crate::radio::RadioOption;
 use crate::select::Select;
 
-#[derive(Debug, Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Hash, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum Theme {
     Light,
     Dark,
     #[default]
     FollowSystem,
+}
+
+impl RadioOption for Theme {
+    fn value(&self) -> prelude::Oco<'static, str> {
+        match self {
+            Theme::Light => Oco::Borrowed("light"),
+            Theme::Dark => Oco::Borrowed("dark"),
+            Theme::FollowSystem => Oco::Borrowed("follow_system"),
+        }
+    }
 }
 
 impl Display for Theme {
@@ -123,9 +135,9 @@ pub fn ThemeSelector() -> impl IntoView {
     let cookie_theme = initial_theme_from_cookie();
     let browser_prefers_dark = browser_prefers_darkmode();
     // Bound to the html select.
-    let selected_theme = RwSignal::new(cookie_theme.to_string());
+    let selected_theme = RwSignal::new(cookie_theme);
     let resulting_light_dark = Memo::new(move |_| {
-        let theme = Theme::from(selected_theme.get().as_str());
+        let theme = selected_theme.get();
         let resulting_theme = match theme {
             Theme::Light => "light",
             Theme::FollowSystem if browser_prefers_dark.get() => "dark light",
@@ -137,7 +149,7 @@ pub fn ThemeSelector() -> impl IntoView {
     });
 
     let resulting_dark = Memo::new(move |_| {
-        let theme = Theme::from(selected_theme.get().as_str());
+        let theme = selected_theme.get();
         debug_log!("Final theme: {theme:?}");
         console_log(format!("Final theme: {theme:?}").as_str());
         let resulting_theme = match theme {
@@ -158,7 +170,7 @@ pub fn ThemeSelector() -> impl IntoView {
                 return;
             }
             debug_log!("Updating theme from {prev_theme:?} to {theme}");
-            let selected_theme = Theme::from(theme.as_str());
+            let selected_theme = theme.clone();
             update_theme_action.dispatch(UpdateTheme {
                 new_theme: selected_theme,
             });
@@ -180,14 +192,11 @@ pub fn ThemeSelector() -> impl IntoView {
             content=move || resulting_light_dark.get()
         />
         <label for="theme">Choose theme:</label>
-        <Select
+        <Select<Theme>
             name="theme"
-            value=selected_theme
-        >
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="follow_system">Follow System</option>
-        </Select>
+            selected=selected_theme
+            options=RwSignal::new(vec![Theme::Light, Theme::Dark, Theme::FollowSystem])
+        />
     }
 }
 

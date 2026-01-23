@@ -67,6 +67,8 @@ rrule = { version = "0.14", features = ["serde"] }
 
 
 serde = "1"
+strum_macros = "0.27.2"
+strum = "0.27.2"
 
 [features]
 default = ["ssr"]
