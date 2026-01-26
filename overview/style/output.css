@@ -1241,6 +1241,11 @@ input:checked + .toggle-bg {
   margin-bottom: 0.75rem;
 }
 
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
 .\!mr-0 {
   margin-right: 0px !important;
 }
@@ -1313,12 +1318,12 @@ input:checked + .toggle-bg {
   margin-top: 0.5rem;
 }
 
-.mt-px {
-  margin-top: 1px;
-}
-
 .mt-3 {
   margin-top: 0.75rem;
+}
+
+.mt-px {
+  margin-top: 1px;
 }
 
 .line-clamp-3 {
@@ -1680,6 +1685,10 @@ input:checked + .toggle-bg {
   flex-direction: column;
 }
 
+.content-center {
+  align-content: center;
+}
+
 .items-start {
   align-items: flex-start;
 }
@@ -1789,6 +1798,10 @@ input:checked + .toggle-bg {
 
 .overflow-x-hidden {
   overflow-x: hidden;
+}
+
+.whitespace-pre-wrap {
+  white-space: pre-wrap;
 }
 
 .rounded {

@@ -153,9 +153,9 @@ pub fn PasswordInput(
     /// Attackers frequently try combinations of public/leaked information they have on people.
     #[prop(into)]
     hazards: Vec<String>,
-    /// Show strength bar
-    #[prop(default = false)]
-    show_strength: bool,
+    // TODO: Show strength bar
+    // #[prop(default = false)]
+    // show_strength: bool,
     /// Shows an eye-icon-button next to the password input.
     /// Clicking the button toggles the input between plaintext and password mode.
     #[prop(default = false)]

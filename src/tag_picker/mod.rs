@@ -194,10 +194,17 @@ where
                             toggle_tag(selected, tag)
                         }
                     >
-                        <Checkbox label=tag.to_string() disable_tab=true value={
-                            let tag = tag.clone();
-                            move || selected.get().contains(&tag)
-                        } />
+                        |_| {let tag=tag.clone(); {
+                            view! {
+                                <Checkbox disable_tab=true value={
+                                    let tag = tag.clone();
+                                    move || selected.get().contains(&tag)
+                                }>
+                                    {tag.to_string()}
+                                </Checkbox>
+                            }
+                        }}
+                        
                     </li>
                 </For>
             </ul>

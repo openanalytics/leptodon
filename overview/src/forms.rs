@@ -2,9 +2,14 @@ use derive_more::Display;
 use leptos::prelude::{ClassAttribute, ElementChild};
 use leptos::{IntoView, component, oco::Oco, prelude::RwSignal, view};
 use leptos_components::button::ButtonType;
+use leptos_components::checkbox::Checkbox;
+use leptos_components::date_picker::DatePicker;
+use leptos_components::date_picker::range_picker::DateRangePicker;
 use leptos_components::form_input::FormInput;
 use leptos_components::input::{InputType, PasswordInput, TextInput};
+use leptos_components::link::Link;
 use leptos_components::select::{MaybeSelect, Select};
+use leptos_components::toggle::Toggle;
 use leptos_components::{
     button::Button,
     radio::{Radio, RadioOption},
@@ -87,28 +92,45 @@ pub fn Forms() -> impl IntoView {
                     options=radio_options
                     required=true
                 />
-                <MaybeSelect
-                    class="my-3"
-                    name="favorite_element"
-                    label="Favorite Element"
-                    options=elements
-                    selected=RwSignal::new(None)
-                    required=false
-                />
-                <Select
-                    class="my-3"
-                    name="an_element"
-                    label="An Element"
-                    options=elements
-                    selected=RwSignal::new(Element::Carbon)
-                    required=true
-                />
-                <TextInput label="Full name" name="fullname" placeholder="Preferred full name" required=true />
-                <TextInput label="Email address" name="email" placeholder="localpart@domain" input_type=InputType::Email required=true />
-                <FormInput<String> label="Password" required=true>
-                    <PasswordInput name="password" placeholder="*******************" hazards=vec!["Merlijn".to_string()] show_eye=true required=true />
+                <FormInput<String> label="Favorite Element" required=false>
+                    <MaybeSelect
+                        class="my-3"
+                        name="favorite_element"
+                        options=elements
+                        selected=RwSignal::new(None)
+                    />
                 </FormInput<String>>
-                // <TextInput label="Passcode" placeholder="*******************" input_type=InputType::Password required=true />
+                <FormInput<String> label="An Element" required=true>
+                    <Select
+                        class="my-3"
+                        name="an_element"
+                        options=elements
+                        selected=RwSignal::new(Element::Carbon)
+                    />
+                </FormInput<String>>
+                <FormInput<String> label="Full name" required=true>
+                    <TextInput name="fullname" placeholder="Preferred full name" />
+                </FormInput<String>>
+                <FormInput<String> label="Email address" required=true>
+                    <TextInput name="email" placeholder="localpart@domain" input_type=InputType::Email />
+                </FormInput<String>>
+                <FormInput<String> label="Password" required=true>
+                    <PasswordInput name="password" placeholder="*******************" hazards=vec!["Merlijn".to_string()] show_eye=true />
+                </FormInput<String>>
+                <Checkbox required=true value=false>
+                    <span class="whitespace-pre-wrap">
+                        Accept <Link class="inline-block" href="/terms"> terms </Link> and conditions
+                    </span>
+                </Checkbox>
+                <br/>
+                <Toggle required=true value=false label="Advertising cookies"/>
+                <br/>
+                <FormInput<String> label="End date" required=true>
+                    <DatePicker name="end-date" value=RwSignal::new(None) />
+                </FormInput<String>>
+                <FormInput<String> label="Period" required=true>
+                    <DateRangePicker name="period" />
+                </FormInput<String>>
                 <Button button_type=ButtonType::Submit>"Submit"</Button>
             </div>
         </Form>

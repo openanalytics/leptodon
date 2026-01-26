@@ -25,7 +25,7 @@ pub fn Link<H>(
     /// if false, link is marked aria-active if the current route starts with it.
     #[prop(optional)]
     exact: bool,
-    /// If `true`, and when `href` has a trailing slash, `aria-current` be only be set if `current_url` also has
+    /// If `true`, and when `href` has a trailing slash, `aria-current` will only be set if `current_url` also has
     /// a trailing slash.
     #[prop(optional)]
     strict_trailing_slash: bool,

@@ -201,7 +201,9 @@ fn Home() -> impl IntoView {
                 </Last>
             </ButtonGroup>
             <br/>
-            <Checkbox label="Done all tasks" value=Signal::derive(|| false)/>
+            <Checkbox value=Signal::derive(|| false)>
+                Done all tasks
+            </Checkbox>
             <br/>
             <AddButton/>
             <EditButton/>

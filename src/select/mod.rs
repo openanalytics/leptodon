@@ -6,8 +6,6 @@ use leptos::prelude::For;
 use leptos::prelude::Get;
 use leptos::prelude::GetUntracked;
 use leptos::prelude::GlobalOnAttributes;
-use leptos::prelude::IntoAny;
-use leptos::prelude::Memo;
 use leptos::prelude::NodeRef;
 use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::RwSignal;
@@ -21,6 +19,7 @@ use leptos::{
 use std::hash::Hash;
 
 use crate::class_list;
+use crate::form_input::Label;
 use crate::radio::RadioOption;
 pub const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 
@@ -78,6 +77,7 @@ where
             label
             required
             selected=some_selected
+            disabled
             options
         />
     }
@@ -110,60 +110,50 @@ where
         <span class=class_list![
             class
         ]>
-            {if !label.is_empty() {
-                view!{
-                    <h3 class="mb-1 mt-3 font-semibold text-heading">
+            <Label required label>
+                <select
+                    class=SELECT_CLASSES
+                    name=name.get()
+                    node_ref=node_ref
+                    onchange=move || {
+                        if let Some(input) = node_ref.get() && !input.value().is_empty() {
+                            let selected_value = input.value();
+                            if let Some(matched_option) = options.get().iter().find(|opt| opt.value() == selected_value) {
+                                debug_log!("selecting radio opt {matched_option}");
+                                selected.set(Some(matched_option.clone()));
+                            }
+                        }
+                    }
+                    required=required
+                    disabled=disabled
+                >
                     <Show
-                        when=move || required
-                        fallback=|| ()><span class="text-red-500">*</span>
-                    </Show> {label}</h3>
-                }.into_any()
-            } else {
-                ().into_any()
-            }}
-
-            <select
-                class=SELECT_CLASSES
-                name=name.get()
-                node_ref=node_ref
-                onchange=move || {
-                    if let Some(input) = node_ref.get() && !input.value().is_empty() {
-                        let selected_value = input.value();
-                        if let Some(matched_option) = options.get().iter().find(|opt| opt.value() == selected_value) {
-                            debug_log!("selecting radio opt {matched_option}");
-                            selected.set(Some(matched_option.clone()));
+                        when=move || { options.get().len() > 0 }
+                        fallback=|| view! { <option disabled=true selected=true>No options</option> }
+                    >
+                        <option
+                            value=""
+                            disabled=true
+                            selected=move || { selected.get().is_none() }
+                        >{ placeholder.clone() }</option>
+                    </Show>
+                    <For
+                        each=move || options.get()
+                        key=|option| { option.clone() }
+                        children=move |option| {
+                            view! {
+                                <option
+                                    value=option.value()
+                                    selected={ selected.get() == Some(option) }
+                                >{ option.to_string() }</option>
+                            }
                         }
-                    }
-                }
-                required=required
-                disabled=disabled
-            >
-                <Show
-                    when=move || { options.get().len() > 0 }
-                    fallback=|| view! { <option disabled=true selected=true>No options</option> }
-                >
-                    <option
-                        value=""
-                        disabled=true
-                        selected=move || { selected.get().is_none() }
-                    >{ placeholder.clone() }</option>
-                </Show>
-                <For
-                    each=move || options.get()
-                    key=|option| { option.clone() }
-                    children=move |option| {
-                        view! {
-                            <option
-                                value=option.value()
-                                selected={ selected.get() == Some(option) }
-                            >{ option.to_string() }</option>
-                        }
-                    }
-                >
+                    >
 
-                </For>
+                    </For>
 
-            </select>
+                </select>
+            </Label>
         </span>
     }
 }

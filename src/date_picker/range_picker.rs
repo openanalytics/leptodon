@@ -1,5 +1,6 @@
 use std::cmp::Ordering;
 
+use crate::class_list;
 use crate::date_picker::DateMenuOption;
 use crate::date_picker::DatePicker;
 use crate::date_picker::SELECTED_ELEM_CLASSES;
@@ -16,9 +17,10 @@ use leptos::{IntoView, component, prelude::MaybeProp, view};
 #[component]
 pub fn DateRangePicker(
     #[prop(optional, into)] id: MaybeProp<String>,
-    // TODO: name, class and label
-    #[prop(optional, into)] _name: MaybeProp<String>,
-    #[prop(optional, into)] _class: MaybeProp<String>,
+    /// Date-input names become `{name}_start` and `{name}_end` respectively.
+    #[prop(optional, into)]
+    name: MaybeProp<String>,
+    #[prop(optional, into)] class: MaybeProp<String>,
     #[prop(default = "yyyy-mm-dd".into(), into)] placeholder: MaybeProp<String>,
 
     /// Picked start date of the date-range
@@ -33,7 +35,7 @@ pub fn DateRangePicker(
     /// Can be used to highlight specific days, e.g. festive days and weekends.
     #[prop(optional, into)]
     highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
-    #[prop(optional, into)] _label: MaybeProp<String>,
+    #[prop(optional)] required: bool,
 ) -> impl IntoView {
     // Swap start and end if the user inputs an end that lays before start.
     Effect::watch(
@@ -104,12 +106,13 @@ pub fn DateRangePicker(
 
     let id_left = MaybeProp::derive(move || id.get().map(|id| format!("{id}-left")));
     let id_right = MaybeProp::derive(move || id.get().map(|id| format!("{id}-right")));
-
+    let name_start = MaybeProp::derive(move || name.get().map(|name| format!("{name}_start")));
+    let name_end = MaybeProp::derive(move || name.get().map(|name| format!("{name}_end")));
     view! {
-        <div class="inline-flex">
-            <DatePicker placeholder id=id_left value=start_date highlighter=combined_highlighter.clone() />
-            "Until"
-            <DatePicker placeholder id=id_right value=end_date highlighter=combined_highlighter/>
+        <div class=class_list!["inline-flex", class]>
+            <DatePicker placeholder id=id_left name=name_start value=start_date highlighter=combined_highlighter.clone() required />
+            <span class="mx-2 content-center">"Until"</span>
+            <DatePicker placeholder id=id_right name=name_end value=end_date highlighter=combined_highlighter required />
         </div>
     }
 }

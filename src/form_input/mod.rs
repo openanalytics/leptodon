@@ -29,7 +29,7 @@ where
                     {children()}
                 </Provider<_, _>>
             </Label>
-    
+
             // Feedback
             <Show
                 when=move || feedback.get().is_some()
@@ -39,24 +39,31 @@ where
                     move || feedback.get().unwrap().to_string()
                 }</span>
             </Show>
-        </div> 
+        </div>
     }
 }
 
 #[component]
-fn Label(label: String, required: bool, children: Children) -> impl IntoView {
+pub fn Label(label: String, required: bool, children: Children) -> impl IntoView {
     view! {
         <label class="block text-sm font-medium text-heading">
             <div>
-                <Show
-                    when=move || required
-                    fallback=|| ()
-                >
-                    <span class="text-red-500">*</span>
-                </Show>
+                <RequiredStar required/>
                 {label}
             </div>
             {children()}
         </label>
+    }
+}
+
+#[component]
+pub fn RequiredStar(required: bool) -> impl IntoView {
+    view! {
+        <Show
+            when=move || required
+            fallback=|| ()
+        >
+            <span class="text-red-500">*</span>
+        </Show>
     }
 }

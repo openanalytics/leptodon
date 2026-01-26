@@ -578,6 +578,7 @@ pub fn DatePicker(
     #[prop(default = day_highlighter(value).into(), into)] highlighter: MaybeProp<
         ArcOneCallback<DateMenuOption, String>,
     >,
+    #[prop(optional)] required: bool,
     #[prop(optional, into)] label: MaybeProp<String>,
 ) -> impl IntoView {
     // Extra internal state for hiding and which menu is active.
@@ -739,7 +740,7 @@ pub fn DatePicker(
     type OptDate = Option<NaiveDate>;
     view! {
         <div node_ref=target>
-            <GenericInput<OptDate, String> id=date_picker_id.get() name class placeholder label parser format value
+            <GenericInput<OptDate, String> id=date_picker_id.get() name class placeholder label parser format value required
                 on:focus=move |_| {
                     picker_state.update(|state| state.show());
                 }

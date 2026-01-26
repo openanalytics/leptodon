@@ -1,3 +1,4 @@
+use leptos::prelude::Children;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
@@ -16,6 +17,7 @@ use leptos::{
 };
 
 use crate::class_list;
+use crate::form_input::RequiredStar;
 
 #[component]
 pub fn Checkbox(
@@ -26,7 +28,9 @@ pub fn Checkbox(
     /// Update this signal to update the state of the checkbox
     #[prop(into)]
     value: Signal<bool>,
-    #[prop(optional, into)] label: String,
+    /// required
+    #[prop(optional)]
+    required: bool,
 
     /// Whether or not this element is unreachable by tabbing.
     #[prop(optional, into)]
@@ -34,6 +38,7 @@ pub fn Checkbox(
     /// Listen to the checked state.
     #[prop(optional, into)]
     checked: RwSignal<bool>,
+    children: Children,
 ) -> impl IntoView {
     let input_ref = NodeRef::<html::element::Input>::new();
     let on_change = move |_| {
@@ -52,10 +57,11 @@ pub fn Checkbox(
                 node_ref=input_ref
                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 on:change=on_change
+                required=required
                 // Non integer values should make tabbing reset to the default behaviour.
                 tabindex=move || if disable_tab { "-1" } else { "auto" }
             />
-            <span class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{label}</span>
+            <span class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><RequiredStar required/>{children()}</span>
         </label>
     }
 }
