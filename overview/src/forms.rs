@@ -9,6 +9,7 @@ use leptos_components::form_input::FormInput;
 use leptos_components::input::{InputType, PasswordInput, TextInput};
 use leptos_components::link::Link;
 use leptos_components::select::{MaybeSelect, Select};
+use leptos_components::textarea::TextArea;
 use leptos_components::toggle::Toggle;
 use leptos_components::{
     button::Button,
@@ -123,13 +124,18 @@ pub fn Forms() -> impl IntoView {
                     </span>
                 </Checkbox>
                 <br/>
-                <Toggle required=true value=false label="Advertising cookies"/>
+                <Toggle required=true value=false>
+                    "Advertising cookies"
+                </Toggle>
                 <br/>
                 <FormInput<String> label="End date" required=true>
                     <DatePicker name="end-date" value=RwSignal::new(None) />
                 </FormInput<String>>
                 <FormInput<String> label="Period" required=true>
                     <DateRangePicker name="period" />
+                </FormInput<String>>
+                <FormInput<String> label="Notes" required=true>
+                    <TextArea value=RwSignal::new("".to_string()) name="notes" />
                 </FormInput<String>>
                 <Button button_type=ButtonType::Submit>"Submit"</Button>
             </div>

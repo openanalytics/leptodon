@@ -99,7 +99,7 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
-            <TextArea input=text_area_input label="Notes" placeholder="Time for text" />
+            <TextArea value=text_area_input label="Notes" placeholder="Time for text" />
             <GroupedTableExample />
             <DemoTable />
             <PopulatedCalendar />
@@ -143,7 +143,7 @@ fn Home() -> impl IntoView {
                 }.into_any()
             }
             <br/>
-            <Toggle label="Lightswitch" value=Signal::derive(move || false) />
+            <Toggle value=Signal::derive(move || false)>"Lightswitch"</Toggle>
             <Avatar src="/favicon.ico" />
             <Avatar />
             <AnyAccordion />

@@ -6,6 +6,7 @@ use crate::button_group::InGroupContext;
 use crate::button_group::Last;
 use crate::class_list;
 use crate::form_input::FormInputContext;
+use crate::form_input::Label;
 use crate::icon::HideIcon;
 use crate::icon::ShowIcon;
 use crate::input_group::GroupItemClassContext;
@@ -26,7 +27,6 @@ use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
-use leptos::prelude::Show;
 use leptos::prelude::Signal;
 use leptos::prelude::Update;
 use leptos::prelude::use_context;
@@ -435,13 +435,16 @@ where
     {
         Either::Left(view! {
             <div>
-                <label class="block mb-2.5 text-sm font-medium text-heading">
-                    <Show
-                        when=move || required.get()
-                        fallback=|| ()><span class="text-red-500">*</span>
-                    </Show> {label}
+                <Label required=required.get() label>
                     {standalone_input}
-                </label>
+                </Label>
+                // <label class="block mb-2.5 text-sm font-medium text-heading">
+                //     <Show
+                //         when=move || required.get()
+                //         fallback=|| ()><span class="text-red-500">*</span>
+                //     </Show> {label}
+                //     {standalone_input}
+                // </label>
             </div>
         })
     } else {

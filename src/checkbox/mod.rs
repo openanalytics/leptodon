@@ -9,15 +9,18 @@ use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
+use leptos::prelude::use_context;
 use leptos::tachys::html;
 use leptos::{
     IntoView, component,
     prelude::{MaybeProp, Signal},
     view,
 };
+use leptos_use::math::use_or;
 
 use crate::class_list;
-use crate::form_input::RequiredStar;
+use crate::form_input::FormInputContext;
+use crate::form_input::PostfixLabelStyle;
 
 #[component]
 pub fn Checkbox(
@@ -45,7 +48,17 @@ pub fn Checkbox(
         let input = input_ref.get_untracked().unwrap();
         checked.set(input.checked());
     };
-
+    
+    // Form context
+    let form_context = use_context::<FormInputContext<String>>();
+    let form_required = Signal::from(
+        form_context
+            .clone()
+            .map(|ctx| ctx.required)
+            .unwrap_or_default(),
+    );
+    let required = use_or(required, form_required);
+    
     view! {
         <label class=class_list!["relative inline-flex items-center cursor-pointer", class]>
             <input
@@ -61,7 +74,7 @@ pub fn Checkbox(
                 // Non integer values should make tabbing reset to the default behaviour.
                 tabindex=move || if disable_tab { "-1" } else { "auto" }
             />
-            <span class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><RequiredStar required/>{children()}</span>
+            <PostfixLabelStyle required=required.get() children />
         </label>
     }
 }

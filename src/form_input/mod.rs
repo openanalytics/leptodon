@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use leptos::context::Provider;
-use leptos::prelude::{ClassAttribute, ElementChild, Get, RwSignal, Show};
+use leptos::prelude::{ClassAttribute, ElementChild, Get, IntoAny, MaybeProp, RwSignal, Show};
 use leptos::{IntoView, component, prelude::Children, view};
 
 #[derive(Clone, Copy)]
@@ -44,15 +44,30 @@ where
 }
 
 #[component]
-pub fn Label(label: String, required: bool, children: Children) -> impl IntoView {
+pub fn Label(#[prop(optional, into)] label: MaybeProp<String>, required: bool, children: Children) -> impl IntoView {
+    if let Some(label) = label.get() {
+        view! {
+            <label class="block text-sm font-medium text-heading">
+                <div>
+                    <RequiredStar required/>
+                    {label}
+                </div>
+                {children()}
+            </label>
+        }
+        .into_any()
+    } else {
+        view! { {children()} }.into_any()
+    }
+}
+
+/// Style helper
+/// Used for inline labels behind checkbox and toggle.
+/// Provide the label via [children], caller is expected to wrap this and the input in a <label>. 
+#[component]
+pub fn PostfixLabelStyle(required: bool, children: Children) -> impl IntoView {
     view! {
-        <label class="block text-sm font-medium text-heading">
-            <div>
-                <RequiredStar required/>
-                {label}
-            </div>
-            {children()}
-        </label>
+        <span class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><RequiredStar required=required/>{children()}</span>
     }
 }
 
