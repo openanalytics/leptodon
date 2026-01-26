@@ -119,6 +119,7 @@ where
                 "{}",
                 clamp(old_value.saturating_add(&inc_step), min.get(), max.get())
             ));
+            debug_log!("i++");
         } else if unparsed.is_empty() {
             value_binder.set("1".to_string());
         }
@@ -131,6 +132,7 @@ where
                 "{}",
                 clamp(old_value.saturating_sub(&step), min.get(), max.get())
             ));
+            debug_log!("i--");
         } else if unparsed.is_empty() {
             value_binder.set("1".to_string());
         }

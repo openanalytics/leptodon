@@ -14,6 +14,7 @@ use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
 use leptos::either::Either;
 use leptos::html;
+use leptos::logging::debug_log;
 use leptos::prelude::BindAttribute;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::Effect;
@@ -32,6 +33,7 @@ use leptos::prelude::Update;
 use leptos::prelude::use_context;
 use leptos::{IntoView, component, view};
 use leptos_use::math::use_or;
+use std::fmt::Debug;
 use std::u32;
 use web_sys::KeyboardEvent;
 use zxcvbn::Score;
@@ -117,6 +119,8 @@ pub fn TextInput(
         Ok(String::from(input))
     };
 
+    let format = move |input: String| input;
+    
     return view! {
         <GenericInput<String, String>
             class
@@ -130,6 +134,7 @@ pub fn TextInput(
             required
             placeholder
             parser
+            format
         />
     };
 }
@@ -300,7 +305,7 @@ pub fn GenericInput<T, E>(
     placeholder: MaybeProp<String>,
 ) -> impl IntoView
 where
-    T: Clone + Default + Sync + Send + 'static,
+    T: Clone + Debug + Default + Sync + Send + 'static,
     E: Clone + Send + Sync + std::fmt::Display + 'static,
 {
     // let input_ref = NodeRef::<html::Input>::new();
@@ -384,6 +389,8 @@ where
         move |value, _prev_value, _| {
             if let Some(format) = format.as_ref() {
                 internal_value_signal.set(format(value.clone()));
+            } else {
+                debug_log!("No formatter to format {:?}", value)
             }
         },
         true,
