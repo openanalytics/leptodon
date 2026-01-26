@@ -194,7 +194,7 @@ where
                             toggle_tag(selected, tag)
                         }
                     >
-                        |_| {let tag=tag.clone(); {
+                        {let tag=tag.clone(); {
                             view! {
                                 <Checkbox disable_tab=true value={
                                     let tag = tag.clone();

@@ -5,9 +5,9 @@ use leptos::prelude::ElementChild;
 use leptos::prelude::For;
 use leptos::prelude::Get;
 use leptos::prelude::GetUntracked;
-use leptos::prelude::GlobalOnAttributes;
 use leptos::prelude::NodeRef;
 use leptos::prelude::NodeRefAttribute;
+use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::prelude::Show;
@@ -61,6 +61,7 @@ where
     Effect::watch(
         move || some_selected.get(),
         move |new, old, _| {
+            debug_log!("Some_selected, {:?} {:?}", new.as_ref().map(|t| t.value()), old.map(|t| t.as_ref().map(|tt| tt.value())));
             if let Some(new_some_selected) = new
                 && Some(new) != old
             {
@@ -115,13 +116,17 @@ where
                     class=SELECT_CLASSES
                     name=name.get()
                     node_ref=node_ref
-                    onchange=move || {
+                    on:change=move |_| {
                         if let Some(input) = node_ref.get() && !input.value().is_empty() {
                             let selected_value = input.value();
                             if let Some(matched_option) = options.get().iter().find(|opt| opt.value() == selected_value) {
-                                debug_log!("selecting radio opt {matched_option}");
+                                debug_log!("selecting opt {matched_option}");
                                 selected.set(Some(matched_option.clone()));
+                            } else{
+                                debug_log!("Could not match {} to any option", selected_value);
                             }
+                        } else {
+                            debug_log!("Nothing was selected for {:?}", node_ref.get());
                         }
                     }
                     required=required

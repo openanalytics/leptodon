@@ -13,7 +13,6 @@ use crate::class_list::{Class, ClassList, IntoClass};
 pub enum ReactiveClass {
     Memo(Memo<Oco<'static, str>>),
     Static(Oco<'static, str>),
-
 }
 
 impl IntoClass for ReactiveClass {
