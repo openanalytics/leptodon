@@ -1,4 +1,5 @@
 use leptos::prelude::ElementChild;
+use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, prelude::RwSignal, view};
@@ -13,13 +14,14 @@ pub fn TestSelect() -> impl IntoView {
     view! {
         <Title text="Test Select"/>
         <p id="selected-display">
-            {selected}
+            {move || selected.get()}
         </p>
         <MaybeSelect
+            id="sel"
             class="my-3"
-            name="favorite_number"
-            options=elements
             selected=selected
+            options=elements
+            name="favorite_number"
         />
         <Button id="set-5" on_click=move |_e| {
             selected.set(Some(5));

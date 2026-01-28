@@ -5,6 +5,8 @@ use leptos::prelude::ElementChild;
 use leptos::prelude::For;
 use leptos::prelude::Get;
 use leptos::prelude::GetUntracked;
+use leptos::prelude::GlobalAttributes;
+use leptos::prelude::IntoAny;
 use leptos::prelude::NodeRef;
 use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::OnAttribute;
@@ -61,7 +63,11 @@ where
     Effect::watch(
         move || some_selected.get(),
         move |new, old, _| {
-            debug_log!("Some_selected, {:?} {:?}", new.as_ref().map(|t| t.value()), old.map(|t| t.as_ref().map(|tt| tt.value())));
+            debug_log!(
+                "Some_selected, {:?} {:?}",
+                new.as_ref().map(|t| t.value()),
+                old.map(|t| t.as_ref().map(|tt| tt.value()))
+            );
             if let Some(new_some_selected) = new
                 && Some(new) != old
             {
@@ -86,33 +92,77 @@ where
 
 #[component]
 pub fn MaybeSelect<T>(
+    #[prop(optional, into)] id: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeProp<String>,
     /// A string specifying a name for the input control.
     /// This name is submitted along with the control's value when the form data is submitted.
     #[prop(optional, into)]
     name: MaybeProp<String>,
-    #[prop(optional, into)] label: String,
-    #[prop(default = " -- select an option -- ".to_string(), into)] placeholder: String,
-    #[prop(optional, into)] required: bool,
-    #[prop(into)] selected: RwSignal<Option<T>>,
-    // TODO:
-    // #[prop(optional, into)] default_value: Option<String>,
+    /// Label obove the select.
+    #[prop(optional, into)]
+    label: String,
+    /// Shown as default option, this option cannot be submitted while this select is required.
+    #[prop(default = " -- select an option -- ".to_string(), into)]
+    placeholder: String,
+    /// Shown as extra option when the select is not required.
+    #[prop(default = " -- none -- ".to_string(), into)]
+    none_option: String,
+    /// Whether a value needs to be selected before a form surrounding this select can be submitted.
+    #[prop(optional, into)]
+    required: bool,
+    /// Selected element, should be an element of [options]
+    #[prop(into)]
+        selected: RwSignal<Option<T>>,
     /// Whether the select is disabled.
     #[prop(optional, into)]
     disabled: Signal<bool>,
-    // TODO: Implement size
-    #[prop(into)] options: RwSignal<Vec<T>>,
+    /// Possible options of this select.
+    #[prop(into)]
+    options: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
     T: RadioOption + Clone + Eq + Hash + Send + Sync + 'static,
 {
+    // Unset the selected elem when it is not part of the new [options]
+    Effect::watch(
+        move || options.get(),
+        move |new, _, _| {
+            if let Some(selected_value) = selected.get_untracked()
+                && !new.contains(&selected_value)
+            {
+                selected.set(None);
+            }
+        },
+        false,
+    );
     let node_ref = NodeRef::<leptos::html::Select>::new();
+
+    // Unset the selected elem when it is not part of the new [options]
+    Effect::watch(
+        move || selected.get(),
+        move |new, old, _| {
+            if Some(new) != old {
+                if let Some(select) = node_ref.get_untracked() {
+                    // Firefox does not want to select disabled values with the selected attribute.
+                    // Workaround..
+                    if let Some(new) = new {
+                        select.set_value(new.value().as_str());
+                    } else {
+                        select.set_value("");
+                    }
+                }
+            }
+        },
+        false,
+    );
+
     view! {
         <span class=class_list![
             class
         ]>
             <Label required label>
                 <select
+                    id=id.get()
                     class=SELECT_CLASSES
                     name=name.get()
                     node_ref=node_ref
@@ -122,10 +172,11 @@ where
                             if let Some(matched_option) = options.get().iter().find(|opt| opt.value() == selected_value) {
                                 debug_log!("selecting opt {matched_option}");
                                 selected.set(Some(matched_option.clone()));
-                            } else{
+                            } else {
                                 debug_log!("Could not match {} to any option", selected_value);
                             }
-                        } else {
+                        } else if !required {
+                            selected.set(None);
                             debug_log!("Nothing was selected for {:?}", node_ref.get());
                         }
                     }
@@ -136,11 +187,22 @@ where
                         when=move || { options.get().len() > 0 }
                         fallback=|| view! { <option disabled=true selected=true>No options</option> }
                     >
+                        // Placeholder option
                         <option
                             value=""
                             disabled=true
-                            selected=move || { selected.get().is_none() }
+                            selected=move || { selected.get().is_none() && required }
                         >{ placeholder.clone() }</option>
+                    </Show>
+                    <Show
+                        when=move || { !required }
+                        fallback=|| ().into_any()
+                    >
+                        // None option, shown when the select is not required.
+                        <option
+                            value=""
+                            selected=move || { selected.get().is_none() && !required }
+                        >{ none_option.clone() }</option>
                     </Show>
                     <For
                         each=move || options.get()
@@ -149,14 +211,12 @@ where
                             view! {
                                 <option
                                     value=option.value()
-                                    selected={ selected.get() == Some(option) }
+                                    selected=move || { selected.get() == Some(option.clone()) }
                                 >{ option.to_string() }</option>
                             }
                         }
                     >
-
                     </For>
-
                 </select>
             </Label>
         </span>
