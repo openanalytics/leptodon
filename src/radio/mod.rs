@@ -129,3 +129,67 @@ pub enum RadioAppearance {
     ListGroup,
     Minimal,
 }
+
+
+impl RadioOption for u8 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl RadioOption for u16 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl RadioOption for u32 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl RadioOption for u64 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl RadioOption for u128 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+
+impl RadioOption for i8 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl RadioOption for i16 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl RadioOption for i32 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl RadioOption for i64 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl RadioOption for i128 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+
+impl RadioOption for f32 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl RadioOption for f64 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}

@@ -72,6 +72,7 @@ pub fn App() -> impl IntoView {
         <Router>
             <Routes fallback=|| "Page not found.">
                 <Route path=StaticSegment("") view=Home/>
+                <Route path=StaticSegment("/test_select") view=crate::testcases::select::TestSelect/>
                 <Route path=StaticSegment("/forms") view=crate::forms::Forms/>
             </Routes>
         </Router>
@@ -134,7 +135,7 @@ fn Home() -> impl IntoView {
                 </p>
             </DialogButton>
             <div>
-                <leptos_components::input_group::ControlledNumberInput<i32> class="w-96" min=-1 max=15 />
+                <leptos_components::input_group::ControlledNumberInput<i32> id="controlled_number_input" class="w-96" min=-1 max=15 />
             </div>
             {
                 view! {

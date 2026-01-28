@@ -6,41 +6,42 @@ test("Modal opens and closes.", async ({ page }) => {
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptos components");
 
+  const toggle_button = page.getByRole("button", { name: "Toggle Modal" });
+  const example_modal = page.getByRole("dialog", { name: "Example modal" });
   // Assert closed
-  await expect(
-    page.getByRole("dialog", { name: "Example modal" }),
-  ).toBeHidden();
+  await expect(example_modal).toBeHidden();
   // Try opening modal
-  await page.getByRole("button", { name: "Toggle Modal" }).click();
+  await toggle_button.click();
   // Assert Open
-  await expect(
-    page.getByRole("dialog", { name: "Example modal" }),
-  ).toBeVisible();
+  await expect(example_modal).toBeVisible();
 
   // Focus tab-transfer from toggle-modal-btn -?> first button (close button).
-  await page.getByRole("button", { name: "Toggle Modal" }).press("Tab");
+  await toggle_button.press("Tab");
   await expect(
-    page
-      .getByLabel("Example modal")
-      .getByRole("button")
-      .filter({ hasText: /^$/ }),
+    example_modal.getByRole("button").filter({ hasText: /^$/ }),
   ).toBeFocused();
 
   // Focus transfer from first button -> next button (Dispose modal button).
-  await page
-    .getByLabel("Example modal")
+  await example_modal
     .getByRole("button")
     .filter({ hasText: /^$/ })
     .press("Tab");
   await expect(
-    page.getByRole("button", { name: "Dispose modal" }),
+    example_modal.getByRole("button", { name: "Dispose modal" }),
   ).toBeFocused();
 
   // Try closing
-  await page.getByRole("button", { name: "Dispose modal" }).press("Space");
-  await expect(
-    page.getByRole("dialog", { name: "Example modal" }),
-  ).toBeHidden();
+  await example_modal
+    .getByRole("button", { name: "Dispose modal" })
+    .press("Space");
+  await expect(example_modal).toBeHidden();
+
+  // Open again
+  await toggle_button.click();
+
+  // Close with Escape
+  await page.keyboard.press("Escape");
+  await expect(example_modal).toBeHidden();
 });
 
 // Check modal, focus looping => modality.
@@ -49,16 +50,17 @@ test("Modal focus looping.", async ({ page }) => {
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptos components");
 
+  const toggle_button = page.getByRole("button", { name: "Toggle Modal" });
   let closeButton = page
     .getByLabel("Example modal")
     .getByRole("button")
     .filter({ hasText: /^$/ });
 
   // Try opening modal
-  await page.getByRole("button", { name: "Toggle Modal" }).click();
+  await toggle_button.click();
 
   // Focus tab-transfer from toggle-modal-btn -?> first button (close button).
-  await page.getByRole("button", { name: "Toggle Modal" }).press("Tab");
+  await toggle_button.press("Tab");
   await expect(closeButton).toBeFocused();
 
   // Focus transfer from first button -> next button (Dispose modal button).

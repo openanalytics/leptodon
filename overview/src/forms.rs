@@ -1,4 +1,7 @@
 use derive_more::Display;
+use leptos::prelude::AddAnyAttr;
+#[allow(unused)]
+use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::{ClassAttribute, ElementChild};
 use leptos::{IntoView, component, oco::Oco, prelude::RwSignal, view};
 use leptos_components::button::ButtonType;
@@ -15,6 +18,7 @@ use leptos_components::{
     button::Button,
     radio::{Radio, RadioOption},
 };
+use leptos_meta::Title;
 use leptos_router::components::Form;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
@@ -84,6 +88,8 @@ pub fn Forms() -> impl IntoView {
     let elements = RwSignal::new(Element::iter().collect());
 
     view! {
+        <Title text="Forms" />
+
         <Form action="/forms">
             <div class="p-4">
                 <Radio
@@ -92,6 +98,8 @@ pub fn Forms() -> impl IntoView {
                     label="Radio Stations"
                     options=radio_options
                     required=true
+                    {..}
+                    attr:data-testid="radio-input"
                 />
                 <FormInput<String> label="Favorite Element" required=false>
                     <MaybeSelect

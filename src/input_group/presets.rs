@@ -1,3 +1,4 @@
+use leptos::prelude::AddAnyAttr;
 use std::fmt::Display;
 use std::ops::Add;
 use std::ops::Sub;
@@ -13,6 +14,9 @@ use leptos::prelude::ClassAttribute;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
+use leptos::prelude::GlobalAttributes;
+#[allow(unused)]
+use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::MaybeProp;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
@@ -40,6 +44,9 @@ where
 
 #[component]
 pub fn ControlledNumberInput<T>(
+    /// Id
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
     /// Name of the input.
     #[prop(optional, into)]
     name: MaybeProp<String>,
@@ -138,15 +145,17 @@ where
         }
     };
     view! {
-        <div class=class_list!(class, "relative flex items-center mb-2")>
+        <div id=id.get() class=class_list!(class, "relative flex items-center mb-2")>
             <GroupItemContextProvider class="rounded-none rounded-l-lg">
                 <TextInput name placeholder input_type=InputType::Text input_mode=InputMode::Numeric value=value_binder />
             </GroupItemContextProvider>
             <GroupItemContextProvider class="rounded-none border-x-0 !mr-0">
-                <Button icon=icon::DecrementIcon() on_click=dec_handler />
+                <Button icon=icon::DecrementIcon() on_click=dec_handler
+                    attr:data-testid="decrement" />
             </GroupItemContextProvider>
             <GroupItemContextProvider class="rounded-none rounded-r-lg">
-                <Button icon=icon::IncrementIcon() on_click=inc_handler />
+                <Button icon=icon::IncrementIcon() on_click=inc_handler
+                    attr:data-testid="increment"/>
             </GroupItemContextProvider>
             // Block context leakage
             <GroupItemContextProvider class="">

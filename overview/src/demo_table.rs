@@ -35,7 +35,8 @@ struct DetailData {
 #[table(
     sortable,
     classes_provider = "TailwindClassesPreset",
-    column_index_type = "enum"
+    column_index_type = "enum",
+    impl_vec_data_provider
 )]
 pub struct Person {
     #[table(renderer = "DetailCellRenderer", skip_sort)]
@@ -88,14 +89,14 @@ pub fn DetailRowRenderer(
 where {
     // debug_log!("Index of row: {}", index);
     // debug_log!("{:?}", row.get());
-    let preset = TailwindClassesPreset{};
+    let preset = TailwindClassesPreset {};
     leptos::view! {
-        <tr class=class on:click=move |mouse_event| on_select.run(mouse_event)>
+        <tr class=class on:click=move |mouse_event| on_select.run(mouse_event) attr:data-testid=format!("person-row-{index}")>
             <For
                 each=move || columns.get().into_iter()
                 key=|column| *column
                 children=move |column| {
-                    Person::cell_renderer_for_column(row, column, String::new()).into_any()
+                    Person::cell_renderer_for_column(row, column, format!("person-row-{index}-col-{column:?}")).into_any()
                 }
             >
             </For>
@@ -103,9 +104,9 @@ where {
         <tr class=class_list!(
             move || class.get(),
             ("hidden", move || !row.get().detail.show)
-        )>
+        )  attr:data-testid=format!("person-detail-{index}")>
             <td class= preset.cell("")> { move || row.get().detail.text }</td>
-           
+
         </tr>
     }
 }
@@ -113,11 +114,10 @@ where {
 #[component]
 pub fn DemoTable() -> impl IntoView {
     let rows = get_person_rows();
-    let rows = RwSignal::new(rows);
     let preset = TailwindClassesPreset {};
     view! {
         <div> hello </div>
-        <table>
+        <table data-testid="person-table">
             <TableContent rows
                 scroll_container="html"
                 drag_handler=HeadDragHandler::new(StyledHeadDragHandler)
@@ -243,7 +243,6 @@ fn AdminEditButtonCellRenderer(
         </td>
     }
 }
-
 
 #[derive(Clone, Copy)]
 pub struct TailwindClassesPreset;

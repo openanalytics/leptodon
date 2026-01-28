@@ -48,11 +48,15 @@ pub fn ControlButton(
 }
 
 #[component]
-pub fn AddButton() -> impl IntoView {
+pub fn AddButton(
+    /// Click handler
+    #[prop(default = BoxOneCallback::new(|_| ()), into)]
+    on_click: BoxOneCallback<ev::MouseEvent>,
+) -> impl IntoView {
     view! {
         <Button
             icon=icon::AddIcon()
-            on_click=move |_| {}
+            on_click=on_click
             appearance=ButtonAppearance::Primary
             class="m-2"
             {..}>
@@ -62,11 +66,15 @@ pub fn AddButton() -> impl IntoView {
 }
 
 #[component]
-pub fn EditButton() -> impl IntoView {
+pub fn EditButton(
+    /// Click handler
+    #[prop(default = BoxOneCallback::new(|_| ()), into)]
+    on_click: BoxOneCallback<ev::MouseEvent>,
+) -> impl IntoView {
     view! {
         <Button
             icon=icon::EditIcon()
-            on_click=move |_| {}
+            on_click=on_click
             appearance=ButtonAppearance::Secondary
             class="m-2"
             {..}>
@@ -76,11 +84,15 @@ pub fn EditButton() -> impl IntoView {
 }
 
 #[component]
-pub fn DeleteButton() -> impl IntoView {
+pub fn DeleteButton(
+    /// Click handler
+    #[prop(default = BoxOneCallback::new(|_| ()), into)]
+    on_click: BoxOneCallback<ev::MouseEvent>,
+) -> impl IntoView {
     view! {
         <Button
             icon=icon::DeleteIcon()
-            on_click=move |_| {}
+            on_click=on_click
             appearance=ButtonAppearance::Danger
             class="m-2"
             {..}>
@@ -90,11 +102,15 @@ pub fn DeleteButton() -> impl IntoView {
 }
 
 #[component]
-pub fn DownloadButton() -> impl IntoView {
+pub fn DownloadButton(
+    /// Click handler
+    #[prop(default = BoxOneCallback::new(|_| ()), into)]
+    on_click: BoxOneCallback<ev::MouseEvent>,
+) -> impl IntoView {
     view! {
         <Button
             icon=icon::DownloadIcon()
-            on_click=move |_| {}
+            on_click=on_click
             appearance=ButtonAppearance::Secondary
             class="m-2"
             {..}>
