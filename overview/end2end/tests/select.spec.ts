@@ -2,7 +2,10 @@ import { test, expect } from "@playwright/test";
 
 // Check that the select reactively updates its signal.
 test("Select functionality", async ({ page, browserName }) => {
-  // test.skip(browserName === 'firefox', 'Firefox keeps failing to update the disp signal, but only when playwright runs the headless test.');
+  // test.skip(
+  //   browserName === "firefox",
+  //   "https://projects.openanalytics.eu/issues/36185",
+  // );
   await page.goto("http://localhost:3000/test_select");
 
   await page.waitForLoadState("networkidle");
@@ -14,8 +17,6 @@ test("Select functionality", async ({ page, browserName }) => {
   let btn_set_none = page.locator("#set-none");
   let btn_elems_1_7 = page.locator("#elems-1-7");
   let btn_elems_3_10 = page.locator("#elems-3-10");
-
-  await page.goto("http://127.0.0.1:3000/test_select");
 
   // Initial state
   await expect(sel_disp).toHaveText("");

@@ -112,7 +112,7 @@ pub fn MaybeSelect<T>(
     required: bool,
     /// Selected element, should be an element of [options]
     #[prop(into)]
-        selected: RwSignal<Option<T>>,
+    selected: RwSignal<Option<T>>,
     /// Whether the select is disabled.
     #[prop(optional, into)]
     disabled: Signal<bool>,
@@ -166,7 +166,7 @@ where
                     class=SELECT_CLASSES
                     name=name.get()
                     node_ref=node_ref
-                    on:change=move |_| {
+                    on:input=move |_| {
                         if let Some(input) = node_ref.get() && !input.value().is_empty() {
                             let selected_value = input.value();
                             if let Some(matched_option) = options.get().iter().find(|opt| opt.value() == selected_value) {

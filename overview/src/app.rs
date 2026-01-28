@@ -73,6 +73,7 @@ pub fn App() -> impl IntoView {
             <Routes fallback=|| "Page not found.">
                 <Route path=StaticSegment("") view=Home/>
                 <Route path=StaticSegment("/test_select") view=crate::testcases::select::TestSelect/>
+                <Route path=StaticSegment("/test_radio") view=crate::testcases::radio::TestRadio/>
                 <Route path=StaticSegment("/forms") view=crate::forms::Forms/>
             </Routes>
         </Router>
