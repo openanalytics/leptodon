@@ -20,6 +20,7 @@ use leptos::prelude::ClassAttribute;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
+use leptos::prelude::GetUntracked;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::IntoAny;
 use leptos::prelude::MaybeProp;
@@ -34,7 +35,6 @@ use leptos::prelude::use_context;
 use leptos::{IntoView, component, view};
 use leptos_use::math::use_or;
 use std::fmt::Debug;
-use std::u32;
 use web_sys::KeyboardEvent;
 use zxcvbn::Score;
 use zxcvbn::zxcvbn;
@@ -51,7 +51,6 @@ pub fn TextInputConfig(
     // Whether or not to trim surrounding whitespace "  My name " -> "My name"
     #[prop(default = true)] trim: bool,
 ) -> impl IntoView {
-    ()
 }
 
 #[component]
@@ -76,7 +75,7 @@ pub fn TextInput(
     input_mode: Signal<InputMode>,
     #[prop(default = TextInputConfigProps::builder().build())] text_config: TextInputConfigProps,
     /// Binds to the value of the input, has to be a string.
-    #[prop(optional, into)]
+    #[prop(optional)]
     value: RwSignal<String>,
     /// Whether the input is readonly.
     #[prop(optional, into)]
@@ -120,8 +119,8 @@ pub fn TextInput(
     };
 
     let format = move |input: String| input;
-    
-    return view! {
+
+    view! {
         <GenericInput<String, String>
             class
             input_ref
@@ -136,7 +135,7 @@ pub fn TextInput(
             parser
             format
         />
-    };
+    }
 }
 
 /// Integrates with dropbox's zxcvbn to create non annoying and actually strong passwords.
@@ -186,12 +185,10 @@ pub fn PasswordInput(
             return Err(format!("{feedback}"));
         }
         if entropy.score() < Score::Four {
-            return Err(format!(
-                "Almost strong enough, add another word or a couple symbols."
-            ));
+            return Err("Almost strong enough, add another word or a couple symbols.".to_string());
         }
 
-        Ok(String::from(input))
+        Ok(input)
     });
 
     let password_vis = RwSignal::new(false);
@@ -305,14 +302,15 @@ pub fn GenericInput<T, E>(
     placeholder: MaybeProp<String>,
 ) -> impl IntoView
 where
-    T: Clone + Debug + Default + Sync + Send + 'static,
-    E: Clone + Send + Sync + std::fmt::Display + 'static,
+    T: Clone + PartialEq + Debug + Default + Sync + Send + 'static,
+    E: Clone + Send + Sync + Debug + std::fmt::Display + 'static,
 {
     // let input_ref = NodeRef::<html::Input>::new();
     // comp_ref.load(InputRef { input_ref });
     let group_context = use_context::<GroupItemClassContext>();
     let group_classes = group_context.map(|item| item.class);
     let in_group = use_context::<InGroupContext>().unwrap_or(InGroupContext { in_group: false });
+    let last_set_value = RwSignal::new(value.get_untracked());
 
     // Form context
     let form_context = use_context::<FormInputContext<E>>();
@@ -333,17 +331,25 @@ where
         let parser = parser.clone();
         move |should_format: bool| {
             let internal_value = internal_value_signal.get();
+            debug_log!("Attempting to parse: {internal_value}");
             if let Some(parser) = parser.as_ref()
-                && (!internal_value.is_empty() || required.get())
+                && !(internal_value.is_empty() && required.get())
             {
                 let parsed_value = parser(internal_value);
+                debug_log!("Parse result: {parsed_value:?}");
+
                 match parsed_value {
                     Ok(parsed_success) => {
+                        // Set both signals, used to differentiate outside changes (where we always want to format) vs inside changes (where we sometimes want to format).
                         // Changing the parsed value causes a format
                         // the blur handler will want to format while input handling does not.
-                        if should_format {
-                            value.set(parsed_success);
+                        if !should_format {
+                            debug_log!("Preventing internal format");
+                            last_set_value.set(parsed_success.clone());
                         }
+                        debug_log!("Updating value");
+                        value.set(parsed_success);
+
                         invalid_reason.set(None);
                     }
                     Err(err) => {
@@ -375,20 +381,24 @@ where
     let on_input = {
         let try_parse = try_parse.clone();
         move |_| {
-            if invalid_reason.get().is_some() {
-                // Formatting should only be done when the user indicates they are done, e.g. by leaving the field (on_blur).
-                // Otherwise a format can disrupt the input
-                try_parse(false);
-            }
+            // if invalid_reason.get().is_some() {
+            // Formatting should only be done when the user indicates they are done, e.g. by leaving the field (on_blur).
+            // Otherwise a format can disrupt the input
+            try_parse(false);
+            // }
         }
     };
 
     // On a successfull parsing or change of value this function formats the input field.
     Effect::watch(
         move || value.get(),
-        move |value, _prev_value, _| {
+        move |value, _, _| {
             if let Some(format) = format.as_ref() {
-                internal_value_signal.set(format(value.clone()));
+                if &(last_set_value.get_untracked()) != value {
+                    internal_value_signal.set(format(value.clone()));
+                } else {
+                    debug_log!("Prevented internal format");
+                }
             } else {
                 debug_log!("No formatter to format {:?}", value)
             }
@@ -404,7 +414,7 @@ where
             bind:value=internal_value_signal
             class=class_list![
                 ("border-oa-red", move || invalid_reason.get().is_some()),
-                if let Some(group_classes) = group_classes { group_classes } else { String::new() },
+                group_classes.unwrap_or_default(),
                 if in_group.in_group { "rounded-none border-r-0 !mr-0" } else { "" },
                 (OA_READONLY_INPUT_CLASSES, move || readonly.get()),
                 (OA_INPUT_CLASSES, move || !readonly.get()),

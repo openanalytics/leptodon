@@ -85,7 +85,7 @@ pub fn DateRangePicker(
             }
         }
 
-        return "rounded-lg".to_string();
+        "rounded-lg".to_string()
     };
 
     let combined_highlighter = ArcOneCallback::new(move |date: DateMenuOption| {

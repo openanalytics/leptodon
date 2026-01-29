@@ -31,6 +31,7 @@ pub struct PopoverController {
 // TODO: Resize observer ?
 #[component]
 pub fn Popover<Trigger, Content>(
+    #[prop(optional, into)] id: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeProp<String>,
     /// Action that displays the popover.
     #[prop(optional)]
@@ -207,7 +208,7 @@ where
         .add_any_attr(on(mouseleave, on_mouse_leave));
 
     view! {
-        <div class=class_list!(class)>
+        <div id=id.get() class=class_list!(class)>
             {trigger_children}
             // Can't be hidden, because then the size is 0 and offset calculations are wrong.
             // Worked around via opacity-0 and z-index.

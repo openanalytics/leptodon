@@ -74,6 +74,10 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("") view=Home/>
                 <Route path=StaticSegment("/test_select") view=crate::testcases::select::TestSelect/>
                 <Route path=StaticSegment("/test_radio") view=crate::testcases::radio::TestRadio/>
+                <Route path=StaticSegment("/test_tag_picker") view=crate::testcases::tag_picker::TestTagPicker/>
+                <Route path=StaticSegment("/test_inputs") view=crate::testcases::inputs::TestInputs/>
+                <Route path=StaticSegment("/test_toggle") view=crate::testcases::toggle::TestToggle/>
+                <Route path=StaticSegment("/test_checkbox") view=crate::testcases::checkbox::TestCheckbox/>
                 <Route path=StaticSegment("/forms") view=crate::forms::Forms/>
             </Routes>
         </Router>
@@ -145,7 +149,7 @@ fn Home() -> impl IntoView {
                 }.into_any()
             }
             <br/>
-            <Toggle value=Signal::derive(move || false)>"Lightswitch"</Toggle>
+            <Toggle checked=RwSignal::new(false)>"Lightswitch"</Toggle>
             <Avatar src="/favicon.ico" />
             <Avatar />
             <AnyAccordion />
@@ -203,7 +207,7 @@ fn Home() -> impl IntoView {
                 </Last>
             </ButtonGroup>
             <br/>
-            <Checkbox value=Signal::derive(|| false)>
+            <Checkbox checked=RwSignal::new(false)>
                 Done all tasks
             </Checkbox>
             <br/>

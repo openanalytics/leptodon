@@ -41,7 +41,7 @@ impl RadioOption for RadioStation {
 }
 
 #[derive(EnumIter, Display, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
-enum Element {
+pub enum Element {
     Hydrogen,
     Helium,
     Lithium,
@@ -59,6 +59,12 @@ enum Element {
 
 impl RadioOption for Element {
     fn value(&self) -> Oco<'static, str> {
+        AsRef::<str>::as_ref(&self).to_string().into()
+    }
+}
+
+impl AsRef<str> for Element {
+    fn as_ref(&self) -> &'static str {
         match self {
             Element::Hydrogen => "hydrogen",
             Element::Helium => "helium",
@@ -74,7 +80,6 @@ impl RadioOption for Element {
             Element::Magnesium => "magnesium",
             Element::Aluminium => "aluminium",
         }
-        .into()
     }
 }
 
@@ -126,13 +131,13 @@ pub fn Forms() -> impl IntoView {
                 <FormInput<String> label="Password" required=true>
                     <PasswordInput name="password" placeholder="*******************" hazards=vec!["Merlijn".to_string()] show_eye=true />
                 </FormInput<String>>
-                <Checkbox required=true value=false>
+                <Checkbox required=true checked=RwSignal::new(false)>
                     <span class="whitespace-pre-wrap">
                         Accept <Link class="inline-block" href="/terms"> terms </Link> and conditions
                     </span>
                 </Checkbox>
                 <br/>
-                <Toggle required=true value=false>
+                <Toggle required=true checked=RwSignal::new(false)>
                     "Advertising cookies"
                 </Toggle>
                 <br/>

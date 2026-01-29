@@ -25,12 +25,12 @@ use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::form_input::Label;
 
 // The selection-indicating orb's style
-const RADIO_OPTION_CLASSES: &'static str = "w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none";
+const RADIO_OPTION_CLASSES: &str = "w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none";
 // Label right of orb
-const RADIO_OPTION_LABEL_CLASSES: &'static str =
+const RADIO_OPTION_LABEL_CLASSES: &str =
     "w-full py-3 select-none ms-2 text-sm font-medium text-heading";
 
-const RADIO_LIST_GROUP_CLASSES: &'static str = "border border-default rounded-lg shadow-sm";
+const RADIO_LIST_GROUP_CLASSES: &str = "border border-default rounded-lg shadow-sm";
 
 /// Methods for radio option
 pub trait RadioOption: Display {

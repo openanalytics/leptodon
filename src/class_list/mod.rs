@@ -5,7 +5,7 @@ use leptos::{
     tachys::renderer::{Rndr, types},
 };
 use std::collections::HashSet;
-#[cfg(feature = "hydrate")]
+#[cfg(not(feature = "ssr"))]
 use std::sync::Arc;
 
 pub mod reactive_class;
@@ -15,11 +15,11 @@ pub struct ClassList {
     // Css classes are applied by the order they are defined in the .css file, ordering of classes in `class="classes.."` does not affect the outcome.
     // Hence a set is fitting
     value: RwSignal<HashSet<Oco<'static, str>>>,
-    #[cfg(feature = "hydrate")]
+    #[cfg(not(feature = "ssr"))]
     effects_oco: Vec<Arc<RenderEffect<Oco<'static, str>>>>,
-    #[cfg(feature = "hydrate")]
+    #[cfg(not(feature = "ssr"))]
     effects_option_oco: Vec<Arc<RenderEffect<Option<Oco<'static, str>>>>>,
-    #[cfg(feature = "hydrate")]
+    #[cfg(not(feature = "ssr"))]
     effects_bool: Vec<Arc<RenderEffect<bool>>>,
 }
 
@@ -46,7 +46,7 @@ impl ClassList {
                         set.insert(name);
                     });
                 }
-                #[cfg(feature = "hydrate")]
+                #[cfg(not(feature = "ssr"))]
                 {
                     let effect = RenderEffect::new(move |old_name| {
                         let name = f();
@@ -76,7 +76,7 @@ impl ClassList {
                         });
                     }
                 }
-                #[cfg(feature = "hydrate")]
+                #[cfg(not(feature = "ssr"))]
                 {
                     let effect = RenderEffect::new(move |old_name| {
                         let name = f();
