@@ -1,10 +1,14 @@
 use leptos::ev::EventCallback;
 use leptos::leptos_dom::logging::console_log;
+use leptos::logging::debug_log;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::ClassAttribute;
+use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::For;
 use leptos::prelude::Get;
+use leptos::prelude::GetUntracked;
+use leptos::prelude::GlobalAttributes;
 use leptos::prelude::IntoAny;
 #[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
@@ -13,6 +17,7 @@ use leptos::prelude::NodeRef;
 use leptos::prelude::Notify;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
+use leptos::prelude::Set;
 use leptos::prelude::Trigger;
 use leptos::prelude::Update;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
@@ -50,14 +55,15 @@ static NUCLEO_MATCHER: LazyLock<Mutex<Matcher>> =
 
 #[component]
 pub fn TagPicker<T>(
+    #[prop(optional, into)] id: MaybeProp<String>,
     /// Shown when no tags are selected.
     #[prop(optional, into)]
     placeholder: MaybeProp<String>,
     /// Subset of tags, containing the selected tags
-    #[prop(optional, into)]
+    #[prop(optional)]
     selected: RwSignal<Vec<T>>,
     /// All tags
-    #[prop(optional, into)]
+    #[prop(optional)]
     tags: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
@@ -66,10 +72,43 @@ where
     let search_filter = RwSignal::new(String::new());
     let search_ref: NodeRef<leptos::html::Input> = NodeRef::new();
 
+    // When the outside tags change, update selected tags.
+    Effect::watch(
+        move || tags.get(),
+        move |new, _, _| {
+            let selected_value = selected.get();
+            let leftover_selected = selected_value
+                .into_iter()
+                .filter(|selected_value| new.contains(selected_value))
+                .collect::<Vec<_>>();
+            selected.set(leftover_selected);
+        },
+        false,
+    );
+
+    // When the outside selection change, Sanity check the selection, purge unselectable tags..
+    Effect::watch(
+        move || selected.get(),
+        move |new, old, _| {
+            if Some(new) != old {
+                let tags = tags.get();
+                let leftover_selected = new
+                    .clone()
+                    .into_iter()
+                    .filter(|selected_value| tags.contains(selected_value))
+                    .collect::<Vec<_>>();
+                selected.set(leftover_selected);
+            }
+        },
+        false,
+    );
+
     // Fuzzy search applier
     let tags_filtersorted: Memo<Vec<T>> = Memo::new(move |_old| {
         let search: String = search_filter.get().to_ascii_lowercase();
         let tags: Vec<T> = tags.get();
+
+        debug_log!("Filtering tag on {search}");
 
         let pattern = Pattern::parse(search.as_str(), CaseMatching::Smart, Normalization::Smart);
         let mut matcher = NUCLEO_MATCHER.lock().expect("Unpoised");
@@ -99,7 +138,7 @@ where
     });
 
     let on_popover_open = move || {
-        let Some(input): Option<HtmlInputElement> = search_ref.get() else {
+        let Some(input): Option<HtmlInputElement> = search_ref.get_untracked() else {
             return;
         };
         input
@@ -115,9 +154,12 @@ where
     };
 
     view! {
-        <Popover show_arrow=false preferred_pos=PopoverPosition::BottomStart trigger_type=PopoverTriggerType::Click popover_controller>
+        <Popover id show_arrow=false preferred_pos=PopoverPosition::BottomStart trigger_type=PopoverTriggerType::Click popover_controller>
             <PopoverTrigger slot>
-                <div class=class_list!(SELECT_CLASSES, "cursor-default flex justify-between items-center")>
+                <div
+                    id=id.get().map(|id| format!("{id}-trigger"))
+                    class=class_list!(SELECT_CLASSES, "cursor-default flex justify-between items-center")
+                >
                     <div class="flex gap-2 overflow-scroll">
                         // Selected tags
                         <For
@@ -132,7 +174,7 @@ where
                                     selected.update(|vec| {
                                         vec.iter()
                                             .position(|e| e == &tag)
-                                            .and_then(|pos| { Some(vec.remove(pos)) });
+                                            .map(|pos| { vec.remove(pos) });
                                     });
                                 }>
                                     <Icon class="w-3 h-3" icon=crate::icon::CloseIcon() />
@@ -155,7 +197,7 @@ where
             </PopoverTrigger>
 
             // Popover Contents VV
-            <ul>
+            <ul id=id.get().map(|id| format!("{id}-dropdown"))>
                 <TextInput class="mb-2" placeholder="Search..." value=search_filter input_ref=search_ref
                     on:keydown=move |key: KeyboardEvent| {
                         console_log(key.code().as_str());
@@ -169,7 +211,7 @@ where
                             let Some((_, tag)) = tags_grouped.get().first().cloned() else {
                                 return;
                             };
-                            
+
                             toggle_tag(selected, tag).invoke(());
                         }
                     }
@@ -196,15 +238,15 @@ where
                     >
                         {let tag=tag.clone(); {
                             view! {
-                                <Checkbox disable_tab=true value={
+                                <Checkbox disable_tab=true checked={
                                     let tag = tag.clone();
-                                    move || selected.get().contains(&tag)
+                                    RwSignal::new(selected.get().contains(&tag))
                                 }>
                                     {tag.to_string()}
                                 </Checkbox>
                             }
                         }}
-                        
+
                     </li>
                 </For>
             </ul>
