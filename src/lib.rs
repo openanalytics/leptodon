@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+
 pub mod include_generated;
 
 #[cfg(feature = "leptos")]

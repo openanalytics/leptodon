@@ -1,3 +1,4 @@
+use attr_docgen::generate_docs;
 use leptos::prelude::BindAttribute;
 use leptos::prelude::Children;
 use leptos::prelude::ClassAttribute;
@@ -19,6 +20,7 @@ use crate::form_input::PostfixLabelStyle;
 
 const TOGGLE_CLASS: &str = "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-oa-blue dark:peer-focus:ring-oa-blue dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-oa-blue";
 
+#[generate_docs]
 /// Similar to checkbox, but in a physical-switch-like design.
 /// Often used for persistent settings to give the feel of a physical switch.
 #[component]

@@ -9,6 +9,11 @@
 .zed
 .idea
 
+**/*-cache
+**/*-node-modules
+**/*-sccache
+**/*-target
+
 overview/.idea
 overview/dist
 overview/.tailwind

@@ -11,6 +11,7 @@ leptos_meta = { version = "0.8.5", optional = true }
 leptos_router = { version = "0.8.5", optional = true }
 leptos_axum = { version = "0.8.5", optional = true }
 leptos-use = { version = "0.18", features = ["use_calendar", "on_click_outside", "math"], optional = true }
+attr-docgen = { path="./attr-docgen"}
 
 reactive_stores = { version = "0.2.5", optional = true }
 uuid = { version = "1.18.1",  features = ["v4", "js"], optional = true }

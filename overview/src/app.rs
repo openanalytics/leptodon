@@ -3,9 +3,12 @@ use crate::group_table::GroupedTableExample;
 use crate::web_calendar::PopulatedCalendar;
 use leptos::logging::log;
 use leptos::prelude::*;
+use leptos_components::icon;
 use leptos_components::accordion::Accordion;
 use leptos_components::accordion::AccordionEntry;
 use leptos_components::avatar::Avatar;
+use leptos_components::navbar::SideBarLink;
+use leptos_components::navbar::NavbarEntries;
 use leptos_components::button::AddButton;
 use leptos_components::button::DeleteButton;
 use leptos_components::button::DialogButton;
@@ -101,6 +104,12 @@ fn Home() -> impl IntoView {
     view! {
         <Title text="Leptos components" />
         <SideNavbar>
+            <NavbarEntries slot:entries>
+                <li><SideBarLink href="#" icon=icon::CalendarIcon()>Calendar</SideBarLink></li>
+                <li><SideBarLink href="users" icon=icon::UserIcon()>Users</SideBarLink></li>
+                <li><SideBarLink href="forms" icon=icon::PendingApprovalIcon()>Users</SideBarLink></li>
+                <li><SideBarLink href="security" icon=icon::LockOpenIcon()>Security</SideBarLink></li>
+            </NavbarEntries>
         <main class="px-3">
             <Settings>
                 <ThemeSelector />

@@ -1,0 +1,35 @@
+services:
+ overview:
+    build:
+      context: ./
+      dockerfile: ./dev.Dockerfile
+    restart: unless-stopped
+    hostname: lc-overview
+    container_name: lc-overview
+    environment:
+    - LEPTOS_SITE_ROOT=/tmp/target
+    - LEPTOS_SITE_ADDR=0.0.0.0:3000
+    - LEPTOS_RELOAD_EXTERNAL_PORT=3000 # https://github.com/jvanmalder/leptos/commit/271154d6809f836a743dec603eb714d78ec8f6bd
+    - CARGO_TARGET_DIR=/tmp/target # https://github.com/leptos-rs/cargo-leptos/issues/74
+    - CARGO_BUILD_TARGET_DIR=/tmp/target # https://github.com/leptos-rs/cargo-leptos/issues/74
+    - RUST_LOG=info
+    - SCCACHE_DIR=/tmp/sccache
+    - RUSTC_WRAPPER=/usr/local/bin/sccache
+    # - TS_DATABASE__URL=sqlite:/tmp/target/sessions.db
+    # - RUST_BACKTRACE=1
+    volumes:
+    - ../:/tmp/leptos-components:ro
+    - ./overview-target:/tmp/target
+    - ./overview-cache:/usr/local/cargo/registry/cache
+    - ./overview-sccache:/tmp/sccache
+    - ./overview-node-modules:/tmp/leptos-components/overview/node_modules/
+    command:
+    - sh
+    - -c
+    - cd /tmp/leptos-components/overview && npm install --no-package-lock && cargo leptos watch
+
+    deploy:
+      resources:
+        limits:
+          cpus: "8"
+          memory: "16g"
