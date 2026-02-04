@@ -7,6 +7,7 @@ use leptos_components::icon;
 use leptos_components::accordion::Accordion;
 use leptos_components::accordion::AccordionEntry;
 use leptos_components::avatar::Avatar;
+use leptos_components::codeblock::Codeblock;
 use leptos_components::navbar::SideBarLink;
 use leptos_components::navbar::NavbarEntries;
 use leptos_components::button::AddButton;
@@ -114,6 +115,12 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
+            <Codeblock code="impl RadioOption for Element {
+    fn value(&self) -> Oco<'static, str> {
+        AsRef::<str>::as_ref(&self).to_string().into()
+    }
+}">
+            </Codeblock>
             <TextArea value=text_area_input label="Notes" placeholder="Time for text" />
             <GroupedTableExample />
             <DemoTable />
