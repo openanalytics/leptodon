@@ -19,6 +19,8 @@ pub mod checkbox;
 #[cfg(feature = "leptos")]
 pub mod class_list;
 #[cfg(feature = "leptos")]
+pub mod codeblock;
+#[cfg(feature = "leptos")]
 pub mod darkmode;
 #[cfg(feature = "leptos")]
 pub mod date_picker;
@@ -34,6 +36,8 @@ pub mod icon;
 pub mod input;
 #[cfg(feature = "leptos")]
 pub mod input_group;
+#[cfg(feature = "leptos")]
+pub mod layout;
 #[cfg(feature = "leptos")]
 pub mod link;
 #[cfg(feature = "leptos")]

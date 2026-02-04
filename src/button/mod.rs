@@ -34,7 +34,7 @@ pub use crate::button::variations::ModalButtonChildren;
 
 const BUTTON_SHADOW_CLASSES: &str = "shadow-sm";
 const BUTTON_SPACING_CLASSES: &str = " px-5 py-2.5 mr-2";
-const SHARED_BUTTON_CLASSES: &str = "relative hover:z-20 focus:z-10 dark:focus:ring-gray-800 outline-offset-[-1px] outline-[5px] focus:outline font-medium inline-flex items-center text-center text-sm";
+const SHARED_BUTTON_CLASSES: &str = "hover:z-20 focus:z-10 dark:focus:ring-gray-800 outline-offset-[-1px] outline-[5px] focus:outline font-medium inline-flex items-center text-center text-sm";
 
 const BUTTON_GRAY_FOCUS_CLASSES: &str =
     "!active:outline-oa-gray-darker focus:outline-oa-gray-darker hover:focus:outline-oa-gray ";

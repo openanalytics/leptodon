@@ -1,39 +1,14 @@
-use leptos::logging::log;
 use leptos::prelude::*;
 use leptos_components::accordion::Accordion;
 use leptos_components::accordion::AccordionEntry;
-use leptos_components::avatar::Avatar;
-use leptos_components::button::AddButton;
-use leptos_components::button::DeleteButton;
-use leptos_components::button::DialogButton;
-use leptos_components::button::DialogButtonChildren;
-use leptos_components::button::DownloadButton;
-use leptos_components::button::DropdownButton;
-use leptos_components::button::DropdownButtonChildren;
-use leptos_components::button::EditButton;
-use leptos_components::button::ModalButton;
-use leptos_components::button::ModalButtonChildren;
-use leptos_components::button_group::ButtonGroup;
-use leptos_components::button_group::First;
-use leptos_components::button_group::Last;
-use leptos_components::checkbox::Checkbox;
 use leptos_components::darkmode::ThemeSelector;
-use leptos_components::date_picker::DatePicker;
-use leptos_components::date_picker::range_picker::DateRangePicker;
-use leptos_components::dropdown::DropdownItem;
 use leptos_components::icon;
-use leptos_components::input::InputType;
-use leptos_components::link::Link;
-use leptos_components::modal::ModalFooterChildren;
 use leptos_components::navbar::NavbarEndChildren;
 use leptos_components::navbar::NavbarEntries;
 use leptos_components::navbar::SideBarLink;
 use leptos_components::navbar::SideNavbar;
-use leptos_components::textarea::TextArea;
-use leptos_components::toggle::Toggle;
 use leptos_components::{
-    button::{Button, ButtonAppearance},
-    input::TextInput,
+    button::{Button, ButtonAppearance}
 };
 use leptos_meta::MetaTags;
 use leptos_meta::Stylesheet;
@@ -46,7 +21,7 @@ use leptos_router::{
     components::{Route, Router, Routes},
 };
 
-use crate::demos::toggle::ToggleDemo;
+use crate::demos::toggle::ToggleDemoPage;
 
 const NAME: &str = "OA Leptos-Components";
 
@@ -101,7 +76,7 @@ pub fn App() -> impl IntoView {
             <Routes fallback=|| "Page not found.">
                 <ParentRoute path=StaticSegment("/") view=RouteShell>
                     <Route path=StaticSegment("/") view=Home/>
-                    <Route path=StaticSegment("/toggle") view=ToggleDemo/>
+                    <Route path=StaticSegment("/toggle") view=ToggleDemoPage/>
                 </ParentRoute>
             </Routes>
         </Router>
