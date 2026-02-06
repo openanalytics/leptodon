@@ -3,13 +3,9 @@ use crate::group_table::GroupedTableExample;
 use crate::web_calendar::PopulatedCalendar;
 use leptos::logging::log;
 use leptos::prelude::*;
-use leptos_components::icon;
 use leptos_components::accordion::Accordion;
 use leptos_components::accordion::AccordionEntry;
 use leptos_components::avatar::Avatar;
-use leptos_components::codeblock::Codeblock;
-use leptos_components::navbar::SideBarLink;
-use leptos_components::navbar::NavbarEntries;
 use leptos_components::button::AddButton;
 use leptos_components::button::DeleteButton;
 use leptos_components::button::DialogButton;
@@ -24,13 +20,18 @@ use leptos_components::button_group::ButtonGroup;
 use leptos_components::button_group::First;
 use leptos_components::button_group::Last;
 use leptos_components::checkbox::Checkbox;
+use leptos_components::codeblock::Codeblock;
 use leptos_components::darkmode::ThemeSelector;
 use leptos_components::date_picker::DatePicker;
 use leptos_components::date_picker::range_picker::DateRangePicker;
 use leptos_components::dropdown::DropdownItem;
+use leptos_components::heading::*;
+use leptos_components::icon;
 use leptos_components::input::InputType;
 use leptos_components::link::Link;
 use leptos_components::modal::ModalFooterChildren;
+use leptos_components::navbar::NavbarEntries;
+use leptos_components::navbar::SideBarLink;
 use leptos_components::navbar::SideNavbar;
 use leptos_components::textarea::TextArea;
 use leptos_components::toggle::Toggle;
@@ -115,6 +116,12 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
+            <Heading1 anchor="the-largest-heading">The Largest Heading</Heading1>
+            <Heading2 class="color-red-500">The 2nd Largest Heading</Heading2>
+            <Heading3>The Large Heading</Heading3>
+            <Heading4>The Heading</Heading4>
+            <Heading5>The Smaller Heading</Heading5>
+            <Heading6>The Smallest Heading</Heading6>
             <Codeblock code="impl RadioOption for Element {
     fn value(&self) -> Oco<'static, str> {
         AsRef::<str>::as_ref(&self).to_string().into()

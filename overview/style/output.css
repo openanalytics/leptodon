@@ -1123,6 +1123,10 @@ input:checked + .toggle-bg {
   left: -0.25rem;
 }
 
+.-top-\[140px\] {
+  top: -140px;
+}
+
 .bottom-0 {
   bottom: 0px;
 }
@@ -1157,6 +1161,10 @@ input:checked + .toggle-bg {
 
 .top-2 {
   top: 0.5rem;
+}
+
+.-top-\[100px\] {
+  top: -100px;
 }
 
 .-z-\[1000\] {
@@ -1359,6 +1367,10 @@ input:checked + .toggle-bg {
 
 .grid {
   display: grid;
+}
+
+.contents {
+  display: contents;
 }
 
 .hidden {
@@ -2012,6 +2024,11 @@ input:checked + .toggle-bg {
   background-color: rgb(225 239 254 / var(--tw-bg-opacity, 1));
 }
 
+.bg-blue-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(235 245 255 / var(--tw-bg-opacity, 1));
+}
+
 .bg-blue-500\/10 {
   background-color: rgb(63 131 248 / 0.1);
 }
@@ -2096,11 +2113,6 @@ input:checked + .toggle-bg {
 .bg-yellow-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(253 246 178 / var(--tw-bg-opacity, 1));
-}
-
-.bg-blue-50 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(235 245 255 / var(--tw-bg-opacity, 1));
 }
 
 .p-0\.5 {
@@ -2221,6 +2233,26 @@ input:checked + .toggle-bg {
 
 .font-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+.text-5xl {
+  font-size: 3rem;
+  line-height: 1;
 }
 
 .text-lg {
@@ -2717,6 +2749,10 @@ input:checked + .toggle-bg {
 
 .hover\:underline:hover {
   text-decoration-line: underline;
+}
+
+.hover\:opacity-100:hover {
+  opacity: 1;
 }
 
 .focus\:z-10:focus {
