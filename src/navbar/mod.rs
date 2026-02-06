@@ -15,7 +15,7 @@ use leptos::view;
 use leptos::{IntoView, component};
 use leptos_router::components::ToHref;
 
-const SIDEBAR_CLASSES: &str = "fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700";
+const SIDEBAR_CLASSES: &str = "fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 lg:translate-x-0 dark:bg-gray-800 dark:border-gray-700";
 
 #[component]
 pub fn SideBarLink<H>(
@@ -30,7 +30,7 @@ where
         <Link href {..}  class=class_list!(OA_TRANSPARENT_BUTTON_CLASSES, "w-full rounded-lg aria-current-page:bg-oa-gray dark:aria-current-page:bg-gray-700")>
             {if let Some(icon) = icon.get() {
                 view! { <Icon icon=icon /> }.into_any()
-            } else { 
+            } else {
                 ().into_any()
             }}
            {children()}
@@ -84,7 +84,7 @@ pub fn SideNavbar(
                     <div class="flex items-center justify-start rtl:justify-end">
                         <ControlButton icon=icon::HamburgerIcon() on_click=move |_| {
                                 visible.update(|is_visible| *is_visible = !*is_visible);
-                            } class="sm:hidden" {..}
+                            } class="lg:hidden" {..}
                             data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
                         />
                         {(logo.children)()}
@@ -112,12 +112,12 @@ pub fn SideNavbar(
             </div>
         </aside>
         <div class=class_list![
-                "sm:hidden fixed top-0 left-0 w-full h-full bg-gray-900/50 z-10",
+                "lg:hidden fixed top-0 left-0 w-full h-full bg-gray-900/50 z-10",
                 ("hidden", move || !visible.get())
             ]
             on:click=move |_| visible.set(false)
         />
-        <div class="p-4 mt-16 sm:ml-64 min-h-full">
+        <div class="p-4 mt-16 lg:ml-64 min-h-full">
             {children().into_any()}
         </div>
     }

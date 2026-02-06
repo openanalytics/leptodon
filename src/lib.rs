@@ -27,9 +27,13 @@ pub mod date_picker;
 #[cfg(feature = "leptos")]
 pub mod dialog;
 #[cfg(feature = "leptos")]
+pub mod divider;
+#[cfg(feature = "leptos")]
 pub mod dropdown;
 #[cfg(feature = "leptos")]
 pub mod form_input;
+#[cfg(feature = "leptos")]
+pub mod heading;
 #[cfg(feature = "leptos")]
 pub mod icon;
 #[cfg(feature = "leptos")]

@@ -7,11 +7,13 @@ use crate::button_group::Last;
 use crate::class_list;
 use crate::form_input::FormInputContext;
 use crate::form_input::Label;
+use crate::form_input::MaybeLabelledFormInput;
 use crate::icon::HideIcon;
 use crate::icon::ShowIcon;
 use crate::input_group::GroupItemClassContext;
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
+use attr_docgen::generate_docs;
 use leptos::either::Either;
 use leptos::html;
 use leptos::logging::debug_log;
@@ -42,6 +44,7 @@ use zxcvbn::zxcvbn;
 pub const OA_READONLY_INPUT_CLASSES: &str = "border-0 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
 const OA_INPUT_CLASSES: &str = "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
 
+#[generate_docs]
 #[component]
 #[allow(unused)] // Generated propsbuilder is used.
 pub fn TextInputConfig(
@@ -53,6 +56,7 @@ pub fn TextInputConfig(
 ) -> impl IntoView {
 }
 
+#[generate_docs]
 #[component]
 pub fn TextInput(
     /// Extra classes added to augment the default style.
@@ -138,6 +142,7 @@ pub fn TextInput(
     }
 }
 
+#[generate_docs]
 /// Integrates with dropbox's zxcvbn to create non annoying and actually strong passwords.
 #[component]
 pub fn PasswordInput(
@@ -181,9 +186,11 @@ pub fn PasswordInput(
     let parser = ArcOneCallback::new(move |input: String| {
         let hazard_strs: Vec<&str> = hazards.iter().map(|s| s.as_ref()).collect();
         let entropy = zxcvbn(input.as_str(), hazard_strs.as_slice());
+
         if let Some(feedback) = entropy.feedback() {
             return Err(format!("{feedback}"));
         }
+
         if entropy.score() < Score::Four {
             return Err("Almost strong enough, add another word or a couple symbols.".to_string());
         }
@@ -194,34 +201,54 @@ pub fn PasswordInput(
     let password_vis = RwSignal::new(false);
 
     if show_eye {
-        view !{
-            <ButtonGroup>
-                <First slot:first>
-                    <GenericInput<String, String>
-                        class
-                        input_ref
-                        label
-                        name
-                        value
-                        readonly
-                        required
-                        placeholder
-                        input_type=Signal::derive(move || { if password_vis.get() { InputType::Text } else { InputType::Password } })
-                        parser=parser.clone()
-                    />
-                </First>
-                <Last slot:last>
-                    <Button
-                        on_click=move |_| {
-                            password_vis.update(|mut_vis| *mut_vis = !*mut_vis)
-                        }
-                        appearance=ButtonAppearance::Secondary
-                        icon=Signal::derive(move || {
-                            if password_vis.get() { HideIcon() } else { ShowIcon() }
-                        })
-                    ></Button>
-                </Last>
-            </ButtonGroup>
+        // Form context
+        let form_context = use_context::<FormInputContext<String>>();
+        let form_required = Signal::from(
+            form_context
+                .clone()
+                .map(|ctx| ctx.required)
+                .unwrap_or_default(),
+        );
+        let required = use_or(required, form_required);
+        let label = if let Some(form_context) = form_context {
+            if label.get().is_some() {
+                label
+            } else {
+                form_context.label
+            }
+        } else {
+            label
+        };
+        view! {
+            <MaybeLabelledFormInput<String> label required=required.get()>
+                <ButtonGroup>
+                    <First slot:first>
+                        <GenericInput<String, String>
+                            class
+                            input_ref
+                            label
+                            name
+                            value
+                            readonly
+                            required
+                            placeholder
+                            input_type=Signal::derive(move || { if password_vis.get() { InputType::Text } else { InputType::Password } })
+                            parser=parser.clone()
+                        />
+                    </First>
+                    <Last slot:last>
+                        <Button
+                            on_click=move |_| {
+                                password_vis.update(|mut_vis| *mut_vis = !*mut_vis)
+                            }
+                            appearance=ButtonAppearance::Secondary
+                            icon=Signal::derive(move || {
+                                if password_vis.get() { HideIcon() } else { ShowIcon() }
+                            })
+                        ></Button>
+                    </Last>
+                </ButtonGroup>
+            </MaybeLabelledFormInput<String>>
         }.into_any()
     } else {
         view! {
@@ -241,6 +268,7 @@ pub fn PasswordInput(
     }
 }
 
+#[generate_docs]
 /// If the input is empty but you supplied **value** then check if you supplied a **format** handler
 ///
 /// The normal layout is as follows:
@@ -455,13 +483,6 @@ where
                 <Label required=required.get() label>
                     {standalone_input}
                 </Label>
-                // <label class="block mb-2.5 text-sm font-medium text-heading">
-                //     <Show
-                //         when=move || required.get()
-                //         fallback=|| ()><span class="text-red-500">*</span>
-                //     </Show> {label}
-                //     {standalone_input}
-                // </label>
             </div>
         })
     } else {

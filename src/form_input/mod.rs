@@ -7,6 +7,7 @@ use leptos::{IntoView, component, prelude::Children, view};
 #[derive(Clone, Copy)]
 pub struct FormInputContext<E: Clone + Send + Sync + std::fmt::Display + 'static> {
     pub required: bool,
+    pub label: MaybeProp<String>,
     pub feedback: RwSignal<Option<E>>,
 }
 
@@ -21,11 +22,29 @@ pub fn FormInput<E>(
 where
     E: Clone + Send + Sync + std::fmt::Display + 'static,
 {
+    view! {
+        <MaybeLabelledFormInput<E> label required children />
+    }
+}
+
+// Internal function: when an input field like password need to display an eye next to itself, the GenericInput can no longer simply display feedback under itself.
+// For that reason the password input wraps itself internally with the FormInput mechanism even when unlabeled.
+#[component]
+pub(crate) fn MaybeLabelledFormInput<E>(
+    #[prop(optional, into)] label: MaybeProp<String>,
+    required: bool,
+    children: Children,
+    #[prop(default = PhantomData)] _phantom: PhantomData<E>,
+) -> impl IntoView
+where
+    E: Clone + Send + Sync + std::fmt::Display + 'static,
+{
     let feedback: RwSignal<Option<E>> = RwSignal::new(None);
+    let form_ctx = FormInputContext { required, label, feedback };
     view! {
         <div class="mb-2">
             <Label label required>
-                <Provider<_, _> value=FormInputContext { required, feedback }>
+                <Provider<_, _> value=form_ctx>
                     {children()}
                 </Provider<_, _>>
             </Label>
@@ -43,8 +62,15 @@ where
     }
 }
 
+/// A label component, shown above its children.
 #[component]
-pub fn Label(#[prop(optional, into)] label: MaybeProp<String>, required: bool, children: Children) -> impl IntoView {
+pub fn Label(
+    #[prop(optional, into)] label: MaybeProp<String>,
+    /// Displays a red star to indicate an input is required to be completed.
+    required: bool,
+    /// The labeled element
+    children: Children,
+) -> impl IntoView {
     if let Some(label) = label.get() {
         view! {
             <label class="block text-sm font-medium text-heading">
@@ -63,7 +89,7 @@ pub fn Label(#[prop(optional, into)] label: MaybeProp<String>, required: bool, c
 
 /// Style helper
 /// Used for inline labels behind checkbox and toggle.
-/// Provide the label via [children], caller is expected to wrap this and the input in a <label>. 
+/// Provide the label via [children], caller is expected to wrap this and the input in a <label>.
 #[component]
 pub fn PostfixLabelStyle(required: bool, children: Children) -> impl IntoView {
     view! {

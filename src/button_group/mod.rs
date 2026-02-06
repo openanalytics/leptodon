@@ -1,4 +1,5 @@
 use crate::input_group::GroupItemClassContext;
+use attr_docgen::generate_docs;
 use leptos::context::Provider;
 use leptos::prelude::ChildrenFn;
 use leptos::prelude::ClassAttribute;
@@ -26,6 +27,7 @@ pub struct Last {
     children: ChildrenFn,
 }
 
+#[generate_docs]
 /// Blocked on passing context to first and last child.
 #[component]
 pub fn ButtonGroup(

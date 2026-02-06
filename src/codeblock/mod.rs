@@ -15,7 +15,8 @@ use web_sys::window;
 #[component]
 pub fn Codeblock(
     /// The code to show in the block.
-    #[prop(into)] code: String
+    #[prop(into)]
+    code: String,
 ) -> impl IntoView {
     let stored_code = StoredValue::new(code);
     let btn_text = RwSignal::new("Copy");
@@ -43,7 +44,7 @@ pub fn Codeblock(
             >
                 {btn_text}
             </Button>
-            <pre class="overflow-x-auto cursor-text">{ stored_code.read_value().clone() }</pre>
+            <pre class="overflow-x-auto cursor-text text-wrap">{ stored_code.read_value().clone() }</pre>
         </div>
     }
 }

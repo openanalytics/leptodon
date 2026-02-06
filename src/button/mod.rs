@@ -9,6 +9,7 @@ use crate::{
     spinner::{Spinner, SpinnerSize},
     util::callback::BoxOneCallback,
 };
+use attr_docgen::generate_docs;
 use leptos::logging::debug_log;
 use leptos::{IntoView, component, view};
 use leptos::{
@@ -94,6 +95,7 @@ pub const OA_MINIMAL_BUTTON_CLASSES: &str = const_str::join!(
     " "
 );
 
+#[generate_docs]
 #[component]
 pub fn Button(
     /// Button ID

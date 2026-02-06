@@ -664,22 +664,22 @@ pub fn DatePicker(
         let month_by_date = month_by_date.clone();
         move || {
             match picker_state.get().menu {
-            DatePickerMenu::DayPicker => view! { <DayPickerMenu weekdays dates value highlighter /> }.into_any(),
-            DatePickerMenu::MonthPicker => view! {
-                <MonthPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state />
+                DatePickerMenu::DayPicker => view! { <DayPickerMenu weekdays dates value highlighter /> }.into_any(),
+                DatePickerMenu::MonthPicker => view! {
+                    <MonthPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state />
+                }
+                .into_any(),
+                DatePickerMenu::YearPicker => view! {
+                    <YearPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
+                    />
+                }
+                .into_any(),
+                DatePickerMenu::DeceniaPicker => view! {
+                    <DeceniumPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
+                    />
+                }
+                .into_any(),
             }
-            .into_any(),
-            DatePickerMenu::YearPicker => view! {
-                <YearPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
-                />
-            }
-            .into_any(),
-            DatePickerMenu::DeceniaPicker => view! {
-                <DeceniumPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
-                />
-            }
-            .into_any(),
-        }
         }
     };
 

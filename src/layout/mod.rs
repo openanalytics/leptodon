@@ -19,3 +19,31 @@ pub fn CenteringColumn(
         </div>
     }
 }
+
+/// Column with a fixed width
+#[component]
+pub fn FixedColumn(
+    #[prop(optional, into)] class: MaybeReactiveClass,
+    children: Children,
+) -> impl IntoView {
+    view! {
+        <div class=class_list!("flex flex-col w-full lg:w-[770px] xl:w-[1024px]", class)>
+            {children()}
+        </div>
+    }
+}
+
+/// A fixed column but centered.
+#[component]
+pub fn FixedCenterColumn(
+    #[prop(optional, into)] class: MaybeReactiveClass,
+    children: Children,
+) -> impl IntoView {
+    view! {
+        <CenteringColumn class>
+            <FixedColumn>
+                {children()}
+            </FixedColumn>
+        </CenteringColumn>
+    }
+}
