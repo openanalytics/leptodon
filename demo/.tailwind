@@ -2044,6 +2044,55 @@ impl RadioOption for f64 {
         Oco::Owned(self.to_string())
     }
 }
+use std::time::Duration;
+
+use crate::button::{Button, ButtonAppearance};
+use leptos::prelude::ClassAttribute;
+use leptos::prelude::ElementChild;
+use leptos::prelude::ReadValue;
+use leptos::prelude::RwSignal;
+use leptos::prelude::Set;
+use leptos::prelude::StoredValue;
+use leptos::prelude::set_timeout;
+use leptos::*;
+use web_sys::window;
+
+/// Styled monospace-rectangle for showing code, copy button in the top right
+#[component]
+pub fn Codeblock(
+    /// The code to show in the block.
+    #[prop(into)] code: String
+) -> impl IntoView {
+    let stored_code = StoredValue::new(code);
+    let btn_text = RwSignal::new("Copy");
+    let on_copy = move |_| {
+        let _ = window()
+            .expect("Window should be present")
+            .navigator()
+            .clipboard()
+            .write_text(&stored_code.read_value());
+        btn_text.set("Copied!");
+        set_timeout(
+            move || {
+                btn_text.set("Copy");
+            },
+            Duration::from_secs(2),
+        );
+    };
+
+    view! {
+        <div class="bg-blue-50 rounded-lg p-4 relative shadow-sm">
+            <Button
+                appearance=ButtonAppearance::Transparent
+                class="absolute top-2 right-2 !mr-0 bg-white"
+                on_click=on_copy
+            >
+                {btn_text}
+            </Button>
+            <pre class="overflow-x-auto cursor-text">{ stored_code.read_value().clone() }</pre>
+        </div>
+    }
+}
 use crate::button_group::InGroupContext;
 use crate::class_list;
 use crate::class_list::reactive_class::MaybeReactiveClass;
@@ -2055,6 +2104,7 @@ use crate::{
     spinner::{Spinner, SpinnerSize},
     util::callback::BoxOneCallback,
 };
+use attr_docgen::generate_docs;
 use leptos::logging::debug_log;
 use leptos::{IntoView, component, view};
 use leptos::{
@@ -2080,7 +2130,7 @@ pub use crate::button::variations::ModalButtonChildren;
 
 const BUTTON_SHADOW_CLASSES: &str = "shadow-sm";
 const BUTTON_SPACING_CLASSES: &str = " px-5 py-2.5 mr-2";
-const SHARED_BUTTON_CLASSES: &str = "relative hover:z-20 focus:z-10 dark:focus:ring-gray-800 outline-offset-[-1px] outline-[5px] focus:outline font-medium inline-flex items-center text-center text-sm";
+const SHARED_BUTTON_CLASSES: &str = "hover:z-20 focus:z-10 dark:focus:ring-gray-800 outline-offset-[-1px] outline-[5px] focus:outline font-medium inline-flex items-center text-center text-sm";
 
 const BUTTON_GRAY_FOCUS_CLASSES: &str =
     "!active:outline-oa-gray-darker focus:outline-oa-gray-darker hover:focus:outline-oa-gray ";
@@ -2140,6 +2190,7 @@ pub const OA_MINIMAL_BUTTON_CLASSES: &str = const_str::join!(
     " "
 );
 
+#[generate_docs]
 #[component]
 pub fn Button(
     /// Button ID
@@ -3322,6 +3373,8 @@ pub fn shared_id() -> SharedValue<String, FromToStringCodec> {
 pub mod include_generated;
 
 #[cfg(feature = "leptos")]
+pub mod heading;
+#[cfg(feature = "leptos")]
 pub mod accordion;
 #[cfg(feature = "leptos")]
 pub mod avatar;
@@ -3338,6 +3391,8 @@ pub mod checkbox;
 #[cfg(feature = "leptos")]
 pub mod class_list;
 #[cfg(feature = "leptos")]
+pub mod codeblock;
+#[cfg(feature = "leptos")]
 pub mod darkmode;
 #[cfg(feature = "leptos")]
 pub mod date_picker;
@@ -3353,6 +3408,8 @@ pub mod icon;
 pub mod input;
 #[cfg(feature = "leptos")]
 pub mod input_group;
+#[cfg(feature = "leptos")]
+pub mod layout;
 #[cfg(feature = "leptos")]
 pub mod link;
 #[cfg(feature = "leptos")]
@@ -3377,6 +3434,27 @@ pub mod textarea;
 pub mod toggle;
 #[cfg(feature = "leptos")]
 pub mod util;
+use leptos::IntoView;
+use leptos::prelude::ClassAttribute;
+use leptos::prelude::ElementChild;
+use leptos::view;
+use leptos::{component, prelude::Children};
+
+use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
+
+/// A flex column which centers its items.
+#[component]
+pub fn CenteringColumn(
+    #[prop(optional, into)] class: MaybeReactiveClass,
+    children: Children,
+) -> impl IntoView {
+    view! {
+        <div class=class_list!("flex flex-col justify-center items-center", class)>
+            {children()}
+        </div>
+    }
+}
 use leptos_struct_table::DragHandler;
 
 pub mod grouping;
@@ -4087,6 +4165,156 @@ pub enum AlignmentAnchor {
     //   https://bugzilla.mozilla.org/show_bug.cgi?id=1838746
     //   It offers fallback rendering positions when a position causes an overflow.
     // Auto
+}
+use leptos::IntoView;
+use leptos::prelude::AriaAttributes;
+use leptos::prelude::ClassAttribute;
+use leptos::prelude::ElementChild;
+use leptos::prelude::Get;
+use leptos::prelude::GlobalAttributes;
+use leptos::prelude::IntoAny;
+use leptos::prelude::MaybeProp;
+use leptos::view;
+use leptos::{component, prelude::Children};
+
+use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
+
+const HEADER_CLASS: &str = "font-bold relative color-gray-900";
+
+#[component]
+fn HeadingAnchor(
+    /// Identifies this anchor.
+    id: String
+) -> impl IntoView {
+    view! {
+        // TODO: Get this offset via navbar context 
+        <span id=id.clone() class="absolute -top-[100px]"></span>
+        <a class="ml-2 text-oa-blue opacity-0 transition-opacity hover:opacity-100" href=format!("#{id}") aria-label="Link to this section: Heading mark">#</a>
+    }
+}
+
+#[component]
+fn MaybeHeadingAnchor(anchor: MaybeProp<String>) -> impl IntoView {
+    if let Some(anchor) = anchor.get() {
+        view !{ <HeadingAnchor id=anchor/> }.into_any()
+    } else {
+        ().into_any()
+    }
+}
+
+#[component]
+pub fn Heading1(
+    /// Whether this Heading should be suffixed by a # serving as an anchor.
+    #[prop(optional, into)]
+    anchor: MaybeProp<String>,
+    /// Extra heading classes
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
+    /// Heading contents
+    children: Children,
+) -> impl IntoView {
+    view! {
+        <h1 class=class_list!("text-5xl", HEADER_CLASS, class)>
+            {children()}
+            <MaybeHeadingAnchor anchor/>
+        </h1>
+    }
+}
+
+#[component]
+pub fn Heading2(
+    /// Whether this Heading should be suffixed by a # serving as an anchor.
+    #[prop(optional, into)]
+    anchor: MaybeProp<String>,
+    /// Extra heading classes
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
+    /// Heading contents
+    children: Children,
+) -> impl IntoView {
+    view! {
+        <h2 class=class_list!("text-4xl", HEADER_CLASS, class)>
+            {children()}
+            <MaybeHeadingAnchor anchor/>
+        </h2>
+    }
+}
+
+#[component]
+pub fn Heading3(
+    /// Whether this Heading should be suffixed by a # serving as an anchor.
+    #[prop(optional, into)]
+    anchor: MaybeProp<String>,
+    /// Extra heading classes
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
+    /// Heading contents
+    children: Children,
+) -> impl IntoView {
+    view! {
+        <h3 class=class_list!("text-3xl", HEADER_CLASS, class)>
+            {children()}
+            <MaybeHeadingAnchor anchor/>
+        </h3>
+    }
+}
+
+#[component]
+pub fn Heading4(
+    /// Whether this Heading should be suffixed by a # serving as an anchor.
+    #[prop(optional, into)]
+    anchor: MaybeProp<String>,
+    /// Extra heading classes
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
+    /// Heading contents
+    children: Children,
+) -> impl IntoView {
+    view! {
+        <h4 class=class_list!("text-2xl", HEADER_CLASS, class)>
+            {children()}
+            <MaybeHeadingAnchor anchor/>
+        </h4>
+    }
+}
+
+#[component]
+pub fn Heading5(
+    /// Whether this Heading should be suffixed by a # serving as an anchor.
+    #[prop(optional, into)]
+    anchor: MaybeProp<String>,
+    /// Extra heading classes
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
+    /// Heading contents
+    children: Children,
+) -> impl IntoView {
+    view! {
+        <h5 class=class_list!("text-xl", HEADER_CLASS, class)>
+            {children()}
+            <MaybeHeadingAnchor anchor/>
+        </h5>
+    }
+}
+
+#[component]
+pub fn Heading6(
+    /// Whether this Heading should be suffixed by a # serving as an anchor.
+    #[prop(optional, into)]
+    anchor: MaybeProp<String>,
+    /// Extra heading classes
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
+    /// Heading contents
+    children: Children,
+) -> impl IntoView {
+    view! {
+        <h6 class=class_list!("text-lg", HEADER_CLASS, class)>
+            {children()}
+            <MaybeHeadingAnchor anchor/>
+        </h6>
+    }
 }
 use crate::avatar::Avatar;
 use crate::class_list;

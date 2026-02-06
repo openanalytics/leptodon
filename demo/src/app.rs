@@ -21,6 +21,8 @@ use leptos_router::{
     components::{Route, Router, Routes},
 };
 
+use crate::demos::button::ButtonDemoPage;
+use crate::demos::input::InputsDemoPage;
 use crate::demos::toggle::ToggleDemoPage;
 
 const NAME: &str = "OA Leptos-Components";
@@ -51,8 +53,9 @@ pub fn RouteShell() -> impl IntoView {
             <SideNavbar>
                 <NavbarEntries slot:entries>
                     <li><SideBarLink href="#" icon=icon::BillingIcon()>Home</SideBarLink></li>
-                    <li><SideBarLink href="#">Buttons</SideBarLink></li>
+                    <li><SideBarLink href="/buttons">Buttons</SideBarLink></li>
                     <li><SideBarLink href="/toggle">Toggle</SideBarLink></li>
+                    <li><SideBarLink href="/inputs">Inputs</SideBarLink></li>
                 </NavbarEntries>
                 <NavbarEndChildren slot:end>
                     <ThemeSelector />
@@ -69,13 +72,14 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        // <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
         <Stylesheet href="/pkg/overview.css"/>
 
         <Router>
             <Routes fallback=|| "Page not found.">
                 <ParentRoute path=StaticSegment("/") view=RouteShell>
                     <Route path=StaticSegment("/") view=Home/>
+                    <Route path=StaticSegment("/buttons") view=ButtonDemoPage/>
+                    <Route path=StaticSegment("/inputs") view=InputsDemoPage/>
                     <Route path=StaticSegment("/toggle") view=ToggleDemoPage/>
                 </ParentRoute>
             </Routes>

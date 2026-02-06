@@ -7,8 +7,8 @@ use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, prelude::RwSignal, view};
 use leptos_components::button::Button;
-use leptos_components::form_input::Label;
-use leptos_components::layout::CenteringColumn;
+use leptos_components::heading::Heading4;
+use leptos_components::layout::FixedCenterColumn;
 use leptos_components::toggle::Toggle;
 use leptos_meta::Title;
 
@@ -45,19 +45,13 @@ pub fn ToggleDemo() -> impl IntoView {
 #[component]
 pub fn ToggleDemoPage() -> impl IntoView {
     view! {
-        <Title text="Test Toggle"/>
+        <Title text="Toggle Component"/>
 
-        <CenteringColumn>
-            <Label required=false label="Example Toggle usage">
-                <div class="flex flex-col border-1 border border-black rounded-lg shadow-sm w-fit p-4 min-w-[50vw]">
-                    <div class="p-3">
-                        <ToggleDemo />
-                    </div>
-                    <hr class="mb-4"></hr>
-                    <ToggleDemoCodeblock />
-                </div>
-            </Label>
+        <FixedCenterColumn>
+            <Heading4 anchor="toggle">"Toggle"</Heading4>
+            <ToggleExample />
+            
             <leptos_components::toggle::ToggleDocs />
-        </CenteringColumn>
+        </FixedCenterColumn>
     }
 }
