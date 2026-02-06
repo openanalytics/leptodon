@@ -5,6 +5,8 @@ use syn::Expr;
 use syn::Lit;
 use syn::{Attribute, FnArg, ItemFn, Meta, MetaNameValue, Pat, parse_macro_input};
 
+use crate::util::trim_surrounding_quotes;
+
 /// Extracts doc attribute from parameter attributes
 fn extract_doc_attr(attrs: &[Attribute]) -> Option<String> {
     for attr in attrs {
@@ -20,13 +22,8 @@ fn extract_doc_attr(attrs: &[Attribute]) -> Option<String> {
                     literal.to_tokens(&mut tokens);
 
                     let mut doc_literal_str = tokens.to_string();
-                    if let Lit::Str(_) = literal.lit
-                        && doc_literal_str.ends_with("\"")
-                        && doc_literal_str.starts_with("\"")
-                    {
-                        // Assumes string literal is surrounded by " ";
-                        doc_literal_str.truncate(doc_literal_str.len() - 1);
-                        doc_literal_str = doc_literal_str[1..].trim().to_string();
+                    if let Lit::Str(_) = literal.lit {
+                        doc_literal_str = trim_surrounding_quotes(doc_literal_str);
                     }
                     return Some(doc_literal_str);
                 }
@@ -61,32 +58,41 @@ pub(crate) fn _generate_docs(_attr: TokenStream, item: TokenStream) -> TokenStre
 
     // Generate documentation-printing function
     let mut print_body = Vec::new();
-    for (name, doc) in &param_docs {
+    for (i, (name, doc)) in param_docs.iter().enumerate() {
+        let classes = if i.is_multiple_of(2) {
+            "border-b border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700".to_string()
+        } else {
+            "border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800".to_string()
+        };
         print_body.push(quote! {
-            <tr>
-                <td>{#name}</td>
-                <td>{#doc}</td>
+            <tr class=#classes>
+                <td class="px-5 py-2"><b>{#name}</b></td>
+                <td class="px-5 py-2">{#doc}</td>
             </tr>
         });
     }
 
     let docs_ident = format_ident!("{}Docs", input.sig.ident);
+    let table_name_ident = format!("{} Parameters", input.sig.ident);
     let print_fn = quote! {
         /// Produces argument documentation extracted from the related component
         #[component]
         pub fn #docs_ident() -> impl IntoView {
             leptos::prelude::view! {
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>"Parameter"</th>
-                            <th>"Documentation"</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        #(#print_body)*
-                    </tbody>
-                </table>
+                <div class="py-2">
+                    <crate::heading::Heading5>#table_name_ident</crate::heading::Heading5>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-300">
+                                <th class="px-5 py-2 text-left">"Parameter"</th>
+                                <th class="px-5 py-2 text-left">"Documentation"</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            #(#print_body)*
+                        </tbody>
+                    </table>
+                </div>
             }
         }
     };
