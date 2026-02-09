@@ -1,3 +1,4 @@
+use chrono::Days;
 use leptos::logging::debug_log;
 use leptos::prelude::GlobalAttributes;
 // Do not remove until leptos is upgraded above 0.8.14
@@ -59,7 +60,9 @@ const YEAR_IN_MONTHS: Months = Months::new(12);
 
 /// Elements refer to the date-picker elements like individual days, months, years.
 const SELECTED_ELEM_CLASSES: &str = "hover:!bg-oa-blue-lighter bg-oa-blue text-white ";
-const ELEM_CLASSES: &str = "hover:bg-oa-gray block flex-1 leading-9 border-0 cursor-pointer text-center text-body font-medium text-sme";
+const SELECTABLE_ELEM_CLASSES: &str = "hover:bg-oa-gray block flex-1 leading-9 border-0 cursor-pointer text-center text-body font-medium text-sme";
+const DISABLED_ELEM_CLASSES: &str =
+    "opacity-40 block flex-1 leading-9 border-0 text-center text-body font-medium text-sme";
 
 const MONTHS: [Month; 12] = [
     Month::January,
@@ -90,6 +93,65 @@ fn naive_date_with_decenium(date: &NaiveDate, decenium: i32) -> NaiveDate {
 fn decenium_from_naive_date(date: &NaiveDate) -> i32 {
     let remainder = date.year() % 10;
     date.year().saturating_sub(remainder)
+}
+
+/// Returns the [menu]-granular date-range containing [date].
+///   e.g.
+///   * 2022-11-13, DatePickerMenu::Day -> (2022-11-13, 2022-11-13)
+///   * 2022-11-13, DatePickerMenu::Month -> (2022-11-1, 2022-11-30)
+///   * 2022-11-13, DatePickerMenu::Year -> (2022-1-1, 2022-12-31)
+///   * 2022-11-13, DatePickerMenu::Decenium -> (2020-1-1, 2029-12-31)
+fn menu_range(date: NaiveDate, menu: DatePickerMenu) -> (NaiveDate, NaiveDate) {
+    match menu {
+        DatePickerMenu::DayPicker => (date, date),
+        DatePickerMenu::MonthPicker => {
+            let start = date.with_day(1).unwrap_or(NaiveDate::MIN);
+            let end = date
+                .with_day(1).unwrap_or(NaiveDate::MIN)
+                .checked_add_months(Months::new(1))
+                .unwrap_or(NaiveDate::MAX)
+                .checked_sub_days(Days::new(1))
+                .unwrap_or(NaiveDate::MAX);
+            (start, end)
+        },
+        DatePickerMenu::YearPicker => {
+            let start = date.with_day(1).unwrap_or(NaiveDate::MIN).with_month(1).unwrap_or(NaiveDate::MIN);
+            let end = date
+                .with_day(1).unwrap_or(NaiveDate::MIN).with_month(12).unwrap_or(NaiveDate::MAX)
+                .checked_add_months(Months::new(1))
+                .unwrap_or(NaiveDate::MAX)
+                .checked_sub_days(Days::new(1))
+                .unwrap_or(NaiveDate::MAX);
+            (start, end)
+        },
+        DatePickerMenu::DeceniaPicker => {
+            let base_year = decenium_from_naive_date(&date);
+            let start = NaiveDate::from_ymd_opt(base_year, 1, 1).unwrap_or(NaiveDate::MIN);
+            let end = NaiveDate::from_ymd_opt(base_year + 9, 12, 31).unwrap_or(NaiveDate::MAX);
+            (start, end)
+        }
+    }
+}
+
+/// Whether menu-granular-[date]-range intersects the (min_date..=max_date) range.
+fn menu_item_intersects_range(
+    date: NaiveDate,
+    menu: DatePickerMenu,
+    min_date: MaybeProp<NaiveDate>,
+    max_date: MaybeProp<NaiveDate>,
+) -> bool {
+    let (menu_min, menu_max) = menu_range(date, menu);
+    if let Some(min_date) = min_date.get() {
+        if let Some(max_date) = max_date.get() {
+            return menu_max >= min_date && menu_min <= max_date
+        } else {
+            return menu_max > min_date
+        }
+    } else if let Some(max_date) = max_date.get() {
+        return menu_min < max_date 
+    } else {
+        return true
+    }
 }
 
 /// Stores visibility and menu state information for a date-picker
@@ -165,6 +227,8 @@ fn DayPickerMenu(
     #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     dates: Signal<Vec<CalendarDate>>,
     value: RwSignal<Option<NaiveDate>>,
+    min_date: MaybeProp<NaiveDate>,
+    max_date: MaybeProp<NaiveDate>,
 ) -> impl IntoView {
     view! {
         <div class="days">
@@ -191,18 +255,19 @@ fn DayPickerMenu(
                     .get()
                     .into_iter()
                     .map(|date| {
-                        // let is_selected = move || { Some(*date) == value.get() };
+                        let intersects = menu_item_intersects_range(*date, DatePickerMenu::DayPicker, min_date, max_date);
+                        let classes = class_list!(
+                            (SELECTABLE_ELEM_CLASSES, intersects),
+                            (DISABLED_ELEM_CLASSES, !intersects),
+                            highlighter.get().map(|it| it(DateMenuOption::Day(date))).unwrap_or_default()
+                        );
+
                         view! {
-                            <div
-                                class=class_list!(
-                                    ELEM_CLASSES,
-                                    highlighter.get().map(|it| it(DateMenuOption::Day(date))).unwrap_or_default()
-                                )
-
-                                // class:border-transparent=move || !is_selected()
-                                on:click=move |_| value.set(Some(*date))
-                            >
-
+                            <div class=classes on:click=move |_| {
+                                if intersects {
+                                    value.set(Some(*date))
+                                }
+                            }>
                                 {date.day()}
                             </div>
                         }
@@ -261,6 +326,8 @@ fn MonthPickerMenu<MonthByDateFn>(
     #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     current_date: Memo<NaiveDate>,
     picker_state: RwSignal<DatePickerState>,
+    min_date: MaybeProp<NaiveDate>,
+    max_date: MaybeProp<NaiveDate>,
 ) -> impl IntoView
 where
     MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
@@ -272,23 +339,28 @@ where
                 MONTHS
                     .iter()
                     .map(|month| {
+                        let date = current_date.get()
+                            .with_month(month.number_from_month())
+                            .unwrap_or(NaiveDate::MIN);
+                        let intersects = menu_item_intersects_range(date, DatePickerMenu::MonthPicker, min_date, max_date);
+                        let classes = class_list!(
+                            (SELECTABLE_ELEM_CLASSES, intersects),
+                            (DISABLED_ELEM_CLASSES, !intersects),
+                            highlighter.get()
+                                .map(|it| it(DateMenuOption::Month(month.number_from_month())))
+                                .unwrap_or_default()
+                        );
+
                         view! {
                             <div
-                                class=class_list!(
-                                    highlighter.get()
-                                        .map(|it| it(DateMenuOption::Month(month.number_from_month())))
-                                        .unwrap_or_default(),
-                                    ELEM_CLASSES
-                                )
+                                class=classes
                                 on:click={
                                     let month_by_date = month_by_date.clone();
                                     move |_| {
-                                        month_by_date(
-                                            &current_date.get()
-                                                .with_month(month.number_from_month())
-                                                .unwrap_or(NaiveDate::MIN)
-                                        );
-                                        picker_state.update(|state| state.set_menu(DatePickerMenu::DayPicker))
+                                        if intersects {
+                                            month_by_date(&date);
+                                            picker_state.update(|state| state.set_menu(DatePickerMenu::DayPicker))
+                                        }
                                     }
                                 }
                             >
@@ -356,6 +428,8 @@ fn YearPickerMenu<MonthByDateFn>(
     #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     current_date: Memo<NaiveDate>,
     picker_state: RwSignal<DatePickerState>,
+    min_date: MaybeProp<NaiveDate>,
+    max_date: MaybeProp<NaiveDate>,
 ) -> impl IntoView
 where
     MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
@@ -372,23 +446,31 @@ where
             {move || {
                 relevant_years()
                     .map(|year| {
+                        let date = current_date.get()
+                            .with_year(year)
+                            .unwrap_or(NaiveDate::MIN);
+                        let intersects = menu_item_intersects_range(date, DatePickerMenu::YearPicker, min_date, max_date);
+                        let classes = class_list!(
+                            (SELECTABLE_ELEM_CLASSES, intersects),
+                            (DISABLED_ELEM_CLASSES, !intersects),
+                            highlighter.get()
+                                .map(|it| it(DateMenuOption::Year(year)))
+                                .unwrap_or_default()
+                        );
                         view! {
                             <div
-                                class=class_list!(
-                                    highlighter.get()
-                                        .map(|it| it(DateMenuOption::Year(year)))
-                                        .unwrap_or_default(),
-                                    ELEM_CLASSES
-                                )
+                                class=classes
                                 on:click={
                                     let month_by_date = month_by_date.clone();
                                     move |_| {
-                                        month_by_date(
-                                            &current_date.get()
-                                                .with_year(year)
-                                                .unwrap_or(NaiveDate::MIN)
-                                        );
-                                        picker_state.update(|state| state.set_menu(DatePickerMenu::MonthPicker))
+                                        if intersects {
+                                            month_by_date(
+                                                &current_date.get()
+                                                    .with_year(year)
+                                                    .unwrap_or(NaiveDate::MIN)
+                                            );
+                                            picker_state.update(|state| state.set_menu(DatePickerMenu::MonthPicker))
+                                        }
                                     }
                                 }
                             >
@@ -453,10 +535,13 @@ fn DeceniumPickerMenu<MonthByDateFn>(
     #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     current_date: Memo<NaiveDate>,
     picker_state: RwSignal<DatePickerState>,
+    min_date: MaybeProp<NaiveDate>,
+    max_date: MaybeProp<NaiveDate>,
 ) -> impl IntoView
 where
     MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
 {
+    // Range of the years within relevant decenia.
     let relevant_decenia = move || {
         let current_year = current_date.get().year();
         let current_millenium = current_year - current_year % 100;
@@ -470,21 +555,30 @@ where
                 relevant_decenia()
                     .step_by(10)
                     .map(|decenium| {
+                        let date = current_date.get()
+                            .with_year(decenium)
+                            .unwrap_or(NaiveDate::MIN);
+                        let intersects = menu_item_intersects_range(date, DatePickerMenu::DeceniaPicker, min_date, max_date);
+                        let classes = class_list!(
+                            (SELECTABLE_ELEM_CLASSES, intersects),
+                            (DISABLED_ELEM_CLASSES, !intersects),
+                            highlighter.get()
+                                .map(|it| it(DateMenuOption::Decenium(decenium)))
+                                .unwrap_or_default()
+                        );
+
                         view! {
                             <div
-                                class=class_list!(
-                                    highlighter.get()
-                                        .map(|it| it(DateMenuOption::Decenium(decenium)))
-                                        .unwrap_or_default(),
-                                    ELEM_CLASSES
-                                )
+                                class=classes
                                 on:click={
                                     let month_by_date = month_by_date.clone();
                                     move |_| {
-                                        month_by_date(
-                                            &naive_date_with_decenium(&current_date.get(), decenium)
-                                        );
-                                        picker_state.update(|state| state.set_menu(DatePickerMenu::YearPicker))
+                                        if intersects {
+                                            month_by_date(
+                                                &naive_date_with_decenium(&current_date.get(), decenium)
+                                            );
+                                            picker_state.update(|state| state.set_menu(DatePickerMenu::YearPicker))
+                                        }
                                     }
                                 }
                             >
@@ -523,19 +617,19 @@ impl DateMenuOption {
     /// # Examples
     ///
     /// ```
-    /// #use std::cmp::Ordering;
-    /// #use chrono::NaiveDate;
-    /// #use leptos_components::date_picker::DateMenuOption;
+    /// # use std::cmp::Ordering;
+    /// # use chrono::NaiveDate;
+    /// # use leptos_components::date_picker::DateMenuOption;
     ///
-    /// let date = NaiveDate::from_str("2025-11-01").unwrap();
+    /// let date = NaiveDate::from_ymd_opt(2025, 11, 01).unwrap();
     ///
     /// let month_option = DateMenuOption::Month(10);
     /// let year_option = DateMenuOption::Year(2025);
     /// let decenium_option = DateMenuOption::Decenium(2030);
     ///
     /// assert_eq!(month_option.compare_against(date), Ordering::Less);
-    /// assert_eq!(year_option.cmp(date), Ordering::Equal);
-    /// assert_eq!(decenium_option.cmp(date), Ordering::Greater);
+    /// assert_eq!(year_option.compare_against(date), Ordering::Equal);
+    /// assert_eq!(decenium_option.compare_against(date), Ordering::Greater);
     /// ```
     pub fn compare_against(&self, date: NaiveDate) -> Ordering {
         match self {
@@ -573,11 +667,17 @@ pub fn DatePicker(
     #[prop(optional, into)] name: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeProp<String>,
     #[prop(default = "yyyy-mm-dd".into(), into)] placeholder: MaybeProp<String>,
+    /// Asserts that min_date <= value
+    #[prop(optional, into)]
+    min_date: MaybeProp<NaiveDate>,
+    /// Asserts that max_date >= value
+    #[prop(optional, into)]
+    max_date: MaybeProp<NaiveDate>,
 
     #[prop(into)] value: RwSignal<Option<NaiveDate>>,
-    #[prop(default = day_highlighter(value).into(), into)] highlighter: MaybeProp<
-        ArcOneCallback<DateMenuOption, String>,
-    >,
+    /// A function which maps a DayMenuOption -> String (css class) to style special days on the date-picker.
+    #[prop(default = day_highlighter(value).into(), into)]
+    highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     #[prop(optional)] required: bool,
     #[prop(optional, into)] label: MaybeProp<String>,
 ) -> impl IntoView {
@@ -586,11 +686,13 @@ pub fn DatePicker(
     let date_picker_id = id;
 
     // Input parser
-    let parser = ArcOneCallback::new(|to_parse: String| {
+    let parser = ArcOneCallback::new(move |to_parse: String| {
         if to_parse.is_empty() {
             return Ok(None);
         }
-        NaiveDate::from_str(to_parse.as_str())
+
+        // Parse date
+        let date = NaiveDate::from_str(to_parse.as_str())
             .map(Option::Some)
             .map_err(|s| {
                 match s.kind() {
@@ -604,7 +706,23 @@ pub fn DatePicker(
                     ParseErrorKind::BadFormat => "try to format as: yyyy-mm-dd".to_string(),
                     _ => "Unknown error, try to format as: yyyy-mm-dd".to_string(),
                 }
-            })
+            })?;
+
+        // Min max checks
+        if let Some(date) = date {
+            if let Some(min_date) = min_date.get() {
+                if min_date > date {
+                    return Err(format!("Enter a date >= {min_date}"));
+                }
+            }
+            if let Some(max_date) = max_date.get() {
+                if max_date < date {
+                    return Err(format!("Enter a date <= {max_date}"));
+                }
+            }
+        };
+
+        Ok(date)
     });
     // Input formatter
     let format = BoxOneCallback::new(|date: Option<NaiveDate>| {
@@ -664,18 +782,24 @@ pub fn DatePicker(
         let month_by_date = month_by_date.clone();
         move || {
             match picker_state.get().menu {
-                DatePickerMenu::DayPicker => view! { <DayPickerMenu weekdays dates value highlighter /> }.into_any(),
+                DatePickerMenu::DayPicker => view! {
+                    <DayPickerMenu weekdays dates value highlighter max_date min_date />
+                }.into_any(),
                 DatePickerMenu::MonthPicker => view! {
-                    <MonthPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state />
+                    <MonthPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
+                    max_date min_date
+                    />
                 }
                 .into_any(),
                 DatePickerMenu::YearPicker => view! {
                     <YearPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
+                    max_date min_date
                     />
                 }
                 .into_any(),
                 DatePickerMenu::DeceniaPicker => view! {
                     <DeceniumPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
+                    max_date min_date
                     />
                 }
                 .into_any(),
@@ -780,4 +904,152 @@ pub fn DatePicker(
             </div>
         </div>
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::NaiveDate;
+
+    #[test]
+    fn test_decenium_from_naive_date() {
+        assert_eq!(
+            decenium_from_naive_date(&NaiveDate::from_ymd_opt(2023, 1, 1).unwrap()),
+            2020
+        );
+        assert_eq!(
+            decenium_from_naive_date(&NaiveDate::from_ymd_opt(2020, 1, 1).unwrap()),
+            2020
+        );
+        assert_eq!(
+            decenium_from_naive_date(&NaiveDate::from_ymd_opt(2029, 12, 31).unwrap()),
+            2020
+        );
+        assert_eq!(
+            decenium_from_naive_date(&NaiveDate::from_ymd_opt(2030, 1, 1).unwrap()),
+            2030
+        );
+    }
+
+    #[test]
+    fn test_naive_date_with_decenium() {
+        assert_eq!(
+            naive_date_with_decenium(
+                &NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(),
+                2020
+            ),
+            NaiveDate::from_ymd_opt(2023, 1, 1).unwrap()
+        );
+        assert_eq!(
+            naive_date_with_decenium(
+                &NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(),
+                2010
+            ),
+            NaiveDate::from_ymd_opt(2013, 1, 1).unwrap()
+        );
+        assert_eq!(
+            naive_date_with_decenium(
+                &NaiveDate::from_ymd_opt(2015, 6, 15).unwrap(),
+                2030
+            ),
+            NaiveDate::from_ymd_opt(2035, 6, 15).unwrap()
+        );
+    }
+
+    #[test]
+    fn test_menu_range() {
+        let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
+        assert_eq!(
+            menu_range(date, DatePickerMenu::DayPicker),
+            (
+                date,
+                date
+            )
+        );
+
+        let date = NaiveDate::from_ymd_opt(2023, 5, 15).unwrap();
+        assert_eq!(
+            menu_range(
+                date,
+                DatePickerMenu::MonthPicker
+            ),
+            (
+                NaiveDate::from_ymd_opt(2023, 5, 1).unwrap(),
+                NaiveDate::from_ymd_opt(2023, 5, 31).unwrap()
+            )
+        );
+        
+        let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
+        assert_eq!(
+            menu_range(
+                date,
+                DatePickerMenu::YearPicker
+            ),
+            (
+                NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(),
+                NaiveDate::from_ymd_opt(2023, 12, 31).unwrap()
+            )
+        );
+
+        let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
+        assert_eq!(
+            menu_range(
+                date,
+                DatePickerMenu::DeceniaPicker
+            ),
+            (
+                NaiveDate::from_ymd_opt(2020, 1, 1).unwrap(),
+                NaiveDate::from_ymd_opt(2029, 12, 31).unwrap()
+            )
+        );
+    }
+    
+    #[test]
+    fn test_menu_item_intersects_range() {
+        let min_date = NaiveDate::from_ymd_opt(2023, 5, 1).unwrap();
+        let max_date = NaiveDate::from_ymd_opt(2023, 5, 31).unwrap();
+        let menu = DatePickerMenu::MonthPicker;
+    
+        // Date inside range
+        assert!(menu_item_intersects_range(
+            NaiveDate::from_ymd_opt(2023, 5, 15).unwrap(),
+            menu,
+            min_date.into(),
+            max_date.into()
+        ));
+    
+        // At start of range
+        assert!(menu_item_intersects_range(
+            min_date,
+            menu,
+            min_date.into(),
+            max_date.into()
+        ));
+    
+        // At end of range
+        assert!(menu_item_intersects_range(
+            max_date,
+            menu,
+            min_date.into(),
+            max_date.into()
+        ));
+    
+        // Before range
+        assert!(!menu_item_intersects_range(
+            NaiveDate::from_ymd_opt(2023, 4, 30).unwrap(),
+            menu,
+            min_date.into(),
+            max_date.into()
+        ));
+    
+        // After range
+        assert!(!menu_item_intersects_range(
+            NaiveDate::from_ymd_opt(2023, 6, 1).unwrap(),
+            menu,
+            min_date.into(),
+            max_date.into()
+        ));
+    }
+
+
 }

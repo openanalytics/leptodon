@@ -1,6 +1,7 @@
 use crate::demo_table::DemoTable;
 use crate::group_table::GroupedTableExample;
 use crate::web_calendar::PopulatedCalendar;
+use chrono::NaiveDate;
 use leptos::logging::log;
 use leptos::prelude::*;
 use leptos_components::accordion::Accordion;
@@ -169,6 +170,9 @@ fn Home() -> impl IntoView {
                 view! {
                     <DatePicker id="date_picker" value=RwSignal::new(None) />
                     <DateRangePicker id="date_range_picker" />
+                    <DateRangePicker id="date_range_picker"
+                        min_date=NaiveDate::from_ymd_opt(2020, 10, 10).unwrap()
+                        max_date=NaiveDate::from_ymd_opt(2030, 10, 10).unwrap() />
                 }.into_any()
             }
             <br/>

@@ -30,7 +30,12 @@ pub fn DateRangePicker(
     /// Picked end date of the date-range
     #[prop(default = RwSignal::new(None), into)]
     end_date: RwSignal<Option<NaiveDate>>,
-
+    /// Asserts that min_date <= value
+    #[prop(optional, into)]
+    min_date: MaybeProp<NaiveDate>,
+    /// Asserts that max_date >= value
+    #[prop(optional, into)]
+    max_date: MaybeProp<NaiveDate>,
     /// Maps dates to tailwind classes to style the dates.
     /// Can be used to highlight specific days, e.g. festive days and weekends.
     #[prop(optional, into)]
@@ -110,9 +115,11 @@ pub fn DateRangePicker(
     let name_end = MaybeProp::derive(move || name.get().map(|name| format!("{name}_end")));
     view! {
         <div class=class_list!["inline-flex", class]>
-            <DatePicker placeholder id=id_left name=name_start value=start_date highlighter=combined_highlighter.clone() required />
+            <DatePicker placeholder id=id_left name=name_start value=start_date min_date max_date
+                highlighter=combined_highlighter.clone() required />
             <span class="mx-2 content-center">"Until"</span>
-            <DatePicker placeholder id=id_right name=name_end value=end_date highlighter=combined_highlighter required />
+            <DatePicker placeholder id=id_right name=name_end value=end_date min_date max_date
+                highlighter=combined_highlighter required />
         </div>
     }
 }
