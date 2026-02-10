@@ -13,7 +13,7 @@ use leptos::server;
 use leptos::server::LocalResource;
 use leptos_components::class_list;
 use leptos_components::popover::Popover;
-use leptos_components::popover::PopoverPosition;
+use leptos_components::popover::PopoverAnchor;
 use leptos_components::popover::PopoverTrigger;
 use leptos_components::util::option_comp::OptionComp;
 
@@ -131,7 +131,7 @@ pub fn PopulatedCalendar() -> impl IntoView {
                         let popup_desc = event_today.description.as_ref().cloned();
 
                         view! {
-                            <Popover preferred_pos=PopoverPosition::Right>
+                            <Popover preferred_pos=PopoverAnchor::Right>
                                 <PopoverTrigger slot>
                                     <div class=class_list!("self-stretch p-0.5 bg-teal-100 dark:bg-teal-900 m-0.5 shadow-sm text-xs md:text-sm line-clamp-3 shrink-0", ("grow", start_time.is_none()))>
                                         <OptionComp value=start_time let:start_time>

@@ -25,12 +25,13 @@ use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::form_input::Label;
 
 // The selection-indicating orb's style
-const RADIO_OPTION_CLASSES: &str = "w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none";
+const RADIO_OPTION_CLASSES: &str = "w-4 h-4 text-neutral-primary border-default-medium rounded-full checked:border-oa-blue focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default dark:border-gray-700 appearance-none";
 // Label right of orb
 const RADIO_OPTION_LABEL_CLASSES: &str =
-    "w-full py-3 select-none ms-2 text-sm font-medium text-heading";
+    "w-full py-3 select-none ms-2 text-sm font-medium text-gray-900 dark:text-gray-100";
 
-const RADIO_LIST_GROUP_CLASSES: &str = "border border-default rounded-lg shadow-sm";
+const RADIO_LIST_GROUP_CLASSES: &str =
+    "border border-default dark:border-gray-700 rounded-lg shadow-sm";
 
 /// Methods for radio option
 pub trait RadioOption: Display {
@@ -58,11 +59,13 @@ where
     Effect::watch(
         move || options.get(),
         move |new, _, _| {
-            if let Some(selected_value) = selected.get_untracked() && !new.contains(&selected_value) {
+            if let Some(selected_value) = selected.get_untracked()
+                && !new.contains(&selected_value)
+            {
                 selected.set(None);
             }
         },
-        false
+        false,
     );
     Effect::watch(
         move || selected.get(),
@@ -89,7 +92,7 @@ where
         <div class=class_list!(class)>
             <Label label=label required>
                 <ul class=class_list!(
-                    "w-48 bg-neutral-primary-soft",
+                    "w-48 bg-oa-gray dark:bg-gray-700 flex flex-col gap-px overflow-hidden",
                     match appearance {
                         RadioAppearance::ListGroup => RADIO_LIST_GROUP_CLASSES,
                         RadioAppearance::Minimal => "",
@@ -107,7 +110,7 @@ where
                                 fields.insert(option.clone(), node_ref);
                             });
                             view! {
-                                <li class="w-full border-b border-default"
+                                <li class="w-full bg-white dark:bg-gray-900"
                                     on:click=move |_| {
                                         if let Some(input) = node_ref.get() {
                                             // Uncheck prev checked input

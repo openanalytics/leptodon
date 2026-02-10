@@ -10,7 +10,7 @@ use leptos::{
     prelude::*,
 };
 use leptos::{
-    logging::{debug_log, debug_warn, error, warn},
+    logging::{debug_log, debug_warn, error},
     tachys::{html::node_ref::node_ref, renderer::dom::CssStyleDeclaration},
 };
 use leptos_use::{
@@ -40,7 +40,7 @@ pub fn Popover<Trigger, Content>(
     popover_trigger: PopoverTrigger<Trigger>,
     /// Configures the position of the Popover.
     #[prop(optional)]
-    preferred_pos: PopoverPosition,
+    preferred_pos: PopoverAnchor,
     /// Wether or not to render and position the popup for a connector arrow between the popover and trigger element.
     #[prop(default = true, optional)]
     show_arrow: bool,
@@ -113,40 +113,26 @@ where
             && popover_visible
         {
             debug_log!("recalculating style");
-            let (chosen_popover_position, abs_position) =
+            let popover_placement =
                 find_popover_abs_position(preferred_pos, &popover, &trigger, show_arrow);
-            if let Some(chosen_popover_position) = chosen_popover_position
-                && let Some(HorizontalOffset::Left(x)) = abs_position.horizontal_offset
-                && let Some(VerticalOffset::Top(y)) = abs_position.vertical_offset
-                && let Some(arrow) = arrow_ref.get()
+            if let Some(popover_placement) = popover_placement
+                && let HorizontalOffset::Left(x) = popover_placement.abs_hoffset
+                && let VerticalOffset::Top(y) = popover_placement.abs_voffset
             {
-                set_arrow_position(arrow, &popover, (x, y), chosen_popover_position);
-            }
-
-            debug_log!("Rel_pos: {abs_position:?}");
-            let popover_style = (*popover).style();
-
-            match abs_position.horizontal_offset {
-                Some(HorizontalOffset::Left(px)) => {
-                    set_style_property(&popover_style, "left", format!("{px}px"));
+                let popover_width = popover_placement.width;
+                let popover_height = popover_placement.height;
+                if let Some(arrow) = arrow_ref.get() {
+                set_arrow_position(arrow, &popover, (x, y), popover_placement.chosen_anchor);
                 }
-                Some(HorizontalOffset::Right(px)) => {
-                    set_style_property(&popover_style, "right", format!("{px}px"));
-                }
-                _ => {
-                    warn!("No horizontal position provided for popover");
-                }
-            }
-            match abs_position.vertical_offset {
-                Some(VerticalOffset::Top(px)) => {
-                    set_style_property(&popover_style, "top", format!("{px}px"));
-                }
-                Some(VerticalOffset::Bot(px)) => {
-                    set_style_property(&popover_style, "bot", format!("{px}px"));
-                }
-                _ => {
-                    warn!("No vertical position provided for popover");
-                }
+                
+                debug_log!("Rel_pos: {popover_placement:?}");
+                let popover_style = (*popover).style();
+    
+             
+                set_style_property(&popover_style, "left", format!("{x}px"));     
+                set_style_property(&popover_style, "top", format!("{y}px"));
+                set_style_property(&popover_style, "width", format!("{popover_width}px"));
+                set_style_property(&popover_style, "height", format!("{popover_height}px"));
             }
         }
     });
@@ -222,7 +208,7 @@ where
                 on:mouseenter=on_mouse_enter
                 on:mouseleave=on_mouse_leave
             >
-                <div class="overflow-auto max-w-[40vw] max-h-[50vw] h-full w-full p-2">
+                <div class="overflow-auto max-w-[40vw] max-h-[50vh] h-full w-full p-2">
                     {content_children}
                 </div>
             </div>
@@ -320,7 +306,7 @@ fn set_arrow_position(
     arrow_ref: HtmlDivElement,
     popover_ref: &web_sys::Element,
     popover_coords: (u32, u32),
-    position: PopoverPosition,
+    anchor: PopoverAnchor,
 ) {
     let (base_x, base_y) = popover_coords;
     let base_x = base_x as f64;
@@ -334,51 +320,51 @@ fn set_arrow_position(
     let popover_width = popover_rect.width();
     let horizontal_middle = popover_rect.width() / 2.0;
     let vertical_middle = popover_rect.height() / 2.0;
-    let (left, top, rotation) = match position {
-        PopoverPosition::Top => (
+    let (left, top, rotation) = match anchor {
+        PopoverAnchor::Top => (
             base_x + horizontal_middle - arrow_middle,
             base_y - arrow_middle + popover_height,
             "135deg",
         ),
-        PopoverPosition::Bottom => (
+        PopoverAnchor::Bottom => (
             base_x + horizontal_middle - arrow_middle,
             base_y - arrow_middle,
             "-45deg",
         ),
-        PopoverPosition::Left => (
+        PopoverAnchor::Left => (
             base_x + popover_width - arrow_middle,
             base_y + vertical_middle - arrow_middle,
             "45deg",
         ),
-        PopoverPosition::Right => (
+        PopoverAnchor::Right => (
             base_x - arrow_middle,
             base_y + vertical_middle - arrow_middle,
             "-135deg",
         ),
-        PopoverPosition::TopStart => (
+        PopoverAnchor::TopStart => (
             base_x + corner_offset,
             base_y - arrow_middle + popover_height,
             "135deg",
         ),
-        PopoverPosition::TopEnd => (
+        PopoverAnchor::TopEnd => (
             base_x + popover_width - corner_offset,
             base_y - arrow_middle + popover_height,
             "135deg",
         ),
-        PopoverPosition::LeftStart => (
+        PopoverAnchor::LeftStart => (
             base_x + popover_width - arrow_middle,
             base_y + corner_offset,
             "45deg",
         ),
-        PopoverPosition::LeftEnd => (
+        PopoverAnchor::LeftEnd => (
             base_x + popover_width - arrow_middle,
             base_y - corner_offset,
             "45deg",
         ),
-        PopoverPosition::RightStart => (base_x - arrow_middle, base_y + corner_offset, "-135deg"),
-        PopoverPosition::RightEnd => (base_x - arrow_middle, base_y - corner_offset, "-135deg"),
-        PopoverPosition::BottomStart => (base_x + corner_offset, base_y - arrow_middle, "-45deg"),
-        PopoverPosition::BottomEnd => (
+        PopoverAnchor::RightStart => (base_x - arrow_middle, base_y + corner_offset, "-135deg"),
+        PopoverAnchor::RightEnd => (base_x - arrow_middle, base_y - corner_offset, "-135deg"),
+        PopoverAnchor::BottomStart => (base_x + corner_offset, base_y - arrow_middle, "-45deg"),
+        PopoverAnchor::BottomEnd => (
             base_x + popover_width - corner_offset,
             base_y - arrow_middle,
             "-45deg",
@@ -390,21 +376,26 @@ fn set_arrow_position(
     set_style_property(&arrow_style, "transform", format!("rotate({rotation})"));
 }
 
+#[derive(Debug)]
+struct PopoverPlacement {
+    chosen_anchor: PopoverAnchor,
+    abs_hoffset: HorizontalOffset,
+    abs_voffset: VerticalOffset,
+    // Used for setting the popover width to the values that get_true_bb told us. 
+    //   This works around the issue that the popovers seemingly lie about their width...
+    width: f64,
+    height: f64,
+}
+
 /// Finds an ideal collision-free area next to [trigger] to place [popover].
 /// returns the chosen position, and absolute coordinates [popover] needs to be placed at for this position.
 fn find_popover_abs_position(
-    preferred_position: PopoverPosition,
+    preferred_position: PopoverAnchor,
     popover: &web_sys::Element,
     trigger: &web_sys::Element,
     show_arrow: bool,
-) -> (Option<PopoverPosition>, RelativePosition) {
-    let fallback = (
-        None,
-        RelativePosition {
-            horizontal_offset: None,
-            vertical_offset: None,
-        },
-    );
+) -> Option<PopoverPlacement> {
+    let fallback = None;
     let popover_rect = get_true_bb(popover);
     let trigger_rect = get_true_bb(trigger);
 
@@ -464,21 +455,21 @@ fn find_popover_abs_position(
     // * Assumes the trigger is not half-onscreen.
     let possible_positions = POPOVER_POSITIONS.iter().filter(|position| match position {
         // Collision checks
-        PopoverPosition::TopStart => top_top_is_open && horizontal_start_is_open,
-        PopoverPosition::Top => top_top_is_open,
-        PopoverPosition::TopEnd => top_top_is_open && horizontal_end_is_open,
+        PopoverAnchor::TopStart => top_top_is_open && horizontal_start_is_open,
+        PopoverAnchor::Top => top_top_is_open,
+        PopoverAnchor::TopEnd => top_top_is_open && horizontal_end_is_open,
 
-        PopoverPosition::BottomStart => bot_bot_is_open && horizontal_start_is_open,
-        PopoverPosition::Bottom => bot_bot_is_open,
-        PopoverPosition::BottomEnd => bot_bot_is_open && horizontal_end_is_open,
+        PopoverAnchor::BottomStart => bot_bot_is_open && horizontal_start_is_open,
+        PopoverAnchor::Bottom => bot_bot_is_open,
+        PopoverAnchor::BottomEnd => bot_bot_is_open && horizontal_end_is_open,
 
-        PopoverPosition::LeftStart => left_left_is_open && vertical_start_is_open,
-        PopoverPosition::Left => left_left_is_open,
-        PopoverPosition::LeftEnd => left_left_is_open && vertical_end_is_open,
+        PopoverAnchor::LeftStart => left_left_is_open && vertical_start_is_open,
+        PopoverAnchor::Left => left_left_is_open,
+        PopoverAnchor::LeftEnd => left_left_is_open && vertical_end_is_open,
 
-        PopoverPosition::RightStart => right_right_is_open && vertical_start_is_open,
-        PopoverPosition::Right => right_right_is_open,
-        PopoverPosition::RightEnd => right_right_is_open && vertical_end_is_open,
+        PopoverAnchor::RightStart => right_right_is_open && vertical_start_is_open,
+        PopoverAnchor::Right => right_right_is_open,
+        PopoverAnchor::RightEnd => right_right_is_open && vertical_end_is_open,
     });
 
     let mut best_position = None;
@@ -501,65 +492,65 @@ fn find_popover_abs_position(
     if let Some(best_position) = best_position {
         // Map to absolute position
         let (horizontal_offset, vertical_offset) = match best_position {
-            PopoverPosition::TopStart => (
+            PopoverAnchor::TopStart => (
                 trigger_rect.left() as u32,
                 (trigger_rect.top() - popover_height - arrow_bump) as u32,
             ),
-            PopoverPosition::Top => (
+            PopoverAnchor::Top => (
                 (trigger_rect.left() + (trigger_width - popover_width) / 2.0) as u32,
                 (trigger_rect.top() - popover_height - arrow_bump) as u32,
             ),
-            PopoverPosition::TopEnd => (
+            PopoverAnchor::TopEnd => (
                 (trigger_rect.right() - popover_width) as u32,
                 (trigger_rect.top() - popover_height - arrow_bump) as u32,
             ),
 
-            PopoverPosition::BottomStart => (
+            PopoverAnchor::BottomStart => (
                 trigger_rect.left() as u32,
                 (trigger_rect.bottom() + arrow_bump) as u32,
             ),
-            PopoverPosition::Bottom => (
+            PopoverAnchor::Bottom => (
                 (trigger_rect.left() + (trigger_width - popover_width) / 2.0) as u32,
                 (trigger_rect.bottom() + arrow_bump) as u32,
             ),
-            PopoverPosition::BottomEnd => (
+            PopoverAnchor::BottomEnd => (
                 (trigger_rect.right() - popover_width) as u32,
                 (trigger_rect.bottom() + arrow_bump) as u32,
             ),
 
-            PopoverPosition::LeftStart => (
+            PopoverAnchor::LeftStart => (
                 (trigger_rect.left() - popover_width - arrow_bump) as u32,
                 trigger_y as u32,
             ),
-            PopoverPosition::Left => (
+            PopoverAnchor::Left => (
                 (trigger_rect.left() - popover_width - arrow_bump) as u32,
                 (trigger_y + (trigger_height - popover_height) / 2.0) as u32,
             ),
-            PopoverPosition::LeftEnd => (
+            PopoverAnchor::LeftEnd => (
                 (trigger_rect.left() - popover_width - arrow_bump) as u32,
                 (trigger_rect.bottom() - popover_height) as u32,
             ),
 
-            PopoverPosition::RightStart => {
+            PopoverAnchor::RightStart => {
                 ((trigger_rect.right() + arrow_bump) as u32, trigger_y as u32)
             }
-            PopoverPosition::Right => (
+            PopoverAnchor::Right => (
                 (trigger_rect.right() + arrow_bump) as u32,
                 (trigger_y + (trigger_height - popover_height) / 2.0) as u32,
             ),
-            PopoverPosition::RightEnd => (
+            PopoverAnchor::RightEnd => (
                 (trigger_rect.right() + arrow_bump) as u32,
                 (trigger_rect.bottom() - popover_height) as u32,
             ),
         };
 
-        return (
-            Some(*best_position),
-            RelativePosition {
-                horizontal_offset: Some(HorizontalOffset::Left(horizontal_offset)),
-                vertical_offset: Some(VerticalOffset::Top(vertical_offset)),
-            },
-        );
+        return Some(PopoverPlacement {
+            chosen_anchor: *best_position,
+            abs_hoffset: HorizontalOffset::Left(horizontal_offset),
+            abs_voffset: VerticalOffset::Top(vertical_offset),
+            width: popover_width,
+            height: popover_height,
+        });
     };
 
     fallback
@@ -617,7 +608,7 @@ impl Copy for PopoverTriggerType {}
 
 /// Keep in sync with POPOVER_POSITIONS
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum PopoverPosition {
+pub enum PopoverAnchor {
     #[default]
     Top,
     Bottom,
@@ -632,38 +623,38 @@ pub enum PopoverPosition {
     BottomStart,
     BottomEnd,
 }
-impl PopoverPosition {
-    fn mirrored(&self) -> PopoverPosition {
+impl PopoverAnchor {
+    fn mirrored(&self) -> PopoverAnchor {
         match self {
-            PopoverPosition::Top => Self::Bottom,
-            PopoverPosition::Bottom => Self::Bottom,
-            PopoverPosition::Left => Self::Right,
-            PopoverPosition::Right => Self::Left,
-            PopoverPosition::TopStart => Self::BottomStart,
-            PopoverPosition::TopEnd => Self::BottomEnd,
-            PopoverPosition::LeftStart => Self::RightStart,
-            PopoverPosition::LeftEnd => Self::RightEnd,
-            PopoverPosition::RightStart => Self::LeftStart,
-            PopoverPosition::RightEnd => Self::LeftEnd,
-            PopoverPosition::BottomStart => Self::TopStart,
-            PopoverPosition::BottomEnd => Self::TopEnd,
+            PopoverAnchor::Top => Self::Bottom,
+            PopoverAnchor::Bottom => Self::Bottom,
+            PopoverAnchor::Left => Self::Right,
+            PopoverAnchor::Right => Self::Left,
+            PopoverAnchor::TopStart => Self::BottomStart,
+            PopoverAnchor::TopEnd => Self::BottomEnd,
+            PopoverAnchor::LeftStart => Self::RightStart,
+            PopoverAnchor::LeftEnd => Self::RightEnd,
+            PopoverAnchor::RightStart => Self::LeftStart,
+            PopoverAnchor::RightEnd => Self::LeftEnd,
+            PopoverAnchor::BottomStart => Self::TopStart,
+            PopoverAnchor::BottomEnd => Self::TopEnd,
         }
     }
 }
 
-const POPOVER_POSITIONS: &[PopoverPosition] = &[
-    PopoverPosition::Top,
-    PopoverPosition::Bottom,
-    PopoverPosition::Left,
-    PopoverPosition::Right,
-    PopoverPosition::TopStart,
-    PopoverPosition::TopEnd,
-    PopoverPosition::LeftStart,
-    PopoverPosition::LeftEnd,
-    PopoverPosition::RightStart,
-    PopoverPosition::RightEnd,
-    PopoverPosition::BottomStart,
-    PopoverPosition::BottomEnd,
+const POPOVER_POSITIONS: &[PopoverAnchor] = &[
+    PopoverAnchor::Top,
+    PopoverAnchor::Bottom,
+    PopoverAnchor::Left,
+    PopoverAnchor::Right,
+    PopoverAnchor::TopStart,
+    PopoverAnchor::TopEnd,
+    PopoverAnchor::LeftStart,
+    PopoverAnchor::LeftEnd,
+    PopoverAnchor::RightStart,
+    PopoverAnchor::RightEnd,
+    PopoverAnchor::BottomStart,
+    PopoverAnchor::BottomEnd,
 ];
 
 #[slot]

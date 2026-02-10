@@ -12,7 +12,7 @@ use leptos::{component, prelude::Children};
 use crate::class_list;
 use crate::class_list::reactive_class::MaybeReactiveClass;
 
-const HEADER_CLASS: &str = "font-bold relative color-gray-900";
+const HEADER_CLASS: &str = "font-bold relative text-gray-900 dark:text-gray-100";
 
 #[component]
 fn HeadingAnchor(

@@ -43,7 +43,7 @@ use crate::input::PLACEHOLDER_TEXT_CLASS;
 use crate::input::TextInput;
 use crate::popover::Popover;
 use crate::popover::PopoverController;
-use crate::popover::PopoverPosition;
+use crate::popover::PopoverAnchor;
 use crate::popover::PopoverTrigger;
 use crate::popover::PopoverTriggerType;
 
@@ -187,7 +187,7 @@ where
     };
 
     view! {
-        <Popover id show_arrow=false preferred_pos=PopoverPosition::BottomStart trigger_type=PopoverTriggerType::Click popover_controller>
+        <Popover id show_arrow=false preferred_pos=PopoverAnchor::BottomStart trigger_type=PopoverTriggerType::Click popover_controller>
             <PopoverTrigger slot>
                 <div
                     id=id.get().map(|id| format!("{id}-trigger"))

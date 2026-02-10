@@ -73,7 +73,7 @@ pub fn Label(
 ) -> impl IntoView {
     if let Some(label) = label.get() {
         view! {
-            <label class="block text-sm font-medium text-heading">
+            <label class="block text-sm font-medium text-heading text-gray-900 dark:text-gray-100">
                 <div>
                     <RequiredStar required/>
                     {label}
@@ -93,7 +93,7 @@ pub fn Label(
 #[component]
 pub fn PostfixLabelStyle(required: bool, children: Children) -> impl IntoView {
     view! {
-        <span class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><RequiredStar required=required/>{children()}</span>
+        <span class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-100"><RequiredStar required=required/>{children()}</span>
     }
 }
 
