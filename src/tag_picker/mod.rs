@@ -20,12 +20,14 @@ use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::prelude::Trigger;
 use leptos::prelude::Update;
+use leptos::prelude::Write;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
 use nucleo_matcher::Config;
 use nucleo_matcher::Matcher;
 use nucleo_matcher::pattern::CaseMatching;
 use nucleo_matcher::pattern::Normalization;
 use nucleo_matcher::pattern::Pattern;
+use std::collections::HashMap;
 use std::fmt::Debug;
 use std::fmt::Display;
 use std::hash::Hash;
@@ -71,19 +73,43 @@ where
 {
     let search_filter = RwSignal::new(String::new());
     let search_ref: NodeRef<leptos::html::Input> = NodeRef::new();
+    let checkboxes = RwSignal::new(HashMap::<T, RwSignal<bool>>::new());
 
     // When the outside tags change, update selected tags.
     Effect::watch(
         move || tags.get(),
-        move |new, _, _| {
-            let selected_value = selected.get();
+        move |new, old, _| {
+            let selected_value = selected.get_untracked();
             let leftover_selected = selected_value
                 .into_iter()
                 .filter(|selected_value| new.contains(selected_value))
                 .collect::<Vec<_>>();
+            
+            let mut checkboxes = checkboxes.write();
+            for tag in new {
+                if let Some(old) = old && old.contains(tag) {
+                    // leave it the same
+                } else {
+                    // new tag
+                    checkboxes.insert(tag.clone(), RwSignal::new(leftover_selected.contains(&tag)));
+                    debug_log!("Added {tag}'s checkbox");
+                }
+            }
+            if let Some(old) = old {
+                for tag in old {
+                    if new.contains(tag) {
+                        // leave it the same
+                    } else {
+                        // removed tag
+                        checkboxes.remove(tag);
+                        debug_log!("Removed {tag}'s checkbox");
+                    }
+                }
+            }
+            drop(checkboxes);
             selected.set(leftover_selected);
         },
-        false,
+        true,
     );
 
     // When the outside selection change, Sanity check the selection, purge unselectable tags..
@@ -91,7 +117,7 @@ where
         move || selected.get(),
         move |new, old, _| {
             if Some(new) != old {
-                let tags = tags.get();
+                let tags = tags.get_untracked();
                 let leftover_selected = new
                     .clone()
                     .into_iter()
@@ -108,7 +134,7 @@ where
         let search: String = search_filter.get().to_ascii_lowercase();
         let tags: Vec<T> = tags.get();
 
-        debug_log!("Filtering tag on {search}");
+        debug_log!("Filtering tags on \"{search}\"");
 
         let pattern = Pattern::parse(search.as_str(), CaseMatching::Smart, Normalization::Smart);
         let mut matcher = NUCLEO_MATCHER.lock().expect("Unpoised");
@@ -120,21 +146,25 @@ where
     // Partitioned into selected and unselected.
     // (Idx -> (T, is_selected))
     let tags_grouped = Memo::new(move |_old| {
+        if checkboxes.get().is_empty() {
+            return vec![]
+        }
         let selected = selected.get();
         let search = search_filter.get();
-        let mut group_1 = vec![];
-        let mut group_2 = vec![];
+        // [all] will contain: selected|unselected.
+        let mut all = vec![];
+        let mut unselected_group = vec![];
         // Group/parition by selected status, unless there is a filter
         for tag in tags_filtersorted.get() {
             if selected.contains(&tag) || !search.is_empty() {
-                group_1.push(tag);
+                all.push(tag);
             } else {
-                group_2.push(tag);
+                unselected_group.push(tag);
             }
         }
 
-        group_1.append(&mut group_2);
-        group_1.into_iter().enumerate().collect::<Vec<(usize, T)>>()
+        all.append(&mut unselected_group);
+        all.into_iter().enumerate().collect::<Vec<(usize, T)>>()
     });
 
     let on_popover_open = move || {
@@ -168,14 +198,15 @@ where
                             let:tag
                             >
                             <div class="p-1.5 bg-oa-gray rounded-lg flex items-center gap-1.5">
-                                <span>{tag.to_string()}</span>
+                                <span>{(&tag).to_string()}</span>
                                 <div class="p-1 hover:bg-oa-gray-mid hover:cursor-pointer rounded" on:click=move |ev| {
                                     ev.stop_propagation();
-                                    selected.update(|vec| {
-                                        vec.iter()
-                                            .position(|e| e == &tag)
-                                            .map(|pos| { vec.remove(pos) });
-                                    });
+                                    let tag = tag.clone();
+                                    let checkboxes = checkboxes.get();
+                                    let Some(checked) = checkboxes.get(&tag) else {
+                                        return ;
+                                    };
+                                    toggle_tag(selected, tag, *checked).invoke(());
                                 }>
                                     <Icon class="w-3 h-3" icon=crate::icon::CloseIcon() />
                                 </div>
@@ -211,8 +242,12 @@ where
                             let Some((_, tag)) = tags_grouped.get().first().cloned() else {
                                 return;
                             };
-
-                            toggle_tag(selected, tag).invoke(());
+                            let checkboxes = checkboxes.get();
+                            let Some(checked) = checkboxes.get(&tag) else {
+                                return ;
+                            };
+                            
+                            toggle_tag(selected, tag, *checked).invoke(());
                         }
                     }
                     {..}
@@ -224,43 +259,54 @@ where
                     key=|tag| {
                         tag.clone()
                     }
-                    let((i, tag))
-                    >
-                    <li
-                        class=class_list!(
-                            TAG_LIST_ITEM_CLASSES,
-                            ("outline outline-black outline-2", move || i == 0 && !search_filter.get().is_empty())
-                        )
-                        on:click={
-                            let tag = tag.clone();
-                            toggle_tag(selected, tag)
-                        }
-                    >
-                        {let tag=tag.clone(); {
-                            view! {
-                                <Checkbox disable_tab=true checked={
-                                    let tag = tag.clone();
-                                    RwSignal::new(selected.get().contains(&tag))
-                                }>
-                                    {tag.to_string()}
-                                </Checkbox>
-                            }
-                        }}
+                    children=move |(i, tag)| {
+                        let checkboxes = checkboxes.get();
+                        let Some(checked) = checkboxes.get(&tag) else {
+                            return view! {}.into_any()
+                        };
+                        debug_log!("Recreating tag item");
 
-                    </li>
+                        view! {
+                            <li
+                                class=class_list!(
+                                    TAG_LIST_ITEM_CLASSES,
+                                    ("outline outline-black outline-2", move || i == 0 && !search_filter.get().is_empty())
+                                )
+                                on:click={
+                                    let tag = tag.clone();
+                                    toggle_tag(selected, tag, *checked)
+                                }
+                            >
+                                {let tag=tag.clone(); {
+                                    view! {
+                                        <Checkbox disable_tab=true checked=*checked prevent_label_clicks=true>
+                                            {tag.to_string()}
+                                        </Checkbox>
+                                    }
+                                }}
+
+                            </li>
+                        }.into_any()
+                    }
+                    >
                 </For>
             </ul>
         </Popover>
     }
 }
 
-fn toggle_tag<T, Event>(selected: RwSignal<Vec<T>>, tag: T) -> impl FnMut(Event) + 'static
+fn toggle_tag<T, Event>(
+    selected: RwSignal<Vec<T>>,
+    tag: T,
+    checked: RwSignal<bool>,
+) -> impl FnMut(Event) + 'static
 where
-    T: Eq + Clone + Send + Sync + 'static,
+    T: Display + Eq + Clone + Send + Sync + 'static,
 {
     move |_| {
         // Toggle selection
         selected.update(|old_sel| {
+            debug_log!("Toggling {}", tag);
             if old_sel.contains(&tag) {
                 old_sel
                     .iter()
@@ -271,6 +317,11 @@ where
             } else {
                 old_sel.push(tag.clone());
             }
+        });
+
+        checked.update(|old| {
+            debug_log!("Flipping chekcbox to {}", !*old);
+            *old = !*old
         });
     }
 }

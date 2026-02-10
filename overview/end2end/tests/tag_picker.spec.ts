@@ -23,9 +23,17 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
   await page.keyboard.press("y");
   await page.keyboard.press("Enter");
   await expect(sel_disp).toHaveText("Hydrogen");
+  // Should be checked now in the dropdown.
+  await expect(
+    tag_dropdown.locator("li").filter({ hasText: "Hydrogen" }).locator("input"),
+  ).toBeChecked();
   await page.keyboard.press("Backspace");
   await page.keyboard.press("e");
   await page.keyboard.press("Enter");
+  // Should be checked now in the dropdown.
+  await expect(
+    tag_dropdown.locator("li").filter({ hasText: "Helium" }).locator("input"),
+  ).toBeChecked();
   await expect(sel_disp).toHaveText("HydrogenHelium");
   await page.keyboard.press("Backspace");
   await page.keyboard.press("Backspace");
@@ -100,6 +108,9 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
   ).toHaveCount(0);
   // Should be unchecked now in the dropdown.
   await expect(
-    tag_dropdown.locator("li").filter({ hasText: "Beryllium" }).locator("input"),
+    tag_dropdown
+      .locator("li")
+      .filter({ hasText: "Beryllium" })
+      .locator("input"),
   ).not.toBeChecked();
 });

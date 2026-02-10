@@ -1,9 +1,12 @@
+use leptos::logging::debug_log;
 use leptos::prelude::BindAttribute;
 use leptos::prelude::Children;
 use leptos::prelude::ClassAttribute;
+use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
+use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::use_context;
 use leptos::{
@@ -26,7 +29,7 @@ pub fn Checkbox(
     #[prop(optional, into)] name: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeProp<String>,
     /// Checked state
-    #[prop(optional, into)]
+    #[prop(optional)]
     checked: RwSignal<bool>,
     /// Required to be checked on for form submission.
     #[prop(optional)]
@@ -34,6 +37,9 @@ pub fn Checkbox(
     /// Whether or not this element is unreachable by tabbing.
     #[prop(optional, into)]
     disable_tab: bool,
+    /// Stops event propagation
+    #[prop(optional)]
+    prevent_label_clicks: bool,
     /// Label goes here.
     children: Children,
 ) -> impl IntoView {
@@ -47,9 +53,19 @@ pub fn Checkbox(
             .unwrap_or_default(),
     );
     let required = use_or(required, form_required);
+    Effect::watch(move || checked.get(), |new, _, _|{
+        debug_log!("Checkbox checked state changed to {new}");
+    }, false);
     
     view! {
-        <label class=class_list!["relative inline-flex items-center cursor-pointer", class]>
+        <label class=class_list!["relative inline-flex items-center cursor-pointer", class] 
+            on:click={
+                move |ev| {
+                    if prevent_label_clicks {
+                        ev.prevent_default();
+                    }
+                }
+            }>
             <input
                 id=id.get()
                 name=name.get()
