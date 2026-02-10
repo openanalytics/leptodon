@@ -214,7 +214,7 @@ where
             // Worked around via opacity-0 and z-index.
             <div
                 class=class_list![
-                    "absolute bg-white border shadow-sm rounded-lg",
+                    "absolute bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-sm rounded-lg",
                     ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
                     ("z-[1000]", move || popover_visible.get())
                 ]
@@ -238,7 +238,7 @@ where
 
                     <div
                         // A clipped white square such that it becomes a bg between top-left, top-right and bottom-right corners.
-                        class="relative w-5 h-3 -translate-y-1 rotate-45 bg-white"
+                        class="relative w-5 h-3 -translate-y-1 rotate-45 bg-white dark:bg-gray-900"
                     />
                 </div>
             </Show>
@@ -262,7 +262,7 @@ fn element_contains_pointer(popover_ref: &HtmlDivElement, e: MouseEvent) -> bool
         rect.y(),
         rect.y() + rect.height()
     );
-    
+
     rect_x_min < x && rect_x_max > x && rect_y_min < y && rect_y_max > y
 }
 
@@ -462,26 +462,24 @@ fn find_popover_abs_position(
 
     // * Popovers should not be wider than the page_width.
     // * Assumes the trigger is not half-onscreen.
-    let possible_positions = POPOVER_POSITIONS
-        .iter()
-        .filter(|position| match position {
-            // Collision checks
-            PopoverPosition::TopStart => top_top_is_open && horizontal_start_is_open,
-            PopoverPosition::Top => top_top_is_open,
-            PopoverPosition::TopEnd => top_top_is_open && horizontal_end_is_open,
+    let possible_positions = POPOVER_POSITIONS.iter().filter(|position| match position {
+        // Collision checks
+        PopoverPosition::TopStart => top_top_is_open && horizontal_start_is_open,
+        PopoverPosition::Top => top_top_is_open,
+        PopoverPosition::TopEnd => top_top_is_open && horizontal_end_is_open,
 
-            PopoverPosition::BottomStart => bot_bot_is_open && horizontal_start_is_open,
-            PopoverPosition::Bottom => bot_bot_is_open,
-            PopoverPosition::BottomEnd => bot_bot_is_open && horizontal_end_is_open,
+        PopoverPosition::BottomStart => bot_bot_is_open && horizontal_start_is_open,
+        PopoverPosition::Bottom => bot_bot_is_open,
+        PopoverPosition::BottomEnd => bot_bot_is_open && horizontal_end_is_open,
 
-            PopoverPosition::LeftStart => left_left_is_open && vertical_start_is_open,
-            PopoverPosition::Left => left_left_is_open,
-            PopoverPosition::LeftEnd => left_left_is_open && vertical_end_is_open,
+        PopoverPosition::LeftStart => left_left_is_open && vertical_start_is_open,
+        PopoverPosition::Left => left_left_is_open,
+        PopoverPosition::LeftEnd => left_left_is_open && vertical_end_is_open,
 
-            PopoverPosition::RightStart => right_right_is_open && vertical_start_is_open,
-            PopoverPosition::Right => right_right_is_open,
-            PopoverPosition::RightEnd => right_right_is_open && vertical_end_is_open,
-        });
+        PopoverPosition::RightStart => right_right_is_open && vertical_start_is_open,
+        PopoverPosition::Right => right_right_is_open,
+        PopoverPosition::RightEnd => right_right_is_open && vertical_end_is_open,
+    });
 
     let mut best_position = None;
     for (i, position) in possible_positions.enumerate() {

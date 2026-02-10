@@ -39,6 +39,7 @@ use web_sys::KeyboardEvent;
 use crate::checkbox::Checkbox;
 use crate::class_list;
 use crate::icon::Icon;
+use crate::input::PLACEHOLDER_TEXT_CLASS;
 use crate::input::TextInput;
 use crate::popover::Popover;
 use crate::popover::PopoverController;
@@ -48,7 +49,7 @@ use crate::popover::PopoverTriggerType;
 
 const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 const TAG_LIST_ITEM_CLASSES: &str =
-    "hover:bg-oa-gray p-2 rounded-lg flex items-center cursor-pointer";
+    "hover:bg-oa-gray hover:dark:bg-gray-600 p-2 rounded-lg flex items-center cursor-pointer";
 
 // Nucleo matcher allocates 135kb memory, so we want to reuse this.
 // Try to not run multiple fuzzy matchers at the same time.
@@ -84,10 +85,12 @@ where
                 .into_iter()
                 .filter(|selected_value| new.contains(selected_value))
                 .collect::<Vec<_>>();
-            
+
             let mut checkboxes = checkboxes.write();
             for tag in new {
-                if let Some(old) = old && old.contains(tag) {
+                if let Some(old) = old
+                    && old.contains(tag)
+                {
                     // leave it the same
                 } else {
                     // new tag
@@ -147,7 +150,7 @@ where
     // (Idx -> (T, is_selected))
     let tags_grouped = Memo::new(move |_old| {
         if checkboxes.get().is_empty() {
-            return vec![]
+            return vec![];
         }
         let selected = selected.get();
         let search = search_filter.get();
@@ -197,9 +200,9 @@ where
                             key=|tag| tag.clone()
                             let:tag
                             >
-                            <div class="p-1.5 bg-oa-gray rounded-lg flex items-center gap-1.5">
+                            <div class="p-1.5 bg-oa-gray dark:bg-gray-800 rounded-lg flex items-center gap-1.5">
                                 <span>{(&tag).to_string()}</span>
-                                <div class="p-1 hover:bg-oa-gray-mid hover:cursor-pointer rounded" on:click=move |ev| {
+                                <div class="p-1 hover:bg-oa-gray-mid hover:dark:bg-gray-600 hover:cursor-pointer rounded" on:click=move |ev| {
                                     ev.stop_propagation();
                                     let tag = tag.clone();
                                     let checkboxes = checkboxes.get();
@@ -213,7 +216,7 @@ where
                             </div>
                         </For>
                         // Placeholder, shown when empty
-                        <div class="p-1.5 text-gray-600">
+                        <div class=class_list!("p-1.5", PLACEHOLDER_TEXT_CLASS)>
                         {move || {
                             if selected.get().is_empty() {
                                 view! { {placeholder.get()} }.into_any()
@@ -246,7 +249,7 @@ where
                             let Some(checked) = checkboxes.get(&tag) else {
                                 return ;
                             };
-                            
+
                             toggle_tag(selected, tag, *checked).invoke(());
                         }
                     }
@@ -279,7 +282,7 @@ where
                             >
                                 {let tag=tag.clone(); {
                                     view! {
-                                        <Checkbox disable_tab=true checked=*checked prevent_label_clicks=true>
+                                        <Checkbox disable_tab=true checked=*checked listen_only=true>
                                             {tag.to_string()}
                                         </Checkbox>
                                     }

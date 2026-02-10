@@ -56,12 +56,14 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <link rel="shortcut icon" type_="image/svg+xml" href="/logo.svg"/>
+
                 // Metadata injection is not allowed here, only use them in components down the chain
                 <AutoReload options=options.clone() />
                 <HydrationScripts options/>
                 <MetaTags/>
             </head>
-            <body>
+            <body class="dark:bg-[#030712]">
                 <App/>
             </body>
         </html>
@@ -73,7 +75,6 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        // <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
         <Stylesheet href="/pkg/overview.css"/>
         <Router>
             <Routes fallback=|| "Page not found.">

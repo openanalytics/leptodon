@@ -60,9 +60,8 @@ const YEAR_IN_MONTHS: Months = Months::new(12);
 
 /// Elements refer to the date-picker elements like individual days, months, years.
 const SELECTED_ELEM_CLASSES: &str = "hover:!bg-oa-blue-lighter bg-oa-blue text-white ";
-const SELECTABLE_ELEM_CLASSES: &str = "hover:bg-oa-gray block flex-1 leading-9 border-0 cursor-pointer text-center text-body font-medium text-sme";
-const DISABLED_ELEM_CLASSES: &str =
-    "opacity-40 block flex-1 leading-9 border-0 text-center text-body font-medium text-sme";
+const SELECTABLE_ELEM_CLASSES: &str = "hover:bg-oa-gray hover:dark:bg-gray-600  block flex-1 leading-9 border-0 cursor-pointer text-center text-body font-medium text-sme";
+const DISABLED_ELEM_CLASSES: &str = "opacity-40 block flex-1 leading-9 border-0 text-center text-body font-medium text-sme cursor-not-allowed";
 
 const MONTHS: [Month; 12] = [
     Month::January,
@@ -107,23 +106,31 @@ fn menu_range(date: NaiveDate, menu: DatePickerMenu) -> (NaiveDate, NaiveDate) {
         DatePickerMenu::MonthPicker => {
             let start = date.with_day(1).unwrap_or(NaiveDate::MIN);
             let end = date
-                .with_day(1).unwrap_or(NaiveDate::MIN)
+                .with_day(1)
+                .unwrap_or(NaiveDate::MIN)
                 .checked_add_months(Months::new(1))
                 .unwrap_or(NaiveDate::MAX)
                 .checked_sub_days(Days::new(1))
                 .unwrap_or(NaiveDate::MAX);
             (start, end)
-        },
+        }
         DatePickerMenu::YearPicker => {
-            let start = date.with_day(1).unwrap_or(NaiveDate::MIN).with_month(1).unwrap_or(NaiveDate::MIN);
+            let start = date
+                .with_day(1)
+                .unwrap_or(NaiveDate::MIN)
+                .with_month(1)
+                .unwrap_or(NaiveDate::MIN);
             let end = date
-                .with_day(1).unwrap_or(NaiveDate::MIN).with_month(12).unwrap_or(NaiveDate::MAX)
+                .with_day(1)
+                .unwrap_or(NaiveDate::MIN)
+                .with_month(12)
+                .unwrap_or(NaiveDate::MAX)
                 .checked_add_months(Months::new(1))
                 .unwrap_or(NaiveDate::MAX)
                 .checked_sub_days(Days::new(1))
                 .unwrap_or(NaiveDate::MAX);
             (start, end)
-        },
+        }
         DatePickerMenu::DeceniaPicker => {
             let base_year = decenium_from_naive_date(&date);
             let start = NaiveDate::from_ymd_opt(base_year, 1, 1).unwrap_or(NaiveDate::MIN);
@@ -143,14 +150,14 @@ fn menu_item_intersects_range(
     let (menu_min, menu_max) = menu_range(date, menu);
     if let Some(min_date) = min_date.get() {
         if let Some(max_date) = max_date.get() {
-            return menu_max >= min_date && menu_min <= max_date
+            return menu_max >= min_date && menu_min <= max_date;
         } else {
-            return menu_max > min_date
+            return menu_max > min_date;
         }
     } else if let Some(max_date) = max_date.get() {
-        return menu_min < max_date 
+        return menu_min < max_date;
     } else {
-        return true
+        return true;
     }
 }
 
@@ -885,9 +892,9 @@ pub fn DatePicker(
             // Picker-Dropdown
             <div id=id class=class_list!(
                 ("hidden", move || !picker_state.get().visible),
-                "absolute bg-white z-50 ml-2 mt-px active block"
+                "absolute bg-white dark:bg-gray-800 z-50 ml-2 mt-px active block"
             )>
-                <div class="inline-block rounded-b-lg border border-oa-gray p-4">
+                <div class="inline-block rounded-b-lg border border-oa-gray dark:border-gray-700 p-4">
 
                     <div class="datepicker-header">
                         <div class="flex justify-between mb-2">
@@ -934,24 +941,15 @@ mod tests {
     #[test]
     fn test_naive_date_with_decenium() {
         assert_eq!(
-            naive_date_with_decenium(
-                &NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(),
-                2020
-            ),
+            naive_date_with_decenium(&NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(), 2020),
             NaiveDate::from_ymd_opt(2023, 1, 1).unwrap()
         );
         assert_eq!(
-            naive_date_with_decenium(
-                &NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(),
-                2010
-            ),
+            naive_date_with_decenium(&NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(), 2010),
             NaiveDate::from_ymd_opt(2013, 1, 1).unwrap()
         );
         assert_eq!(
-            naive_date_with_decenium(
-                &NaiveDate::from_ymd_opt(2015, 6, 15).unwrap(),
-                2030
-            ),
+            naive_date_with_decenium(&NaiveDate::from_ymd_opt(2015, 6, 15).unwrap(), 2030),
             NaiveDate::from_ymd_opt(2035, 6, 15).unwrap()
         );
     }
@@ -959,32 +957,20 @@ mod tests {
     #[test]
     fn test_menu_range() {
         let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
-        assert_eq!(
-            menu_range(date, DatePickerMenu::DayPicker),
-            (
-                date,
-                date
-            )
-        );
+        assert_eq!(menu_range(date, DatePickerMenu::DayPicker), (date, date));
 
         let date = NaiveDate::from_ymd_opt(2023, 5, 15).unwrap();
         assert_eq!(
-            menu_range(
-                date,
-                DatePickerMenu::MonthPicker
-            ),
+            menu_range(date, DatePickerMenu::MonthPicker),
             (
                 NaiveDate::from_ymd_opt(2023, 5, 1).unwrap(),
                 NaiveDate::from_ymd_opt(2023, 5, 31).unwrap()
             )
         );
-        
+
         let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
         assert_eq!(
-            menu_range(
-                date,
-                DatePickerMenu::YearPicker
-            ),
+            menu_range(date, DatePickerMenu::YearPicker),
             (
                 NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(),
                 NaiveDate::from_ymd_opt(2023, 12, 31).unwrap()
@@ -993,23 +979,20 @@ mod tests {
 
         let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
         assert_eq!(
-            menu_range(
-                date,
-                DatePickerMenu::DeceniaPicker
-            ),
+            menu_range(date, DatePickerMenu::DeceniaPicker),
             (
                 NaiveDate::from_ymd_opt(2020, 1, 1).unwrap(),
                 NaiveDate::from_ymd_opt(2029, 12, 31).unwrap()
             )
         );
     }
-    
+
     #[test]
     fn test_menu_item_intersects_range() {
         let min_date = NaiveDate::from_ymd_opt(2023, 5, 1).unwrap();
         let max_date = NaiveDate::from_ymd_opt(2023, 5, 31).unwrap();
         let menu = DatePickerMenu::MonthPicker;
-    
+
         // Date inside range
         assert!(menu_item_intersects_range(
             NaiveDate::from_ymd_opt(2023, 5, 15).unwrap(),
@@ -1017,7 +1000,7 @@ mod tests {
             min_date.into(),
             max_date.into()
         ));
-    
+
         // At start of range
         assert!(menu_item_intersects_range(
             min_date,
@@ -1025,7 +1008,7 @@ mod tests {
             min_date.into(),
             max_date.into()
         ));
-    
+
         // At end of range
         assert!(menu_item_intersects_range(
             max_date,
@@ -1033,7 +1016,7 @@ mod tests {
             min_date.into(),
             max_date.into()
         ));
-    
+
         // Before range
         assert!(!menu_item_intersects_range(
             NaiveDate::from_ymd_opt(2023, 4, 30).unwrap(),
@@ -1041,7 +1024,7 @@ mod tests {
             min_date.into(),
             max_date.into()
         ));
-    
+
         // After range
         assert!(!menu_item_intersects_range(
             NaiveDate::from_ymd_opt(2023, 6, 1).unwrap(),
@@ -1050,6 +1033,4 @@ mod tests {
             max_date.into()
         ));
     }
-
-
 }

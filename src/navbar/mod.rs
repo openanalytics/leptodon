@@ -41,8 +41,9 @@ where
 #[component]
 fn OALogoLink() -> impl IntoView {
     view! {
-        <a href="https://www.openanalytics.eu/" class="flex ms-2 md:me-24">
-            <img src="https://www.openanalytics.eu/img/logo.png" class="h-8 me-3" alt="OA Logo"/>
+        <a href="https://www.openanalytics.eu/" class="flex items-center ms-2 md:me-24">
+            <img src="/logo.svg" class="h-8 me-3" alt="OA Logo"/>
+            Leptos Components
         </a>
     }
 }

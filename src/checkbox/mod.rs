@@ -37,9 +37,9 @@ pub fn Checkbox(
     /// Whether or not this element is unreachable by tabbing.
     #[prop(optional, into)]
     disable_tab: bool,
-    /// Stops event propagation
+    /// Stops internal click handling
     #[prop(optional)]
-    prevent_label_clicks: bool,
+    listen_only: bool,
     /// Label goes here.
     children: Children,
 ) -> impl IntoView {
@@ -61,7 +61,7 @@ pub fn Checkbox(
         <label class=class_list!["relative inline-flex items-center cursor-pointer", class] 
             on:click={
                 move |ev| {
-                    if prevent_label_clicks {
+                    if listen_only {
                         ev.prevent_default();
                     }
                 }

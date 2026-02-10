@@ -165,9 +165,9 @@ pub fn Calendar(
                     </ButtonGroup>
                 </span>
             </div>
-            <div class="flex grid border border-oa-gray-mid bg-oa-gray-mid gap-px grid-cols-5 grid-rows-[1lh_minmax(0,_1fr)] rounded-lg shadow-sm overflow-auto">
+            <div class="flex grid border border-oa-gray-mid dark:border-gray-700 bg-oa-gray-mid dark:bg-gray-600 gap-px grid-cols-5 grid-rows-[1lh_minmax(0,_1fr)] rounded-lg shadow-sm overflow-auto">
                 <For each=move || show_days.get().iter() key=|idx| *idx let:idx>
-                    <div class="text-right bg-oa-gray font-bold h-fit">
+                    <div class="text-right bg-oa-gray dark:bg-gray-700 font-bold h-fit">
                         <span class="mr-2">
                         {idx.to_string()}
                         </span>
@@ -211,13 +211,13 @@ fn CalendarItem(date: CalendarDate, children: Option<CalendarChildrenFn>) -> imp
     ];
     if date.is_other_month() {
         view! {
-            <div class="bg-gray-100 w-full h-full" />
+            <div class="bg-gray-100 dark:bg-[#030712] w-full h-full" />
         }
         .into_any()
     } else {
         view! {
             <div
-                class=class_list!("flex flex-col pointer hover:bg-oa-gray bg-white overflow-auto h-[6lh]", col_class[col_idx])
+                class=class_list!("flex flex-col pointer hover:bg-oa-gray bg-white hover:dark:bg-gray-800 dark:bg-gray-900 overflow-auto h-[6lh]", col_class[col_idx])
                 class=("text-oa-gray", date.is_other_month())
             >
                 <div class="self-end">

@@ -27,6 +27,7 @@ pub async fn read_calendar<'a>(
 ) -> Result<Vec<crate::ical_property::Event>, ServerFnError> {
     return ics_events(month, year).ok_or(ServerFnError::ServerError(format!("Parse error")));
 }
+
 #[cfg(feature = "ssr")]
 fn ics_events(month: u32, year: i32) -> Option<Vec<crate::ical_property::Event>> {
     use std::fs;
@@ -132,7 +133,7 @@ pub fn PopulatedCalendar() -> impl IntoView {
                         view! {
                             <Popover preferred_pos=PopoverPosition::Right>
                                 <PopoverTrigger slot>
-                                    <div class=class_list!("self-stretch p-0.5 bg-teal-100 m-0.5 shadow-sm text-xs md:text-sm line-clamp-3 shrink-0", ("grow", start_time.is_none()))>
+                                    <div class=class_list!("self-stretch p-0.5 bg-teal-100 dark:bg-teal-900 m-0.5 shadow-sm text-xs md:text-sm line-clamp-3 shrink-0", ("grow", start_time.is_none()))>
                                         <OptionComp value=start_time let:start_time>
                                             <strong class="mr-[0.5ch] font-mono">
                                                 {start_time.time().format("%H:%M").to_string()}

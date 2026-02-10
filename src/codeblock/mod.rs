@@ -36,10 +36,10 @@ pub fn Codeblock(
     };
 
     view! {
-        <div class="bg-blue-50 rounded-lg p-4 relative shadow-sm">
+        <div class="bg-codeblock-light dark:bg-codeblock-dark rounded-lg p-4 relative shadow-sm">
             <Button
                 appearance=ButtonAppearance::Transparent
-                class="absolute top-2 right-2 !mr-0 bg-white"
+                class="absolute top-2 right-2 !mr-0 bg-white dark:bg-black"
                 on_click=on_copy
             >
                 {btn_text}

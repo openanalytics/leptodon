@@ -6,8 +6,9 @@ use leptos::{IntoView, component, view};
 use std::sync::atomic::{AtomicU64, Ordering};
 
 static ATOMIC_ACCORDION_ID: AtomicU64 = AtomicU64::new(1);
-const ACCORDION_HEADING_CLASSES: &str = "flex items-center justify-between w-full p-5 font-medium rtl:text-right text-body border border-t-0 border-x-0 border-b-default hover:text-heading hover:bg-neutral-secondary-medium gap-3 hover:bg-gray-50";
-const ACCORDION_BODY_CLASSES: &str = "border border-s-0 border-e-0 border-t-0 border-b-default";
+const ACCORDION_HEADING_CLASSES: &str = "flex items-center justify-between w-full p-5 font-medium rtl:text-right text-body border border-t-0 border-x-0 border-b-default dark:border-gray-700 hover:text-heading gap-3 hover:bg-gray-50 hover:dark:bg-gray-900";
+const ACCORDION_BODY_CLASSES: &str =
+    "border dark:border-gray-700 border-s-0 border-e-0 border-t-0 border-b-default";
 
 /// Single collapseable section for the [Accordion]
 #[component]
@@ -27,7 +28,7 @@ pub fn AccordionEntry(
         <h2 id=head_id.clone()>
           <button type="button" class=class_list![
               ACCORDION_HEADING_CLASSES,
-              ("bg-gray-50", move || !is_hidden.get())
+              ("bg-gray-50 dark:bg-gray-900", move || !is_hidden.get())
           ] aria-expanded="true" aria-controls=body_id.clone()
             on:click=move |_| {
                 console_log(format!("Is_hidden: {}", is_hidden.get()).as_str());
@@ -61,7 +62,7 @@ where
     T: AddAnyAttr + IntoView + Send + 'static,
 {
     view! {
-        <div id="accordion-collapse" data-accordion="collapse" class="rounded-lg border border-default overflow-hidden shadow-sm">
+        <div id="accordion-collapse" data-accordion="collapse" class="rounded-lg border border-default dark:border-gray-700 overflow-hidden shadow-sm">
             { children.into_inner()() }
         </div>
     }
