@@ -1,3 +1,4 @@
+use leptos::prelude::GlobalAttributes;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 #[allow(unused)]
@@ -10,37 +11,48 @@ use leptos_components::popover::PopoverTrigger;
 use leptos_meta::Title;
 
 #[component]
-fn PopoverRow() -> impl IntoView {
+fn PopoverRow(
+    #[prop(into)] 
+    id: String
+) -> impl IntoView {
+    let id_left = format!("{id}-left");
+    let id_top = format!("{id}-top");
+    let id_bot = format!("{id}-bottom");
+    let id_right = format!("{id}-right");
+    let id_left_popover = format!("{id_left}-popover");
+    let id_top_popover = format!("{id_top}-popover");
+    let id_bot_popover = format!("{id_bot}-popover");
+    let id_right_popover = format!("{id_right}-popover");
     view! {
         <Popover preferred_pos=PopoverAnchor::Left>
             <PopoverTrigger slot>
-                <Button>"L"</Button>
+                <Button id=id_left>"L"</Button>
             </PopoverTrigger>
-            <p>
+            <p id=id_left_popover>
                 Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
             </p>
         </Popover>
         <Popover preferred_pos=PopoverAnchor::Top>
             <PopoverTrigger slot>
-                <Button>"T"</Button>
+                <Button id=id_top>"T"</Button>
             </PopoverTrigger>
-            <p>
+            <p id=id_top_popover>
                 Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
             </p>
         </Popover>
         <Popover preferred_pos=PopoverAnchor::Bottom>
             <PopoverTrigger slot>
-                <Button>"B"</Button>
+                <Button id=id_bot>"B"</Button>
             </PopoverTrigger>
-            <p>
+            <p id=id_bot_popover>
                 Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
             </p>
         </Popover>
         <Popover preferred_pos=PopoverAnchor::Right>
             <PopoverTrigger slot>
-                <Button>"R"</Button>
+                <Button id=id_right>"R"</Button>
             </PopoverTrigger>
-            <p>
+            <p id=id_right_popover>
                 Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
             </p>
         </Popover>
@@ -55,13 +67,13 @@ pub fn TestPopover() -> impl IntoView {
         <div class="h-[300vh] w-[300vw] flex justify-center items-center">
             <div class="h-[100vh] w-[100vw] flex flex-col justify-between">
                 <div class="flex flex-row justify-between">
-                    <PopoverRow/>
+                    <PopoverRow id="row1" />
                 </div>
                 <div class="flex flex-row justify-between">
-                    <PopoverRow/>
+                    <PopoverRow id="row2"/>
                 </div>
                 <div class="flex flex-row justify-between">
-                    <PopoverRow/>
+                    <PopoverRow id="row3"/>
                 </div>
             </div>
         </div>
