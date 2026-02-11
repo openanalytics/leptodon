@@ -1,7 +1,8 @@
 use std::time::Duration;
 
+use crate::class_list;
 use crate::{
-    class_list,
+    class_list::reactive_class::MaybeReactiveClass,
     util::{callback::BoxCallback, element::Element},
 };
 use leptos::{
@@ -32,7 +33,7 @@ pub struct PopoverController {
 #[component]
 pub fn Popover<Trigger, Content>(
     #[prop(optional, into)] id: MaybeProp<String>,
-    #[prop(optional, into)] class: MaybeProp<String>,
+    #[prop(optional, into)] class: MaybeReactiveClass,
     /// Action that displays the popover.
     #[prop(optional)]
     trigger_type: PopoverTriggerType,
@@ -122,14 +123,13 @@ where
                 let popover_width = popover_placement.width;
                 let popover_height = popover_placement.height;
                 if let Some(arrow) = arrow_ref.get() {
-                set_arrow_position(arrow, &popover, (x, y), popover_placement.chosen_anchor);
+                    set_arrow_position(arrow, &popover, (x, y), popover_placement.chosen_anchor);
                 }
-                
+
                 debug_log!("Rel_pos: {popover_placement:?}");
                 let popover_style = (*popover).style();
-    
-             
-                set_style_property(&popover_style, "left", format!("{x}px"));     
+
+                set_style_property(&popover_style, "left", format!("{x}px"));
                 set_style_property(&popover_style, "top", format!("{y}px"));
                 set_style_property(&popover_style, "width", format!("{popover_width}px"));
                 set_style_property(&popover_style, "height", format!("{popover_height}px"));
@@ -201,7 +201,7 @@ where
             <div
                 class=class_list![
                     "absolute bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-sm rounded-lg",
-                    ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
+                    ("-z-[1000] invisible left-0 top-0", move || !popover_visible.get()),
                     ("z-[1000]", move || popover_visible.get())
                 ]
                 node_ref=popover_ref
@@ -219,7 +219,7 @@ where
                 <div class=class_list!(
                     // top-right-bordered transparent square
                     "absolute border-t border-r rotate-45 h-3 w-3 overflow-hidden",
-                    ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
+                    ("-z-[1000] invisible left-0 top-0", move || !popover_visible.get()),
                     ("z-[1001]", move || popover_visible.get())) node_ref=arrow_ref>
 
                     <div
@@ -381,7 +381,7 @@ struct PopoverPlacement {
     chosen_anchor: PopoverAnchor,
     abs_hoffset: HorizontalOffset,
     abs_voffset: VerticalOffset,
-    // Used for setting the popover width to the values that get_true_bb told us. 
+    // Used for setting the popover width to the values that get_true_bb told us.
     //   This works around the issue that the popovers seemingly lie about their width...
     width: f64,
     height: f64,

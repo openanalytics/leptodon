@@ -22,6 +22,7 @@ use leptos::prelude::Set;
 use leptos::prelude::Trigger;
 use leptos::prelude::Update;
 use leptos::prelude::Write;
+use leptos::prelude::set_timeout;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
 use nucleo_matcher::Config;
 use nucleo_matcher::Matcher;
@@ -34,11 +35,13 @@ use std::fmt::Display;
 use std::hash::Hash;
 use std::sync::LazyLock;
 use std::sync::Mutex;
+use std::time::Duration;
 use web_sys::HtmlInputElement;
 use web_sys::KeyboardEvent;
 
 use crate::checkbox::Checkbox;
 use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::icon::Icon;
 use crate::input::PLACEHOLDER_TEXT_CLASS;
 use crate::input::TextInput;
@@ -60,6 +63,7 @@ static NUCLEO_MATCHER: LazyLock<Mutex<Matcher>> =
 #[component]
 pub fn TagPicker<T>(
     #[prop(optional, into)] id: MaybeProp<String>,
+    #[prop(optional, into)] class: MaybeReactiveClass,
     /// Shown when no tags are selected.
     #[prop(optional, into)]
     placeholder: MaybeProp<String>,
@@ -187,9 +191,13 @@ where
         let Some(input): Option<HtmlInputElement> = search_ref.get_untracked() else {
             return;
         };
-        input
-            .focus()
-            .expect("Tag picker search box should be focusable upon opening.");
+        
+        // Run next tick such that the input box can first unhide itself. Can't focus invisible elements.
+        set_timeout(move || {
+            input
+                .focus()
+                .expect("Tag picker search box should be focusable upon opening.");    
+        }, Duration::ZERO);
     };
 
     let close_popover = Trigger::new();
@@ -200,7 +208,7 @@ where
     };
 
     view! {
-        <Popover id show_arrow=false preferred_pos=PopoverAnchor::BottomStart trigger_type=PopoverTriggerType::Click popover_controller>
+        <Popover id class show_arrow=false preferred_pos=PopoverAnchor::BottomStart trigger_type=PopoverTriggerType::Click popover_controller>
             <PopoverTrigger slot>
                 <div
                     id=id.get().map(|id| format!("{id}-trigger"))

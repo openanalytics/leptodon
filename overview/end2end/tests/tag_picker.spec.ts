@@ -17,6 +17,7 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
 
   await expect(sel_disp).toHaveText("");
   await tag_picker.click();
+  await expect(tag_dropdown.locator("input").first()).toBeFocused();
 
   // Test keyboard selection
   await page.keyboard.press("H");
@@ -90,6 +91,7 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
   // Open tag-picker dropdown
   tag_trigger.click();
   await expect(tag_dropdown).toBeInViewport();
+  await expect(tag_dropdown).toBeVisible();
   // Remove lithium using the tag-picker trigger.
   await tag_trigger
     .locator("div")

@@ -15,10 +15,10 @@ use crate::forms::Element;
 
 #[component]
 pub fn TestTagPicker() -> impl IntoView {
-    let range_to_tags =  |range: RangeInclusive<i32>| {
+    let range_to_tags = |range: RangeInclusive<i32>| {
         Element::iter()
             .enumerate()
-            .filter(|(i, _)|range.contains(&(*i as i32)))
+            .filter(|(i, _)| range.contains(&(*i as i32)))
             .map(|(_, e)| e)
             .collect::<Vec<Element>>()
     };
@@ -26,18 +26,22 @@ pub fn TestTagPicker() -> impl IntoView {
     let selected = RwSignal::new(vec![]);
     view! {
         <Title text="Test Tag Picker"/>
-        <p id="selected-display">
+        <p>
+            "Selected: "
+            <span id="selected-display">
             {move || selected.get()
                 .iter()
-                .map(|tag: &Element| { 
+                .map(|tag: &Element| {
                     view! {
                         {tag.to_string()}
                     }
                 })
                 .collect_view()}
+            </span>
         </p>
         <TagPicker
             id="tag_picker"
+            class="mt-[150vh]"
             selected=selected
             tags=elements
         />
