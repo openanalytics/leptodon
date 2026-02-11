@@ -1,6 +1,7 @@
 use leptos::ev::EventCallback;
 use leptos::leptos_dom::logging::console_log;
 use leptos::logging::debug_log;
+use leptos::logging::warn;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::Effect;
@@ -42,8 +43,8 @@ use crate::icon::Icon;
 use crate::input::PLACEHOLDER_TEXT_CLASS;
 use crate::input::TextInput;
 use crate::popover::Popover;
-use crate::popover::PopoverController;
 use crate::popover::PopoverAnchor;
+use crate::popover::PopoverController;
 use crate::popover::PopoverTrigger;
 use crate::popover::PopoverTriggerType;
 
@@ -75,12 +76,13 @@ where
     let search_filter = RwSignal::new(String::new());
     let search_ref: NodeRef<leptos::html::Input> = NodeRef::new();
     let checkboxes = RwSignal::new(HashMap::<T, RwSignal<bool>>::new());
+    let inside_selected = RwSignal::new(selected.get_untracked());
 
-    // When the outside tags change, update selected tags.
+    // When the outside tags change, update selected tags as some may have become non-options.
     Effect::watch(
         move || tags.get(),
         move |new, old, _| {
-            let selected_value = selected.get_untracked();
+            let selected_value = inside_selected.get_untracked();
             let leftover_selected = selected_value
                 .into_iter()
                 .filter(|selected_value| new.contains(selected_value))
@@ -110,28 +112,39 @@ where
                 }
             }
             drop(checkboxes);
-            selected.set(leftover_selected);
+            inside_selected.set(leftover_selected);
         },
         true,
     );
 
+    // When the inside selection change, propagate to outside.
+    Effect::new(move || selected.set(inside_selected.get()));
+    
     // When the outside selection change, Sanity check the selection, purge unselectable tags..
     Effect::watch(
         move || selected.get(),
-        move |new, old, _| {
-            if Some(new) != old {
+        move |new, _, _| {
+            // Make sure this is not the value we just wrote to the outside
+            if new != &inside_selected.get_untracked() {
+                let checkboxes = checkboxes.get_untracked();
                 let tags = tags.get_untracked();
                 let leftover_selected = new
                     .clone()
                     .into_iter()
                     .filter(|selected_value| tags.contains(selected_value))
                     .collect::<Vec<_>>();
-                selected.set(leftover_selected);
+                
+                // Update signals, could do less updates but that requires a lot more code, seemed like premature optimisation.
+                for (checkbox_tag, checkbox_signal) in checkboxes {
+                    checkbox_signal.set(leftover_selected.contains(&checkbox_tag));
+                }
+         
+                inside_selected.set(leftover_selected);
             }
         },
         false,
     );
-
+    
     // Fuzzy search applier
     let tags_filtersorted: Memo<Vec<T>> = Memo::new(move |_old| {
         let search: String = search_filter.get().to_ascii_lowercase();
@@ -152,7 +165,7 @@ where
         if checkboxes.get().is_empty() {
             return vec![];
         }
-        let selected = selected.get();
+        let selected = inside_selected.get();
         let search = search_filter.get();
         // [all] will contain: selected|unselected.
         let mut all = vec![];
@@ -196,7 +209,7 @@ where
                     <div class="flex gap-2 overflow-scroll">
                         // Selected tags
                         <For
-                            each=move || selected.get()
+                            each=move || inside_selected.get()
                             key=|tag| tag.clone()
                             let:tag
                             >
@@ -209,7 +222,7 @@ where
                                     let Some(checked) = checkboxes.get(&tag) else {
                                         return ;
                                     };
-                                    toggle_tag(selected, tag, *checked).invoke(());
+                                    toggle_tag(inside_selected, tag, *checked).invoke(());
                                 }>
                                     <Icon class="w-3 h-3" icon=crate::icon::CloseIcon() />
                                 </div>
@@ -218,7 +231,7 @@ where
                         // Placeholder, shown when empty
                         <div class=class_list!("p-1.5", PLACEHOLDER_TEXT_CLASS)>
                         {move || {
-                            if selected.get().is_empty() {
+                            if inside_selected.get().is_empty() {
                                 view! { {placeholder.get()} }.into_any()
                             } else {
                                 ().into_any()
@@ -250,7 +263,7 @@ where
                                 return ;
                             };
 
-                            toggle_tag(selected, tag, *checked).invoke(());
+                            toggle_tag(inside_selected, tag, *checked).invoke(());
                         }
                     }
                     {..}
@@ -259,14 +272,21 @@ where
                 // Tags
                 <For
                     each=move || tags_grouped.get()
-                    key=|tag| {
-                        tag.clone()
+                    key=move |tag| {
+                        let checkboxes = checkboxes.get();
+                        if let Some(checkbox) = checkboxes.get(&tag.1) {
+                            (tag.clone(), checkbox.get())
+                        } else {
+                            warn!("Checkbox signal not found in tag_picker ");
+                            (tag.clone(), false)
+                        }
                     }
                     children=move |(i, tag)| {
                         let checkboxes = checkboxes.get();
                         let Some(checked) = checkboxes.get(&tag) else {
                             return view! {}.into_any()
                         };
+
                         debug_log!("Recreating tag item");
 
                         view! {
@@ -277,12 +297,12 @@ where
                                 )
                                 on:click={
                                     let tag = tag.clone();
-                                    toggle_tag(selected, tag, *checked)
+                                    toggle_tag(inside_selected, tag, *checked)
                                 }
                             >
                                 {let tag=tag.clone(); {
                                     view! {
-                                        <Checkbox disable_tab=true checked=*checked listen_only=true>
+                                        <Checkbox disable_tab=true checked=*checked prevent_label=true>
                                             {tag.to_string()}
                                         </Checkbox>
                                     }
@@ -299,7 +319,7 @@ where
 }
 
 fn toggle_tag<T, Event>(
-    selected: RwSignal<Vec<T>>,
+    inside_selected: RwSignal<Vec<T>>,
     tag: T,
     checked: RwSignal<bool>,
 ) -> impl FnMut(Event) + 'static
@@ -308,7 +328,7 @@ where
 {
     move |_| {
         // Toggle selection
-        selected.update(|old_sel| {
+        inside_selected.update(|old_sel| {
             debug_log!("Toggling {}", tag);
             if old_sel.contains(&tag) {
                 old_sel

@@ -172,7 +172,7 @@ fn Home() -> impl IntoView {
                 view! {
                     <DatePicker id="date_picker" value=RwSignal::new(None) />
                     <DateRangePicker id="date_range_picker" />
-                    <DateRangePicker id="date_range_picker"
+                    <DateRangePicker id="date_range_picker_min_max"
                         min_date=NaiveDate::from_ymd_opt(2020, 10, 10).unwrap()
                         max_date=NaiveDate::from_ymd_opt(2030, 10, 10).unwrap() />
                 }.into_any()

@@ -22,7 +22,7 @@ use crate::form_input::PostfixLabelStyle;
 
 const CHECKBOX_CLASS: &str = "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
 
-/// A simple checkmark-box with optional label on the right. 
+/// A simple checkmark-box with optional label on the right.
 #[component]
 pub fn Checkbox(
     #[prop(optional, into)] id: MaybeProp<String>,
@@ -37,13 +37,12 @@ pub fn Checkbox(
     /// Whether or not this element is unreachable by tabbing.
     #[prop(optional, into)]
     disable_tab: bool,
-    /// Stops internal click handling
+    /// Stops label click handling
     #[prop(optional)]
-    listen_only: bool,
+    prevent_label: bool,
     /// Label goes here.
     children: Children,
 ) -> impl IntoView {
-
     // Form context
     let form_context = use_context::<FormInputContext<String>>();
     let form_required = Signal::from(
@@ -53,15 +52,19 @@ pub fn Checkbox(
             .unwrap_or_default(),
     );
     let required = use_or(required, form_required);
-    Effect::watch(move || checked.get(), |new, _, _|{
-        debug_log!("Checkbox checked state changed to {new}");
-    }, false);
-    
+    Effect::watch(
+        move || checked.get(),
+        |new, _, _| {
+            debug_log!("Checkbox checked state changed to {new}");
+        },
+        false,
+    );
+
     view! {
         <label class=class_list!["relative inline-flex items-center cursor-pointer", class] 
             on:click={
                 move |ev| {
-                    if listen_only {
+                    if prevent_label {
                         ev.prevent_default();
                     }
                 }

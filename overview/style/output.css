@@ -1455,10 +1455,6 @@ input:checked + .toggle-bg {
   max-height: 50vh;
 }
 
-.max-h-\[50vw\] {
-  max-height: 50vw;
-}
-
 .max-h-full {
   max-height: 100%;
 }
