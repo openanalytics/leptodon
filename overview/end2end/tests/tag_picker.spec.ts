@@ -116,3 +116,36 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
       .locator("input"),
   ).not.toBeChecked();
 });
+
+// LLM QWEN3:30b generated test, only took a minimal look at it.
+test("Tag Picker dropdown opens without scrolling the page", async ({ page }) => {
+  await page.goto("http://localhost:3000/test_tag_picker");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Tag Picker");
+  
+  // Bring tag picker into view
+  await page.locator("#tag_picker").hover();
+  
+  // Record initial scroll position
+  const { scrollX: initialX, scrollY: initialY } = await page.evaluate(() => ({
+    scrollX: window.scrollX,
+    scrollY: window.scrollY,
+  }));
+  
+  // Click to open dropdown
+  await page.locator("#tag_picker").click();
+  
+  // Wait for dropdown to be visible
+  await page.waitForSelector("#tag_picker-dropdown", { state: "visible" });
+
+  // Verify page didn't move during dropdown opening
+  const { scrollX: finalX, scrollY: finalY } = await page.evaluate(() => ({
+    scrollX: window.scrollX,
+    scrollY: window.scrollY,
+  }));
+
+  expect(finalX).toBe(initialX);
+  expect(finalY).toBe(initialY);
+});
+
