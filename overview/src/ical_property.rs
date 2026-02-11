@@ -282,31 +282,3 @@ fn map_ical_event(input: &IcalEvent) -> Result<Event, Error> {
     }
     Ok(event)
 }
-
-#[cfg(test)]
-mod tests {
-    use std::{fs::File, io::BufReader};
-
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let buf = BufReader::new(File::open("resources/test1.ical").unwrap());
-
-        let reader = ical::IcalParser::new(buf);
-
-        for calendar in reader {
-            let cal = calendar.unwrap();
-            for event in cal.events {
-                let res = map_ical_event(&event);
-                let res = res.unwrap();
-                if res.summary == Some("Jeden Montag bis Freitag ganztägig".into()) {
-                    println!("{:#?}", res);
-                    for event in res.rrule.unwrap().into_iter().take(100) {
-                        println!("Occurance: {}", event)
-                    }
-                }
-            }
-        }
-    }
-}

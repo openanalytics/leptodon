@@ -86,6 +86,7 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_toggle") view=crate::testcases::toggle::TestToggle/>
                 <Route path=StaticSegment("/test_checkbox") view=crate::testcases::checkbox::TestCheckbox/>
                 <Route path=StaticSegment("/test_popover") view=crate::testcases::popover::TestPopover/>
+                <Route path=StaticSegment("/test_calendar") view=crate::testcases::calendar::TestCalendar/>
                 <Route path=StaticSegment("/forms") view=crate::forms::Forms/>
             </Routes>
         </Router>
