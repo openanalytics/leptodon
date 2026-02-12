@@ -148,7 +148,7 @@ pub fn DemoRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {{
     .into_inner()
     .into_any_nested_route()
 }}
-        "
+"
         ),
     )?;
 
@@ -164,9 +164,10 @@ fn main() -> Result<(), Error> {
         .output()
         .expect("failed to execute process");
 
-    // page_infos()
+    // page_infos() and DemoRoutes
     generate_demo_pages()?;
     println!("cargo::rerun-if-changed=build.rs");
+    println!("cargo::rerun-if-changed=src/demos");
     println!("cargo::rerun-if-changed=Cargo.toml");
     Ok(())
 }

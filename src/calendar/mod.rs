@@ -1,11 +1,7 @@
 use crate::{
-    badge::{Badge, BadgePostfix, BadgePrefix, BadgeSize, BadgeTheme},
-    button::{Button, ButtonAppearance},
-    button_group::{ButtonGroup, First, Last},
-    class_list,
-    icon::{self, NextIcon, PreviousIcon},
-    util::callback::ArcOneCallback,
+    badge::{Badge, BadgePostfix, BadgePrefix, BadgeSize, BadgeTheme}, button::{Button, ButtonAppearance}, button_group::{ButtonGroup, First, Last}, class_list, icon::{self, NextIcon, PreviousIcon}, popover::{Popover, PopoverAnchor, PopoverTrigger}, util::{callback::ArcOneCallback, option_comp::OptionComp}
 };
+use attr_docgen::generate_docs;
 use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveTime, Weekday};
 use leptos::{either::Either, logging::error, prelude::*, tachys::view::any_view::AnyView};
 use leptos_use::{CalendarDate, UseCalendarOptions, UseCalendarReturn, use_calendar_with_options};
@@ -46,6 +42,7 @@ fn should_show_week(date: &CalendarDate, show_days: &[Weekday]) -> bool {
     return false;
 }
 
+#[generate_docs]
 /// Calendar component.
 ///   Displays a full-month view, shown days can be configured.
 ///   Custom content is possible via [children]
@@ -58,7 +55,7 @@ pub fn Calendar(
     #[prop(default = Signal::derive(|| Local::now()), into)] local_date_time: Signal<
         DateTime<Local>,
     >,
-    #[prop(default = RwSignal::new(Box::new(& WORK_WEEK)), into)] show_days: RwSignal<
+    #[prop(default = RwSignal::new(Box::new(&WORK_WEEK)), into)] show_days: RwSignal<
         Box<&'static [Weekday]>,
     >,
     #[prop(default = Local::now().date_naive(), into)] initial_date: NaiveDate,
@@ -188,7 +185,7 @@ pub fn Calendar(
                         })
                         .map(|date| {
                             view! {
-                                <CalendarItem
+                                <CalendarDay
                                     date
                                     children=children.clone()
                                 />
@@ -203,7 +200,7 @@ pub fn Calendar(
 }
 
 #[component]
-fn CalendarItem(date: CalendarDate, children: Option<CalendarChildrenFn>) -> impl IntoView {
+fn CalendarDay(date: CalendarDate, children: Option<CalendarChildrenFn>) -> impl IntoView {
     // Some months start in the middle of a week, we then need to manually align calendar items at the correct column.
     let col_idx = date.weekday() as usize; // 0-indexed
     let col_class = [
@@ -234,16 +231,63 @@ fn CalendarItem(date: CalendarDate, children: Option<CalendarChildrenFn>) -> imp
     }
 }
 
-struct CalendarDay {
-    events: Vec<CalendarEvent>,
-}
-
-struct CalendarEvent {
-    start_time: NaiveTime,
-    end_time: NaiveTime,
-    title: String,
-    desc: Option<String>,
-    location: Option<String>,
+#[generate_docs]
+/// A rectangular calendar-event made to fit inside a calendar-day, shows more details on hover. 
+#[component]
+pub fn CalendarEvent(
+    /// Start time, shown next to the event
+    #[prop(optional, into)]
+    start_time: Option<NaiveTime>,
+    /// Event end time, shown in the popover
+    #[prop(optional, into)]
+    end_time: Option<NaiveTime>,
+    /// Event summary, shown in the calendar
+    #[prop(optional, into)]
+    summary: Option<String>,
+    /// Title of the event-popup
+    #[prop(optional, into)]
+    popup_title: Option<String>,
+    /// Content of the event-popup
+    #[prop(optional, into)]
+    popup_desc: Option<String>,
+) -> impl IntoView {
+    view! {
+        <Popover preferred_pos=PopoverAnchor::Right>
+            <PopoverTrigger slot>
+                <div class=class_list!("self-stretch p-0.5 bg-teal-100 dark:bg-teal-900 m-0.5 shadow-sm text-xs md:text-sm line-clamp-3 shrink-0", ("grow", start_time.is_none()))>
+                    <OptionComp value=start_time let:start_time>
+                        <strong class="mr-[0.5ch] font-mono">
+                            {start_time.format("%H:%M").to_string()}
+                        </strong>
+                    </OptionComp>
+                    <OptionComp value=summary.clone() let:summary>
+                        <span>
+                            {summary.to_string()}
+                        </span>
+                    </OptionComp>
+                </div>
+            </PopoverTrigger>
+            <div>
+                <OptionComp value=start_time let:start_time>
+                    <OptionComp value=end_time let:end_time>
+                        <strong class="mr-[0.5ch] font-mono">
+                            {start_time.format("%H:%M").to_string()} - {end_time.format("%H:%M").to_string()}
+                        </strong>
+                    </OptionComp>
+                </OptionComp>
+                <OptionComp value=popup_title let:title>
+                    <p><strong>
+                        {title.to_string()}
+                    </strong></p>
+                </OptionComp>
+                <OptionComp value=popup_desc let:desc>
+                    <p>
+                        {desc.to_string()}
+                    </p>
+                </OptionComp>
+            </div>
+        </Popover>
+    }
 }
 
 #[derive(Clone)]

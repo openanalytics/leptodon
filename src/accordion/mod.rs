@@ -1,15 +1,15 @@
 use crate::class_list;
+use crate::util::shared_id::shared_id;
+use attr_docgen::generate_docs;
 use leptos::leptos_dom::logging::console_log;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
 
-use std::sync::atomic::{AtomicU64, Ordering};
-
-static ATOMIC_ACCORDION_ID: AtomicU64 = AtomicU64::new(1);
 const ACCORDION_HEADING_CLASSES: &str = "flex items-center justify-between w-full p-5 font-medium rtl:text-right text-body border border-t-0 border-x-0 border-b-default dark:border-gray-700 hover:text-heading gap-3 hover:bg-gray-50 hover:dark:bg-gray-900";
 const ACCORDION_BODY_CLASSES: &str =
     "border dark:border-gray-700 border-s-0 border-e-0 border-t-0 border-b-default";
 
+#[generate_docs]
 /// Single collapseable section for the [Accordion]
 #[component]
 pub fn AccordionEntry(
@@ -20,7 +20,7 @@ pub fn AccordionEntry(
     /// Or more accordions.
     children: Children,
 ) -> impl IntoView {
-    let id = ATOMIC_ACCORDION_ID.fetch_add(1, Ordering::SeqCst);
+    let id = shared_id();
     let head_id = format!("accordion-collapse-heading-{id}");
     let body_id = format!("accordion-collapse-body-{id}");
     let (is_hidden, set_hidden) = signal(true);
@@ -52,6 +52,7 @@ pub fn AccordionEntry(
     }
 }
 
+#[generate_docs]
 /// A stack of expandable/collapseable sections.
 #[component]
 pub fn Accordion<T>(
