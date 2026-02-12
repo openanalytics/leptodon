@@ -22,6 +22,8 @@ module.exports = {
       "oa-gray-mid": "#d6d6d6",
       "oa-gray-darker": "#c3c3c3", // 15% darker than oa-gray
       "oa-docs-blue": "#30638e",
+      "codeblock-light": "#fafdff",
+      "codeblock-dark": "#04121B",
     },
     extend: {
       aria: {

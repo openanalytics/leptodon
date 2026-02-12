@@ -1,15 +1,13 @@
 use leptos::prelude::*;
 use leptos_components::accordion::Accordion;
 use leptos_components::accordion::AccordionEntry;
+use leptos_components::button::{Button, ButtonAppearance};
 use leptos_components::darkmode::ThemeSelector;
 use leptos_components::icon;
 use leptos_components::navbar::NavbarEndChildren;
 use leptos_components::navbar::NavbarEntries;
 use leptos_components::navbar::SideBarLink;
 use leptos_components::navbar::SideNavbar;
-use leptos_components::{
-    button::{Button, ButtonAppearance}
-};
 use leptos_meta::MetaTags;
 use leptos_meta::Stylesheet;
 use leptos_meta::Title;
@@ -21,9 +19,8 @@ use leptos_router::{
     components::{Route, Router, Routes},
 };
 
-use crate::demos::button::ButtonDemoPage;
-use crate::demos::input::InputsDemoPage;
-use crate::demos::toggle::ToggleDemoPage;
+use crate::generated_demolist::DemoRoutes;
+use crate::generated_demolist::page_infos;
 
 const NAME: &str = "OA Leptos-Components";
 
@@ -48,14 +45,20 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 
 #[component]
 pub fn RouteShell() -> impl IntoView {
+    let demo_links = page_infos()
+        .into_iter()
+        .map(|page_info| {
+            view! {
+                <li><SideBarLink href=page_info.location>{page_info.name}</SideBarLink></li>
+            }
+        })
+        .collect_view();
     view! {
         <main>
             <SideNavbar>
                 <NavbarEntries slot:entries>
                     <li><SideBarLink href="#" icon=icon::BillingIcon()>Home</SideBarLink></li>
-                    <li><SideBarLink href="/buttons">Buttons</SideBarLink></li>
-                    <li><SideBarLink href="/toggle">Toggle</SideBarLink></li>
-                    <li><SideBarLink href="/inputs">Inputs</SideBarLink></li>
+                    {demo_links}
                 </NavbarEntries>
                 <NavbarEndChildren slot:end>
                     <ThemeSelector />
@@ -70,7 +73,7 @@ pub fn RouteShell() -> impl IntoView {
 #[component]
 pub fn App() -> impl IntoView {
     provide_meta_context();
-
+    
     view! {
         <Stylesheet href="/pkg/overview.css"/>
 
@@ -78,9 +81,7 @@ pub fn App() -> impl IntoView {
             <Routes fallback=|| "Page not found.">
                 <ParentRoute path=StaticSegment("/") view=RouteShell>
                     <Route path=StaticSegment("/") view=Home/>
-                    <Route path=StaticSegment("/buttons") view=ButtonDemoPage/>
-                    <Route path=StaticSegment("/inputs") view=InputsDemoPage/>
-                    <Route path=StaticSegment("/toggle") view=ToggleDemoPage/>
+                    <DemoRoutes/>
                 </ParentRoute>
             </Routes>
         </Router>

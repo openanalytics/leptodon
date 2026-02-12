@@ -2343,6 +2343,7 @@ dependencies = [
  "console_log",
  "dateparser",
  "derive_more",
+ "heck",
  "http",
  "ical",
  "itertools 0.14.0",
@@ -2358,11 +2359,13 @@ dependencies = [
  "serde",
  "strum",
  "strum_macros",
+ "syn",
  "thiserror 1.0.69",
  "tokio",
  "tower",
  "tower-http 0.5.2",
  "tracing",
+ "walkdir",
  "wasm-bindgen",
 ]
 

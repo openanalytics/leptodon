@@ -5,4 +5,3 @@ edition = "2024"
 
 [dependencies]
 leptos-components = { path = "../../../leptos-components", default-features = false, features = [] }
-syn = { version = "2.0.110", features = ["full"] }

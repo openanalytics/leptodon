@@ -2,6 +2,7 @@
 
 pub mod app;
 pub mod demos;
+pub mod generated_demolist;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

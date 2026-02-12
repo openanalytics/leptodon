@@ -518,8 +518,9 @@ use leptos::{IntoView, component, view};
 use std::sync::atomic::{AtomicU64, Ordering};
 
 static ATOMIC_ACCORDION_ID: AtomicU64 = AtomicU64::new(1);
-const ACCORDION_HEADING_CLASSES: &str = "flex items-center justify-between w-full p-5 font-medium rtl:text-right text-body border border-t-0 border-x-0 border-b-default hover:text-heading hover:bg-neutral-secondary-medium gap-3 hover:bg-gray-50";
-const ACCORDION_BODY_CLASSES: &str = "border border-s-0 border-e-0 border-t-0 border-b-default";
+const ACCORDION_HEADING_CLASSES: &str = "flex items-center justify-between w-full p-5 font-medium rtl:text-right text-body border border-t-0 border-x-0 border-b-default dark:border-gray-700 hover:text-heading gap-3 hover:bg-gray-50 hover:dark:bg-gray-900";
+const ACCORDION_BODY_CLASSES: &str =
+    "border dark:border-gray-700 border-s-0 border-e-0 border-t-0 border-b-default";
 
 /// Single collapseable section for the [Accordion]
 #[component]
@@ -539,7 +540,7 @@ pub fn AccordionEntry(
         <h2 id=head_id.clone()>
           <button type="button" class=class_list![
               ACCORDION_HEADING_CLASSES,
-              ("bg-gray-50", move || !is_hidden.get())
+              ("bg-gray-50 dark:bg-gray-900", move || !is_hidden.get())
           ] aria-expanded="true" aria-controls=body_id.clone()
             on:click=move |_| {
                 console_log(format!("Is_hidden: {}", is_hidden.get()).as_str());
@@ -573,7 +574,7 @@ where
     T: AddAnyAttr + IntoView + Send + 'static,
 {
     view! {
-        <div id="accordion-collapse" data-accordion="collapse" class="rounded-lg border border-default overflow-hidden shadow-sm">
+        <div id="accordion-collapse" data-accordion="collapse" class="rounded-lg border border-default dark:border-gray-700 overflow-hidden shadow-sm">
             { children.into_inner()() }
         </div>
     }
@@ -581,6 +582,7 @@ where
 use leptos::ev::EventCallback;
 use leptos::leptos_dom::logging::console_log;
 use leptos::logging::debug_log;
+use leptos::logging::warn;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::Effect;
@@ -600,33 +602,39 @@ use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::prelude::Trigger;
 use leptos::prelude::Update;
+use leptos::prelude::Write;
+use leptos::prelude::set_timeout;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
 use nucleo_matcher::Config;
 use nucleo_matcher::Matcher;
 use nucleo_matcher::pattern::CaseMatching;
 use nucleo_matcher::pattern::Normalization;
 use nucleo_matcher::pattern::Pattern;
+use std::collections::HashMap;
 use std::fmt::Debug;
 use std::fmt::Display;
 use std::hash::Hash;
 use std::sync::LazyLock;
 use std::sync::Mutex;
+use std::time::Duration;
 use web_sys::HtmlInputElement;
 use web_sys::KeyboardEvent;
 
 use crate::checkbox::Checkbox;
 use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::icon::Icon;
+use crate::input::PLACEHOLDER_TEXT_CLASS;
 use crate::input::TextInput;
 use crate::popover::Popover;
+use crate::popover::PopoverAnchor;
 use crate::popover::PopoverController;
-use crate::popover::PopoverPosition;
 use crate::popover::PopoverTrigger;
 use crate::popover::PopoverTriggerType;
 
 const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 const TAG_LIST_ITEM_CLASSES: &str =
-    "hover:bg-oa-gray p-2 rounded-lg flex items-center cursor-pointer";
+    "hover:bg-oa-gray hover:dark:bg-gray-600 p-2 rounded-lg flex items-center cursor-pointer";
 
 // Nucleo matcher allocates 135kb memory, so we want to reuse this.
 // Try to not run multiple fuzzy matchers at the same time.
@@ -636,6 +644,7 @@ static NUCLEO_MATCHER: LazyLock<Mutex<Matcher>> =
 #[component]
 pub fn TagPicker<T>(
     #[prop(optional, into)] id: MaybeProp<String>,
+    #[prop(optional, into)] class: MaybeReactiveClass,
     /// Shown when no tags are selected.
     #[prop(optional, into)]
     placeholder: MaybeProp<String>,
@@ -651,44 +660,82 @@ where
 {
     let search_filter = RwSignal::new(String::new());
     let search_ref: NodeRef<leptos::html::Input> = NodeRef::new();
+    let checkboxes = RwSignal::new(HashMap::<T, RwSignal<bool>>::new());
+    let inside_selected = RwSignal::new(selected.get_untracked());
 
-    // When the outside tags change, update selected tags.
+    // When the outside tags change, update selected tags as some may have become non-options.
     Effect::watch(
         move || tags.get(),
-        move |new, _, _| {
-            let selected_value = selected.get();
+        move |new, old, _| {
+            let selected_value = inside_selected.get_untracked();
             let leftover_selected = selected_value
                 .into_iter()
                 .filter(|selected_value| new.contains(selected_value))
                 .collect::<Vec<_>>();
-            selected.set(leftover_selected);
+
+            let mut checkboxes = checkboxes.write();
+            for tag in new {
+                if let Some(old) = old
+                    && old.contains(tag)
+                {
+                    // leave it the same
+                } else {
+                    // new tag
+                    checkboxes.insert(tag.clone(), RwSignal::new(leftover_selected.contains(&tag)));
+                    debug_log!("Added {tag}'s checkbox");
+                }
+            }
+            if let Some(old) = old {
+                for tag in old {
+                    if new.contains(tag) {
+                        // leave it the same
+                    } else {
+                        // removed tag
+                        checkboxes.remove(tag);
+                        debug_log!("Removed {tag}'s checkbox");
+                    }
+                }
+            }
+            drop(checkboxes);
+            inside_selected.set(leftover_selected);
         },
-        false,
+        true,
     );
 
+    // When the inside selection change, propagate to outside.
+    Effect::new(move || selected.set(inside_selected.get()));
+    
     // When the outside selection change, Sanity check the selection, purge unselectable tags..
     Effect::watch(
         move || selected.get(),
-        move |new, old, _| {
-            if Some(new) != old {
-                let tags = tags.get();
+        move |new, _, _| {
+            // Make sure this is not the value we just wrote to the outside
+            if new != &inside_selected.get_untracked() {
+                let checkboxes = checkboxes.get_untracked();
+                let tags = tags.get_untracked();
                 let leftover_selected = new
                     .clone()
                     .into_iter()
                     .filter(|selected_value| tags.contains(selected_value))
                     .collect::<Vec<_>>();
-                selected.set(leftover_selected);
+                
+                // Update signals, could do less updates but that requires a lot more code, seemed like premature optimisation.
+                for (checkbox_tag, checkbox_signal) in checkboxes {
+                    checkbox_signal.set(leftover_selected.contains(&checkbox_tag));
+                }
+         
+                inside_selected.set(leftover_selected);
             }
         },
         false,
     );
-
+    
     // Fuzzy search applier
     let tags_filtersorted: Memo<Vec<T>> = Memo::new(move |_old| {
         let search: String = search_filter.get().to_ascii_lowercase();
         let tags: Vec<T> = tags.get();
 
-        debug_log!("Filtering tag on {search}");
+        debug_log!("Filtering tags on \"{search}\"");
 
         let pattern = Pattern::parse(search.as_str(), CaseMatching::Smart, Normalization::Smart);
         let mut matcher = NUCLEO_MATCHER.lock().expect("Unpoised");
@@ -700,30 +747,38 @@ where
     // Partitioned into selected and unselected.
     // (Idx -> (T, is_selected))
     let tags_grouped = Memo::new(move |_old| {
-        let selected = selected.get();
+        if checkboxes.get().is_empty() {
+            return vec![];
+        }
+        let selected = inside_selected.get();
         let search = search_filter.get();
-        let mut group_1 = vec![];
-        let mut group_2 = vec![];
+        // [all] will contain: selected|unselected.
+        let mut all = vec![];
+        let mut unselected_group = vec![];
         // Group/parition by selected status, unless there is a filter
         for tag in tags_filtersorted.get() {
             if selected.contains(&tag) || !search.is_empty() {
-                group_1.push(tag);
+                all.push(tag);
             } else {
-                group_2.push(tag);
+                unselected_group.push(tag);
             }
         }
 
-        group_1.append(&mut group_2);
-        group_1.into_iter().enumerate().collect::<Vec<(usize, T)>>()
+        all.append(&mut unselected_group);
+        all.into_iter().enumerate().collect::<Vec<(usize, T)>>()
     });
 
     let on_popover_open = move || {
         let Some(input): Option<HtmlInputElement> = search_ref.get_untracked() else {
             return;
         };
-        input
-            .focus()
-            .expect("Tag picker search box should be focusable upon opening.");
+        
+        // Run next tick such that the input box can first unhide itself. Can't focus invisible elements.
+        set_timeout(move || {
+            input
+                .focus()
+                .expect("Tag picker search box should be focusable upon opening.");    
+        }, Duration::ZERO);
     };
 
     let close_popover = Trigger::new();
@@ -734,7 +789,7 @@ where
     };
 
     view! {
-        <Popover id show_arrow=false preferred_pos=PopoverPosition::BottomStart trigger_type=PopoverTriggerType::Click popover_controller>
+        <Popover id class show_arrow=false preferred_pos=PopoverAnchor::BottomStart trigger_type=PopoverTriggerType::Click popover_controller>
             <PopoverTrigger slot>
                 <div
                     id=id.get().map(|id| format!("{id}-trigger"))
@@ -743,28 +798,29 @@ where
                     <div class="flex gap-2 overflow-scroll">
                         // Selected tags
                         <For
-                            each=move || selected.get()
+                            each=move || inside_selected.get()
                             key=|tag| tag.clone()
                             let:tag
                             >
-                            <div class="p-1.5 bg-oa-gray rounded-lg flex items-center gap-1.5">
-                                <span>{tag.to_string()}</span>
-                                <div class="p-1 hover:bg-oa-gray-mid hover:cursor-pointer rounded" on:click=move |ev| {
+                            <div class="p-1.5 bg-oa-gray dark:bg-gray-800 rounded-lg flex items-center gap-1.5">
+                                <span>{(&tag).to_string()}</span>
+                                <div class="p-1 hover:bg-oa-gray-mid hover:dark:bg-gray-600 hover:cursor-pointer rounded" on:click=move |ev| {
                                     ev.stop_propagation();
-                                    selected.update(|vec| {
-                                        vec.iter()
-                                            .position(|e| e == &tag)
-                                            .map(|pos| { vec.remove(pos) });
-                                    });
+                                    let tag = tag.clone();
+                                    let checkboxes = checkboxes.get();
+                                    let Some(checked) = checkboxes.get(&tag) else {
+                                        return ;
+                                    };
+                                    toggle_tag(inside_selected, tag, *checked).invoke(());
                                 }>
                                     <Icon class="w-3 h-3" icon=crate::icon::CloseIcon() />
                                 </div>
                             </div>
                         </For>
                         // Placeholder, shown when empty
-                        <div class="p-1.5 text-gray-600">
+                        <div class=class_list!("p-1.5", PLACEHOLDER_TEXT_CLASS)>
                         {move || {
-                            if selected.get().is_empty() {
+                            if inside_selected.get().is_empty() {
                                 view! { {placeholder.get()} }.into_any()
                             } else {
                                 ().into_any()
@@ -791,8 +847,12 @@ where
                             let Some((_, tag)) = tags_grouped.get().first().cloned() else {
                                 return;
                             };
+                            let checkboxes = checkboxes.get();
+                            let Some(checked) = checkboxes.get(&tag) else {
+                                return ;
+                            };
 
-                            toggle_tag(selected, tag).invoke(());
+                            toggle_tag(inside_selected, tag, *checked).invoke(());
                         }
                     }
                     {..}
@@ -801,46 +861,64 @@ where
                 // Tags
                 <For
                     each=move || tags_grouped.get()
-                    key=|tag| {
-                        tag.clone()
-                    }
-                    let((i, tag))
-                    >
-                    <li
-                        class=class_list!(
-                            TAG_LIST_ITEM_CLASSES,
-                            ("outline outline-black outline-2", move || i == 0 && !search_filter.get().is_empty())
-                        )
-                        on:click={
-                            let tag = tag.clone();
-                            toggle_tag(selected, tag)
+                    key=move |tag| {
+                        let checkboxes = checkboxes.get();
+                        if let Some(checkbox) = checkboxes.get(&tag.1) {
+                            (tag.clone(), checkbox.get())
+                        } else {
+                            warn!("Checkbox signal not found in tag_picker ");
+                            (tag.clone(), false)
                         }
-                    >
-                        {let tag=tag.clone(); {
-                            view! {
-                                <Checkbox disable_tab=true checked={
-                                    let tag = tag.clone();
-                                    RwSignal::new(selected.get().contains(&tag))
-                                }>
-                                    {tag.to_string()}
-                                </Checkbox>
-                            }
-                        }}
+                    }
+                    children=move |(i, tag)| {
+                        let checkboxes = checkboxes.get();
+                        let Some(checked) = checkboxes.get(&tag) else {
+                            return view! {}.into_any()
+                        };
 
-                    </li>
+                        debug_log!("Recreating tag item");
+
+                        view! {
+                            <li
+                                class=class_list!(
+                                    TAG_LIST_ITEM_CLASSES,
+                                    ("outline outline-black outline-2", move || i == 0 && !search_filter.get().is_empty())
+                                )
+                                on:click={
+                                    let tag = tag.clone();
+                                    toggle_tag(inside_selected, tag, *checked)
+                                }
+                            >
+                                {let tag=tag.clone(); {
+                                    view! {
+                                        <Checkbox disable_tab=true checked=*checked prevent_label=true>
+                                            {tag.to_string()}
+                                        </Checkbox>
+                                    }
+                                }}
+
+                            </li>
+                        }.into_any()
+                    }
+                    >
                 </For>
             </ul>
         </Popover>
     }
 }
 
-fn toggle_tag<T, Event>(selected: RwSignal<Vec<T>>, tag: T) -> impl FnMut(Event) + 'static
+fn toggle_tag<T, Event>(
+    inside_selected: RwSignal<Vec<T>>,
+    tag: T,
+    checked: RwSignal<bool>,
+) -> impl FnMut(Event) + 'static
 where
-    T: Eq + Clone + Send + Sync + 'static,
+    T: Display + Eq + Clone + Send + Sync + 'static,
 {
     move |_| {
         // Toggle selection
-        selected.update(|old_sel| {
+        inside_selected.update(|old_sel| {
+            debug_log!("Toggling {}", tag);
             if old_sel.contains(&tag) {
                 old_sel
                     .iter()
@@ -851,6 +929,11 @@ where
             } else {
                 old_sel.push(tag.clone());
             }
+        });
+
+        checked.update(|old| {
+            debug_log!("Flipping chekcbox to {}", !*old);
+            *old = !*old
         });
     }
 }
@@ -881,11 +964,13 @@ use crate::button_group::Last;
 use crate::class_list;
 use crate::form_input::FormInputContext;
 use crate::form_input::Label;
+use crate::form_input::MaybeLabelledFormInput;
 use crate::icon::HideIcon;
 use crate::icon::ShowIcon;
 use crate::input_group::GroupItemClassContext;
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
+use attr_docgen::generate_docs;
 use leptos::either::Either;
 use leptos::html;
 use leptos::logging::debug_log;
@@ -915,7 +1000,8 @@ use zxcvbn::zxcvbn;
 
 pub const OA_READONLY_INPUT_CLASSES: &str = "border-0 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
 const OA_INPUT_CLASSES: &str = "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
-
+pub const PLACEHOLDER_TEXT_CLASS: &str = "text-gray-600 dark:text-gray-400";
+#[generate_docs]
 #[component]
 #[allow(unused)] // Generated propsbuilder is used.
 pub fn TextInputConfig(
@@ -927,6 +1013,7 @@ pub fn TextInputConfig(
 ) -> impl IntoView {
 }
 
+#[generate_docs]
 #[component]
 pub fn TextInput(
     /// Extra classes added to augment the default style.
@@ -1012,6 +1099,7 @@ pub fn TextInput(
     }
 }
 
+#[generate_docs]
 /// Integrates with dropbox's zxcvbn to create non annoying and actually strong passwords.
 #[component]
 pub fn PasswordInput(
@@ -1055,9 +1143,11 @@ pub fn PasswordInput(
     let parser = ArcOneCallback::new(move |input: String| {
         let hazard_strs: Vec<&str> = hazards.iter().map(|s| s.as_ref()).collect();
         let entropy = zxcvbn(input.as_str(), hazard_strs.as_slice());
+
         if let Some(feedback) = entropy.feedback() {
             return Err(format!("{feedback}"));
         }
+
         if entropy.score() < Score::Four {
             return Err("Almost strong enough, add another word or a couple symbols.".to_string());
         }
@@ -1068,34 +1158,54 @@ pub fn PasswordInput(
     let password_vis = RwSignal::new(false);
 
     if show_eye {
-        view !{
-            <ButtonGroup>
-                <First slot:first>
-                    <GenericInput<String, String>
-                        class
-                        input_ref
-                        label
-                        name
-                        value
-                        readonly
-                        required
-                        placeholder
-                        input_type=Signal::derive(move || { if password_vis.get() { InputType::Text } else { InputType::Password } })
-                        parser=parser.clone()
-                    />
-                </First>
-                <Last slot:last>
-                    <Button
-                        on_click=move |_| {
-                            password_vis.update(|mut_vis| *mut_vis = !*mut_vis)
-                        }
-                        appearance=ButtonAppearance::Secondary
-                        icon=Signal::derive(move || {
-                            if password_vis.get() { HideIcon() } else { ShowIcon() }
-                        })
-                    ></Button>
-                </Last>
-            </ButtonGroup>
+        // Form context
+        let form_context = use_context::<FormInputContext<String>>();
+        let form_required = Signal::from(
+            form_context
+                .clone()
+                .map(|ctx| ctx.required)
+                .unwrap_or_default(),
+        );
+        let required = use_or(required, form_required);
+        let label = if let Some(form_context) = form_context {
+            if label.get().is_some() {
+                label
+            } else {
+                form_context.label
+            }
+        } else {
+            label
+        };
+        view! {
+            <MaybeLabelledFormInput<String> label required=required.get()>
+                <ButtonGroup>
+                    <First slot:first>
+                        <GenericInput<String, String>
+                            class
+                            input_ref
+                            label
+                            name
+                            value
+                            readonly
+                            required
+                            placeholder
+                            input_type=Signal::derive(move || { if password_vis.get() { InputType::Text } else { InputType::Password } })
+                            parser=parser.clone()
+                        />
+                    </First>
+                    <Last slot:last>
+                        <Button
+                            on_click=move |_| {
+                                password_vis.update(|mut_vis| *mut_vis = !*mut_vis)
+                            }
+                            appearance=ButtonAppearance::Secondary
+                            icon=Signal::derive(move || {
+                                if password_vis.get() { HideIcon() } else { ShowIcon() }
+                            })
+                        ></Button>
+                    </Last>
+                </ButtonGroup>
+            </MaybeLabelledFormInput<String>>
         }.into_any()
     } else {
         view! {
@@ -1115,6 +1225,7 @@ pub fn PasswordInput(
     }
 }
 
+#[generate_docs]
 /// If the input is empty but you supplied **value** then check if you supplied a **format** handler
 ///
 /// The normal layout is as follows:
@@ -1329,13 +1440,6 @@ where
                 <Label required=required.get() label>
                     {standalone_input}
                 </Label>
-                // <label class="block mb-2.5 text-sm font-medium text-heading">
-                //     <Show
-                //         when=move || required.get()
-                //         fallback=|| ()><span class="text-red-500">*</span>
-                //     </Show> {label}
-                //     {standalone_input}
-                // </label>
             </div>
         })
     } else {
@@ -1481,6 +1585,7 @@ use leptos::{IntoView, component, prelude::Children, view};
 #[derive(Clone, Copy)]
 pub struct FormInputContext<E: Clone + Send + Sync + std::fmt::Display + 'static> {
     pub required: bool,
+    pub label: MaybeProp<String>,
     pub feedback: RwSignal<Option<E>>,
 }
 
@@ -1495,11 +1600,29 @@ pub fn FormInput<E>(
 where
     E: Clone + Send + Sync + std::fmt::Display + 'static,
 {
+    view! {
+        <MaybeLabelledFormInput<E> label required children />
+    }
+}
+
+// Internal function: when an input field like password need to display an eye next to itself, the GenericInput can no longer simply display feedback under itself.
+// For that reason the password input wraps itself internally with the FormInput mechanism even when unlabeled.
+#[component]
+pub(crate) fn MaybeLabelledFormInput<E>(
+    #[prop(optional, into)] label: MaybeProp<String>,
+    required: bool,
+    children: Children,
+    #[prop(default = PhantomData)] _phantom: PhantomData<E>,
+) -> impl IntoView
+where
+    E: Clone + Send + Sync + std::fmt::Display + 'static,
+{
     let feedback: RwSignal<Option<E>> = RwSignal::new(None);
+    let form_ctx = FormInputContext { required, label, feedback };
     view! {
         <div class="mb-2">
             <Label label required>
-                <Provider<_, _> value=FormInputContext { required, feedback }>
+                <Provider<_, _> value=form_ctx>
                     {children()}
                 </Provider<_, _>>
             </Label>
@@ -1517,11 +1640,18 @@ where
     }
 }
 
+/// A label component, shown above its children.
 #[component]
-pub fn Label(#[prop(optional, into)] label: MaybeProp<String>, required: bool, children: Children) -> impl IntoView {
+pub fn Label(
+    #[prop(optional, into)] label: MaybeProp<String>,
+    /// Displays a red star to indicate an input is required to be completed.
+    required: bool,
+    /// The labeled element
+    children: Children,
+) -> impl IntoView {
     if let Some(label) = label.get() {
         view! {
-            <label class="block text-sm font-medium text-heading">
+            <label class="block text-sm font-medium text-heading text-gray-900 dark:text-gray-100">
                 <div>
                     <RequiredStar required/>
                     {label}
@@ -1537,11 +1667,11 @@ pub fn Label(#[prop(optional, into)] label: MaybeProp<String>, required: bool, c
 
 /// Style helper
 /// Used for inline labels behind checkbox and toggle.
-/// Provide the label via [children], caller is expected to wrap this and the input in a <label>. 
+/// Provide the label via [children], caller is expected to wrap this and the input in a <label>.
 #[component]
 pub fn PostfixLabelStyle(required: bool, children: Children) -> impl IntoView {
     view! {
-        <span class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><RequiredStar required=required/>{children()}</span>
+        <span class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-100"><RequiredStar required=required/>{children()}</span>
     }
 }
 
@@ -1834,12 +1964,13 @@ use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::form_input::Label;
 
 // The selection-indicating orb's style
-const RADIO_OPTION_CLASSES: &str = "w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none";
+const RADIO_OPTION_CLASSES: &str = "w-4 h-4 text-neutral-primary border-default-medium rounded-full checked:border-oa-blue focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default dark:border-gray-700 appearance-none";
 // Label right of orb
 const RADIO_OPTION_LABEL_CLASSES: &str =
-    "w-full py-3 select-none ms-2 text-sm font-medium text-heading";
+    "w-full py-3 select-none ms-2 text-sm font-medium text-gray-900 dark:text-gray-100";
 
-const RADIO_LIST_GROUP_CLASSES: &str = "border border-default rounded-lg shadow-sm";
+const RADIO_LIST_GROUP_CLASSES: &str =
+    "border border-default dark:border-gray-700 rounded-lg shadow-sm";
 
 /// Methods for radio option
 pub trait RadioOption: Display {
@@ -1867,11 +1998,13 @@ where
     Effect::watch(
         move || options.get(),
         move |new, _, _| {
-            if let Some(selected_value) = selected.get_untracked() && !new.contains(&selected_value) {
+            if let Some(selected_value) = selected.get_untracked()
+                && !new.contains(&selected_value)
+            {
                 selected.set(None);
             }
         },
-        false
+        false,
     );
     Effect::watch(
         move || selected.get(),
@@ -1898,7 +2031,7 @@ where
         <div class=class_list!(class)>
             <Label label=label required>
                 <ul class=class_list!(
-                    "w-48 bg-neutral-primary-soft",
+                    "w-48 bg-oa-gray dark:bg-gray-700 flex flex-col gap-px overflow-hidden",
                     match appearance {
                         RadioAppearance::ListGroup => RADIO_LIST_GROUP_CLASSES,
                         RadioAppearance::Minimal => "",
@@ -1916,7 +2049,7 @@ where
                                 fields.insert(option.clone(), node_ref);
                             });
                             view! {
-                                <li class="w-full border-b border-default"
+                                <li class="w-full bg-white dark:bg-gray-900"
                                     on:click=move |_| {
                                         if let Some(input) = node_ref.get() {
                                             // Uncheck prev checked input
@@ -2061,7 +2194,8 @@ use web_sys::window;
 #[component]
 pub fn Codeblock(
     /// The code to show in the block.
-    #[prop(into)] code: String
+    #[prop(into)]
+    code: String,
 ) -> impl IntoView {
     let stored_code = StoredValue::new(code);
     let btn_text = RwSignal::new("Copy");
@@ -2081,15 +2215,15 @@ pub fn Codeblock(
     };
 
     view! {
-        <div class="bg-blue-50 rounded-lg p-4 relative shadow-sm">
+        <div class="bg-codeblock-light dark:bg-codeblock-dark rounded-lg p-4 relative shadow-sm">
             <Button
                 appearance=ButtonAppearance::Transparent
-                class="absolute top-2 right-2 !mr-0 bg-white"
+                class="absolute top-2 right-2 !mr-0 bg-white dark:bg-black"
                 on_click=on_copy
             >
                 {btn_text}
             </Button>
-            <pre class="overflow-x-auto cursor-text">{ stored_code.read_value().clone() }</pre>
+            <pre class="overflow-x-auto cursor-text text-wrap">{ stored_code.read_value().clone() }</pre>
         </div>
     }
 }
@@ -2593,10 +2727,16 @@ pub struct DropdownButtonChildren {
 ///
 /// Example
 /// ```
+/// # use leptos_components::dropdown::DropdownItem;
+/// # use leptos_components::button::DropdownButtonChildren;
+/// # use leptos_components::button::DropdownButton;
+/// # use leptos::logging::debug_log;
+/// leptos::view! {
 /// <DropdownButton>
 ///     <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>
 ///     <DropdownItem label="Entry-1" on_click=move |e| { debug_log!("{e:?}"); } />
 /// </DropdownButton>
+/// };
 /// ```
 #[component]
 pub fn DropdownButton(
@@ -3373,8 +3513,6 @@ pub fn shared_id() -> SharedValue<String, FromToStringCodec> {
 pub mod include_generated;
 
 #[cfg(feature = "leptos")]
-pub mod heading;
-#[cfg(feature = "leptos")]
 pub mod accordion;
 #[cfg(feature = "leptos")]
 pub mod avatar;
@@ -3399,9 +3537,13 @@ pub mod date_picker;
 #[cfg(feature = "leptos")]
 pub mod dialog;
 #[cfg(feature = "leptos")]
+pub mod divider;
+#[cfg(feature = "leptos")]
 pub mod dropdown;
 #[cfg(feature = "leptos")]
 pub mod form_input;
+#[cfg(feature = "leptos")]
+pub mod heading;
 #[cfg(feature = "leptos")]
 pub mod icon;
 #[cfg(feature = "leptos")]
@@ -3453,6 +3595,34 @@ pub fn CenteringColumn(
         <div class=class_list!("flex flex-col justify-center items-center", class)>
             {children()}
         </div>
+    }
+}
+
+/// Column with a fixed width
+#[component]
+pub fn FixedColumn(
+    #[prop(optional, into)] class: MaybeReactiveClass,
+    children: Children,
+) -> impl IntoView {
+    view! {
+        <div class=class_list!("flex flex-col w-full lg:w-[770px] xl:w-[1024px]", class)>
+            {children()}
+        </div>
+    }
+}
+
+/// A fixed column but centered.
+#[component]
+pub fn FixedCenterColumn(
+    #[prop(optional, into)] class: MaybeReactiveClass,
+    children: Children,
+) -> impl IntoView {
+    view! {
+        <CenteringColumn class>
+            <FixedColumn>
+                {children()}
+            </FixedColumn>
+        </CenteringColumn>
     }
 }
 use leptos_struct_table::DragHandler;
@@ -3606,6 +3776,7 @@ impl<T> Default for GroupingInfo<T> {
     }
 }
 use crate::input_group::GroupItemClassContext;
+use attr_docgen::generate_docs;
 use leptos::context::Provider;
 use leptos::prelude::ChildrenFn;
 use leptos::prelude::ClassAttribute;
@@ -3633,6 +3804,7 @@ pub struct Last {
     children: ChildrenFn,
 }
 
+#[generate_docs]
 /// Blocked on passing context to first and last child.
 #[component]
 pub fn ButtonGroup(
@@ -4180,7 +4352,7 @@ use leptos::{component, prelude::Children};
 use crate::class_list;
 use crate::class_list::reactive_class::MaybeReactiveClass;
 
-const HEADER_CLASS: &str = "font-bold relative color-gray-900";
+const HEADER_CLASS: &str = "font-bold relative text-gray-900 dark:text-gray-100";
 
 #[component]
 fn HeadingAnchor(
@@ -4316,7 +4488,19 @@ pub fn Heading6(
         </h6>
     }
 }
-use crate::avatar::Avatar;
+use leptos::IntoView;
+use leptos::prelude::ClassAttribute;
+use leptos::view;
+use leptos::component;
+
+const HEADER_CLASS: &str = "font-bold relative color-gray-900";
+
+#[component]
+fn HorizontalLine() -> impl IntoView {
+    view! {
+        <hr class="my-4" />
+    }
+}use crate::avatar::Avatar;
 use crate::class_list;
 use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
@@ -5448,8 +5632,9 @@ pub fn ClearIcon() -> IconRef {
 }
 use std::time::Duration;
 
+use crate::class_list;
 use crate::{
-    class_list,
+    class_list::reactive_class::MaybeReactiveClass,
     util::{callback::BoxCallback, element::Element},
 };
 use leptos::{
@@ -5458,7 +5643,7 @@ use leptos::{
     prelude::*,
 };
 use leptos::{
-    logging::{debug_log, debug_warn, error, warn},
+    logging::{debug_log, debug_warn, error},
     tachys::{html::node_ref::node_ref, renderer::dom::CssStyleDeclaration},
 };
 use leptos_use::{
@@ -5480,7 +5665,7 @@ pub struct PopoverController {
 #[component]
 pub fn Popover<Trigger, Content>(
     #[prop(optional, into)] id: MaybeProp<String>,
-    #[prop(optional, into)] class: MaybeProp<String>,
+    #[prop(optional, into)] class: MaybeReactiveClass,
     /// Action that displays the popover.
     #[prop(optional)]
     trigger_type: PopoverTriggerType,
@@ -5488,7 +5673,7 @@ pub fn Popover<Trigger, Content>(
     popover_trigger: PopoverTrigger<Trigger>,
     /// Configures the position of the Popover.
     #[prop(optional)]
-    preferred_pos: PopoverPosition,
+    preferred_pos: PopoverAnchor,
     /// Wether or not to render and position the popup for a connector arrow between the popover and trigger element.
     #[prop(default = true, optional)]
     show_arrow: bool,
@@ -5561,40 +5746,25 @@ where
             && popover_visible
         {
             debug_log!("recalculating style");
-            let (chosen_popover_position, abs_position) =
+            let popover_placement =
                 find_popover_abs_position(preferred_pos, &popover, &trigger, show_arrow);
-            if let Some(chosen_popover_position) = chosen_popover_position
-                && let Some(HorizontalOffset::Left(x)) = abs_position.horizontal_offset
-                && let Some(VerticalOffset::Top(y)) = abs_position.vertical_offset
-                && let Some(arrow) = arrow_ref.get()
+            if let Some(popover_placement) = popover_placement
+                && let HorizontalOffset::Left(x) = popover_placement.abs_hoffset
+                && let VerticalOffset::Top(y) = popover_placement.abs_voffset
             {
-                set_arrow_position(arrow, &popover, (x, y), chosen_popover_position);
-            }
+                let popover_width = popover_placement.width;
+                let popover_height = popover_placement.height;
+                if let Some(arrow) = arrow_ref.get() {
+                    set_arrow_position(arrow, &popover, (x, y), popover_placement.chosen_anchor);
+                }
 
-            debug_log!("Rel_pos: {abs_position:?}");
-            let popover_style = (*popover).style();
+                debug_log!("Rel_pos: {popover_placement:?}");
+                let popover_style = (*popover).style();
 
-            match abs_position.horizontal_offset {
-                Some(HorizontalOffset::Left(px)) => {
-                    set_style_property(&popover_style, "left", format!("{px}px"));
-                }
-                Some(HorizontalOffset::Right(px)) => {
-                    set_style_property(&popover_style, "right", format!("{px}px"));
-                }
-                _ => {
-                    warn!("No horizontal position provided for popover");
-                }
-            }
-            match abs_position.vertical_offset {
-                Some(VerticalOffset::Top(px)) => {
-                    set_style_property(&popover_style, "top", format!("{px}px"));
-                }
-                Some(VerticalOffset::Bot(px)) => {
-                    set_style_property(&popover_style, "bot", format!("{px}px"));
-                }
-                _ => {
-                    warn!("No vertical position provided for popover");
-                }
+                set_style_property(&popover_style, "left", format!("{x}px"));
+                set_style_property(&popover_style, "top", format!("{y}px"));
+                set_style_property(&popover_style, "width", format!("{popover_width}px"));
+                set_style_property(&popover_style, "height", format!("{popover_height}px"));
             }
         }
     });
@@ -5662,15 +5832,15 @@ where
             // Worked around via opacity-0 and z-index.
             <div
                 class=class_list![
-                    "absolute bg-white border shadow-sm rounded-lg",
-                    ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
+                    "absolute bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-sm rounded-lg",
+                    ("-z-[1000] invisible left-0 top-0", move || !popover_visible.get()),
                     ("z-[1000]", move || popover_visible.get())
                 ]
                 node_ref=popover_ref
                 on:mouseenter=on_mouse_enter
                 on:mouseleave=on_mouse_leave
             >
-                <div class="overflow-auto max-w-[40vw] max-h-[50vw] h-full w-full p-2">
+                <div class="overflow-auto max-w-[40vw] max-h-[50vh] h-full w-full p-2">
                     {content_children}
                 </div>
             </div>
@@ -5681,12 +5851,12 @@ where
                 <div class=class_list!(
                     // top-right-bordered transparent square
                     "absolute border-t border-r rotate-45 h-3 w-3 overflow-hidden",
-                    ("-z-[1000] opacity-0 left-0 top-0", move || !popover_visible.get()),
+                    ("-z-[1000] invisible left-0 top-0", move || !popover_visible.get()),
                     ("z-[1001]", move || popover_visible.get())) node_ref=arrow_ref>
 
                     <div
                         // A clipped white square such that it becomes a bg between top-left, top-right and bottom-right corners.
-                        class="relative w-5 h-3 -translate-y-1 rotate-45 bg-white"
+                        class="relative w-5 h-3 -translate-y-1 rotate-45 bg-white dark:bg-gray-900"
                     />
                 </div>
             </Show>
@@ -5710,7 +5880,7 @@ fn element_contains_pointer(popover_ref: &HtmlDivElement, e: MouseEvent) -> bool
         rect.y(),
         rect.y() + rect.height()
     );
-    
+
     rect_x_min < x && rect_x_max > x && rect_y_min < y && rect_y_max > y
 }
 
@@ -5768,7 +5938,7 @@ fn set_arrow_position(
     arrow_ref: HtmlDivElement,
     popover_ref: &web_sys::Element,
     popover_coords: (u32, u32),
-    position: PopoverPosition,
+    anchor: PopoverAnchor,
 ) {
     let (base_x, base_y) = popover_coords;
     let base_x = base_x as f64;
@@ -5782,51 +5952,51 @@ fn set_arrow_position(
     let popover_width = popover_rect.width();
     let horizontal_middle = popover_rect.width() / 2.0;
     let vertical_middle = popover_rect.height() / 2.0;
-    let (left, top, rotation) = match position {
-        PopoverPosition::Top => (
+    let (left, top, rotation) = match anchor {
+        PopoverAnchor::Top => (
             base_x + horizontal_middle - arrow_middle,
             base_y - arrow_middle + popover_height,
             "135deg",
         ),
-        PopoverPosition::Bottom => (
+        PopoverAnchor::Bottom => (
             base_x + horizontal_middle - arrow_middle,
             base_y - arrow_middle,
             "-45deg",
         ),
-        PopoverPosition::Left => (
+        PopoverAnchor::Left => (
             base_x + popover_width - arrow_middle,
             base_y + vertical_middle - arrow_middle,
             "45deg",
         ),
-        PopoverPosition::Right => (
+        PopoverAnchor::Right => (
             base_x - arrow_middle,
             base_y + vertical_middle - arrow_middle,
             "-135deg",
         ),
-        PopoverPosition::TopStart => (
+        PopoverAnchor::TopStart => (
             base_x + corner_offset,
             base_y - arrow_middle + popover_height,
             "135deg",
         ),
-        PopoverPosition::TopEnd => (
+        PopoverAnchor::TopEnd => (
             base_x + popover_width - corner_offset,
             base_y - arrow_middle + popover_height,
             "135deg",
         ),
-        PopoverPosition::LeftStart => (
+        PopoverAnchor::LeftStart => (
             base_x + popover_width - arrow_middle,
             base_y + corner_offset,
             "45deg",
         ),
-        PopoverPosition::LeftEnd => (
+        PopoverAnchor::LeftEnd => (
             base_x + popover_width - arrow_middle,
             base_y - corner_offset,
             "45deg",
         ),
-        PopoverPosition::RightStart => (base_x - arrow_middle, base_y + corner_offset, "-135deg"),
-        PopoverPosition::RightEnd => (base_x - arrow_middle, base_y - corner_offset, "-135deg"),
-        PopoverPosition::BottomStart => (base_x + corner_offset, base_y - arrow_middle, "-45deg"),
-        PopoverPosition::BottomEnd => (
+        PopoverAnchor::RightStart => (base_x - arrow_middle, base_y + corner_offset, "-135deg"),
+        PopoverAnchor::RightEnd => (base_x - arrow_middle, base_y - corner_offset, "-135deg"),
+        PopoverAnchor::BottomStart => (base_x + corner_offset, base_y - arrow_middle, "-45deg"),
+        PopoverAnchor::BottomEnd => (
             base_x + popover_width - corner_offset,
             base_y - arrow_middle,
             "-45deg",
@@ -5838,21 +6008,26 @@ fn set_arrow_position(
     set_style_property(&arrow_style, "transform", format!("rotate({rotation})"));
 }
 
+#[derive(Debug)]
+struct PopoverPlacement {
+    chosen_anchor: PopoverAnchor,
+    abs_hoffset: HorizontalOffset,
+    abs_voffset: VerticalOffset,
+    // Used for setting the popover width to the values that get_true_bb told us.
+    //   This works around the issue that the popovers seemingly lie about their width...
+    width: f64,
+    height: f64,
+}
+
 /// Finds an ideal collision-free area next to [trigger] to place [popover].
 /// returns the chosen position, and absolute coordinates [popover] needs to be placed at for this position.
 fn find_popover_abs_position(
-    preferred_position: PopoverPosition,
+    preferred_position: PopoverAnchor,
     popover: &web_sys::Element,
     trigger: &web_sys::Element,
     show_arrow: bool,
-) -> (Option<PopoverPosition>, RelativePosition) {
-    let fallback = (
-        None,
-        RelativePosition {
-            horizontal_offset: None,
-            vertical_offset: None,
-        },
-    );
+) -> Option<PopoverPlacement> {
+    let fallback = None;
     let popover_rect = get_true_bb(popover);
     let trigger_rect = get_true_bb(trigger);
 
@@ -5910,26 +6085,24 @@ fn find_popover_abs_position(
 
     // * Popovers should not be wider than the page_width.
     // * Assumes the trigger is not half-onscreen.
-    let possible_positions = POPOVER_POSITIONS
-        .iter()
-        .filter(|position| match position {
-            // Collision checks
-            PopoverPosition::TopStart => top_top_is_open && horizontal_start_is_open,
-            PopoverPosition::Top => top_top_is_open,
-            PopoverPosition::TopEnd => top_top_is_open && horizontal_end_is_open,
+    let possible_positions = POPOVER_POSITIONS.iter().filter(|position| match position {
+        // Collision checks
+        PopoverAnchor::TopStart => top_top_is_open && horizontal_start_is_open,
+        PopoverAnchor::Top => top_top_is_open,
+        PopoverAnchor::TopEnd => top_top_is_open && horizontal_end_is_open,
 
-            PopoverPosition::BottomStart => bot_bot_is_open && horizontal_start_is_open,
-            PopoverPosition::Bottom => bot_bot_is_open,
-            PopoverPosition::BottomEnd => bot_bot_is_open && horizontal_end_is_open,
+        PopoverAnchor::BottomStart => bot_bot_is_open && horizontal_start_is_open,
+        PopoverAnchor::Bottom => bot_bot_is_open,
+        PopoverAnchor::BottomEnd => bot_bot_is_open && horizontal_end_is_open,
 
-            PopoverPosition::LeftStart => left_left_is_open && vertical_start_is_open,
-            PopoverPosition::Left => left_left_is_open,
-            PopoverPosition::LeftEnd => left_left_is_open && vertical_end_is_open,
+        PopoverAnchor::LeftStart => left_left_is_open && vertical_start_is_open,
+        PopoverAnchor::Left => left_left_is_open,
+        PopoverAnchor::LeftEnd => left_left_is_open && vertical_end_is_open,
 
-            PopoverPosition::RightStart => right_right_is_open && vertical_start_is_open,
-            PopoverPosition::Right => right_right_is_open,
-            PopoverPosition::RightEnd => right_right_is_open && vertical_end_is_open,
-        });
+        PopoverAnchor::RightStart => right_right_is_open && vertical_start_is_open,
+        PopoverAnchor::Right => right_right_is_open,
+        PopoverAnchor::RightEnd => right_right_is_open && vertical_end_is_open,
+    });
 
     let mut best_position = None;
     for (i, position) in possible_positions.enumerate() {
@@ -5951,65 +6124,65 @@ fn find_popover_abs_position(
     if let Some(best_position) = best_position {
         // Map to absolute position
         let (horizontal_offset, vertical_offset) = match best_position {
-            PopoverPosition::TopStart => (
+            PopoverAnchor::TopStart => (
                 trigger_rect.left() as u32,
                 (trigger_rect.top() - popover_height - arrow_bump) as u32,
             ),
-            PopoverPosition::Top => (
+            PopoverAnchor::Top => (
                 (trigger_rect.left() + (trigger_width - popover_width) / 2.0) as u32,
                 (trigger_rect.top() - popover_height - arrow_bump) as u32,
             ),
-            PopoverPosition::TopEnd => (
+            PopoverAnchor::TopEnd => (
                 (trigger_rect.right() - popover_width) as u32,
                 (trigger_rect.top() - popover_height - arrow_bump) as u32,
             ),
 
-            PopoverPosition::BottomStart => (
+            PopoverAnchor::BottomStart => (
                 trigger_rect.left() as u32,
                 (trigger_rect.bottom() + arrow_bump) as u32,
             ),
-            PopoverPosition::Bottom => (
+            PopoverAnchor::Bottom => (
                 (trigger_rect.left() + (trigger_width - popover_width) / 2.0) as u32,
                 (trigger_rect.bottom() + arrow_bump) as u32,
             ),
-            PopoverPosition::BottomEnd => (
+            PopoverAnchor::BottomEnd => (
                 (trigger_rect.right() - popover_width) as u32,
                 (trigger_rect.bottom() + arrow_bump) as u32,
             ),
 
-            PopoverPosition::LeftStart => (
+            PopoverAnchor::LeftStart => (
                 (trigger_rect.left() - popover_width - arrow_bump) as u32,
                 trigger_y as u32,
             ),
-            PopoverPosition::Left => (
+            PopoverAnchor::Left => (
                 (trigger_rect.left() - popover_width - arrow_bump) as u32,
                 (trigger_y + (trigger_height - popover_height) / 2.0) as u32,
             ),
-            PopoverPosition::LeftEnd => (
+            PopoverAnchor::LeftEnd => (
                 (trigger_rect.left() - popover_width - arrow_bump) as u32,
                 (trigger_rect.bottom() - popover_height) as u32,
             ),
 
-            PopoverPosition::RightStart => {
+            PopoverAnchor::RightStart => {
                 ((trigger_rect.right() + arrow_bump) as u32, trigger_y as u32)
             }
-            PopoverPosition::Right => (
+            PopoverAnchor::Right => (
                 (trigger_rect.right() + arrow_bump) as u32,
                 (trigger_y + (trigger_height - popover_height) / 2.0) as u32,
             ),
-            PopoverPosition::RightEnd => (
+            PopoverAnchor::RightEnd => (
                 (trigger_rect.right() + arrow_bump) as u32,
                 (trigger_rect.bottom() - popover_height) as u32,
             ),
         };
 
-        return (
-            Some(*best_position),
-            RelativePosition {
-                horizontal_offset: Some(HorizontalOffset::Left(horizontal_offset)),
-                vertical_offset: Some(VerticalOffset::Top(vertical_offset)),
-            },
-        );
+        return Some(PopoverPlacement {
+            chosen_anchor: *best_position,
+            abs_hoffset: HorizontalOffset::Left(horizontal_offset),
+            abs_voffset: VerticalOffset::Top(vertical_offset),
+            width: popover_width,
+            height: popover_height,
+        });
     };
 
     fallback
@@ -6067,7 +6240,7 @@ impl Copy for PopoverTriggerType {}
 
 /// Keep in sync with POPOVER_POSITIONS
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum PopoverPosition {
+pub enum PopoverAnchor {
     #[default]
     Top,
     Bottom,
@@ -6082,38 +6255,38 @@ pub enum PopoverPosition {
     BottomStart,
     BottomEnd,
 }
-impl PopoverPosition {
-    fn mirrored(&self) -> PopoverPosition {
+impl PopoverAnchor {
+    fn mirrored(&self) -> PopoverAnchor {
         match self {
-            PopoverPosition::Top => Self::Bottom,
-            PopoverPosition::Bottom => Self::Bottom,
-            PopoverPosition::Left => Self::Right,
-            PopoverPosition::Right => Self::Left,
-            PopoverPosition::TopStart => Self::BottomStart,
-            PopoverPosition::TopEnd => Self::BottomEnd,
-            PopoverPosition::LeftStart => Self::RightStart,
-            PopoverPosition::LeftEnd => Self::RightEnd,
-            PopoverPosition::RightStart => Self::LeftStart,
-            PopoverPosition::RightEnd => Self::LeftEnd,
-            PopoverPosition::BottomStart => Self::TopStart,
-            PopoverPosition::BottomEnd => Self::TopEnd,
+            PopoverAnchor::Top => Self::Bottom,
+            PopoverAnchor::Bottom => Self::Bottom,
+            PopoverAnchor::Left => Self::Right,
+            PopoverAnchor::Right => Self::Left,
+            PopoverAnchor::TopStart => Self::BottomStart,
+            PopoverAnchor::TopEnd => Self::BottomEnd,
+            PopoverAnchor::LeftStart => Self::RightStart,
+            PopoverAnchor::LeftEnd => Self::RightEnd,
+            PopoverAnchor::RightStart => Self::LeftStart,
+            PopoverAnchor::RightEnd => Self::LeftEnd,
+            PopoverAnchor::BottomStart => Self::TopStart,
+            PopoverAnchor::BottomEnd => Self::TopEnd,
         }
     }
 }
 
-const POPOVER_POSITIONS: &[PopoverPosition] = &[
-    PopoverPosition::Top,
-    PopoverPosition::Bottom,
-    PopoverPosition::Left,
-    PopoverPosition::Right,
-    PopoverPosition::TopStart,
-    PopoverPosition::TopEnd,
-    PopoverPosition::LeftStart,
-    PopoverPosition::LeftEnd,
-    PopoverPosition::RightStart,
-    PopoverPosition::RightEnd,
-    PopoverPosition::BottomStart,
-    PopoverPosition::BottomEnd,
+const POPOVER_POSITIONS: &[PopoverAnchor] = &[
+    PopoverAnchor::Top,
+    PopoverAnchor::Bottom,
+    PopoverAnchor::Left,
+    PopoverAnchor::Right,
+    PopoverAnchor::TopStart,
+    PopoverAnchor::TopEnd,
+    PopoverAnchor::LeftStart,
+    PopoverAnchor::LeftEnd,
+    PopoverAnchor::RightStart,
+    PopoverAnchor::RightEnd,
+    PopoverAnchor::BottomStart,
+    PopoverAnchor::BottomEnd,
 ];
 
 #[slot]
@@ -6250,7 +6423,7 @@ use leptos::view;
 use leptos::{IntoView, component};
 use leptos_router::components::ToHref;
 
-const SIDEBAR_CLASSES: &str = "fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700";
+const SIDEBAR_CLASSES: &str = "fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 lg:translate-x-0 dark:bg-gray-800 dark:border-gray-700";
 
 #[component]
 pub fn SideBarLink<H>(
@@ -6265,7 +6438,7 @@ where
         <Link href {..}  class=class_list!(OA_TRANSPARENT_BUTTON_CLASSES, "w-full rounded-lg aria-current-page:bg-oa-gray dark:aria-current-page:bg-gray-700")>
             {if let Some(icon) = icon.get() {
                 view! { <Icon icon=icon /> }.into_any()
-            } else { 
+            } else {
                 ().into_any()
             }}
            {children()}
@@ -6276,8 +6449,9 @@ where
 #[component]
 fn OALogoLink() -> impl IntoView {
     view! {
-        <a href="https://www.openanalytics.eu/" class="flex ms-2 md:me-24">
-            <img src="https://www.openanalytics.eu/img/logo.png" class="h-8 me-3" alt="OA Logo"/>
+        <a href="https://www.openanalytics.eu/" class="flex items-center ms-2 md:me-24">
+            <img src="/logo.svg" class="h-8 me-3" alt="OA Logo"/>
+            Leptos Components
         </a>
     }
 }
@@ -6319,7 +6493,7 @@ pub fn SideNavbar(
                     <div class="flex items-center justify-start rtl:justify-end">
                         <ControlButton icon=icon::HamburgerIcon() on_click=move |_| {
                                 visible.update(|is_visible| *is_visible = !*is_visible);
-                            } class="sm:hidden" {..}
+                            } class="lg:hidden" {..}
                             data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
                         />
                         {(logo.children)()}
@@ -6347,12 +6521,12 @@ pub fn SideNavbar(
             </div>
         </aside>
         <div class=class_list![
-                "sm:hidden fixed top-0 left-0 w-full h-full bg-gray-900/50 z-10",
+                "lg:hidden fixed top-0 left-0 w-full h-full bg-gray-900/50 z-10",
                 ("hidden", move || !visible.get())
             ]
             on:click=move |_| visible.set(false)
         />
-        <div class="p-4 mt-16 sm:ml-64 min-h-full">
+        <div class="p-4 mt-16 lg:ml-64 min-h-full">
             {children().into_any()}
         </div>
     }
@@ -6994,9 +7168,9 @@ pub fn Calendar(
                     </ButtonGroup>
                 </span>
             </div>
-            <div class="flex grid border border-oa-gray-mid bg-oa-gray-mid gap-px grid-cols-5 grid-rows-[1lh_minmax(0,_1fr)] rounded-lg shadow-sm overflow-auto">
+            <div class="flex grid border border-oa-gray-mid dark:border-gray-700 bg-oa-gray-mid dark:bg-gray-600 gap-px grid-cols-5 grid-rows-[1lh_minmax(0,_1fr)] rounded-lg shadow-sm overflow-auto">
                 <For each=move || show_days.get().iter() key=|idx| *idx let:idx>
-                    <div class="text-right bg-oa-gray font-bold h-fit">
+                    <div class="text-right bg-oa-gray dark:bg-gray-700 font-bold h-fit">
                         <span class="mr-2">
                         {idx.to_string()}
                         </span>
@@ -7040,13 +7214,13 @@ fn CalendarItem(date: CalendarDate, children: Option<CalendarChildrenFn>) -> imp
     ];
     if date.is_other_month() {
         view! {
-            <div class="bg-gray-100 w-full h-full" />
+            <div class="bg-gray-100 dark:bg-[#030712] w-full h-full" />
         }
         .into_any()
     } else {
         view! {
             <div
-                class=class_list!("flex flex-col pointer hover:bg-oa-gray bg-white overflow-auto h-[6lh]", col_class[col_idx])
+                class=class_list!("flex flex-col pointer hover:bg-oa-gray bg-white hover:dark:bg-gray-800 dark:bg-gray-900 overflow-auto h-[6lh]", col_class[col_idx])
                 class=("text-oa-gray", date.is_other_month())
             >
                 <div class="self-end">
@@ -7097,12 +7271,15 @@ where
         })))
     }
 }
+use leptos::logging::debug_log;
 use leptos::prelude::BindAttribute;
 use leptos::prelude::Children;
 use leptos::prelude::ClassAttribute;
+use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
+use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::use_context;
 use leptos::{
@@ -7118,14 +7295,14 @@ use crate::form_input::PostfixLabelStyle;
 
 const CHECKBOX_CLASS: &str = "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
 
-/// A simple checkmark-box with optional label on the right. 
+/// A simple checkmark-box with optional label on the right.
 #[component]
 pub fn Checkbox(
     #[prop(optional, into)] id: MaybeProp<String>,
     #[prop(optional, into)] name: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeProp<String>,
     /// Checked state
-    #[prop(optional, into)]
+    #[prop(optional)]
     checked: RwSignal<bool>,
     /// Required to be checked on for form submission.
     #[prop(optional)]
@@ -7133,10 +7310,12 @@ pub fn Checkbox(
     /// Whether or not this element is unreachable by tabbing.
     #[prop(optional, into)]
     disable_tab: bool,
+    /// Stops label click handling
+    #[prop(optional)]
+    prevent_label: bool,
     /// Label goes here.
     children: Children,
 ) -> impl IntoView {
-
     // Form context
     let form_context = use_context::<FormInputContext<String>>();
     let form_required = Signal::from(
@@ -7146,9 +7325,23 @@ pub fn Checkbox(
             .unwrap_or_default(),
     );
     let required = use_or(required, form_required);
-    
+    Effect::watch(
+        move || checked.get(),
+        |new, _, _| {
+            debug_log!("Checkbox checked state changed to {new}");
+        },
+        false,
+    );
+
     view! {
-        <label class=class_list!["relative inline-flex items-center cursor-pointer", class]>
+        <label class=class_list!["relative inline-flex items-center cursor-pointer", class] 
+            on:click={
+                move |ev| {
+                    if prevent_label {
+                        ev.prevent_default();
+                    }
+                }
+            }>
             <input
                 id=id.get()
                 name=name.get()
@@ -7163,6 +7356,7 @@ pub fn Checkbox(
         </label>
     }
 }
+use chrono::Days;
 use leptos::logging::debug_log;
 use leptos::prelude::GlobalAttributes;
 // Do not remove until leptos is upgraded above 0.8.14
@@ -7224,7 +7418,8 @@ const YEAR_IN_MONTHS: Months = Months::new(12);
 
 /// Elements refer to the date-picker elements like individual days, months, years.
 const SELECTED_ELEM_CLASSES: &str = "hover:!bg-oa-blue-lighter bg-oa-blue text-white ";
-const ELEM_CLASSES: &str = "hover:bg-oa-gray block flex-1 leading-9 border-0 cursor-pointer text-center text-body font-medium text-sme";
+const SELECTABLE_ELEM_CLASSES: &str = "hover:bg-oa-gray hover:dark:bg-gray-600  block flex-1 leading-9 border-0 cursor-pointer text-center text-body font-medium text-sme";
+const DISABLED_ELEM_CLASSES: &str = "opacity-40 block flex-1 leading-9 border-0 text-center text-body font-medium text-sme cursor-not-allowed";
 
 const MONTHS: [Month; 12] = [
     Month::January,
@@ -7255,6 +7450,73 @@ fn naive_date_with_decenium(date: &NaiveDate, decenium: i32) -> NaiveDate {
 fn decenium_from_naive_date(date: &NaiveDate) -> i32 {
     let remainder = date.year() % 10;
     date.year().saturating_sub(remainder)
+}
+
+/// Returns the [menu]-granular date-range containing [date].
+///   e.g.
+///   * 2022-11-13, DatePickerMenu::Day -> (2022-11-13, 2022-11-13)
+///   * 2022-11-13, DatePickerMenu::Month -> (2022-11-1, 2022-11-30)
+///   * 2022-11-13, DatePickerMenu::Year -> (2022-1-1, 2022-12-31)
+///   * 2022-11-13, DatePickerMenu::Decenium -> (2020-1-1, 2029-12-31)
+fn menu_range(date: NaiveDate, menu: DatePickerMenu) -> (NaiveDate, NaiveDate) {
+    match menu {
+        DatePickerMenu::DayPicker => (date, date),
+        DatePickerMenu::MonthPicker => {
+            let start = date.with_day(1).unwrap_or(NaiveDate::MIN);
+            let end = date
+                .with_day(1)
+                .unwrap_or(NaiveDate::MIN)
+                .checked_add_months(Months::new(1))
+                .unwrap_or(NaiveDate::MAX)
+                .checked_sub_days(Days::new(1))
+                .unwrap_or(NaiveDate::MAX);
+            (start, end)
+        }
+        DatePickerMenu::YearPicker => {
+            let start = date
+                .with_day(1)
+                .unwrap_or(NaiveDate::MIN)
+                .with_month(1)
+                .unwrap_or(NaiveDate::MIN);
+            let end = date
+                .with_day(1)
+                .unwrap_or(NaiveDate::MIN)
+                .with_month(12)
+                .unwrap_or(NaiveDate::MAX)
+                .checked_add_months(Months::new(1))
+                .unwrap_or(NaiveDate::MAX)
+                .checked_sub_days(Days::new(1))
+                .unwrap_or(NaiveDate::MAX);
+            (start, end)
+        }
+        DatePickerMenu::DeceniaPicker => {
+            let base_year = decenium_from_naive_date(&date);
+            let start = NaiveDate::from_ymd_opt(base_year, 1, 1).unwrap_or(NaiveDate::MIN);
+            let end = NaiveDate::from_ymd_opt(base_year + 9, 12, 31).unwrap_or(NaiveDate::MAX);
+            (start, end)
+        }
+    }
+}
+
+/// Whether menu-granular-[date]-range intersects the (min_date..=max_date) range.
+fn menu_item_intersects_range(
+    date: NaiveDate,
+    menu: DatePickerMenu,
+    min_date: MaybeProp<NaiveDate>,
+    max_date: MaybeProp<NaiveDate>,
+) -> bool {
+    let (menu_min, menu_max) = menu_range(date, menu);
+    if let Some(min_date) = min_date.get() {
+        if let Some(max_date) = max_date.get() {
+            return menu_max >= min_date && menu_min <= max_date;
+        } else {
+            return menu_max > min_date;
+        }
+    } else if let Some(max_date) = max_date.get() {
+        return menu_min < max_date;
+    } else {
+        return true;
+    }
 }
 
 /// Stores visibility and menu state information for a date-picker
@@ -7330,6 +7592,8 @@ fn DayPickerMenu(
     #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     dates: Signal<Vec<CalendarDate>>,
     value: RwSignal<Option<NaiveDate>>,
+    min_date: MaybeProp<NaiveDate>,
+    max_date: MaybeProp<NaiveDate>,
 ) -> impl IntoView {
     view! {
         <div class="days">
@@ -7356,18 +7620,19 @@ fn DayPickerMenu(
                     .get()
                     .into_iter()
                     .map(|date| {
-                        // let is_selected = move || { Some(*date) == value.get() };
+                        let intersects = menu_item_intersects_range(*date, DatePickerMenu::DayPicker, min_date, max_date);
+                        let classes = class_list!(
+                            (SELECTABLE_ELEM_CLASSES, intersects),
+                            (DISABLED_ELEM_CLASSES, !intersects),
+                            highlighter.get().map(|it| it(DateMenuOption::Day(date))).unwrap_or_default()
+                        );
+
                         view! {
-                            <div
-                                class=class_list!(
-                                    ELEM_CLASSES,
-                                    highlighter.get().map(|it| it(DateMenuOption::Day(date))).unwrap_or_default()
-                                )
-
-                                // class:border-transparent=move || !is_selected()
-                                on:click=move |_| value.set(Some(*date))
-                            >
-
+                            <div class=classes on:click=move |_| {
+                                if intersects {
+                                    value.set(Some(*date))
+                                }
+                            }>
                                 {date.day()}
                             </div>
                         }
@@ -7426,6 +7691,8 @@ fn MonthPickerMenu<MonthByDateFn>(
     #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     current_date: Memo<NaiveDate>,
     picker_state: RwSignal<DatePickerState>,
+    min_date: MaybeProp<NaiveDate>,
+    max_date: MaybeProp<NaiveDate>,
 ) -> impl IntoView
 where
     MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
@@ -7437,23 +7704,28 @@ where
                 MONTHS
                     .iter()
                     .map(|month| {
+                        let date = current_date.get()
+                            .with_month(month.number_from_month())
+                            .unwrap_or(NaiveDate::MIN);
+                        let intersects = menu_item_intersects_range(date, DatePickerMenu::MonthPicker, min_date, max_date);
+                        let classes = class_list!(
+                            (SELECTABLE_ELEM_CLASSES, intersects),
+                            (DISABLED_ELEM_CLASSES, !intersects),
+                            highlighter.get()
+                                .map(|it| it(DateMenuOption::Month(month.number_from_month())))
+                                .unwrap_or_default()
+                        );
+
                         view! {
                             <div
-                                class=class_list!(
-                                    highlighter.get()
-                                        .map(|it| it(DateMenuOption::Month(month.number_from_month())))
-                                        .unwrap_or_default(),
-                                    ELEM_CLASSES
-                                )
+                                class=classes
                                 on:click={
                                     let month_by_date = month_by_date.clone();
                                     move |_| {
-                                        month_by_date(
-                                            &current_date.get()
-                                                .with_month(month.number_from_month())
-                                                .unwrap_or(NaiveDate::MIN)
-                                        );
-                                        picker_state.update(|state| state.set_menu(DatePickerMenu::DayPicker))
+                                        if intersects {
+                                            month_by_date(&date);
+                                            picker_state.update(|state| state.set_menu(DatePickerMenu::DayPicker))
+                                        }
                                     }
                                 }
                             >
@@ -7521,6 +7793,8 @@ fn YearPickerMenu<MonthByDateFn>(
     #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     current_date: Memo<NaiveDate>,
     picker_state: RwSignal<DatePickerState>,
+    min_date: MaybeProp<NaiveDate>,
+    max_date: MaybeProp<NaiveDate>,
 ) -> impl IntoView
 where
     MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
@@ -7537,23 +7811,31 @@ where
             {move || {
                 relevant_years()
                     .map(|year| {
+                        let date = current_date.get()
+                            .with_year(year)
+                            .unwrap_or(NaiveDate::MIN);
+                        let intersects = menu_item_intersects_range(date, DatePickerMenu::YearPicker, min_date, max_date);
+                        let classes = class_list!(
+                            (SELECTABLE_ELEM_CLASSES, intersects),
+                            (DISABLED_ELEM_CLASSES, !intersects),
+                            highlighter.get()
+                                .map(|it| it(DateMenuOption::Year(year)))
+                                .unwrap_or_default()
+                        );
                         view! {
                             <div
-                                class=class_list!(
-                                    highlighter.get()
-                                        .map(|it| it(DateMenuOption::Year(year)))
-                                        .unwrap_or_default(),
-                                    ELEM_CLASSES
-                                )
+                                class=classes
                                 on:click={
                                     let month_by_date = month_by_date.clone();
                                     move |_| {
-                                        month_by_date(
-                                            &current_date.get()
-                                                .with_year(year)
-                                                .unwrap_or(NaiveDate::MIN)
-                                        );
-                                        picker_state.update(|state| state.set_menu(DatePickerMenu::MonthPicker))
+                                        if intersects {
+                                            month_by_date(
+                                                &current_date.get()
+                                                    .with_year(year)
+                                                    .unwrap_or(NaiveDate::MIN)
+                                            );
+                                            picker_state.update(|state| state.set_menu(DatePickerMenu::MonthPicker))
+                                        }
                                     }
                                 }
                             >
@@ -7618,10 +7900,13 @@ fn DeceniumPickerMenu<MonthByDateFn>(
     #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     current_date: Memo<NaiveDate>,
     picker_state: RwSignal<DatePickerState>,
+    min_date: MaybeProp<NaiveDate>,
+    max_date: MaybeProp<NaiveDate>,
 ) -> impl IntoView
 where
     MonthByDateFn: Fn(&NaiveDate) + Clone + Send + Sync + 'static,
 {
+    // Range of the years within relevant decenia.
     let relevant_decenia = move || {
         let current_year = current_date.get().year();
         let current_millenium = current_year - current_year % 100;
@@ -7635,21 +7920,30 @@ where
                 relevant_decenia()
                     .step_by(10)
                     .map(|decenium| {
+                        let date = current_date.get()
+                            .with_year(decenium)
+                            .unwrap_or(NaiveDate::MIN);
+                        let intersects = menu_item_intersects_range(date, DatePickerMenu::DeceniaPicker, min_date, max_date);
+                        let classes = class_list!(
+                            (SELECTABLE_ELEM_CLASSES, intersects),
+                            (DISABLED_ELEM_CLASSES, !intersects),
+                            highlighter.get()
+                                .map(|it| it(DateMenuOption::Decenium(decenium)))
+                                .unwrap_or_default()
+                        );
+
                         view! {
                             <div
-                                class=class_list!(
-                                    highlighter.get()
-                                        .map(|it| it(DateMenuOption::Decenium(decenium)))
-                                        .unwrap_or_default(),
-                                    ELEM_CLASSES
-                                )
+                                class=classes
                                 on:click={
                                     let month_by_date = month_by_date.clone();
                                     move |_| {
-                                        month_by_date(
-                                            &naive_date_with_decenium(&current_date.get(), decenium)
-                                        );
-                                        picker_state.update(|state| state.set_menu(DatePickerMenu::YearPicker))
+                                        if intersects {
+                                            month_by_date(
+                                                &naive_date_with_decenium(&current_date.get(), decenium)
+                                            );
+                                            picker_state.update(|state| state.set_menu(DatePickerMenu::YearPicker))
+                                        }
                                     }
                                 }
                             >
@@ -7688,19 +7982,19 @@ impl DateMenuOption {
     /// # Examples
     ///
     /// ```
-    /// #use std::cmp::Ordering;
-    /// #use chrono::NaiveDate;
-    /// #use leptos_components::date_picker::DateMenuOption;
+    /// # use std::cmp::Ordering;
+    /// # use chrono::NaiveDate;
+    /// # use leptos_components::date_picker::DateMenuOption;
     ///
-    /// let date = NaiveDate::from_str("2025-11-01").unwrap();
+    /// let date = NaiveDate::from_ymd_opt(2025, 11, 01).unwrap();
     ///
     /// let month_option = DateMenuOption::Month(10);
     /// let year_option = DateMenuOption::Year(2025);
     /// let decenium_option = DateMenuOption::Decenium(2030);
     ///
     /// assert_eq!(month_option.compare_against(date), Ordering::Less);
-    /// assert_eq!(year_option.cmp(date), Ordering::Equal);
-    /// assert_eq!(decenium_option.cmp(date), Ordering::Greater);
+    /// assert_eq!(year_option.compare_against(date), Ordering::Equal);
+    /// assert_eq!(decenium_option.compare_against(date), Ordering::Greater);
     /// ```
     pub fn compare_against(&self, date: NaiveDate) -> Ordering {
         match self {
@@ -7738,11 +8032,17 @@ pub fn DatePicker(
     #[prop(optional, into)] name: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeProp<String>,
     #[prop(default = "yyyy-mm-dd".into(), into)] placeholder: MaybeProp<String>,
+    /// Asserts that min_date <= value
+    #[prop(optional, into)]
+    min_date: MaybeProp<NaiveDate>,
+    /// Asserts that max_date >= value
+    #[prop(optional, into)]
+    max_date: MaybeProp<NaiveDate>,
 
     #[prop(into)] value: RwSignal<Option<NaiveDate>>,
-    #[prop(default = day_highlighter(value).into(), into)] highlighter: MaybeProp<
-        ArcOneCallback<DateMenuOption, String>,
-    >,
+    /// A function which maps a DayMenuOption -> String (css class) to style special days on the date-picker.
+    #[prop(default = day_highlighter(value).into(), into)]
+    highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
     #[prop(optional)] required: bool,
     #[prop(optional, into)] label: MaybeProp<String>,
 ) -> impl IntoView {
@@ -7751,11 +8051,13 @@ pub fn DatePicker(
     let date_picker_id = id;
 
     // Input parser
-    let parser = ArcOneCallback::new(|to_parse: String| {
+    let parser = ArcOneCallback::new(move |to_parse: String| {
         if to_parse.is_empty() {
             return Ok(None);
         }
-        NaiveDate::from_str(to_parse.as_str())
+
+        // Parse date
+        let date = NaiveDate::from_str(to_parse.as_str())
             .map(Option::Some)
             .map_err(|s| {
                 match s.kind() {
@@ -7769,7 +8071,23 @@ pub fn DatePicker(
                     ParseErrorKind::BadFormat => "try to format as: yyyy-mm-dd".to_string(),
                     _ => "Unknown error, try to format as: yyyy-mm-dd".to_string(),
                 }
-            })
+            })?;
+
+        // Min max checks
+        if let Some(date) = date {
+            if let Some(min_date) = min_date.get() {
+                if min_date > date {
+                    return Err(format!("Enter a date >= {min_date}"));
+                }
+            }
+            if let Some(max_date) = max_date.get() {
+                if max_date < date {
+                    return Err(format!("Enter a date <= {max_date}"));
+                }
+            }
+        };
+
+        Ok(date)
     });
     // Input formatter
     let format = BoxOneCallback::new(|date: Option<NaiveDate>| {
@@ -7829,22 +8147,28 @@ pub fn DatePicker(
         let month_by_date = month_by_date.clone();
         move || {
             match picker_state.get().menu {
-            DatePickerMenu::DayPicker => view! { <DayPickerMenu weekdays dates value highlighter /> }.into_any(),
-            DatePickerMenu::MonthPicker => view! {
-                <MonthPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state />
+                DatePickerMenu::DayPicker => view! {
+                    <DayPickerMenu weekdays dates value highlighter max_date min_date />
+                }.into_any(),
+                DatePickerMenu::MonthPicker => view! {
+                    <MonthPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
+                    max_date min_date
+                    />
+                }
+                .into_any(),
+                DatePickerMenu::YearPicker => view! {
+                    <YearPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
+                    max_date min_date
+                    />
+                }
+                .into_any(),
+                DatePickerMenu::DeceniaPicker => view! {
+                    <DeceniumPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
+                    max_date min_date
+                    />
+                }
+                .into_any(),
             }
-            .into_any(),
-            DatePickerMenu::YearPicker => view! {
-                <YearPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
-                />
-            }
-            .into_any(),
-            DatePickerMenu::DeceniaPicker => view! {
-                <DeceniumPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
-                />
-            }
-            .into_any(),
-        }
         }
     };
 
@@ -7926,9 +8250,9 @@ pub fn DatePicker(
             // Picker-Dropdown
             <div id=id class=class_list!(
                 ("hidden", move || !picker_state.get().visible),
-                "absolute bg-white z-50 ml-2 mt-px active block"
+                "absolute bg-white dark:bg-gray-800 z-50 ml-2 mt-px active block"
             )>
-                <div class="inline-block rounded-b-lg border border-oa-gray p-4">
+                <div class="inline-block rounded-b-lg border border-oa-gray dark:border-gray-700 p-4">
 
                     <div class="datepicker-header">
                         <div class="flex justify-between mb-2">
@@ -7944,6 +8268,128 @@ pub fn DatePicker(
                 </div>
             </div>
         </div>
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::NaiveDate;
+
+    #[test]
+    fn test_decenium_from_naive_date() {
+        assert_eq!(
+            decenium_from_naive_date(&NaiveDate::from_ymd_opt(2023, 1, 1).unwrap()),
+            2020
+        );
+        assert_eq!(
+            decenium_from_naive_date(&NaiveDate::from_ymd_opt(2020, 1, 1).unwrap()),
+            2020
+        );
+        assert_eq!(
+            decenium_from_naive_date(&NaiveDate::from_ymd_opt(2029, 12, 31).unwrap()),
+            2020
+        );
+        assert_eq!(
+            decenium_from_naive_date(&NaiveDate::from_ymd_opt(2030, 1, 1).unwrap()),
+            2030
+        );
+    }
+
+    #[test]
+    fn test_naive_date_with_decenium() {
+        assert_eq!(
+            naive_date_with_decenium(&NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(), 2020),
+            NaiveDate::from_ymd_opt(2023, 1, 1).unwrap()
+        );
+        assert_eq!(
+            naive_date_with_decenium(&NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(), 2010),
+            NaiveDate::from_ymd_opt(2013, 1, 1).unwrap()
+        );
+        assert_eq!(
+            naive_date_with_decenium(&NaiveDate::from_ymd_opt(2015, 6, 15).unwrap(), 2030),
+            NaiveDate::from_ymd_opt(2035, 6, 15).unwrap()
+        );
+    }
+
+    #[test]
+    fn test_menu_range() {
+        let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
+        assert_eq!(menu_range(date, DatePickerMenu::DayPicker), (date, date));
+
+        let date = NaiveDate::from_ymd_opt(2023, 5, 15).unwrap();
+        assert_eq!(
+            menu_range(date, DatePickerMenu::MonthPicker),
+            (
+                NaiveDate::from_ymd_opt(2023, 5, 1).unwrap(),
+                NaiveDate::from_ymd_opt(2023, 5, 31).unwrap()
+            )
+        );
+
+        let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
+        assert_eq!(
+            menu_range(date, DatePickerMenu::YearPicker),
+            (
+                NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(),
+                NaiveDate::from_ymd_opt(2023, 12, 31).unwrap()
+            )
+        );
+
+        let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
+        assert_eq!(
+            menu_range(date, DatePickerMenu::DeceniaPicker),
+            (
+                NaiveDate::from_ymd_opt(2020, 1, 1).unwrap(),
+                NaiveDate::from_ymd_opt(2029, 12, 31).unwrap()
+            )
+        );
+    }
+
+    #[test]
+    fn test_menu_item_intersects_range() {
+        let min_date = NaiveDate::from_ymd_opt(2023, 5, 1).unwrap();
+        let max_date = NaiveDate::from_ymd_opt(2023, 5, 31).unwrap();
+        let menu = DatePickerMenu::MonthPicker;
+
+        // Date inside range
+        assert!(menu_item_intersects_range(
+            NaiveDate::from_ymd_opt(2023, 5, 15).unwrap(),
+            menu,
+            min_date.into(),
+            max_date.into()
+        ));
+
+        // At start of range
+        assert!(menu_item_intersects_range(
+            min_date,
+            menu,
+            min_date.into(),
+            max_date.into()
+        ));
+
+        // At end of range
+        assert!(menu_item_intersects_range(
+            max_date,
+            menu,
+            min_date.into(),
+            max_date.into()
+        ));
+
+        // Before range
+        assert!(!menu_item_intersects_range(
+            NaiveDate::from_ymd_opt(2023, 4, 30).unwrap(),
+            menu,
+            min_date.into(),
+            max_date.into()
+        ));
+
+        // After range
+        assert!(!menu_item_intersects_range(
+            NaiveDate::from_ymd_opt(2023, 6, 1).unwrap(),
+            menu,
+            min_date.into(),
+            max_date.into()
+        ));
     }
 }
 use std::cmp::Ordering;
@@ -7978,7 +8424,12 @@ pub fn DateRangePicker(
     /// Picked end date of the date-range
     #[prop(default = RwSignal::new(None), into)]
     end_date: RwSignal<Option<NaiveDate>>,
-
+    /// Asserts that min_date <= value
+    #[prop(optional, into)]
+    min_date: MaybeProp<NaiveDate>,
+    /// Asserts that max_date >= value
+    #[prop(optional, into)]
+    max_date: MaybeProp<NaiveDate>,
     /// Maps dates to tailwind classes to style the dates.
     /// Can be used to highlight specific days, e.g. festive days and weekends.
     #[prop(optional, into)]
@@ -8058,9 +8509,11 @@ pub fn DateRangePicker(
     let name_end = MaybeProp::derive(move || name.get().map(|name| format!("{name}_end")));
     view! {
         <div class=class_list!["inline-flex", class]>
-            <DatePicker placeholder id=id_left name=name_start value=start_date highlighter=combined_highlighter.clone() required />
+            <DatePicker placeholder id=id_left name=name_start value=start_date min_date max_date
+                highlighter=combined_highlighter.clone() required />
             <span class="mx-2 content-center">"Until"</span>
-            <DatePicker placeholder id=id_right name=name_end value=end_date highlighter=combined_highlighter required />
+            <DatePicker placeholder id=id_right name=name_end value=end_date min_date max_date
+                highlighter=combined_highlighter required />
         </div>
     }
 }

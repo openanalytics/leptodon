@@ -347,7 +347,6 @@ name = "codegen"
 version = "0.1.0"
 dependencies = [
  "leptos-components",
- "syn",
 ]
 
 [[package]]
