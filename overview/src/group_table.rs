@@ -79,6 +79,7 @@ pub fn GroupedTableExample() -> impl IntoView {
         <table>
             {move || {
                 let group_on = group_on.get();
+                debug_log!("Running group calc on {group_on:?}");
                 let rows = LocalFlowers::new(group_on);
                 view! {
                     <TableContent rows

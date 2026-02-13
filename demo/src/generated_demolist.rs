@@ -41,6 +41,14 @@ pub fn page_infos() -> Vec<PageInfo> {
             name: "Calendar"
         },
         PageInfo {
+            location: "/demo/textarea",
+            name: "Text Area"
+        },
+        PageInfo {
+            location: "/demo/tag_picker",
+            name: "Tag Picker"
+        },
+        PageInfo {
             location: "/demo/dropdown",
             name: "Dropdown"
         },
@@ -101,6 +109,10 @@ pub fn page_infos() -> Vec<PageInfo> {
             name: "Spinner"
         },
         PageInfo {
+            location: "/demo/table",
+            name: "Table"
+        },
+        PageInfo {
             location: "/demo/radio",
             name: "Radio"
         }
@@ -118,6 +130,8 @@ pub fn DemoRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
             <Route path=path!("/divider") view=crate::demos::divider::DividerDemoPage/>
             <Route path=path!("/toggle") view=crate::demos::toggle::ToggleDemoPage/>
             <Route path=path!("/calendar") view=crate::demos::calendar::CalendarDemoPage/>
+            <Route path=path!("/textarea") view=crate::demos::textarea::TextAreaDemoPage/>
+            <Route path=path!("/tag_picker") view=crate::demos::tag_picker::TagPickerDemoPage/>
             <Route path=path!("/dropdown") view=crate::demos::dropdown::DropdownDemoPage/>
             <Route path=path!("/dialog") view=crate::demos::dialog::DialogDemoPage/>
             <Route path=path!("/codeblock") view=crate::demos::codeblock::CodeblockDemoPage/>
@@ -133,6 +147,7 @@ pub fn DemoRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
             <Route path=path!("/button") view=crate::demos::button::ButtonDemoPage/>
             <Route path=path!("/date_picker") view=crate::demos::date_picker::DatePickerDemoPage/>
             <Route path=path!("/spinner") view=crate::demos::spinner::SpinnerDemoPage/>
+            <Route path=path!("/table") view=crate::demos::table::TableDemoPage/>
             <Route path=path!("/radio") view=crate::demos::radio::RadioDemoPage/>
         </ParentRoute>
     }

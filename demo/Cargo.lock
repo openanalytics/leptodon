@@ -1731,7 +1731,7 @@ dependencies = [
  "const-str 0.7.0",
  "http",
  "leptos",
- "leptos-struct-table 0.18.0",
+ "leptos-struct-table",
  "leptos-use",
  "leptos_axum",
  "leptos_meta",
@@ -1751,43 +1751,18 @@ dependencies = [
 
 [[package]]
 name = "leptos-struct-table"
-version = "0.17.0"
-dependencies = [
- "chrono",
- "leptos",
- "leptos-struct-table-macro 0.14.1",
- "leptos-use",
- "send_wrapper",
- "serde",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
-name = "leptos-struct-table"
 version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8512aac7ab65b0e8f4c963abd4a0501fe49eac2ab18b99a046001e7ea73a07df"
 dependencies = [
  "chrono",
  "leptos",
- "leptos-struct-table-macro 0.15.0",
+ "leptos-struct-table-macro",
  "leptos-use",
  "send_wrapper",
  "serde",
  "wasm-bindgen",
  "web-sys",
-]
-
-[[package]]
-name = "leptos-struct-table-macro"
-version = "0.14.1"
-dependencies = [
- "darling 0.23.0",
- "heck",
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]
@@ -2349,7 +2324,7 @@ dependencies = [
  "itertools 0.14.0",
  "leptos",
  "leptos-components",
- "leptos-struct-table 0.17.0",
+ "leptos-struct-table",
  "leptos_axum",
  "leptos_meta",
  "leptos_router",

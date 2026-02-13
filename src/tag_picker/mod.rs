@@ -1,3 +1,4 @@
+use attr_docgen::generate_docs;
 use leptos::ev::EventCallback;
 use leptos::leptos_dom::logging::console_log;
 use leptos::logging::debug_log;
@@ -60,6 +61,7 @@ const TAG_LIST_ITEM_CLASSES: &str =
 static NUCLEO_MATCHER: LazyLock<Mutex<Matcher>> =
     LazyLock::new(|| Mutex::new(Matcher::new(Config::DEFAULT)));
 
+#[generate_docs]
 #[component]
 pub fn TagPicker<T>(
     #[prop(optional, into)] id: MaybeProp<String>,

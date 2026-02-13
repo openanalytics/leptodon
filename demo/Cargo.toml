@@ -48,7 +48,7 @@ wasm-bindgen = { version = "=0.2.105", optional = true }
 
 itertools = "0.14.0"
 leptos-components = { path = "..", default-features = false, features = ["leptos"] }
-leptos-struct-table = { path = "../../leptos-struct-table", features = ["chrono"] }
+leptos-struct-table = { version = "0.18", features = ["chrono"] }
 
 axum-extra = { version = "0.12.2", optional = true, features = ["cookie"] }
 

@@ -1435,6 +1435,10 @@ input:checked + .toggle-bg {
   height: 100vh;
 }
 
+.h-2 {
+  height: 0.5rem;
+}
+
 .max-h-\[50vh\] {
   max-height: 50vh;
 }
@@ -1510,6 +1514,22 @@ input:checked + .toggle-bg {
 
 .w-full {
   width: 100%;
+}
+
+.w-\[calc\(60\%-2\.5rem\)\] {
+  width: calc(60% - 2.5rem);
+}
+
+.w-\[calc\(75\%-2\.5rem\)\] {
+  width: calc(75% - 2.5rem);
+}
+
+.w-\[calc\(85\%-2\.5rem\)\] {
+  width: calc(85% - 2.5rem);
+}
+
+.w-\[calc\(90\%-2\.5rem\)\] {
+  width: calc(90% - 2.5rem);
 }
 
 .max-w-2xl {
@@ -1606,6 +1626,16 @@ input:checked + .toggle-bg {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .cursor-default {
@@ -2202,6 +2232,10 @@ input:checked + .toggle-bg {
   text-align: right;
 }
 
+.align-middle {
+  vertical-align: middle;
+}
+
 .font-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
@@ -2477,6 +2511,31 @@ input:checked + .toggle-bg {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
+.before\:order-last::before {
+  content: var(--tw-content);
+  order: 9999;
+}
+
+.before\:pl-0\.5::before {
+  content: var(--tw-content);
+  padding-left: 0.125rem;
+}
+
+.before\:font-light::before {
+  content: var(--tw-content);
+  font-weight: 300;
+}
+
+.before\:opacity-40::before {
+  content: var(--tw-content);
+  opacity: 0.4;
+}
+
+.before\:content-\[--sort-priority\]::before {
+  --tw-content: var(--sort-priority);
+  content: var(--tw-content);
+}
+
 .after\:absolute::after {
   content: var(--tw-content);
   position: absolute;
@@ -2592,6 +2651,16 @@ input:checked + .toggle-bg {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
+.after\:pl-1::after {
+  content: var(--tw-content);
+  padding-left: 0.25rem;
+}
+
+.after\:opacity-40::after {
+  content: var(--tw-content);
+  opacity: 0.4;
+}
+
 .after\:transition-all::after {
   content: var(--tw-content);
   transition-property: all;
@@ -2601,6 +2670,11 @@ input:checked + .toggle-bg {
 
 .after\:content-\[\'\'\]::after {
   --tw-content: '';
+  content: var(--tw-content);
+}
+
+.after\:content-\[--sort-icon\]::after {
+  --tw-content: var(--sort-icon);
   content: var(--tw-content);
 }
 
@@ -3112,6 +3186,11 @@ input:checked + .toggle-bg {
 .hover\:dark\:bg-gray-900:where(.dark, .dark *):hover {
   --tw-bg-opacity: 1;
   background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));
+}
+
+.dark\:hover\:bg-gray-700:hover:where(.dark, .dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
 }
 
 .dark\:hover\:text-blue-500:hover:where(.dark, .dark *) {
