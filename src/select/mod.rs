@@ -1,3 +1,4 @@
+use attr_docgen::generate_docs;
 use leptos::logging::debug_log;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::Effect;
@@ -25,6 +26,7 @@ use crate::form_input::Label;
 use crate::radio::RadioOption;
 pub const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 
+#[generate_docs]
 #[component]
 pub fn Select<T>(
     #[prop(optional, into)] class: MaybeProp<String>,
@@ -90,6 +92,7 @@ where
     }
 }
 
+#[generate_docs]
 #[component]
 pub fn MaybeSelect<T>(
     #[prop(optional, into)] id: MaybeProp<String>,

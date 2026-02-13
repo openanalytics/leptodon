@@ -6,7 +6,7 @@ use crate::icon::icon_data::IconRef;
 use crate::input_group::GroupItemClassContext;
 use crate::util::signals::ComponentRef;
 use crate::{
-    spinner::{Spinner, SpinnerSize},
+    spinner::{Spinner},
     util::callback::BoxOneCallback,
 };
 use attr_docgen::generate_docs;
@@ -97,9 +97,6 @@ pub fn Button(
     /// A button can have its content and borders styled for greater emphasis or to be subtle.
     #[prop(optional, into)]
     appearance: Signal<ButtonAppearance>,
-    /// A button supports different sizes.
-    #[prop(optional, into)]
-    size: MaybeProp<Signal<ButtonSize>>,
     /// The default behavior of the button.
     #[prop(optional, into)]
     button_type: ButtonType,
@@ -118,10 +115,6 @@ pub fn Button(
 ) -> impl IntoView
 where
 {
-    let size_injection = ButtonSizeInjection::use_context().map(|s| s.0);
-    let size = size
-        .get()
-        .unwrap_or_else(|| Signal::stored(size_injection.unwrap_or_default()));
     let in_group = use_context::<InGroupContext>().unwrap_or(InGroupContext { in_group: false });
     let aria_disabled = move || {
         if loading.get() { Some("true") } else { None }
@@ -178,7 +171,7 @@ where
                     EitherOf3::A(
                         view! {
                             <span class="thaw-button__icon">
-                                <Spinner size=Signal::derive(move || size.get().into()) />
+                                <Spinner />
                             </span>
                         },
                     )
@@ -265,16 +258,6 @@ impl ButtonSize {
             ButtonSize::Small => "small",
             ButtonSize::Medium => "medium",
             ButtonSize::Large => "large",
-        }
-    }
-}
-
-impl From<ButtonSize> for SpinnerSize {
-    fn from(value: ButtonSize) -> Self {
-        match value {
-            ButtonSize::Small => Self::Tiny,
-            ButtonSize::Medium => Self::Tiny,
-            ButtonSize::Large => Self::ExtraSmall,
         }
     }
 }

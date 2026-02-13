@@ -1,6 +1,6 @@
 use crate::button::ButtonProps;
 use crate::button::ButtonShape;
-use crate::button::{Button, ButtonAppearance, ButtonRef, ButtonSize, ButtonType};
+use crate::button::{Button, ButtonAppearance, ButtonRef, ButtonType};
 use crate::class_list;
 use crate::dialog::Dialog;
 use crate::dropdown::AlignmentAnchor;
@@ -161,9 +161,6 @@ pub fn DropdownButton(
     /// A button can have its content and borders styled for greater emphasis or to be subtle.
     #[prop(optional, into)]
     appearance: Signal<ButtonAppearance>,
-    /// A button supports different sizes.
-    #[prop(optional, into)]
-    size: MaybeProp<Signal<ButtonSize>>,
     /// The default behavior of the button.
     #[prop(optional, into)]
     button_type: ButtonType,
@@ -196,7 +193,6 @@ where
         id,
         class: class.into(),
         appearance,
-        size,
         button_type,
         shape,
         icon,
@@ -239,9 +235,6 @@ pub fn ModalButton(
     /// A button can have its content and borders styled for greater emphasis or to be subtle.
     #[prop(optional, into)]
     appearance: Signal<ButtonAppearance>,
-    /// A button supports different sizes.
-    #[prop(optional, into)]
-    size: MaybeProp<Signal<ButtonSize>>,
     /// The default behavior of the button.
     #[prop(optional, into)]
     button_type: ButtonType,
@@ -277,7 +270,6 @@ where
         id,
         class: class.into(),
         appearance,
-        size,
         button_type,
         shape,
         icon,
@@ -321,9 +313,6 @@ pub fn DialogButton(
     /// A button can have its content and borders styled for greater emphasis or to be subtle.
     #[prop(optional, into)]
     appearance: Signal<ButtonAppearance>,
-    /// A button supports different sizes.
-    #[prop(optional, into)]
-    size: MaybeProp<Signal<ButtonSize>>,
     /// The default behavior of the button.
     #[prop(optional, into)]
     button_type: ButtonType,
@@ -368,7 +357,6 @@ where
         id,
         class: class.into(),
         appearance,
-        size,
         button_type,
         shape,
         icon,

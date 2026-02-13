@@ -16,8 +16,10 @@ pub mod link;
 pub mod modal;
 pub mod navbar;
 pub mod popover;
+pub mod radio;
+pub mod select;
+pub mod spinner;
 pub mod themeselector;
 pub mod toggle;
-pub mod radio;
 
 // text-left

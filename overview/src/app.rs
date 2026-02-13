@@ -34,6 +34,7 @@ use leptos_components::modal::ModalFooterChildren;
 use leptos_components::navbar::NavbarEntries;
 use leptos_components::navbar::SideBarLink;
 use leptos_components::navbar::SideNavbar;
+use leptos_components::spinner::Spinner;
 use leptos_components::textarea::TextArea;
 use leptos_components::toggle::Toggle;
 use leptos_components::{
@@ -120,6 +121,7 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
+            <Spinner />
             <Heading1 anchor="the-largest-heading">The Largest Heading</Heading1>
             <Heading2 class="color-red-500">The 2nd Largest Heading</Heading2>
             <Heading3>The Large Heading</Heading3>

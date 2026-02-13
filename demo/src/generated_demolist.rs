@@ -21,6 +21,10 @@ pub fn page_infos() -> Vec<PageInfo> {
             name: "Badge"
         },
         PageInfo {
+            location: "/demo/select",
+            name: "Select"
+        },
+        PageInfo {
             location: "/demo/avatar",
             name: "Avatar"
         },
@@ -93,6 +97,10 @@ pub fn page_infos() -> Vec<PageInfo> {
             name: "Date Picker"
         },
         PageInfo {
+            location: "/demo/spinner",
+            name: "Spinner"
+        },
+        PageInfo {
             location: "/demo/radio",
             name: "Radio"
         }
@@ -105,6 +113,7 @@ pub fn DemoRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
         <ParentRoute path=path!("demo") view=Outlet>
             <Route path=path!("/navbar") view=crate::demos::navbar::SideNavbarDemoPage/>
             <Route path=path!("/badge") view=crate::demos::badge::BadgeDemoPage/>
+            <Route path=path!("/select") view=crate::demos::select::SelectDemoPage/>
             <Route path=path!("/avatar") view=crate::demos::avatar::AvatarDemoPage/>
             <Route path=path!("/divider") view=crate::demos::divider::DividerDemoPage/>
             <Route path=path!("/toggle") view=crate::demos::toggle::ToggleDemoPage/>
@@ -123,6 +132,7 @@ pub fn DemoRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
             <Route path=path!("/input") view=crate::demos::input::InputsDemoPage/>
             <Route path=path!("/button") view=crate::demos::button::ButtonDemoPage/>
             <Route path=path!("/date_picker") view=crate::demos::date_picker::DatePickerDemoPage/>
+            <Route path=path!("/spinner") view=crate::demos::spinner::SpinnerDemoPage/>
             <Route path=path!("/radio") view=crate::demos::radio::RadioDemoPage/>
         </ParentRoute>
     }

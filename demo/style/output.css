@@ -1656,6 +1656,10 @@ input:checked + .toggle-bg {
   grid-template-rows: 1lh minmax(0, 1fr);
 }
 
+.flex-row {
+  flex-direction: row;
+}
+
 .flex-col {
   flex-direction: column;
 }
@@ -2068,6 +2072,18 @@ input:checked + .toggle-bg {
 
 .fill-oa-gray {
   fill: #e6e6e6;
+}
+
+.fill-red-500 {
+  fill: #F05252;
+}
+
+.stroke-red-500 {
+  stroke: #F05252;
+}
+
+.stroke-oa-gray {
+  stroke: #e6e6e6;
 }
 
 .p-0\.5 {
@@ -2974,6 +2990,14 @@ input:checked + .toggle-bg {
 
 .dark\:fill-black:where(.dark, .dark *) {
   fill: #000000;
+}
+
+.dark\:stroke-gray-300:where(.dark, .dark *) {
+  stroke: #D1D5DB;
+}
+
+.dark\:stroke-gray-700:where(.dark, .dark *) {
+  stroke: #374151;
 }
 
 .dark\:text-blue-300:where(.dark, .dark *) {
