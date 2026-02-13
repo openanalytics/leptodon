@@ -16,6 +16,7 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 
+use attr_docgen::generate_docs;
 use std::fmt::Display;
 use std::str::FromStr;
 // Do not remove until leptos is upgraded above 0.8.14
@@ -129,6 +130,7 @@ pub fn fetch_ssr_tailwind_class() -> String {
     resulting_theme.to_string()
 }
 
+#[generate_docs]
 #[component]
 pub fn ThemeSelector() -> impl IntoView {
     let update_theme_action: ServerAction<UpdateTheme> = ServerAction::new();

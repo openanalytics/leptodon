@@ -1,3 +1,4 @@
+use attr_docgen::generate_docs;
 use chrono::Days;
 use leptos::logging::debug_log;
 use leptos::prelude::GlobalAttributes;
@@ -661,13 +662,14 @@ pub fn day_highlighter(
         } else if let DateMenuOption::Day(date) = date
             && date.is_other_month()
         {
-            "text-gray-500".to_string()
+            "text-gray-500 rounded-lg".to_string()
         } else {
             "rounded-lg".to_string()
         }
     })
 }
 
+#[generate_docs]
 #[component]
 pub fn DatePicker(
     #[prop(optional, into)] id: MaybeProp<String>,
@@ -685,6 +687,7 @@ pub fn DatePicker(
     /// A function which maps a DayMenuOption -> String (css class) to style special days on the date-picker.
     #[prop(default = day_highlighter(value).into(), into)]
     highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
+    
     #[prop(optional)] required: bool,
     #[prop(optional, into)] label: MaybeProp<String>,
 ) -> impl IntoView {
@@ -872,9 +875,9 @@ pub fn DatePicker(
     view! {
         <div node_ref=target>
             <GenericInput<OptDate, String> id=date_picker_id.get() name class placeholder label parser format value required
-                on:focus=move |_| {
+                on_focus=ArcOneCallback::new(move |_| {
                     picker_state.update(|state| state.show());
-                }
+                })
                 on:keydown=move |key: KeyboardEvent| {
                     console_log(key.code().as_str());
                     if key.code() == "Escape" || key.code() == "Tab" {

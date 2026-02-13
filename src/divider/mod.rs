@@ -1,12 +1,14 @@
+use attr_docgen::generate_docs;
 use leptos::IntoView;
+use leptos::component;
 use leptos::prelude::ClassAttribute;
 use leptos::view;
-use leptos::component;
 
 const HEADER_CLASS: &str = "font-bold relative color-gray-900";
 
+#[generate_docs]
 #[component]
-fn HorizontalLine() -> impl IntoView {
+pub fn HorizontalLine() -> impl IntoView {
     view! {
         <hr class="my-4" />
     }

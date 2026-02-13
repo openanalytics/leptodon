@@ -1,3 +1,4 @@
+use attr_docgen::generate_docs;
 use leptos::prelude::MaybeProp;
 use leptos::prelude::{AddAnyAttr, IntoAny};
 // Do not remove until leptos is upgraded above 0.8.14
@@ -11,6 +12,7 @@ use crate::class_list;
 
 const LINK_CLASSES: &str = "text-oa-blue hover:underline";
 
+#[generate_docs]
 /// See [[A](leptos_router::components::A)]
 #[component]
 pub fn Link<H>(

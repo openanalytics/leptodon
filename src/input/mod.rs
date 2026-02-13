@@ -37,6 +37,7 @@ use leptos::prelude::use_context;
 use leptos::{IntoView, component, view};
 use leptos_use::math::use_or;
 use std::fmt::Debug;
+use web_sys::FocusEvent;
 use web_sys::KeyboardEvent;
 use zxcvbn::Score;
 use zxcvbn::zxcvbn;
@@ -211,10 +212,12 @@ pub fn PasswordInput(
         );
         let required = use_or(required, form_required);
         let label = if let Some(form_context) = form_context {
-            if label.get().is_some() {
-                label
+            if form_context.label.get().is_some() || label.get().is_none() {
+                // Either the form context already provides the label, or we don't have one
+                // -> Then don't place a label
+                MaybeProp::default()
             } else {
-                form_context.label
+                label
             }
         } else {
             label
@@ -322,6 +325,10 @@ pub fn GenericInput<T, E>(
     /// Whether the input is required.
     #[prop(optional, into)]
     required: Signal<bool>,
+    /// On focus event listener, sometimes the input is wrapped inside a label etc so listeners can't be added from outside.
+    /// In such cases use this property.
+    #[prop(optional, into)]
+    on_focus: MaybeProp<ArcOneCallback<FocusEvent>>,
     /// Whether the input is readonly.
     #[prop(optional, into)]
     readonly: Signal<bool>,
@@ -455,6 +462,7 @@ where
             required={required.get()}
             on:blur=on_blur
             on:input=on_input
+            on:focus=move |e| {on_focus.get().map(|on_focus| on_focus(e));}
             on:keydown={
                 let try_parse = try_parse.clone();
                 move |key: KeyboardEvent| {

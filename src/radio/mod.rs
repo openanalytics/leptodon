@@ -1,3 +1,4 @@
+use attr_docgen::generate_docs;
 use leptos::html::Input;
 use leptos::logging::debug_log;
 use leptos::oco::Oco;
@@ -39,16 +40,23 @@ pub trait RadioOption: Display {
     fn value(&self) -> Oco<'static, str>;
 }
 
+#[generate_docs]
 /// A list of options where the user can choose at most one.
 #[component]
 pub fn Radio<T>(
+    /// Html id
     #[prop(optional, into)] id: Oco<'static, str>,
+    /// Name identifier for form submission
     #[prop(into)] name: Oco<'static, str>,
+    /// Extra style classes
     #[prop(optional, into)] class: MaybeReactiveClass,
+    /// Label for the radio-button menu.
     #[prop(optional, into)] label: String,
+    /// Whether selecting an option is required for form submission.
     #[prop(optional, into)] required: bool,
-    #[prop(default = RadioAppearance::default())] appearance: RadioAppearance,
+    /// Value of the selected element
     #[prop(optional, into)] selected: RwSignal<Option<T>>,
+    /// Available radio options
     #[prop(optional, into)] options: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
@@ -93,10 +101,7 @@ where
             <Label label=label required>
                 <ul class=class_list!(
                     "w-48 bg-oa-gray dark:bg-gray-700 flex flex-col gap-px overflow-hidden",
-                    match appearance {
-                        RadioAppearance::ListGroup => RADIO_LIST_GROUP_CLASSES,
-                        RadioAppearance::Minimal => "",
-                    }
+                    RADIO_LIST_GROUP_CLASSES  
                 )>
                     <For
                         each=move || options.get()
@@ -167,13 +172,6 @@ where
             </Label>
         </div>
     }
-}
-
-#[derive(Default)]
-pub enum RadioAppearance {
-    #[default]
-    ListGroup,
-    Minimal,
 }
 
 impl RadioOption for u8 {

@@ -3,6 +3,7 @@ use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
 use crate::link::Link;
 use crate::{class_list, icon};
+use attr_docgen::generate_docs;
 use leptos::prelude::Get;
 #[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
@@ -17,6 +18,7 @@ use leptos_router::components::ToHref;
 
 const SIDEBAR_CLASSES: &str = "fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 lg:translate-x-0 dark:bg-gray-800 dark:border-gray-700";
 
+#[generate_docs]
 #[component]
 pub fn SideBarLink<H>(
     #[prop(optional, into)] icon: MaybeProp<IconRef>,
@@ -66,13 +68,18 @@ pub struct NavbarEntries {
     children: Children,
 }
 
+#[generate_docs]
 #[component]
 pub fn SideNavbar(
+    /// Page content
     children: Children,
+    /// Slot for items in the top navbar
     #[prop(optional, default=NavbarEndChildren { children: Box::new(|| ().into_any()) })]
     end: NavbarEndChildren,
+    /// Slot for branding
     #[prop(optional, default=NavbarLogo { children: Box::new(|| OALogoLink().into_any()) })]
     logo: NavbarLogo,
+    /// Slot for sidebar entries
     #[prop(optional, default=NavbarEntries { children: Box::new(|| ().into_any()) })]
     entries: NavbarEntries,
 ) -> impl IntoView {

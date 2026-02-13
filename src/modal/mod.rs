@@ -1,3 +1,4 @@
+use attr_docgen::generate_docs;
 use leptos::children::Children;
 use leptos::leptos_dom::logging::console_log;
 use leptos::logging::error;
@@ -34,6 +35,7 @@ pub struct ModalFooterChildren {
     children: Children,
 }
 
+#[generate_docs]
 #[component]
 pub fn Modal(
     /// Modal id

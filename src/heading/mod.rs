@@ -1,3 +1,4 @@
+use attr_docgen::generate_docs;
 use leptos::IntoView;
 use leptos::prelude::AriaAttributes;
 use leptos::prelude::ClassAttribute;
@@ -17,10 +18,10 @@ const HEADER_CLASS: &str = "font-bold relative text-gray-900 dark:text-gray-100"
 #[component]
 fn HeadingAnchor(
     /// Identifies this anchor.
-    id: String
+    id: String,
 ) -> impl IntoView {
     view! {
-        // TODO: Get this offset via navbar context 
+        // TODO: Get this offset via navbar context
         <span id=id.clone() class="absolute -top-[100px]"></span>
         <a class="ml-2 text-oa-blue opacity-0 transition-opacity hover:opacity-100" href=format!("#{id}") aria-label="Link to this section: Heading mark">#</a>
     }
@@ -29,21 +30,22 @@ fn HeadingAnchor(
 #[component]
 fn MaybeHeadingAnchor(anchor: MaybeProp<String>) -> impl IntoView {
     if let Some(anchor) = anchor.get() {
-        view !{ <HeadingAnchor id=anchor/> }.into_any()
+        view! { <HeadingAnchor id=anchor/> }.into_any()
     } else {
         ().into_any()
     }
 }
 
+#[generate_docs]
 #[component]
 pub fn Heading1(
-    /// Whether this Heading should be suffixed by a # serving as an anchor.
+    /// Whether this Heading should be suffixed by a #, serving as an anchor.
     #[prop(optional, into)]
     anchor: MaybeProp<String>,
     /// Extra heading classes
     #[prop(optional, into)]
     class: MaybeReactiveClass,
-    /// Heading contents
+    /// Heading text
     children: Children,
 ) -> impl IntoView {
     view! {

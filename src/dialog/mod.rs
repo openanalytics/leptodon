@@ -1,3 +1,4 @@
+use attr_docgen::generate_docs;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::{IntoAny, RwSignal};
@@ -11,6 +12,7 @@ use crate::button::{Button, ButtonAppearance};
 use crate::modal::{Modal, ModalFooterChildren};
 use crate::util::callback::BoxCallback;
 
+#[generate_docs]
 #[component]
 pub fn Dialog(
     /// Dialog id

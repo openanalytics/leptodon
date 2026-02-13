@@ -1,3 +1,4 @@
+use attr_docgen::generate_docs;
 use leptos::logging::debug_log;
 use leptos::prelude::BindAttribute;
 use leptos::prelude::Children;
@@ -22,6 +23,7 @@ use crate::form_input::PostfixLabelStyle;
 
 const CHECKBOX_CLASS: &str = "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
 
+#[generate_docs]
 /// A simple checkmark-box with optional label on the right.
 #[component]
 pub fn Checkbox(

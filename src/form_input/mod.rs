@@ -1,5 +1,6 @@
 use std::marker::PhantomData;
 
+use attr_docgen::generate_docs;
 use leptos::context::Provider;
 use leptos::prelude::{ClassAttribute, ElementChild, Get, IntoAny, MaybeProp, RwSignal, Show};
 use leptos::{IntoView, component, prelude::Children, view};
@@ -11,6 +12,7 @@ pub struct FormInputContext<E: Clone + Send + Sync + std::fmt::Display + 'static
     pub feedback: RwSignal<Option<E>>,
 }
 
+#[generate_docs]
 /// Use this to add labels, required-indicator and automatic feedback to form inputs (crate::input, crate::select, crate::radio).
 #[component]
 pub fn FormInput<E>(
@@ -42,7 +44,7 @@ where
     let feedback: RwSignal<Option<E>> = RwSignal::new(None);
     let form_ctx = FormInputContext { required, label, feedback };
     view! {
-        <div class="mb-2">
+        <div class="mb-2 flex flex-col">
             <Label label required>
                 <Provider<_, _> value=form_ctx>
                     {children()}

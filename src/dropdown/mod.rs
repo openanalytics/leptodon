@@ -1,6 +1,7 @@
 use crate::class_list;
 use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
+use attr_docgen::generate_docs;
 use leptos::either::Either;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
@@ -11,6 +12,7 @@ const DROPDOWN_LIST_STYLE: &str = "py-2 text-sm text-gray-700 dark:text-gray-200
 const DROPDOWN_ITEM_STYLE: &str =
     "block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white";
 
+#[generate_docs]
 #[component]
 pub fn Dropdown(
     /// Dropdown id
@@ -42,6 +44,7 @@ pub fn Dropdown(
 pub type AutoClose = bool;
 pub type SetVisibleCallback = WriteSignal<bool>;
 
+#[generate_docs]
 /// An item in a dropdown menu.
 /// This item can take contexts via [leptus::context::provide_context]:
 ///   context 1: [AutoClose] to indicate wether clicking this item should close the dropdown.
@@ -74,7 +77,7 @@ pub fn DropdownItem(
                 *set_visible.write() = false;
             }
         }>
-            <a href="#" class=class_list![DROPDOWN_ITEM_STYLE, class]>
+            <a class=class_list![DROPDOWN_ITEM_STYLE, class]>
                 {if let Some(icon) = icon.get() {
                     Either::Left(view! { <Icon icon=icon/> })
                 } else {

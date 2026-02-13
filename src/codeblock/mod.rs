@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use crate::button::{Button, ButtonAppearance};
+use attr_docgen::generate_docs;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::ReadValue;
@@ -11,6 +12,7 @@ use leptos::prelude::set_timeout;
 use leptos::*;
 use web_sys::window;
 
+#[generate_docs]
 /// Styled monospace-rectangle for showing code, copy button in the top right
 #[component]
 pub fn Codeblock(

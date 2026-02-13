@@ -12,6 +12,7 @@ use crate::modal::{Modal, ModalFooterChildren};
 use crate::util::callback::BoxCallback;
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
+use attr_docgen::generate_docs;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::IntoAny;
 use leptos::prelude::{Children, Get, MaybeProp, Signal, provide_context, signal};
@@ -130,6 +131,7 @@ pub struct DropdownButtonChildren {
     children: Children,
 }
 
+#[generate_docs]
 /// A button triggers an action or event when activated.
 ///
 /// Example
@@ -210,7 +212,7 @@ where
     let dropdown_id = id.get().map(|id| format!("{id}-modal"));
 
     view! {
-        <div class="fit-content relative">
+        <div class="w-fit relative">
             {button}
             <Dropdown id=dropdown_id is_visible alignment>
                 {children().into_any()}
@@ -224,6 +226,7 @@ pub struct ModalButtonChildren {
     children: Children,
 }
 
+#[generate_docs]
 /// A button to toggle a modal
 #[component]
 pub fn ModalButton(
@@ -305,6 +308,7 @@ pub struct DialogButtonChildren {
     children: Children,
 }
 
+#[generate_docs]
 /// A button to toggle a dialog
 #[component]
 pub fn DialogButton(

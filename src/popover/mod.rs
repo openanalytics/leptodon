@@ -5,6 +5,7 @@ use crate::{
     class_list::reactive_class::MaybeReactiveClass,
     util::{callback::BoxCallback, element::Element},
 };
+use attr_docgen::generate_docs;
 use leptos::{
     ev::{click, mouseenter, mouseleave, on},
     html::Div,
@@ -29,6 +30,7 @@ pub struct PopoverController {
     pub on_close: Option<BoxCallback>,
 }
 
+#[generate_docs]
 // TODO: Resize observer ?
 #[component]
 pub fn Popover<Trigger, Content>(
