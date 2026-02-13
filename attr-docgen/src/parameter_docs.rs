@@ -78,6 +78,9 @@ pub(crate) fn _generate_docs(_attr: TokenStream, item: TokenStream) -> TokenStre
         /// Produces argument documentation extracted from the related component
         #[component]
         pub fn #docs_ident() -> impl IntoView {
+            use leptos::prelude::ClassAttribute;
+            use leptos::prelude::ElementChild;
+
             leptos::prelude::view! {
                 <div class="py-2">
                     <crate::heading::Heading5>#table_name_ident</crate::heading::Heading5>
