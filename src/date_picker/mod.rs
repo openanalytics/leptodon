@@ -1,6 +1,7 @@
 use attr_docgen::generate_docs;
 use chrono::Days;
 use leptos::logging::debug_log;
+use leptos::prelude::GetUntracked;
 use leptos::prelude::GlobalAttributes;
 // Do not remove until leptos is upgraded above 0.8.14
 use chrono::Datelike;
@@ -849,16 +850,30 @@ pub fn DatePicker(
 
     let target = NodeRef::<Div>::new();
 
-    // could be optimized as to only add the listener when the date_picker is visible.
-    // listener can be removed by calling the returned closure.
-    let _ = on_click_outside_with_options(
-        target,
-        move |_event| {
-            debug_log!("clicked outside date_picker, closing.");
-            picker_state.update(|state| state.hide());
-        },
-        OnClickOutsideOptions::default(),
-    );
+    // Only attached global click handler when the picker is visible. 
+    let last_click_to_close_listener = RwSignal::new(None);
+    Effect::watch(move || picker_state.get().visible, move |new, old, _| {
+        if old == Some(new) {
+            return;
+        }
+        if *new {
+            // Just became visible
+            let cancel = on_click_outside_with_options(
+                target,
+                move |_event| {
+                    debug_log!("clicked outside date_picker, closing.");
+                    picker_state.update(|state| state.hide());
+                },
+                OnClickOutsideOptions::default(),
+            );
+            last_click_to_close_listener.set(Some(cancel));
+        } else {
+            // Just hid
+            if let Some(cancellable) = last_click_to_close_listener.get_untracked() {
+                cancellable();
+            }
+        }
+    }, true);
 
     let id = shared_id();
 
