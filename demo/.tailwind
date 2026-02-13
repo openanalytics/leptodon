@@ -511,17 +511,17 @@ impl IntoClass for MaybeReactiveClass {
         self.0.into_class()
     }
 }use crate::class_list;
+use crate::util::shared_id::shared_id;
+use attr_docgen::generate_docs;
 use leptos::leptos_dom::logging::console_log;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
 
-use std::sync::atomic::{AtomicU64, Ordering};
-
-static ATOMIC_ACCORDION_ID: AtomicU64 = AtomicU64::new(1);
 const ACCORDION_HEADING_CLASSES: &str = "flex items-center justify-between w-full p-5 font-medium rtl:text-right text-body border border-t-0 border-x-0 border-b-default dark:border-gray-700 hover:text-heading gap-3 hover:bg-gray-50 hover:dark:bg-gray-900";
 const ACCORDION_BODY_CLASSES: &str =
     "border dark:border-gray-700 border-s-0 border-e-0 border-t-0 border-b-default";
 
+#[generate_docs]
 /// Single collapseable section for the [Accordion]
 #[component]
 pub fn AccordionEntry(
@@ -532,7 +532,7 @@ pub fn AccordionEntry(
     /// Or more accordions.
     children: Children,
 ) -> impl IntoView {
-    let id = ATOMIC_ACCORDION_ID.fetch_add(1, Ordering::SeqCst);
+    let id = shared_id();
     let head_id = format!("accordion-collapse-heading-{id}");
     let body_id = format!("accordion-collapse-body-{id}");
     let (is_hidden, set_hidden) = signal(true);
@@ -564,6 +564,7 @@ pub fn AccordionEntry(
     }
 }
 
+#[generate_docs]
 /// A stack of expandable/collapseable sections.
 #[component]
 pub fn Accordion<T>(
@@ -994,6 +995,7 @@ use leptos::prelude::use_context;
 use leptos::{IntoView, component, view};
 use leptos_use::math::use_or;
 use std::fmt::Debug;
+use web_sys::FocusEvent;
 use web_sys::KeyboardEvent;
 use zxcvbn::Score;
 use zxcvbn::zxcvbn;
@@ -1168,10 +1170,12 @@ pub fn PasswordInput(
         );
         let required = use_or(required, form_required);
         let label = if let Some(form_context) = form_context {
-            if label.get().is_some() {
-                label
+            if form_context.label.get().is_some() || label.get().is_none() {
+                // Either the form context already provides the label, or we don't have one
+                // -> Then don't place a label
+                MaybeProp::default()
             } else {
-                form_context.label
+                label
             }
         } else {
             label
@@ -1279,6 +1283,10 @@ pub fn GenericInput<T, E>(
     /// Whether the input is required.
     #[prop(optional, into)]
     required: Signal<bool>,
+    /// On focus event listener, sometimes the input is wrapped inside a label etc so listeners can't be added from outside.
+    /// In such cases use this property.
+    #[prop(optional, into)]
+    on_focus: MaybeProp<ArcOneCallback<FocusEvent>>,
     /// Whether the input is readonly.
     #[prop(optional, into)]
     readonly: Signal<bool>,
@@ -1412,6 +1420,7 @@ where
             required={required.get()}
             on:blur=on_blur
             on:input=on_input
+            on:focus=move |e| {on_focus.get().map(|on_focus| on_focus(e));}
             on:keydown={
                 let try_parse = try_parse.clone();
                 move |key: KeyboardEvent| {
@@ -1519,6 +1528,7 @@ impl InputMode {
         }
     }
 }
+use attr_docgen::generate_docs;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::{IntoAny, RwSignal};
@@ -1532,6 +1542,7 @@ use crate::button::{Button, ButtonAppearance};
 use crate::modal::{Modal, ModalFooterChildren};
 use crate::util::callback::BoxCallback;
 
+#[generate_docs]
 #[component]
 pub fn Dialog(
     /// Dialog id
@@ -1578,6 +1589,7 @@ pub fn Dialog(
 }
 use std::marker::PhantomData;
 
+use attr_docgen::generate_docs;
 use leptos::context::Provider;
 use leptos::prelude::{ClassAttribute, ElementChild, Get, IntoAny, MaybeProp, RwSignal, Show};
 use leptos::{IntoView, component, prelude::Children, view};
@@ -1589,6 +1601,7 @@ pub struct FormInputContext<E: Clone + Send + Sync + std::fmt::Display + 'static
     pub feedback: RwSignal<Option<E>>,
 }
 
+#[generate_docs]
 /// Use this to add labels, required-indicator and automatic feedback to form inputs (crate::input, crate::select, crate::radio).
 #[component]
 pub fn FormInput<E>(
@@ -1620,7 +1633,7 @@ where
     let feedback: RwSignal<Option<E>> = RwSignal::new(None);
     let form_ctx = FormInputContext { required, label, feedback };
     view! {
-        <div class="mb-2">
+        <div class="mb-2 flex flex-col">
             <Label label required>
                 <Provider<_, _> value=form_ctx>
                     {children()}
@@ -1937,6 +1950,7 @@ pub fn InputGroup(children: ChildrenFragment) -> impl IntoView {
         </div>
     }
 }
+use attr_docgen::generate_docs;
 use leptos::html::Input;
 use leptos::logging::debug_log;
 use leptos::oco::Oco;
@@ -1978,16 +1992,23 @@ pub trait RadioOption: Display {
     fn value(&self) -> Oco<'static, str>;
 }
 
+#[generate_docs]
 /// A list of options where the user can choose at most one.
 #[component]
 pub fn Radio<T>(
+    /// Html id
     #[prop(optional, into)] id: Oco<'static, str>,
+    /// Name identifier for form submission
     #[prop(into)] name: Oco<'static, str>,
+    /// Extra style classes
     #[prop(optional, into)] class: MaybeReactiveClass,
+    /// Label for the radio-button menu.
     #[prop(optional, into)] label: String,
+    /// Whether selecting an option is required for form submission.
     #[prop(optional, into)] required: bool,
-    #[prop(default = RadioAppearance::default())] appearance: RadioAppearance,
+    /// Value of the selected element
     #[prop(optional, into)] selected: RwSignal<Option<T>>,
+    /// Available radio options
     #[prop(optional, into)] options: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
@@ -2032,10 +2053,7 @@ where
             <Label label=label required>
                 <ul class=class_list!(
                     "w-48 bg-oa-gray dark:bg-gray-700 flex flex-col gap-px overflow-hidden",
-                    match appearance {
-                        RadioAppearance::ListGroup => RADIO_LIST_GROUP_CLASSES,
-                        RadioAppearance::Minimal => "",
-                    }
+                    RADIO_LIST_GROUP_CLASSES  
                 )>
                     <For
                         each=move || options.get()
@@ -2108,13 +2126,6 @@ where
     }
 }
 
-#[derive(Default)]
-pub enum RadioAppearance {
-    #[default]
-    ListGroup,
-    Minimal,
-}
-
 impl RadioOption for u8 {
     fn value(&self) -> Oco<'static, str> {
         Oco::Owned(self.to_string())
@@ -2180,6 +2191,7 @@ impl RadioOption for f64 {
 use std::time::Duration;
 
 use crate::button::{Button, ButtonAppearance};
+use attr_docgen::generate_docs;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::ReadValue;
@@ -2190,6 +2202,7 @@ use leptos::prelude::set_timeout;
 use leptos::*;
 use web_sys::window;
 
+#[generate_docs]
 /// Styled monospace-rectangle for showing code, copy button in the top right
 #[component]
 pub fn Codeblock(
@@ -2250,17 +2263,7 @@ use leptos::{
 mod variations;
 
 // Re-exports
-pub use crate::button::variations::AddButton;
-pub use crate::button::variations::ControlButton;
-pub use crate::button::variations::DeleteButton;
-pub use crate::button::variations::DialogButton;
-pub use crate::button::variations::DialogButtonChildren;
-pub use crate::button::variations::DownloadButton;
-pub use crate::button::variations::DropdownButton;
-pub use crate::button::variations::DropdownButtonChildren;
-pub use crate::button::variations::EditButton;
-pub use crate::button::variations::ModalButton;
-pub use crate::button::variations::ModalButtonChildren;
+pub use crate::button::variations::*;
 
 const BUTTON_SHADOW_CLASSES: &str = "shadow-sm";
 const BUTTON_SPACING_CLASSES: &str = " px-5 py-2.5 mr-2";
@@ -2605,6 +2608,7 @@ use crate::modal::{Modal, ModalFooterChildren};
 use crate::util::callback::BoxCallback;
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
+use attr_docgen::generate_docs;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::IntoAny;
 use leptos::prelude::{Children, Get, MaybeProp, Signal, provide_context, signal};
@@ -2723,6 +2727,7 @@ pub struct DropdownButtonChildren {
     children: Children,
 }
 
+#[generate_docs]
 /// A button triggers an action or event when activated.
 ///
 /// Example
@@ -2803,7 +2808,7 @@ where
     let dropdown_id = id.get().map(|id| format!("{id}-modal"));
 
     view! {
-        <div class="fit-content relative">
+        <div class="w-fit relative">
             {button}
             <Dropdown id=dropdown_id is_visible alignment>
                 {children().into_any()}
@@ -2817,6 +2822,7 @@ pub struct ModalButtonChildren {
     children: Children,
 }
 
+#[generate_docs]
 /// A button to toggle a modal
 #[component]
 pub fn ModalButton(
@@ -2898,6 +2904,7 @@ pub struct DialogButtonChildren {
     children: Children,
 }
 
+#[generate_docs]
 /// A button to toggle a dialog
 #[component]
 pub fn DialogButton(
@@ -3010,7 +3017,7 @@ pub mod option_comp;
 pub mod optional_prop;
 pub mod shared_id;
 pub mod signals;
-// MIT License, taken from https://github.com/thaw-ui/thaw at 69bc65d
+pub mod lorem;// MIT License, taken from https://github.com/thaw-ui/thaw at 69bc65d
 mod component_ref;
 mod signal_watch;
 
@@ -3494,7 +3501,38 @@ impl Deref for HtmlElement {
         &self.el
     }
 }
-use std::sync::atomic::{AtomicU32, Ordering};
+use leptos::{IntoView, component};
+
+const LOREM_IPSUM: &str = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis.
+At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. 
+Consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+
+// Generates Lorem Ipsum.
+#[component]
+pub fn Lorem(
+    #[prop(optional)]
+    // Offset
+    offset: u8,
+    // Max 35 - offset
+    sentences: u8
+) -> impl IntoView {
+    let mut i = 0;
+    let mut dot_iter = LOREM_IPSUM.match_indices(".").skip(offset as usize);
+    let mut last_dot = 0;
+    while i < sentences {
+        if let Some((position, _)) = dot_iter.next() {
+            last_dot = position;
+        } else {
+            break;
+        }
+        i += 1;
+    }
+    LOREM_IPSUM[0..last_dot].to_string()
+}use std::sync::atomic::{AtomicU32, Ordering};
 
 use base64::{Engine, prelude::BASE64_URL_SAFE_NO_PAD};
 use leptos::server::{SharedValue, codee::string::FromToStringCodec};
@@ -4241,6 +4279,7 @@ pub fn Spinner(
 use crate::class_list;
 use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
+use attr_docgen::generate_docs;
 use leptos::either::Either;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
@@ -4251,6 +4290,7 @@ const DROPDOWN_LIST_STYLE: &str = "py-2 text-sm text-gray-700 dark:text-gray-200
 const DROPDOWN_ITEM_STYLE: &str =
     "block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white";
 
+#[generate_docs]
 #[component]
 pub fn Dropdown(
     /// Dropdown id
@@ -4282,6 +4322,7 @@ pub fn Dropdown(
 pub type AutoClose = bool;
 pub type SetVisibleCallback = WriteSignal<bool>;
 
+#[generate_docs]
 /// An item in a dropdown menu.
 /// This item can take contexts via [leptus::context::provide_context]:
 ///   context 1: [AutoClose] to indicate wether clicking this item should close the dropdown.
@@ -4314,7 +4355,7 @@ pub fn DropdownItem(
                 *set_visible.write() = false;
             }
         }>
-            <a href="#" class=class_list![DROPDOWN_ITEM_STYLE, class]>
+            <a class=class_list![DROPDOWN_ITEM_STYLE, class]>
                 {if let Some(icon) = icon.get() {
                     Either::Left(view! { <Icon icon=icon/> })
                 } else {
@@ -4338,6 +4379,7 @@ pub enum AlignmentAnchor {
     //   It offers fallback rendering positions when a position causes an overflow.
     // Auto
 }
+use attr_docgen::generate_docs;
 use leptos::IntoView;
 use leptos::prelude::AriaAttributes;
 use leptos::prelude::ClassAttribute;
@@ -4357,10 +4399,10 @@ const HEADER_CLASS: &str = "font-bold relative text-gray-900 dark:text-gray-100"
 #[component]
 fn HeadingAnchor(
     /// Identifies this anchor.
-    id: String
+    id: String,
 ) -> impl IntoView {
     view! {
-        // TODO: Get this offset via navbar context 
+        // TODO: Get this offset via navbar context
         <span id=id.clone() class="absolute -top-[100px]"></span>
         <a class="ml-2 text-oa-blue opacity-0 transition-opacity hover:opacity-100" href=format!("#{id}") aria-label="Link to this section: Heading mark">#</a>
     }
@@ -4369,21 +4411,22 @@ fn HeadingAnchor(
 #[component]
 fn MaybeHeadingAnchor(anchor: MaybeProp<String>) -> impl IntoView {
     if let Some(anchor) = anchor.get() {
-        view !{ <HeadingAnchor id=anchor/> }.into_any()
+        view! { <HeadingAnchor id=anchor/> }.into_any()
     } else {
         ().into_any()
     }
 }
 
+#[generate_docs]
 #[component]
 pub fn Heading1(
-    /// Whether this Heading should be suffixed by a # serving as an anchor.
+    /// Whether this Heading should be suffixed by a #, serving as an anchor.
     #[prop(optional, into)]
     anchor: MaybeProp<String>,
     /// Extra heading classes
     #[prop(optional, into)]
     class: MaybeReactiveClass,
-    /// Heading contents
+    /// Heading text
     children: Children,
 ) -> impl IntoView {
     view! {
@@ -4488,49 +4531,77 @@ pub fn Heading6(
         </h6>
     }
 }
+use attr_docgen::generate_docs;
 use leptos::IntoView;
+use leptos::component;
 use leptos::prelude::ClassAttribute;
 use leptos::view;
-use leptos::component;
 
 const HEADER_CLASS: &str = "font-bold relative color-gray-900";
 
+#[generate_docs]
 #[component]
-fn HorizontalLine() -> impl IntoView {
+pub fn HorizontalLine() -> impl IntoView {
     view! {
         <hr class="my-4" />
     }
-}use crate::avatar::Avatar;
+}
+use crate::avatar::Avatar;
 use crate::class_list;
 use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
-use crate::util::shared_id::shared_id;
+use crate::util::callback::ArcOneCallback;
+use attr_docgen::generate_docs;
 use leptos::either::Either;
-use leptos::prelude::Get;
 use leptos::prelude::{AnyView, Children, ClassAttribute, ElementChild, IntoAny, MaybeProp};
-use leptos::prelude::{AriaAttributes, CustomAttribute, GlobalAttributes};
+use leptos::prelude::{AriaAttributes, CustomAttribute};
+use leptos::prelude::{Get, OnAttribute, RwSignal, Set};
 use leptos::{IntoView, component, view};
+use web_sys::MouseEvent;
 
-const BADGE_BASE_CLASSES: &str = "flex font-medium rounded-lg";
+const BADGE_BASE_CLASSES: &str = "flex font-medium rounded-lg h-fit w-fit";
 
+#[generate_docs]
+/// A badge
 #[component]
 pub fn Badge(
     #[prop(optional)] size: BadgeSize,
-    #[prop(optional, into)] class: MaybeProp<String>,
+    /// Extra styling
+    #[prop(optional, into)]
+    class: MaybeProp<String>,
     #[prop(optional)] theme: BadgeTheme,
-    #[prop(optional, into)] prefix: MaybeProp<BadgePrefix>,
-    #[prop(optional, into)] postfix: MaybeProp<BadgePostfix>,
-    #[prop(optional)] border: bool,
-    #[prop(optional)] dismissable: bool,
+    /// Shown inside the badge, before the children
+    #[prop(optional, into)]
+    prefix: MaybeProp<BadgePrefix>,
+    /// Shown inside the badge, after the children
+    #[prop(optional, into)]
+    postfix: MaybeProp<BadgePostfix>,
+    /// Whether the badge should have a border
+    #[prop(optional)]
+    border: bool,
+    /// Whether the badge should have a cross button to dismiss it.
+    #[prop(optional)]
+    dismissable: bool,
+    /// Ran on dismissal request
+    #[prop(optional)]
+    on_dismiss: Option<ArcOneCallback<MouseEvent>>,
+    /// Usually text content.
     children: Children,
 ) -> impl IntoView {
     let prefix_classes = move |prefix: MaybeProp<BadgePrefix>| {
         prefix.get().map(|prefix| prefix.class()).unwrap_or("")
     };
-    let id = shared_id();
-    let target_id = format!("#{}", id.clone());
+    let dismissed = RwSignal::new(false);
     view! {
-        <span id=id.clone() class=class_list!(BADGE_BASE_CLASSES, class, theme.base_class(), (theme.border_class(), border), ("gap-1", dismissable), prefix_classes(prefix), prefix_classes(postfix), size.class())>
+        <span
+            class=class_list!(
+                BADGE_BASE_CLASSES, class, theme.base_class(),
+                (theme.border_class(), border),
+                ("gap-1", dismissable),
+                ("hidden", move || dismissed.get()),
+                prefix_classes(prefix), prefix_classes(postfix), size.class()
+            )
+        >
             {move || if let Some(prefix) = prefix.get() {
                 prefix.view()
             } else {
@@ -4544,9 +4615,14 @@ pub fn Badge(
             }}
             {if dismissable {
                 Either::Left(view!{
-                    <button type="button" class="inline-flex items-center p-0.5 text-sm bg-transparent rounded-xs hover:bg-neutral-tertiary" data-dismiss-target=target_id  aria_label="Remove">
-                      <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
-                      <span class="sr-only">Remove badge</span>
+                    <button type="button" class="inline-flex items-center p-0.5 text-sm bg-transparent rounded-xs hover:bg-neutral-tertiary" aria_label="Remove" on:click=move |e| {
+                        if let Some(on_dismiss) = on_dismiss.clone() {
+                            on_dismiss(e);
+                        }
+                        dismissed.set(true);
+                    }>
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
+                        <span class="sr-only">Remove badge</span>
                     </button>
                 })
             } else {
@@ -4562,10 +4638,11 @@ pub enum BadgeSize {
     Normal,
     Large,
 }
+
 impl BadgeSize {
     pub fn class(&self) -> &'static str {
         match self {
-            BadgeSize::Normal => "text-xs px-2.5 py-0.5",
+            BadgeSize::Normal => "text-xs px-1 py-0.5",
             BadgeSize::Large => "text-sm px-2 py-1",
         }
     }
@@ -4583,6 +4660,7 @@ pub enum BadgeTheme {
 }
 
 impl BadgeTheme {
+    // Color theme
     pub fn base_class(&self) -> &'static str {
         match self {
             BadgeTheme::Brand => "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
@@ -4599,6 +4677,8 @@ impl BadgeTheme {
             }
         }
     }
+
+    // Border and their colors
     pub fn border_class(&self) -> &'static str {
         match self {
             BadgeTheme::Brand => "border border-blue-400",
@@ -4628,18 +4708,22 @@ impl BadgePrefix {
     }
 
     pub fn view(&self) -> AnyView {
+        let size = "h-[1lh] w-[1lh] me-1";
         match self {
             BadgePrefix::Icon(icon_data) => view! {
-                <Icon class="!w-5 !h-5" icon=*icon_data/>
+                <Icon class=class_list!(size) icon=*icon_data/>
             }.into_any(),
             BadgePrefix::Dot => view! {
-                <span class="h-1.5 w-1.5 bg-fg-brand-strong rounded-full me-1"></span>
+                <span class=class_list!("w-1.5 h-1.5 me-1 bg-oa-blue rounded-full")></span>
             }.into_any(),
             BadgePrefix::SvgLoader => view! {
-                <svg aria-hidden="true" role="status" class="w-3 h-3 me-1 animate-spin text-neutral-tertiary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="#6A7282"/></svg>
+                <svg aria-hidden="true" role="status" class=class_list!(size, "animate-spin text-black fill-oa-gray dark:fill-black dark:text-oa-gray") viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                </svg>
             }.into_any(),
             BadgePrefix::Avatar { src } => view! {
-                <Avatar src=src.to_string() />
+                <Avatar src=src.to_string() class=class_list!(size) />
             }.into_any()
         }
     }
@@ -5637,6 +5721,7 @@ use crate::{
     class_list::reactive_class::MaybeReactiveClass,
     util::{callback::BoxCallback, element::Element},
 };
+use attr_docgen::generate_docs;
 use leptos::{
     ev::{click, mouseenter, mouseleave, on},
     html::Div,
@@ -5661,6 +5746,7 @@ pub struct PopoverController {
     pub on_close: Option<BoxCallback>,
 }
 
+#[generate_docs]
 // TODO: Resize observer ?
 #[component]
 pub fn Popover<Trigger, Content>(
@@ -6360,6 +6446,7 @@ pub fn Toggle(
         </label>
     }
 }
+use attr_docgen::generate_docs;
 use leptos::prelude::MaybeProp;
 use leptos::prelude::{AddAnyAttr, IntoAny};
 // Do not remove until leptos is upgraded above 0.8.14
@@ -6373,6 +6460,7 @@ use crate::class_list;
 
 const LINK_CLASSES: &str = "text-oa-blue hover:underline";
 
+#[generate_docs]
 /// See [[A](leptos_router::components::A)]
 #[component]
 pub fn Link<H>(
@@ -6411,6 +6499,7 @@ use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
 use crate::link::Link;
 use crate::{class_list, icon};
+use attr_docgen::generate_docs;
 use leptos::prelude::Get;
 #[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
@@ -6425,6 +6514,7 @@ use leptos_router::components::ToHref;
 
 const SIDEBAR_CLASSES: &str = "fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 lg:translate-x-0 dark:bg-gray-800 dark:border-gray-700";
 
+#[generate_docs]
 #[component]
 pub fn SideBarLink<H>(
     #[prop(optional, into)] icon: MaybeProp<IconRef>,
@@ -6474,13 +6564,18 @@ pub struct NavbarEntries {
     children: Children,
 }
 
+#[generate_docs]
 #[component]
 pub fn SideNavbar(
+    /// Page content
     children: Children,
+    /// Slot for items in the top navbar
     #[prop(optional, default=NavbarEndChildren { children: Box::new(|| ().into_any()) })]
     end: NavbarEndChildren,
+    /// Slot for branding
     #[prop(optional, default=NavbarLogo { children: Box::new(|| OALogoLink().into_any()) })]
     logo: NavbarLogo,
+    /// Slot for sidebar entries
     #[prop(optional, default=NavbarEntries { children: Box::new(|| ().into_any()) })]
     entries: NavbarEntries,
 ) -> impl IntoView {
@@ -6531,20 +6626,26 @@ pub fn SideNavbar(
         </div>
     }
 }
+use attr_docgen::generate_docs;
 use leptos::prelude::ElementChild;
 use leptos::prelude::{IntoAny, IntoOptionGetter, MaybeProp};
 use leptos::{IntoView, component, prelude::ClassAttribute, view};
 
 use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 
+#[generate_docs]
+/// Circular avatar component.
 #[component]
 pub fn Avatar(
+    /// Image source for the avatar.
     #[prop(optional, into)] src: MaybeProp<String>,
-    #[prop(optional, into)] extra_classes: MaybeProp<String>,
+    /// Extra classes to style this component.
+    #[prop(optional, into)] class: MaybeReactiveClass,
 ) -> impl IntoView {
     if let Some(src) = src.into_option_getter().run() {
         view! {
-            <img class=class_list!["w-10 h-10 rounded-full", extra_classes] src=src alt="Rounded avatar"/>
+            <img class=class_list!["w-10 h-10 rounded-full", class] src=src alt="Rounded avatar"/>
         }.into_any()
     } else {
         view! {
@@ -6572,6 +6673,7 @@ pub fn Avatar(
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 
+use attr_docgen::generate_docs;
 use std::fmt::Display;
 use std::str::FromStr;
 // Do not remove until leptos is upgraded above 0.8.14
@@ -6685,6 +6787,7 @@ pub fn fetch_ssr_tailwind_class() -> String {
     resulting_theme.to_string()
 }
 
+#[generate_docs]
 #[component]
 pub fn ThemeSelector() -> impl IntoView {
     let update_theme_action: ServerAction<UpdateTheme> = ServerAction::new();
@@ -6812,6 +6915,7 @@ pub fn initial_theme_from_cookie() -> Theme {
     });
     found.unwrap_or_default()
 }
+use attr_docgen::generate_docs;
 use leptos::children::Children;
 use leptos::leptos_dom::logging::console_log;
 use leptos::logging::error;
@@ -6848,6 +6952,7 @@ pub struct ModalFooterChildren {
     children: Children,
 }
 
+#[generate_docs]
 #[component]
 pub fn Modal(
     /// Modal id
@@ -7002,13 +7107,9 @@ pub fn TextArea(
     }
 }
 use crate::{
-    badge::{Badge, BadgePostfix, BadgePrefix, BadgeSize, BadgeTheme},
-    button::{Button, ButtonAppearance},
-    button_group::{ButtonGroup, First, Last},
-    class_list,
-    icon::{self, NextIcon, PreviousIcon},
-    util::callback::ArcOneCallback,
+    badge::{Badge, BadgePostfix, BadgePrefix, BadgeSize, BadgeTheme}, button::{Button, ButtonAppearance}, button_group::{ButtonGroup, First, Last}, class_list, icon::{self, NextIcon, PreviousIcon}, popover::{Popover, PopoverAnchor, PopoverTrigger}, util::{callback::ArcOneCallback, option_comp::OptionComp}
 };
+use attr_docgen::generate_docs;
 use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveTime, Weekday};
 use leptos::{either::Either, logging::error, prelude::*, tachys::view::any_view::AnyView};
 use leptos_use::{CalendarDate, UseCalendarOptions, UseCalendarReturn, use_calendar_with_options};
@@ -7049,6 +7150,7 @@ fn should_show_week(date: &CalendarDate, show_days: &[Weekday]) -> bool {
     return false;
 }
 
+#[generate_docs]
 /// Calendar component.
 ///   Displays a full-month view, shown days can be configured.
 ///   Custom content is possible via [children]
@@ -7061,7 +7163,7 @@ pub fn Calendar(
     #[prop(default = Signal::derive(|| Local::now()), into)] local_date_time: Signal<
         DateTime<Local>,
     >,
-    #[prop(default = RwSignal::new(Box::new(& WORK_WEEK)), into)] show_days: RwSignal<
+    #[prop(default = RwSignal::new(Box::new(&WORK_WEEK)), into)] show_days: RwSignal<
         Box<&'static [Weekday]>,
     >,
     #[prop(default = Local::now().date_naive(), into)] initial_date: NaiveDate,
@@ -7191,7 +7293,7 @@ pub fn Calendar(
                         })
                         .map(|date| {
                             view! {
-                                <CalendarItem
+                                <CalendarDay
                                     date
                                     children=children.clone()
                                 />
@@ -7206,7 +7308,7 @@ pub fn Calendar(
 }
 
 #[component]
-fn CalendarItem(date: CalendarDate, children: Option<CalendarChildrenFn>) -> impl IntoView {
+fn CalendarDay(date: CalendarDate, children: Option<CalendarChildrenFn>) -> impl IntoView {
     // Some months start in the middle of a week, we then need to manually align calendar items at the correct column.
     let col_idx = date.weekday() as usize; // 0-indexed
     let col_class = [
@@ -7237,16 +7339,63 @@ fn CalendarItem(date: CalendarDate, children: Option<CalendarChildrenFn>) -> imp
     }
 }
 
-struct CalendarDay {
-    events: Vec<CalendarEvent>,
-}
-
-struct CalendarEvent {
-    start_time: NaiveTime,
-    end_time: NaiveTime,
-    title: String,
-    desc: Option<String>,
-    location: Option<String>,
+#[generate_docs]
+/// A rectangular calendar-event made to fit inside a calendar-day, shows more details on hover. 
+#[component]
+pub fn CalendarEvent(
+    /// Start time, shown next to the event
+    #[prop(optional, into)]
+    start_time: Option<NaiveTime>,
+    /// Event end time, shown in the popover
+    #[prop(optional, into)]
+    end_time: Option<NaiveTime>,
+    /// Event summary, shown in the calendar
+    #[prop(optional, into)]
+    summary: Option<String>,
+    /// Title of the event-popup
+    #[prop(optional, into)]
+    popup_title: Option<String>,
+    /// Content of the event-popup
+    #[prop(optional, into)]
+    popup_desc: Option<String>,
+) -> impl IntoView {
+    view! {
+        <Popover preferred_pos=PopoverAnchor::Right>
+            <PopoverTrigger slot>
+                <div class=class_list!("self-stretch p-0.5 bg-teal-100 dark:bg-teal-900 m-0.5 shadow-sm text-xs md:text-sm line-clamp-3 shrink-0", ("grow", start_time.is_none()))>
+                    <OptionComp value=start_time let:start_time>
+                        <strong class="mr-[0.5ch] font-mono">
+                            {start_time.format("%H:%M").to_string()}
+                        </strong>
+                    </OptionComp>
+                    <OptionComp value=summary.clone() let:summary>
+                        <span>
+                            {summary.to_string()}
+                        </span>
+                    </OptionComp>
+                </div>
+            </PopoverTrigger>
+            <div>
+                <OptionComp value=start_time let:start_time>
+                    <OptionComp value=end_time let:end_time>
+                        <strong class="mr-[0.5ch] font-mono">
+                            {start_time.format("%H:%M").to_string()} - {end_time.format("%H:%M").to_string()}
+                        </strong>
+                    </OptionComp>
+                </OptionComp>
+                <OptionComp value=popup_title let:title>
+                    <p><strong>
+                        {title.to_string()}
+                    </strong></p>
+                </OptionComp>
+                <OptionComp value=popup_desc let:desc>
+                    <p>
+                        {desc.to_string()}
+                    </p>
+                </OptionComp>
+            </div>
+        </Popover>
+    }
 }
 
 #[derive(Clone)]
@@ -7271,6 +7420,7 @@ where
         })))
     }
 }
+use attr_docgen::generate_docs;
 use leptos::logging::debug_log;
 use leptos::prelude::BindAttribute;
 use leptos::prelude::Children;
@@ -7295,6 +7445,7 @@ use crate::form_input::PostfixLabelStyle;
 
 const CHECKBOX_CLASS: &str = "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
 
+#[generate_docs]
 /// A simple checkmark-box with optional label on the right.
 #[component]
 pub fn Checkbox(
@@ -7356,6 +7507,7 @@ pub fn Checkbox(
         </label>
     }
 }
+use attr_docgen::generate_docs;
 use chrono::Days;
 use leptos::logging::debug_log;
 use leptos::prelude::GlobalAttributes;
@@ -8019,13 +8171,14 @@ pub fn day_highlighter(
         } else if let DateMenuOption::Day(date) = date
             && date.is_other_month()
         {
-            "text-gray-500".to_string()
+            "text-gray-500 rounded-lg".to_string()
         } else {
             "rounded-lg".to_string()
         }
     })
 }
 
+#[generate_docs]
 #[component]
 pub fn DatePicker(
     #[prop(optional, into)] id: MaybeProp<String>,
@@ -8043,6 +8196,7 @@ pub fn DatePicker(
     /// A function which maps a DayMenuOption -> String (css class) to style special days on the date-picker.
     #[prop(default = day_highlighter(value).into(), into)]
     highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
+    
     #[prop(optional)] required: bool,
     #[prop(optional, into)] label: MaybeProp<String>,
 ) -> impl IntoView {
@@ -8230,9 +8384,9 @@ pub fn DatePicker(
     view! {
         <div node_ref=target>
             <GenericInput<OptDate, String> id=date_picker_id.get() name class placeholder label parser format value required
-                on:focus=move |_| {
+                on_focus=ArcOneCallback::new(move |_| {
                     picker_state.update(|state| state.show());
-                }
+                })
                 on:keydown=move |key: KeyboardEvent| {
                     console_log(key.code().as_str());
                     if key.code() == "Escape" || key.code() == "Tab" {

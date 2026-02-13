@@ -1751,7 +1751,9 @@ dependencies = [
 
 [[package]]
 name = "leptos-struct-table"
-version = "0.17.0"
+version = "0.18.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8512aac7ab65b0e8f4c963abd4a0501fe49eac2ab18b99a046001e7ea73a07df"
 dependencies = [
  "chrono",
  "leptos",
@@ -1765,7 +1767,9 @@ dependencies = [
 
 [[package]]
 name = "leptos-struct-table-macro"
-version = "0.14.1"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "efea065f7c41c2268e1c8e7e9bf62bd7bda606855ef9ab13441e738c1d71fb34"
 dependencies = [
  "darling 0.23.0",
  "heck",
