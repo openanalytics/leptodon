@@ -23,7 +23,7 @@ pub fn LoginFormInputDemo() -> impl IntoView {
                     <TextInput name="email" placeholder="localpart@domain" input_type=InputType::Email />
                 </FormInput<String>>
                 // <String> is the feedback error type of the GenericInput inside PasswordInput.
-                <FormInput<String> label="Password" required=true> 
+                <FormInput<String> label="Password" required=true>
                     <PasswordInput name="password" placeholder="*******************" hazards=vec!["YourName".to_string()] show_eye=true />
                 </FormInput<String>>
                 <Button button_type=ButtonType::Submit>"Submit"</Button>

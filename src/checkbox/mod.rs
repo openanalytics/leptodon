@@ -63,7 +63,7 @@ pub fn Checkbox(
     );
 
     view! {
-        <label class=class_list!["relative inline-flex items-center cursor-pointer", class] 
+        <label class=class_list!["relative inline-flex items-center cursor-pointer", class]
             on:click={
                 move |ev| {
                     if prevent_label {

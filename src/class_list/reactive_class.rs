@@ -77,10 +77,11 @@ impl From<ClassList> for MaybeReactiveClass {
 
 impl From<MaybeProp<String>> for MaybeReactiveClass {
     fn from(value: MaybeProp<String>) -> Self {
-        MaybeReactiveClass(MaybeProp::derive(move || value.get().map( ReactiveClass::from)))
+        MaybeReactiveClass(MaybeProp::derive(move || {
+            value.get().map(ReactiveClass::from)
+        }))
     }
 }
-
 
 impl IntoClass for MaybeReactiveClass {
     fn into_class(self) -> Class {

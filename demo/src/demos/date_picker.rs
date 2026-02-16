@@ -15,7 +15,6 @@ use leptos_components::layout::FixedCenterColumn;
 use leptos_components::util::callback::ArcOneCallback;
 use leptos_meta::Title;
 
-
 #[generate_codeblock(DatePickerExample)]
 #[component]
 pub fn DatePickerDemo() -> impl IntoView {
@@ -79,7 +78,7 @@ pub fn DatePickerDemoPage() -> impl IntoView {
         <FixedCenterColumn>
             <Heading4 anchor="datepicker">"DatePicker"</Heading4>
             <DatePickerExample />
-            
+
             <Heading4 anchor="datepicker-highlighter">"DatePicker Highlighter"</Heading4>
             <DatePickerHighlighterExample />
 

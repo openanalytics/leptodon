@@ -45,19 +45,26 @@ pub trait RadioOption: Display {
 #[component]
 pub fn Radio<T>(
     /// Html id
-    #[prop(optional, into)] id: Oco<'static, str>,
+    #[prop(optional, into)]
+    id: Oco<'static, str>,
     /// Name identifier for form submission
-    #[prop(into)] name: Oco<'static, str>,
+    #[prop(into)]
+    name: Oco<'static, str>,
     /// Extra style classes
-    #[prop(optional, into)] class: MaybeReactiveClass,
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
     /// Label for the radio-button menu.
-    #[prop(optional, into)] label: String,
+    #[prop(optional, into)]
+    label: String,
     /// Whether selecting an option is required for form submission.
-    #[prop(optional, into)] required: bool,
+    #[prop(optional, into)]
+    required: bool,
     /// Value of the selected element
-    #[prop(optional, into)] selected: RwSignal<Option<T>>,
+    #[prop(optional, into)]
+    selected: RwSignal<Option<T>>,
     /// Available radio options
-    #[prop(optional, into)] options: RwSignal<Vec<T>>,
+    #[prop(optional, into)]
+    options: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
     T: RadioOption + Clone + Eq + Hash + Send + Sync + 'static,
@@ -101,7 +108,7 @@ where
             <Label label=label required>
                 <ul class=class_list!(
                     "w-48 bg-oa-gray dark:bg-gray-700 flex flex-col gap-px overflow-hidden",
-                    RADIO_LIST_GROUP_CLASSES  
+                    RADIO_LIST_GROUP_CLASSES
                 )>
                     <For
                         each=move || options.get()

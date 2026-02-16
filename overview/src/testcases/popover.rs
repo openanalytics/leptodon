@@ -1,6 +1,6 @@
-use leptos::prelude::GlobalAttributes;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
+use leptos::prelude::GlobalAttributes;
 #[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
 use leptos::{IntoView, component, view};
@@ -11,10 +11,7 @@ use leptos_components::popover::PopoverTrigger;
 use leptos_meta::Title;
 
 #[component]
-fn PopoverRow(
-    #[prop(into)] 
-    id: String
-) -> impl IntoView {
+fn PopoverRow(#[prop(into)] id: String) -> impl IntoView {
     let id_left = format!("{id}-left");
     let id_top = format!("{id}-top");
     let id_bot = format!("{id}-bottom");

@@ -50,7 +50,7 @@ pub fn ToggleDemoPage() -> impl IntoView {
         <FixedCenterColumn>
             <Heading4 anchor="toggle">"Toggle"</Heading4>
             <ToggleExample />
-            
+
             <leptos_components::toggle::ToggleDocs />
         </FixedCenterColumn>
     }

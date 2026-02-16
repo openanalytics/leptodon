@@ -10,8 +10,8 @@ use leptos::{IntoView, component, view};
 use leptos_components::button::Button;
 use leptos_components::heading::Heading4;
 use leptos_components::layout::FixedCenterColumn;
-use leptos_components::select::MaybeSelect;
 use leptos_components::radio::RadioOption;
+use leptos_components::select::MaybeSelect;
 use leptos_components::select::Select;
 use leptos_meta::Title;
 
@@ -109,7 +109,7 @@ pub fn SelectDemoPage() -> impl IntoView {
             <Heading4 anchor="maybe-select">"MaybeSelect"</Heading4>
             <p>"The MaybeSelect<T> needs an Option<T> value."</p>
             <MaybeSelectExample />
-            
+
             <Heading4 anchor="select">"Select"</Heading4>
             <p>"The Select<T> needs a T value."</p>
             <SelectExample />

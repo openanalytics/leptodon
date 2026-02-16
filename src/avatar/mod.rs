@@ -11,14 +11,17 @@ use crate::class_list::reactive_class::MaybeReactiveClass;
 #[component]
 pub fn Avatar(
     /// Image source for the avatar.
-    #[prop(optional, into)] src: MaybeProp<String>,
+    #[prop(optional, into)]
+    src: MaybeProp<String>,
     /// Extra classes to style this component.
-    #[prop(optional, into)] class: MaybeReactiveClass,
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
 ) -> impl IntoView {
     if let Some(src) = src.into_option_getter().run() {
         view! {
             <img class=class_list!["w-10 h-10 rounded-full", class] src=src alt="Rounded avatar"/>
-        }.into_any()
+        }
+        .into_any()
     } else {
         view! {
             <div class="relative w-10 h-10 overflow-hidden bg-neutral-secondary-medium rounded-full">

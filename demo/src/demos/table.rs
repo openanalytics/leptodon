@@ -45,7 +45,7 @@ pub fn GroupedTableDemo() -> impl IntoView {
             &self.grouping_info
         }
     }
-    
+
     let grouped_by = Arc::new(vec![FlowerColumn::SepalWidth]);
     let rows = vec![
         Flower {
@@ -76,9 +76,9 @@ pub fn GroupedTableDemo() -> impl IntoView {
 
     view! {
         <table>
-            <TableContent 
-                rows=rows 
-                scroll_container="html" 
+            <TableContent
+                rows=rows
+                scroll_container="html"
                 row_renderer=GroupTableRowRenderer
                 drag_handler=HeadDragHandler::new(StyledHeadDragHandler)>
             </TableContent>
@@ -93,6 +93,9 @@ pub fn TableDemoPage() -> impl IntoView {
 
         <FixedCenterColumn>
             <Heading4 anchor="group-table">"Grouped Table"</Heading4>
+            <p>
+                "When using paginated tables there is currenlty a bug that causes a scroll-to-top. To reduce the frequency of this issue you can increase your data-load chunks."
+            </p>
             <GroupedTableExample />
         </FixedCenterColumn>
     }

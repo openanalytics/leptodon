@@ -73,7 +73,7 @@ pub fn RouteShell() -> impl IntoView {
 #[component]
 pub fn App() -> impl IntoView {
     provide_meta_context();
-    
+
     view! {
         <Stylesheet href="/pkg/overview.css"/>
 

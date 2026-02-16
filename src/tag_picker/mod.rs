@@ -125,7 +125,7 @@ where
 
     // When the inside selection change, propagate to outside.
     Effect::new(move || selected.set(inside_selected.get()));
-    
+
     // When the outside selection change, Sanity check the selection, purge unselectable tags..
     Effect::watch(
         move || selected.get(),
@@ -139,18 +139,18 @@ where
                     .into_iter()
                     .filter(|selected_value| tags.contains(selected_value))
                     .collect::<Vec<_>>();
-                
+
                 // Update signals, could do less updates but that requires a lot more code, seemed like premature optimisation.
                 for (checkbox_tag, checkbox_signal) in checkboxes {
                     checkbox_signal.set(leftover_selected.contains(&checkbox_tag));
                 }
-         
+
                 inside_selected.set(leftover_selected);
             }
         },
         false,
     );
-    
+
     // Fuzzy search applier
     let tags_filtersorted: Memo<Vec<T>> = Memo::new(move |_old| {
         let search: String = search_filter.get().to_ascii_lowercase();
@@ -193,13 +193,16 @@ where
         let Some(input): Option<HtmlInputElement> = search_ref.get_untracked() else {
             return;
         };
-        
+
         // Run next tick such that the input box can first unhide itself. Can't focus invisible elements.
-        set_timeout(move || {
-            input
-                .focus()
-                .expect("Tag picker search box should be focusable upon opening.");    
-        }, Duration::ZERO);
+        set_timeout(
+            move || {
+                input
+                    .focus()
+                    .expect("Tag picker search box should be focusable upon opening.");
+            },
+            Duration::ZERO,
+        );
     };
 
     let close_popover = Trigger::new();

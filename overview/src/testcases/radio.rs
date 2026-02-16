@@ -3,8 +3,8 @@ use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, prelude::RwSignal, view};
-use leptos_components::radio::Radio;
 use leptos_components::button::Button;
+use leptos_components::radio::Radio;
 use leptos_meta::Title;
 
 #[component]

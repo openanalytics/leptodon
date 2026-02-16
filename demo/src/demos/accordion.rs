@@ -11,7 +11,6 @@ use leptos_meta::Title;
 #[generate_codeblock(AccordionExample)]
 #[component]
 pub fn AccordionDemo() -> impl IntoView {
-
     view! {
         <Accordion>
             <AccordionEntry title="An outer accordion">

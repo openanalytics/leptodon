@@ -243,4 +243,3 @@ fn AdminEditButtonCellRenderer(
         </td>
     }
 }
-

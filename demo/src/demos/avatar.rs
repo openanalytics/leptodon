@@ -31,7 +31,7 @@ pub fn AvatarDemoPage() -> impl IntoView {
         <FixedCenterColumn>
             <Heading4 anchor="avatar-placeholder">"Avatar Placeholder"</Heading4>
             <AvatarPlaceholderExample />
-            
+
             <Heading4 anchor="avatar">"Avatar Link"</Heading4>
             <AvatarLinkExample />
 

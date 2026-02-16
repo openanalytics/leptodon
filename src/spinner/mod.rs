@@ -9,14 +9,18 @@ pub enum SpinnerAppearance {
     #[default]
     Default,
     OA,
-    Custom(MaybeReactiveClass)
+    Custom(MaybeReactiveClass),
 }
 
 impl SpinnerAppearance {
     fn into_class(self) -> MaybeReactiveClass {
         match self {
-            SpinnerAppearance::Default => "text-gray-900 stroke-oa-gray dark:text-oa-gray dark:stroke-gray-700".into(),
-            SpinnerAppearance::OA => "text-oa-blue stroke-oa-gray dark:text-oa-blue dark:stroke-gray-700".into(),
+            SpinnerAppearance::Default => {
+                "text-gray-900 stroke-oa-gray dark:text-oa-gray dark:stroke-gray-700".into()
+            }
+            SpinnerAppearance::OA => {
+                "text-oa-blue stroke-oa-gray dark:text-oa-blue dark:stroke-gray-700".into()
+            }
             SpinnerAppearance::Custom(class) => class,
         }
     }
@@ -30,7 +34,7 @@ pub fn Spinner(
     class: MaybeReactiveClass,
     /// Spinner appearance
     #[prop(optional)]
-    appearance: SpinnerAppearance
+    appearance: SpinnerAppearance,
 ) -> impl IntoView {
     view! {
         <div

@@ -107,7 +107,7 @@ pub fn GenericInputDemo() -> impl IntoView {
             format
             value
         />
-        { 
+        {
             move || {
                 if let Some(sum) = value.get() {
                     view!{ <p>Result = {sum.a + sum.b}</p> }.into_any()

@@ -53,7 +53,6 @@ pub fn DialogButtonDemo() -> impl IntoView {
     }
 }
 
-
 #[generate_codeblock(DialogExample)]
 #[component]
 pub fn DialogDemo() -> impl IntoView {
@@ -87,7 +86,7 @@ pub fn DialogDemoPage() -> impl IntoView {
         <FixedCenterColumn>
             <Heading4 anchor="dialog">"Dialog"</Heading4>
             <DialogExample />
-            
+
             <Heading4 anchor="dialog-button">"Dialog Button"</Heading4>
             <DialogButtonExample />
 

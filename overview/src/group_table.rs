@@ -71,9 +71,9 @@ pub fn GroupedTableExample() -> impl IntoView {
 
     view! {
         <div>Group on: </div>
-        <TagPicker 
-            placeholder="Selects columns to group on" 
-            tags=RwSignal::new(column_tags) 
+        <TagPicker
+            placeholder="Selects columns to group on"
+            tags=RwSignal::new(column_tags)
             selected=group_on
         />
         <table>
@@ -83,9 +83,9 @@ pub fn GroupedTableExample() -> impl IntoView {
                 let rows = LocalFlowers::new(group_on);
                 view! {
                     <TableContent rows
-                        row_renderer=GroupTableRowRenderer 
-                        display_strategy=strat 
-                        scroll_container="html" 
+                        row_renderer=GroupTableRowRenderer
+                        display_strategy=strat
+                        scroll_container="html"
                         drag_handler=HeadDragHandler::new(StyledHeadDragHandler)
                     ></TableContent>
                 }

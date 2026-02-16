@@ -1,5 +1,11 @@
 use crate::{
-    badge::{Badge, BadgePostfix, BadgePrefix, BadgeSize, BadgeTheme}, button::{Button, ButtonAppearance}, button_group::{ButtonGroup, First, Last}, class_list, icon::{self, NextIcon, PreviousIcon}, popover::{Popover, PopoverAnchor, PopoverTrigger}, util::{callback::ArcOneCallback, option_comp::OptionComp}
+    badge::{Badge, BadgePostfix, BadgePrefix, BadgeSize, BadgeTheme},
+    button::{Button, ButtonAppearance},
+    button_group::{ButtonGroup, First, Last},
+    class_list,
+    icon::{self, NextIcon, PreviousIcon},
+    popover::{Popover, PopoverAnchor, PopoverTrigger},
+    util::{callback::ArcOneCallback, option_comp::OptionComp},
 };
 use attr_docgen::generate_docs;
 use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveTime, Weekday};
@@ -232,7 +238,7 @@ fn CalendarDay(date: CalendarDate, children: Option<CalendarChildrenFn>) -> impl
 }
 
 #[generate_docs]
-/// A rectangular calendar-event made to fit inside a calendar-day, shows more details on hover. 
+/// A rectangular calendar-event made to fit inside a calendar-day, shows more details on hover.
 #[component]
 pub fn CalendarEvent(
     /// Start time, shown next to the event

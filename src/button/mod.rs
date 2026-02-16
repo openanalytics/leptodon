@@ -5,10 +5,7 @@ use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
 use crate::input_group::GroupItemClassContext;
 use crate::util::signals::ComponentRef;
-use crate::{
-    spinner::{Spinner},
-    util::callback::BoxOneCallback,
-};
+use crate::{spinner::Spinner, util::callback::BoxOneCallback};
 use attr_docgen::generate_docs;
 use leptos::logging::debug_log;
 use leptos::{IntoView, component, view};

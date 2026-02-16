@@ -42,7 +42,11 @@ where
     E: Clone + Send + Sync + std::fmt::Display + 'static,
 {
     let feedback: RwSignal<Option<E>> = RwSignal::new(None);
-    let form_ctx = FormInputContext { required, label, feedback };
+    let form_ctx = FormInputContext {
+        required,
+        label,
+        feedback,
+    };
     view! {
         <div class="mb-2 flex flex-col">
             <Label label required>

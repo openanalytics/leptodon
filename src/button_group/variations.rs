@@ -44,7 +44,7 @@ pub fn Pagination(
                 <Button appearance icon=prev_icon on_click=move |_| {
                     current_page.update(|old| *old = std::cmp::max(*old-1, 1));
                 }></Button>
-                
+
                 {if jumper {
                     view! {
                         <GenericInput<usize, String>
