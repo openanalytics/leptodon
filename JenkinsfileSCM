@@ -1,0 +1,137 @@
+pipeline {
+  agent {
+    kubernetes {
+      inheritFrom 'kaniko'
+      yamlFile 'agent.pod.yaml'
+      defaultContainer 'leptos-components-build'
+      yamlMergeStrategy merge()
+    }
+  }
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '3'))
+  }
+  environment {
+    VERSION = sh(
+      returnStdout: true,
+      script: cargo metadata --no-deps --format-version=1 | jq ".packages[0].version" --raw-output'
+    ).trim()
+    NS = 'openanalytics'
+    REGISTRY = 'registry.openanalytics.eu'
+    IMAGE = 'leptos-components-demo'
+    CACHE_IMAGE = 'leptos-components-demo-cache'
+    DOCKER_BUILDKIT = '1'
+    NO_COLOR = 'true'
+  }
+  stages {
+    stage('Prepare Environment') {
+      steps {
+        script {
+          if (env.BRANCH_NAME == 'develop') {
+            env.TAG = "${env.VERSION}-SNAPSHOT"
+          } else {
+            env.TAG = "${env.VERSION}"
+          }
+          echo "TAG is set to ${env.TAG}"
+        }
+      }
+    }
+    stage('License Check') {
+      steps {
+	      sh "cargo make license-check"
+      }
+    }
+    stage('Linting') {
+      steps {
+	      sh "cargo make lint"
+      }
+    }
+    stage('Unit Tests') {
+      steps {
+        sh "cargo make unit-tests"
+        withChecks('Back-end Unit Tests') {
+          junit "back-end/target/nextest/default/junit.xml"
+        }
+        sh "junit2html back-end/target/nextest/default/junit.xml back-end/target/nextest/default/unit-tests.html"
+        publishHTML([
+	        reportDir: 'back-end/target/nextest/default/', reportFiles: 'unit-tests.html',
+	        reportName: 'Unit Tests / Back-end Test Report',
+	        allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true
+        ])
+      }
+    }
+    stage('Integration Tests') {
+      steps {
+        sh "cargo make integration-tests"
+        withChecks('Integration Tests') {
+          junit "tests/integration/target/nextest/default/junit.xml"
+        }
+        sh "junit2html tests/integration/target/nextest/default/junit.xml tests/integration/target/nextest/default/integration-tests.html"
+        publishHTML([
+          reportDir: 'tests/integration/target/nextest/default/', reportFiles: 'integration-tests.html',
+          reportName: 'Integration Tests / Front-end Test Report',
+          allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true
+        ])
+      }
+    }
+    stage('Publish Back-end') {
+      when {
+        anyOf {
+          branch 'develop'
+          branch 'main'
+        }
+      }
+      steps {
+        container('kaniko') {
+          sh """
+          /kaniko/executor \
+            -v info \
+            --context ${env.WORKSPACE} \
+            --cache=true \
+            --cache-repo ${env.REGISTRY}/${env.NS}/${env.CACHE_IMAGE}-back-end \
+            --destination ${env.REGISTRY}/${env.NS}/${env.IMAGE}-back-end:${env.TAG} \
+            --destination ${env.REGISTRY}/${env.NS_DEV}/${env.IMAGE}-back-end:${env.TAG} \
+            --log-format=text \
+            --log-timestamp=true \
+            --dockerfile back-end.Dockerfile
+          """
+        }
+      }
+      post {
+        always {
+          sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
+          archiveArtifacts artifacts: 'mem*.log', fingerprint: true
+        }
+      }
+    }
+    stage('Publish Front-end') {
+      when {
+        anyOf {
+          branch 'develop'
+          branch 'main'
+        }
+      }
+      steps {
+        container('kaniko') {
+          sh """
+          /kaniko/executor \
+            -v info \
+            --context ${env.WORKSPACE} \
+            --cache=true \
+            --cache-repo ${env.REGISTRY}/${env.NS}/${env.CACHE_IMAGE}-front-end \
+            --destination ${env.REGISTRY}/${env.NS}/${env.IMAGE}-front-end:${env.TAG} \
+            --destination ${env.REGISTRY}/${env.NS_DEV}/${env.IMAGE}-front-end:${env.TAG} \
+            --log-format=text \
+            --log-timestamp=true \
+            --dockerfile front-end.Dockerfile
+          """
+        }
+      }
+      post {
+        always {
+          sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
+          archiveArtifacts artifacts: 'mem*.log', fingerprint: true
+        }
+      }
+    }
+  }
+}

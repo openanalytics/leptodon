@@ -29,7 +29,7 @@ impl ClassList {
     }
 
     #[allow(unused_mut)]
-    pub fn add(mut self, value: impl IntoClass) -> Self {
+    pub fn add_class(mut self, value: impl IntoClass) -> Self {
         let class = value.into_class();
         match class {
             Class::None => (),
@@ -96,13 +96,12 @@ impl ClassList {
                                     _ => {}
                                 });
                             }
-                        } else {
-                            if let Some(name) = name.clone() {
-                                self.value.update(|set| {
-                                    set.insert(name.clone());
-                                });
-                            }
+                        } else if let Some(name) = name.clone() {
+                            self.value.update(|set| {
+                                set.insert(name.clone());
+                            });
                         }
+
                         name
                     });
                     self.effects_option_oco.push(effect.into());
@@ -205,11 +204,10 @@ impl leptos::tachys::html::class::IntoClass for ClassList {
                     (el, prev_class)
                 }
             } else {
-                if !class.is_empty() {
-                    if !FROM_SERVER {
-                        Rndr::set_attribute(&el, "class", &class);
-                    }
+                if !class.is_empty() && !FROM_SERVER {
+                    Rndr::set_attribute(&el, "class", &class);
                 }
+
                 (el.clone(), class)
             }
         })
@@ -398,7 +396,7 @@ macro_rules! class_list {
     ($($name:expr),+) => {
         {
             use $crate::class_list::ClassList;
-            ClassList::new()$(.add($name))+
+            ClassList::new()$(.add_class($name))+
         }
     };
 }

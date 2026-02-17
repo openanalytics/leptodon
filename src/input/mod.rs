@@ -114,10 +114,10 @@ pub fn TextInput(
             if input_len > max_len {
                 return Err(format!("Input Length must be <{max_len}"));
             }
-        } else if let Some(min_len) = text_config.min_len.get() {
-            if input_len < min_len {
-                return Err(format!("Input Length must be >{min_len}"));
-            }
+        } else if let Some(min_len) = text_config.min_len.get()
+            && input_len < min_len
+        {
+            return Err(format!("Input Length must be >{min_len}"));
         }
 
         Ok(String::from(input))
@@ -462,7 +462,7 @@ where
             required={required.get()}
             on:blur=on_blur
             on:input=on_input
-            on:focus=move |e| {on_focus.get().map(|on_focus| on_focus(e));}
+            on:focus=move |e| {if let Some(on_focus) = on_focus.get() { on_focus(e) }}
             on:keydown={
                 let try_parse = try_parse.clone();
                 move |key: KeyboardEvent| {

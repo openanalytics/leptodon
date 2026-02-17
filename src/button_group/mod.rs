@@ -32,7 +32,7 @@ pub struct Last {
 #[component]
 pub fn ButtonGroup(
     first: First,
-    #[prop(default=Box::new(move || { view!{}.into_any()}))] children: Children,
+    #[prop(default=Box::new(move || { ().into_any() }))] children: Children,
     last: Last,
 ) -> impl IntoView {
     view! {

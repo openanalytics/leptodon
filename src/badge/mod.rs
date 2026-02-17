@@ -156,7 +156,7 @@ pub enum BadgePrefix {
 }
 impl BadgePrefix {
     pub fn class(self) -> &'static str {
-        return "inline-flex items-center";
+        "inline-flex items-center"
     }
 
     pub fn view(&self) -> AnyView {

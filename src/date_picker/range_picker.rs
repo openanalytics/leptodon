@@ -77,16 +77,16 @@ pub fn DateRangePicker(
                 return "rounded-lg".to_string();
             }
         } else {
-            if let Some(start) = start_date.get() {
-                if date.matches_date(start) {
-                    return "rounded-lg ".to_string() + SELECTED_ELEM_CLASSES;
-                }
+            if let Some(start) = start_date.get()
+                && date.matches_date(start)
+            {
+                return "rounded-lg ".to_string() + SELECTED_ELEM_CLASSES;
             }
 
-            if let Some(end) = end_date.get() {
-                if date.matches_date(end) {
-                    return "rounded-lg ".to_string() + SELECTED_ELEM_CLASSES;
-                }
+            if let Some(end) = end_date.get()
+                && date.matches_date(end)
+            {
+                return "rounded-lg ".to_string() + SELECTED_ELEM_CLASSES;
             }
         }
 

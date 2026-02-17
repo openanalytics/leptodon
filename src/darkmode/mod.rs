@@ -237,7 +237,7 @@ pub fn initial_theme_from_cookie() -> Theme {
         .get(axum::http::header::COOKIE)
         .map(|value| value.to_str())
     else {
-        console_log(format!("Failed to find cookie header").as_str());
+        console_log("Failed to find cookie header".to_string().as_str());
         return Theme::FollowSystem;
     };
     let parseable_value = Cow::from(head_value_bytes.to_string());

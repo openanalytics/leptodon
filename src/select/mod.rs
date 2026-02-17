@@ -144,15 +144,15 @@ where
     Effect::watch(
         move || selected.get(),
         move |new, old, _| {
-            if Some(new) != old {
-                if let Some(select) = node_ref.get_untracked() {
-                    // Firefox does not want to select disabled values with the selected attribute.
-                    // Workaround..
-                    if let Some(new) = new {
-                        select.set_value(new.value().as_str());
-                    } else {
-                        select.set_value("");
-                    }
+            if Some(new) != old
+                && let Some(select) = node_ref.get_untracked()
+            {
+                // Firefox does not want to select disabled values with the selected attribute.
+                // Workaround..
+                if let Some(new) = new {
+                    select.set_value(new.value().as_str());
+                } else {
+                    select.set_value("");
                 }
             }
         },
@@ -187,7 +187,7 @@ where
                     disabled=disabled
                 >
                     <Show
-                        when=move || { options.get().len() > 0 }
+                        when=move || { !options.get().is_empty() }
                         fallback=|| view! { <option disabled=true selected=true>No options</option> }
                     >
                         // Placeholder option

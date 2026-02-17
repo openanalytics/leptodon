@@ -102,7 +102,7 @@ where
                     // leave it the same
                 } else {
                     // new tag
-                    checkboxes.insert(tag.clone(), RwSignal::new(leftover_selected.contains(&tag)));
+                    checkboxes.insert(tag.clone(), RwSignal::new(leftover_selected.contains(tag)));
                     debug_log!("Added {tag}'s checkbox");
                 }
             }
@@ -227,7 +227,7 @@ where
                             let:tag
                             >
                             <div class="p-1.5 bg-oa-gray dark:bg-gray-800 rounded-lg flex items-center gap-1.5">
-                                <span>{(&tag).to_string()}</span>
+                                <span>{tag.to_string()}</span>
                                 <div class="p-1 hover:bg-oa-gray-mid hover:dark:bg-gray-600 hover:cursor-pointer rounded" on:click=move |ev| {
                                     ev.stop_propagation();
                                     let tag = tag.clone();
@@ -297,7 +297,7 @@ where
                     children=move |(i, tag)| {
                         let checkboxes = checkboxes.get();
                         let Some(checked) = checkboxes.get(&tag) else {
-                            return view! {}.into_any()
+                            return ().into_any()
                         };
 
                         debug_log!("Recreating tag item");
@@ -344,12 +344,9 @@ where
         inside_selected.update(|old_sel| {
             debug_log!("Toggling {}", tag);
             if old_sel.contains(&tag) {
-                old_sel
-                    .iter()
-                    .position(|sel_tag| sel_tag == &tag)
-                    .map(|pos| {
-                        old_sel.remove(pos);
-                    });
+                if let Some(pos) = old_sel.iter().position(|sel_tag| sel_tag == &tag) {
+                    old_sel.remove(pos);
+                }
             } else {
                 old_sel.push(tag.clone());
             }

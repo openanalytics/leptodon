@@ -45,7 +45,7 @@ fn should_show_week(date: &CalendarDate, show_days: &[Weekday]) -> bool {
             checking_day = next_day;
         }
     }
-    return false;
+    false
 }
 
 #[generate_docs]
@@ -113,7 +113,7 @@ pub fn Calendar(
         if let Err(fmt::Error) = current.format("%B %Y").write_to(&mut out) {
             error!("%B %Y is no longer a valid chronos format string");
         }
-        return out;
+        out
     });
 
     view! {
