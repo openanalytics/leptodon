@@ -31,12 +31,12 @@ pub fn DialogButtonDemo() -> impl IntoView {
         <DialogButton dialog_title="Example dialog?" dialog_visible
             primary_text="Yes"
             on_click_primary=BoxCallback::new(move || {
-                yes_clickcount.update(|old| *old = *old + 1);
+                yes_clickcount.update(|old| *old += 1);
                 dialog_visible.set(false);
             })
             secondary_text="No"
             on_click_secondary=BoxCallback::new(move || {
-                no_clickcount.update(|old| *old = *old + 1);
+                no_clickcount.update(|old| *old += 1);
                 dialog_visible.set(false);
             })
         >

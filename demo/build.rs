@@ -24,13 +24,13 @@ fn find_page_details(path: &Path) -> PageInfo {
 
     let mut functions = page_source.items.iter().filter(|item| {
         if let syn::Item::Fn(item_fn) = item {
-            item_fn.sig.inputs.len() == 0
+            item_fn.sig.inputs.is_empty()
         } else {
             false
         }
     });
 
-    let page_info = functions
+    functions
         .find_map(|func| match func {
             syn::Item::Fn(item_fn)
                 if matches!(item_fn.vis, Visibility::Public(_))
@@ -56,8 +56,7 @@ fn find_page_details(path: &Path) -> PageInfo {
             }
             _ => None,
         })
-        .expect(format!("{} should have a ...Page() function", path.display()).as_str());
-    page_info
+        .unwrap_or_else(|| panic!("{} should have a ...Page() function", path.display()))
 }
 
 fn generate_demo_pages() -> Result<(), Error> {
@@ -104,7 +103,7 @@ fn generate_demo_pages() -> Result<(), Error> {
         })
         .collect::<Vec<_>>()
         .join(",");
-    
+
     let page_routes = page_infos
         .iter()
         .map(|page_info| {

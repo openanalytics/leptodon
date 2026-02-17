@@ -26,7 +26,7 @@ pub fn TextInputDemo() -> impl IntoView {
     view! {
         <b>
             {move ||
-                format!("Hello {}!", value.get().to_string())
+                format!("Hello {}!", value.get())
             }
         </b>
 

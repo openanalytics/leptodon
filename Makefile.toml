@@ -1,15 +1,44 @@
-[tasks.dev-up]
-command = "docker"
-args = ["compose", "-f", "docker-compose.overview.yaml", "up", "-d"]
-
-[tasks.dev-logs]
-command = "docker"
-args = ["compose", "-f", "docker-compose.overview.yaml", "logs", "-f"]
-
-[tasks.dev-stop]
-command = "docker"
-args = ["compose", "-f", "docker-compose.overview.yaml", "stop"]
-
 [tasks.license-check]
 command = "licensure"
 args = ["--check", "--project"]
+
+# Lints
+[tasks.lint-library]
+cwd = "."
+command = "cargo"
+args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
+
+[tasks.lint-test-overview]
+cwd = "./overview"
+command = "cargo"
+args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
+
+[tasks.lint-test-overview-codegen]
+cwd = "./overview/codegen"
+command = "cargo"
+args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
+
+[tasks.lint-demo]
+cwd = "./demo"
+command = "cargo"
+args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
+
+[tasks.lint-demo-codegen]
+cwd = "./demo/codegen"
+command = "cargo"
+args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
+
+[tasks.lint-demo-macros]
+cwd = "./attr-docgen"
+command = "cargo"
+args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
+
+[tasks.lint]
+run_task = { name = [
+    "lint-library",
+    "lint-test-overview",
+    "lint-test-overview-codegen",
+    "lint-demo",
+    "lint-demo-codegen",
+    "lint-demo-macros",
+] }

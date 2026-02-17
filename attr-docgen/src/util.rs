@@ -6,5 +6,5 @@ pub(crate) fn trim_surrounding_quotes(mut str: String) -> String {
         str.truncate(str.len() - 1);
         return str[1..].trim().to_string();
     }
-    return str;
+    str
 }

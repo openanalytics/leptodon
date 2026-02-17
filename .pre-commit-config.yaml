@@ -1,0 +1,25 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+  - id: check-merge-conflict
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+  - id: check-added-large-files
+  - id: check-case-conflict
+  - id: check-json
+    exclude: ^\.vscode\/.+$
+  - id: check-toml
+- repo: local
+  hooks:
+# Leptosfmt breaks some code and strings.
+# - id: run-leptosfmt
+  # name: run Leptos view! macro formatter
+  # always_run: true
+  # language: script
+  # entry: /bin/sh -c 'leptosfmt ./src ./overview/src ./demo/src ./attr-docgen/src'
+  - id: run-rustfmt
+    name: run Rust formatter
+    always_run: true
+    language: script
+    entry: /bin/sh -c 'rustfmt --edition 2024 ./src/lib.rs ./overview/src/lib.rs ./demo/src/lib.rs ./attr-docgen/src/lib.rs'

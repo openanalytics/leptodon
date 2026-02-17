@@ -13,10 +13,10 @@ fn gen_icons() -> Result<(), Error> {
     )
     .expect("valid source code");
 
-    let func_count = leptos_components_icons.items.iter().count();
+    let func_count = leptos_components_icons.items.len();
     let functions = leptos_components_icons.items.iter().filter(|item| {
         if let syn::Item::Fn(item_fn) = item {
-            item_fn.sig.inputs.len() == 0
+            item_fn.sig.inputs.is_empty()
         } else {
             false
         }
@@ -32,8 +32,8 @@ fn gen_icons() -> Result<(), Error> {
                 {}
             </span>
 "#,
-                    item_fn.sig.ident.to_string(),
-                    item_fn.sig.ident.to_string()
+                    item_fn.sig.ident,
+                    item_fn.sig.ident
                 )
             }
             _ => String::new(),

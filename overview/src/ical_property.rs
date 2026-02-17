@@ -50,7 +50,7 @@ impl DateMaybeTime {
     /// Ignore potentially exiting time, only take naive date.
     pub fn as_naive_date(&self) -> NaiveDate {
         match self {
-            Self::Date(d) => d.clone(),
+            Self::Date(d) => *d,
             Self::DateTime(dt) => dt.date_naive(),
         }
     }

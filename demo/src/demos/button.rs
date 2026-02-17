@@ -29,7 +29,7 @@ pub fn ButtonDemo() -> impl IntoView {
     view! {
         <p>
             {move ||
-                format!("Button was pressed {} times!", count.get().to_string())
+                format!("Button was pressed {} times!", count.get())
             }
         </p>
 
@@ -38,7 +38,7 @@ pub fn ButtonDemo() -> impl IntoView {
             shape=ButtonShape::Rounded
             icon=icon::AddIcon()
             on_click=move |_| {
-                count.update(|old| *old = *old + 1);
+                count.update(|old| *old += 1);
             }
         >
             1

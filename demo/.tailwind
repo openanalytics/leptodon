@@ -29,7 +29,7 @@ impl ClassList {
     }
 
     #[allow(unused_mut)]
-    pub fn add(mut self, value: impl IntoClass) -> Self {
+    pub fn add_class(mut self, value: impl IntoClass) -> Self {
         let class = value.into_class();
         match class {
             Class::None => (),
@@ -96,13 +96,12 @@ impl ClassList {
                                     _ => {}
                                 });
                             }
-                        } else {
-                            if let Some(name) = name.clone() {
-                                self.value.update(|set| {
-                                    set.insert(name.clone());
-                                });
-                            }
+                        } else if let Some(name) = name.clone() {
+                            self.value.update(|set| {
+                                set.insert(name.clone());
+                            });
                         }
+
                         name
                     });
                     self.effects_option_oco.push(effect.into());
@@ -205,11 +204,10 @@ impl leptos::tachys::html::class::IntoClass for ClassList {
                     (el, prev_class)
                 }
             } else {
-                if !class.is_empty() {
-                    if !FROM_SERVER {
-                        Rndr::set_attribute(&el, "class", &class);
-                    }
+                if !class.is_empty() && !FROM_SERVER {
+                    Rndr::set_attribute(&el, "class", &class);
                 }
+
                 (el.clone(), class)
             }
         })
@@ -398,7 +396,7 @@ macro_rules! class_list {
     ($($name:expr),+) => {
         {
             use $crate::class_list::ClassList;
-            ClassList::new()$(.add($name))+
+            ClassList::new()$(.add_class($name))+
         }
     };
 }
@@ -501,16 +499,18 @@ impl From<ClassList> for MaybeReactiveClass {
 
 impl From<MaybeProp<String>> for MaybeReactiveClass {
     fn from(value: MaybeProp<String>) -> Self {
-        MaybeReactiveClass(MaybeProp::derive(move || value.get().map( ReactiveClass::from)))
+        MaybeReactiveClass(MaybeProp::derive(move || {
+            value.get().map(ReactiveClass::from)
+        }))
     }
 }
-
 
 impl IntoClass for MaybeReactiveClass {
     fn into_class(self) -> Class {
         self.0.into_class()
     }
-}use crate::class_list;
+}
+use crate::class_list;
 use crate::util::shared_id::shared_id;
 use attr_docgen::generate_docs;
 use leptos::leptos_dom::logging::console_log;
@@ -684,7 +684,7 @@ where
                     // leave it the same
                 } else {
                     // new tag
-                    checkboxes.insert(tag.clone(), RwSignal::new(leftover_selected.contains(&tag)));
+                    checkboxes.insert(tag.clone(), RwSignal::new(leftover_selected.contains(tag)));
                     debug_log!("Added {tag}'s checkbox");
                 }
             }
@@ -707,7 +707,7 @@ where
 
     // When the inside selection change, propagate to outside.
     Effect::new(move || selected.set(inside_selected.get()));
-    
+
     // When the outside selection change, Sanity check the selection, purge unselectable tags..
     Effect::watch(
         move || selected.get(),
@@ -721,18 +721,18 @@ where
                     .into_iter()
                     .filter(|selected_value| tags.contains(selected_value))
                     .collect::<Vec<_>>();
-                
+
                 // Update signals, could do less updates but that requires a lot more code, seemed like premature optimisation.
                 for (checkbox_tag, checkbox_signal) in checkboxes {
                     checkbox_signal.set(leftover_selected.contains(&checkbox_tag));
                 }
-         
+
                 inside_selected.set(leftover_selected);
             }
         },
         false,
     );
-    
+
     // Fuzzy search applier
     let tags_filtersorted: Memo<Vec<T>> = Memo::new(move |_old| {
         let search: String = search_filter.get().to_ascii_lowercase();
@@ -775,13 +775,16 @@ where
         let Some(input): Option<HtmlInputElement> = search_ref.get_untracked() else {
             return;
         };
-        
+
         // Run next tick such that the input box can first unhide itself. Can't focus invisible elements.
-        set_timeout(move || {
-            input
-                .focus()
-                .expect("Tag picker search box should be focusable upon opening.");    
-        }, Duration::ZERO);
+        set_timeout(
+            move || {
+                input
+                    .focus()
+                    .expect("Tag picker search box should be focusable upon opening.");
+            },
+            Duration::ZERO,
+        );
     };
 
     let close_popover = Trigger::new();
@@ -806,7 +809,7 @@ where
                             let:tag
                             >
                             <div class="p-1.5 bg-oa-gray dark:bg-gray-800 rounded-lg flex items-center gap-1.5">
-                                <span>{(&tag).to_string()}</span>
+                                <span>{tag.to_string()}</span>
                                 <div class="p-1 hover:bg-oa-gray-mid hover:dark:bg-gray-600 hover:cursor-pointer rounded" on:click=move |ev| {
                                     ev.stop_propagation();
                                     let tag = tag.clone();
@@ -876,7 +879,7 @@ where
                     children=move |(i, tag)| {
                         let checkboxes = checkboxes.get();
                         let Some(checked) = checkboxes.get(&tag) else {
-                            return view! {}.into_any()
+                            return ().into_any()
                         };
 
                         debug_log!("Recreating tag item");
@@ -923,12 +926,9 @@ where
         inside_selected.update(|old_sel| {
             debug_log!("Toggling {}", tag);
             if old_sel.contains(&tag) {
-                old_sel
-                    .iter()
-                    .position(|sel_tag| sel_tag == &tag)
-                    .map(|pos| {
-                        old_sel.remove(pos);
-                    });
+                if let Some(pos) = old_sel.iter().position(|sel_tag| sel_tag == &tag) {
+                    old_sel.remove(pos);
+                }
             } else {
                 old_sel.push(tag.clone());
             }
@@ -1074,10 +1074,10 @@ pub fn TextInput(
             if input_len > max_len {
                 return Err(format!("Input Length must be <{max_len}"));
             }
-        } else if let Some(min_len) = text_config.min_len.get() {
-            if input_len < min_len {
-                return Err(format!("Input Length must be >{min_len}"));
-            }
+        } else if let Some(min_len) = text_config.min_len.get()
+            && input_len < min_len
+        {
+            return Err(format!("Input Length must be >{min_len}"));
         }
 
         Ok(String::from(input))
@@ -1422,7 +1422,7 @@ where
             required={required.get()}
             on:blur=on_blur
             on:input=on_input
-            on:focus=move |e| {on_focus.get().map(|on_focus| on_focus(e));}
+            on:focus=move |e| {if let Some(on_focus) = on_focus.get() { on_focus(e) }}
             on:keydown={
                 let try_parse = try_parse.clone();
                 move |key: KeyboardEvent| {
@@ -1633,7 +1633,11 @@ where
     E: Clone + Send + Sync + std::fmt::Display + 'static,
 {
     let feedback: RwSignal<Option<E>> = RwSignal::new(None);
-    let form_ctx = FormInputContext { required, label, feedback };
+    let form_ctx = FormInputContext {
+        required,
+        label,
+        feedback,
+    };
     view! {
         <div class="mb-2 flex flex-col">
             <Label label required>
@@ -1999,19 +2003,26 @@ pub trait RadioOption: Display {
 #[component]
 pub fn Radio<T>(
     /// Html id
-    #[prop(optional, into)] id: Oco<'static, str>,
+    #[prop(optional, into)]
+    id: Oco<'static, str>,
     /// Name identifier for form submission
-    #[prop(into)] name: Oco<'static, str>,
+    #[prop(into)]
+    name: Oco<'static, str>,
     /// Extra style classes
-    #[prop(optional, into)] class: MaybeReactiveClass,
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
     /// Label for the radio-button menu.
-    #[prop(optional, into)] label: String,
+    #[prop(optional, into)]
+    label: String,
     /// Whether selecting an option is required for form submission.
-    #[prop(optional, into)] required: bool,
+    #[prop(optional, into)]
+    required: bool,
     /// Value of the selected element
-    #[prop(optional, into)] selected: RwSignal<Option<T>>,
+    #[prop(optional, into)]
+    selected: RwSignal<Option<T>>,
     /// Available radio options
-    #[prop(optional, into)] options: RwSignal<Vec<T>>,
+    #[prop(optional, into)]
+    options: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
     T: RadioOption + Clone + Eq + Hash + Send + Sync + 'static,
@@ -2055,7 +2066,7 @@ where
             <Label label=label required>
                 <ul class=class_list!(
                     "w-48 bg-oa-gray dark:bg-gray-700 flex flex-col gap-px overflow-hidden",
-                    RADIO_LIST_GROUP_CLASSES  
+                    RADIO_LIST_GROUP_CLASSES
                 )>
                     <For
                         each=move || options.get()
@@ -2249,10 +2260,7 @@ use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
 use crate::input_group::GroupItemClassContext;
 use crate::util::signals::ComponentRef;
-use crate::{
-    spinner::{Spinner},
-    util::callback::BoxOneCallback,
-};
+use crate::{spinner::Spinner, util::callback::BoxOneCallback};
 use attr_docgen::generate_docs;
 use leptos::logging::debug_log;
 use leptos::{IntoView, component, view};
@@ -2986,11 +2994,12 @@ where
 }
 pub mod callback;
 pub mod element;
+pub mod lorem;
 pub mod option_comp;
 pub mod optional_prop;
 pub mod shared_id;
 pub mod signals;
-pub mod lorem;// MIT License, taken from https://github.com/thaw-ui/thaw at 69bc65d
+// MIT License, taken from https://github.com/thaw-ui/thaw at 69bc65d
 mod component_ref;
 mod signal_watch;
 
@@ -3067,7 +3076,7 @@ where
 
 impl<T, S> Clone for ComponentRef<T, S> {
     fn clone(&self) -> Self {
-        Self(self.0.clone())
+        *self
     }
 }
 
@@ -3481,7 +3490,7 @@ Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie co
 Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
 Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
 Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis.
-At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. 
+At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.
 Consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr,  sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
 
 // Generates Lorem Ipsum.
@@ -3491,7 +3500,7 @@ pub fn Lorem(
     // Offset
     offset: u8,
     // Max 35 - offset
-    sentences: u8
+    sentences: u8,
 ) -> impl IntoView {
     let mut i = 0;
     let mut dot_iter = LOREM_IPSUM.match_indices(".").skip(offset as usize);
@@ -3505,7 +3514,8 @@ pub fn Lorem(
         i += 1;
     }
     LOREM_IPSUM[0..last_dot].to_string()
-}use std::sync::atomic::{AtomicU32, Ordering};
+}
+use std::sync::atomic::{AtomicU32, Ordering};
 
 use base64::{Engine, prelude::BASE64_URL_SAFE_NO_PAD};
 use leptos::server::{SharedValue, codee::string::FromToStringCodec};
@@ -3820,7 +3830,7 @@ pub struct Last {
 #[component]
 pub fn ButtonGroup(
     first: First,
-    #[prop(default=Box::new(move || { view!{}.into_any()}))] children: Children,
+    #[prop(default=Box::new(move || { ().into_any() }))] children: Children,
     last: Last,
 ) -> impl IntoView {
     view! {
@@ -3883,7 +3893,7 @@ pub fn Pagination(
                 <Button appearance icon=prev_icon on_click=move |_| {
                     current_page.update(|old| *old = std::cmp::max(*old-1, 1));
                 }></Button>
-                
+
                 {if jumper {
                     view! {
                         <GenericInput<usize, String>
@@ -4055,15 +4065,15 @@ where
     Effect::watch(
         move || selected.get(),
         move |new, old, _| {
-            if Some(new) != old {
-                if let Some(select) = node_ref.get_untracked() {
-                    // Firefox does not want to select disabled values with the selected attribute.
-                    // Workaround..
-                    if let Some(new) = new {
-                        select.set_value(new.value().as_str());
-                    } else {
-                        select.set_value("");
-                    }
+            if Some(new) != old
+                && let Some(select) = node_ref.get_untracked()
+            {
+                // Firefox does not want to select disabled values with the selected attribute.
+                // Workaround..
+                if let Some(new) = new {
+                    select.set_value(new.value().as_str());
+                } else {
+                    select.set_value("");
                 }
             }
         },
@@ -4098,7 +4108,7 @@ where
                     disabled=disabled
                 >
                     <Show
-                        when=move || { options.get().len() > 0 }
+                        when=move || { !options.get().is_empty() }
                         fallback=|| view! { <option disabled=true selected=true>No options</option> }
                     >
                         // Placeholder option
@@ -4166,14 +4176,18 @@ pub enum SpinnerAppearance {
     #[default]
     Default,
     OA,
-    Custom(MaybeReactiveClass)
+    Custom(MaybeReactiveClass),
 }
 
 impl SpinnerAppearance {
     fn into_class(self) -> MaybeReactiveClass {
         match self {
-            SpinnerAppearance::Default => "text-gray-900 stroke-oa-gray dark:text-oa-gray dark:stroke-gray-700".into(),
-            SpinnerAppearance::OA => "text-oa-blue stroke-oa-gray dark:text-oa-blue dark:stroke-gray-700".into(),
+            SpinnerAppearance::Default => {
+                "text-gray-900 stroke-oa-gray dark:text-oa-gray dark:stroke-gray-700".into()
+            }
+            SpinnerAppearance::OA => {
+                "text-oa-blue stroke-oa-gray dark:text-oa-blue dark:stroke-gray-700".into()
+            }
             SpinnerAppearance::Custom(class) => class,
         }
     }
@@ -4187,7 +4201,7 @@ pub fn Spinner(
     class: MaybeReactiveClass,
     /// Spinner appearance
     #[prop(optional)]
-    appearance: SpinnerAppearance
+    appearance: SpinnerAppearance,
 ) -> impl IntoView {
     view! {
         <div
@@ -4651,7 +4665,7 @@ pub enum BadgePrefix {
 }
 impl BadgePrefix {
     pub fn class(self) -> &'static str {
-        return "inline-flex items-center";
+        "inline-flex items-center"
     }
 
     pub fn view(&self) -> AnyView {
@@ -6586,14 +6600,17 @@ use crate::class_list::reactive_class::MaybeReactiveClass;
 #[component]
 pub fn Avatar(
     /// Image source for the avatar.
-    #[prop(optional, into)] src: MaybeProp<String>,
+    #[prop(optional, into)]
+    src: MaybeProp<String>,
     /// Extra classes to style this component.
-    #[prop(optional, into)] class: MaybeReactiveClass,
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
 ) -> impl IntoView {
     if let Some(src) = src.into_option_getter().run() {
         view! {
             <img class=class_list!["w-10 h-10 rounded-full", class] src=src alt="Rounded avatar"/>
-        }.into_any()
+        }
+        .into_any()
     } else {
         view! {
             <div class="relative w-10 h-10 overflow-hidden bg-neutral-secondary-medium rounded-full">
@@ -6841,7 +6858,7 @@ pub fn initial_theme_from_cookie() -> Theme {
         .get(axum::http::header::COOKIE)
         .map(|value| value.to_str())
     else {
-        console_log(format!("Failed to find cookie header").as_str());
+        console_log("Failed to find cookie header".to_string().as_str());
         return Theme::FollowSystem;
     };
     let parseable_value = Cow::from(head_value_bytes.to_string());
@@ -7057,7 +7074,13 @@ pub fn TextArea(
     }
 }
 use crate::{
-    badge::{Badge, BadgePostfix, BadgePrefix, BadgeSize, BadgeTheme}, button::{Button, ButtonAppearance}, button_group::{ButtonGroup, First, Last}, class_list, icon::{self, NextIcon, PreviousIcon}, popover::{Popover, PopoverAnchor, PopoverTrigger}, util::{callback::ArcOneCallback, option_comp::OptionComp}
+    badge::{Badge, BadgePostfix, BadgePrefix, BadgeSize, BadgeTheme},
+    button::{Button, ButtonAppearance},
+    button_group::{ButtonGroup, First, Last},
+    class_list,
+    icon::{self, NextIcon, PreviousIcon},
+    popover::{Popover, PopoverAnchor, PopoverTrigger},
+    util::{callback::ArcOneCallback, option_comp::OptionComp},
 };
 use attr_docgen::generate_docs;
 use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveTime, Weekday};
@@ -7097,7 +7120,7 @@ fn should_show_week(date: &CalendarDate, show_days: &[Weekday]) -> bool {
             checking_day = next_day;
         }
     }
-    return false;
+    false
 }
 
 #[generate_docs]
@@ -7165,7 +7188,7 @@ pub fn Calendar(
         if let Err(fmt::Error) = current.format("%B %Y").write_to(&mut out) {
             error!("%B %Y is no longer a valid chronos format string");
         }
-        return out;
+        out
     });
 
     view! {
@@ -7290,7 +7313,7 @@ fn CalendarDay(date: CalendarDate, children: Option<CalendarChildrenFn>) -> impl
 }
 
 #[generate_docs]
-/// A rectangular calendar-event made to fit inside a calendar-day, shows more details on hover. 
+/// A rectangular calendar-event made to fit inside a calendar-day, shows more details on hover.
 #[component]
 pub fn CalendarEvent(
     /// Start time, shown next to the event
@@ -7435,7 +7458,7 @@ pub fn Checkbox(
     );
 
     view! {
-        <label class=class_list!["relative inline-flex items-center cursor-pointer", class] 
+        <label class=class_list!["relative inline-flex items-center cursor-pointer", class]
             on:click={
                 move |ev| {
                     if prevent_label {
@@ -7460,6 +7483,7 @@ pub fn Checkbox(
 use attr_docgen::generate_docs;
 use chrono::Days;
 use leptos::logging::debug_log;
+use leptos::prelude::GetUntracked;
 use leptos::prelude::GlobalAttributes;
 // Do not remove until leptos is upgraded above 0.8.14
 use chrono::Datelike;
@@ -7562,8 +7586,8 @@ fn decenium_from_naive_date(date: &NaiveDate) -> i32 {
 ///   * 2022-11-13, DatePickerMenu::Decenium -> (2020-1-1, 2029-12-31)
 fn menu_range(date: NaiveDate, menu: DatePickerMenu) -> (NaiveDate, NaiveDate) {
     match menu {
-        DatePickerMenu::DayPicker => (date, date),
-        DatePickerMenu::MonthPicker => {
+        DatePickerMenu::Day => (date, date),
+        DatePickerMenu::Month => {
             let start = date.with_day(1).unwrap_or(NaiveDate::MIN);
             let end = date
                 .with_day(1)
@@ -7574,7 +7598,7 @@ fn menu_range(date: NaiveDate, menu: DatePickerMenu) -> (NaiveDate, NaiveDate) {
                 .unwrap_or(NaiveDate::MAX);
             (start, end)
         }
-        DatePickerMenu::YearPicker => {
+        DatePickerMenu::Year => {
             let start = date
                 .with_day(1)
                 .unwrap_or(NaiveDate::MIN)
@@ -7591,7 +7615,7 @@ fn menu_range(date: NaiveDate, menu: DatePickerMenu) -> (NaiveDate, NaiveDate) {
                 .unwrap_or(NaiveDate::MAX);
             (start, end)
         }
-        DatePickerMenu::DeceniaPicker => {
+        DatePickerMenu::Decenia => {
             let base_year = decenium_from_naive_date(&date);
             let start = NaiveDate::from_ymd_opt(base_year, 1, 1).unwrap_or(NaiveDate::MIN);
             let end = NaiveDate::from_ymd_opt(base_year + 9, 12, 31).unwrap_or(NaiveDate::MAX);
@@ -7610,14 +7634,14 @@ fn menu_item_intersects_range(
     let (menu_min, menu_max) = menu_range(date, menu);
     if let Some(min_date) = min_date.get() {
         if let Some(max_date) = max_date.get() {
-            return menu_max >= min_date && menu_min <= max_date;
+            menu_max >= min_date && menu_min <= max_date
         } else {
-            return menu_max > min_date;
+            menu_max > min_date
         }
     } else if let Some(max_date) = max_date.get() {
-        return menu_min < max_date;
+        menu_min < max_date
     } else {
-        return true;
+        true
     }
 }
 
@@ -7650,10 +7674,10 @@ impl DatePickerState {
 #[derive(Default, Copy, Clone)]
 pub(crate) enum DatePickerMenu {
     #[default]
-    DayPicker,
-    MonthPicker,
-    YearPicker,
-    DeceniaPicker,
+    Day,
+    Month,
+    Year,
+    Decenia,
 }
 
 // Navigation component for the day picking view of the date-picker.
@@ -7681,7 +7705,7 @@ where
     view! {
         <ControlButton icon=icon::PreviousIcon() on_click=move |_| { previous_month() } {..} tabindex="-1"></ControlButton>
         <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
-            picker_state.update(|state| state.set_menu(DatePickerMenu::MonthPicker))
+            picker_state.update(|state| state.set_menu(DatePickerMenu::Month))
         } {..} tabindex="-1">{ move || current_month_year.get() }</Button>
         <ControlButton icon=icon::NextIcon() on_click=move |_| { next_month() } {..} tabindex="-1"></ControlButton>
     }
@@ -7722,7 +7746,7 @@ fn DayPickerMenu(
                     .get()
                     .into_iter()
                     .map(|date| {
-                        let intersects = menu_item_intersects_range(*date, DatePickerMenu::DayPicker, min_date, max_date);
+                        let intersects = menu_item_intersects_range(*date, DatePickerMenu::Day, min_date, max_date);
                         let classes = class_list!(
                             (SELECTABLE_ELEM_CLASSES, intersects),
                             (DISABLED_ELEM_CLASSES, !intersects),
@@ -7781,7 +7805,7 @@ where
     view! {
         <ControlButton icon=icon::PreviousIcon() on_click=move |_| { prev_year() } {..} tabindex="-1"></ControlButton>
         <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
-            picker_state.update(|state| state.set_menu(DatePickerMenu::YearPicker))
+            picker_state.update(|state| state.set_menu(DatePickerMenu::Year))
         } {..} tabindex="-1">{ move || current_date.get().format("%Y").to_string() }</Button>
         <ControlButton icon=icon::NextIcon() on_click=move |_| { next_year() } {..} tabindex="-1"></ControlButton>
     }
@@ -7809,7 +7833,7 @@ where
                         let date = current_date.get()
                             .with_month(month.number_from_month())
                             .unwrap_or(NaiveDate::MIN);
-                        let intersects = menu_item_intersects_range(date, DatePickerMenu::MonthPicker, min_date, max_date);
+                        let intersects = menu_item_intersects_range(date, DatePickerMenu::Month, min_date, max_date);
                         let classes = class_list!(
                             (SELECTABLE_ELEM_CLASSES, intersects),
                             (DISABLED_ELEM_CLASSES, !intersects),
@@ -7826,7 +7850,7 @@ where
                                     move |_| {
                                         if intersects {
                                             month_by_date(&date);
-                                            picker_state.update(|state| state.set_menu(DatePickerMenu::DayPicker))
+                                            picker_state.update(|state| state.set_menu(DatePickerMenu::Day))
                                         }
                                     }
                                 }
@@ -7877,7 +7901,7 @@ where
     view! {
         <ControlButton icon=icon::PreviousIcon() on_click=move |_| { prev_decenia() } {..} tabindex="-1"></ControlButton>
         <Button appearance=ButtonAppearance::Transparent on_click=move |_| {
-            picker_state.update(|state| state.set_menu(DatePickerMenu::DeceniaPicker))
+            picker_state.update(|state| state.set_menu(DatePickerMenu::Decenia))
         } {..} tabindex="-1">
         { move || {
             let current_year = current_date.get().year();
@@ -7916,7 +7940,7 @@ where
                         let date = current_date.get()
                             .with_year(year)
                             .unwrap_or(NaiveDate::MIN);
-                        let intersects = menu_item_intersects_range(date, DatePickerMenu::YearPicker, min_date, max_date);
+                        let intersects = menu_item_intersects_range(date, DatePickerMenu::Year, min_date, max_date);
                         let classes = class_list!(
                             (SELECTABLE_ELEM_CLASSES, intersects),
                             (DISABLED_ELEM_CLASSES, !intersects),
@@ -7936,7 +7960,7 @@ where
                                                     .with_year(year)
                                                     .unwrap_or(NaiveDate::MIN)
                                             );
-                                            picker_state.update(|state| state.set_menu(DatePickerMenu::MonthPicker))
+                                            picker_state.update(|state| state.set_menu(DatePickerMenu::Month))
                                         }
                                     }
                                 }
@@ -8025,7 +8049,7 @@ where
                         let date = current_date.get()
                             .with_year(decenium)
                             .unwrap_or(NaiveDate::MIN);
-                        let intersects = menu_item_intersects_range(date, DatePickerMenu::DeceniaPicker, min_date, max_date);
+                        let intersects = menu_item_intersects_range(date, DatePickerMenu::Decenia, min_date, max_date);
                         let classes = class_list!(
                             (SELECTABLE_ELEM_CLASSES, intersects),
                             (DISABLED_ELEM_CLASSES, !intersects),
@@ -8044,7 +8068,7 @@ where
                                             month_by_date(
                                                 &naive_date_with_decenium(&current_date.get(), decenium)
                                             );
-                                            picker_state.update(|state| state.set_menu(DatePickerMenu::YearPicker))
+                                            picker_state.update(|state| state.set_menu(DatePickerMenu::Year))
                                         }
                                     }
                                 }
@@ -8146,7 +8170,7 @@ pub fn DatePicker(
     /// A function which maps a DayMenuOption -> String (css class) to style special days on the date-picker.
     #[prop(default = day_highlighter(value).into(), into)]
     highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
-    
+
     #[prop(optional)] required: bool,
     #[prop(optional, into)] label: MaybeProp<String>,
 ) -> impl IntoView {
@@ -8179,15 +8203,15 @@ pub fn DatePicker(
 
         // Min max checks
         if let Some(date) = date {
-            if let Some(min_date) = min_date.get() {
-                if min_date > date {
-                    return Err(format!("Enter a date >= {min_date}"));
-                }
+            if let Some(min_date) = min_date.get()
+                && min_date > date
+            {
+                return Err(format!("Enter a date >= {min_date}"));
             }
-            if let Some(max_date) = max_date.get() {
-                if max_date < date {
-                    return Err(format!("Enter a date <= {max_date}"));
-                }
+            if let Some(max_date) = max_date.get()
+                && max_date < date
+            {
+                return Err(format!("Enter a date <= {max_date}"));
             }
         };
 
@@ -8251,22 +8275,22 @@ pub fn DatePicker(
         let month_by_date = month_by_date.clone();
         move || {
             match picker_state.get().menu {
-                DatePickerMenu::DayPicker => view! {
+                DatePickerMenu::Day => view! {
                     <DayPickerMenu weekdays dates value highlighter max_date min_date />
                 }.into_any(),
-                DatePickerMenu::MonthPicker => view! {
+                DatePickerMenu::Month => view! {
                     <MonthPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
                     max_date min_date
                     />
                 }
                 .into_any(),
-                DatePickerMenu::YearPicker => view! {
+                DatePickerMenu::Year => view! {
                     <YearPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
                     max_date min_date
                     />
                 }
                 .into_any(),
-                DatePickerMenu::DeceniaPicker => view! {
+                DatePickerMenu::Decenia => view! {
                     <DeceniumPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
                     max_date min_date
                     />
@@ -8278,7 +8302,7 @@ pub fn DatePicker(
 
     // Presents the navigation the user can user depending on which menu is active.
     let nav_picker = move || match picker_state.get().menu {
-        DatePickerMenu::DayPicker => view! {
+        DatePickerMenu::Day => view! {
             <DayPickerMenuNav
                 previous_month=previous_month.clone()
                 next_month=next_month.clone()
@@ -8287,19 +8311,19 @@ pub fn DatePicker(
             />
         }
         .into_any(),
-        DatePickerMenu::MonthPicker => view! {
+        DatePickerMenu::Month => view! {
             <MonthPickerMenuNav month_by_date=month_by_date.clone()
                 current_date
                 picker_state />
         }
         .into_any(),
-        DatePickerMenu::YearPicker => view! {
+        DatePickerMenu::Year => view! {
             <YearPickerMenuNav month_by_date=month_by_date.clone()
                 current_date
                 picker_state />
         }
         .into_any(),
-        DatePickerMenu::DeceniaPicker => view! {
+        DatePickerMenu::Decenia => view! {
             <DeceniumPickerMenuNav month_by_date=month_by_date.clone()
                 current_date />
         }
@@ -8308,15 +8332,33 @@ pub fn DatePicker(
 
     let target = NodeRef::<Div>::new();
 
-    // could be optimized as to only add the listener when the date_picker is visible.
-    // listener can be removed by calling the returned closure.
-    let _ = on_click_outside_with_options(
-        target,
-        move |_event| {
-            debug_log!("clicked outside date_picker, closing.");
-            picker_state.update(|state| state.hide());
+    // Only attached global click handler when the picker is visible.
+    let last_click_to_close_listener = RwSignal::new(None);
+    Effect::watch(
+        move || picker_state.get().visible,
+        move |new, old, _| {
+            if old == Some(new) {
+                return;
+            }
+            if *new {
+                // Just became visible
+                let cancel = on_click_outside_with_options(
+                    target,
+                    move |_event| {
+                        debug_log!("clicked outside date_picker, closing.");
+                        picker_state.update(|state| state.hide());
+                    },
+                    OnClickOutsideOptions::default(),
+                );
+                last_click_to_close_listener.set(Some(cancel));
+            } else {
+                // Just hid
+                if let Some(cancellable) = last_click_to_close_listener.get_untracked() {
+                    cancellable();
+                }
+            }
         },
-        OnClickOutsideOptions::default(),
+        true,
     );
 
     let id = shared_id();
@@ -8419,11 +8461,11 @@ mod tests {
     #[test]
     fn test_menu_range() {
         let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
-        assert_eq!(menu_range(date, DatePickerMenu::DayPicker), (date, date));
+        assert_eq!(menu_range(date, DatePickerMenu::Day), (date, date));
 
         let date = NaiveDate::from_ymd_opt(2023, 5, 15).unwrap();
         assert_eq!(
-            menu_range(date, DatePickerMenu::MonthPicker),
+            menu_range(date, DatePickerMenu::Month),
             (
                 NaiveDate::from_ymd_opt(2023, 5, 1).unwrap(),
                 NaiveDate::from_ymd_opt(2023, 5, 31).unwrap()
@@ -8432,7 +8474,7 @@ mod tests {
 
         let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
         assert_eq!(
-            menu_range(date, DatePickerMenu::YearPicker),
+            menu_range(date, DatePickerMenu::Year),
             (
                 NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(),
                 NaiveDate::from_ymd_opt(2023, 12, 31).unwrap()
@@ -8441,7 +8483,7 @@ mod tests {
 
         let date = NaiveDate::from_ymd_opt(2023, 1, 1).unwrap();
         assert_eq!(
-            menu_range(date, DatePickerMenu::DeceniaPicker),
+            menu_range(date, DatePickerMenu::Decenia),
             (
                 NaiveDate::from_ymd_opt(2020, 1, 1).unwrap(),
                 NaiveDate::from_ymd_opt(2029, 12, 31).unwrap()
@@ -8453,7 +8495,7 @@ mod tests {
     fn test_menu_item_intersects_range() {
         let min_date = NaiveDate::from_ymd_opt(2023, 5, 1).unwrap();
         let max_date = NaiveDate::from_ymd_opt(2023, 5, 31).unwrap();
-        let menu = DatePickerMenu::MonthPicker;
+        let menu = DatePickerMenu::Month;
 
         // Date inside range
         assert!(menu_item_intersects_range(
@@ -8575,16 +8617,16 @@ pub fn DateRangePicker(
                 return "rounded-lg".to_string();
             }
         } else {
-            if let Some(start) = start_date.get() {
-                if date.matches_date(start) {
-                    return "rounded-lg ".to_string() + SELECTED_ELEM_CLASSES;
-                }
+            if let Some(start) = start_date.get()
+                && date.matches_date(start)
+            {
+                return "rounded-lg ".to_string() + SELECTED_ELEM_CLASSES;
             }
 
-            if let Some(end) = end_date.get() {
-                if date.matches_date(end) {
-                    return "rounded-lg ".to_string() + SELECTED_ELEM_CLASSES;
-                }
+            if let Some(end) = end_date.get()
+                && date.matches_date(end)
+            {
+                return "rounded-lg ".to_string() + SELECTED_ELEM_CLASSES;
             }
         }
 

@@ -125,9 +125,9 @@ impl LocalFlowers {
         let group_on = Arc::new(group_on);
         let grouped_flowers = group_flowers(get_flowers(), group_on.clone());
         debug_log!("Flower table contains {} flowers.", grouped_flowers.len());
-        return LocalFlowers {
+        LocalFlowers {
             rows: grouped_flowers,
-        };
+        }
     }
 }
 
@@ -149,7 +149,7 @@ impl PaginatedTableDataProvider<Flower, FlowerColumn> for LocalFlowers {
     }
 
     async fn page_count(&self) -> Option<usize> {
-        let pages = (&self.rows.len() + Self::PAGE_ROW_COUNT - 1) / Self::PAGE_ROW_COUNT;
+        let pages = self.rows.len().div_ceil(Self::PAGE_ROW_COUNT);
         debug_log!(
             "Flowers table has {} rows and {} pages",
             &self.rows.len(),

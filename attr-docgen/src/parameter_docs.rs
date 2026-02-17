@@ -15,19 +15,17 @@ fn extract_doc_attr(attrs: &[Attribute]) -> Option<String> {
             eq_token: _eq_token,
             value,
         }) = &attr.meta
+            && path.is_ident("doc")
+            && let Expr::Lit(literal) = value
         {
-            if path.is_ident("doc") {
-                if let Expr::Lit(literal) = value {
-                    let mut tokens = proc_macro2::TokenStream::new();
-                    literal.to_tokens(&mut tokens);
+            let mut tokens = proc_macro2::TokenStream::new();
+            literal.to_tokens(&mut tokens);
 
-                    let mut doc_literal_str = tokens.to_string();
-                    if let Lit::Str(_) = literal.lit {
-                        doc_literal_str = trim_surrounding_quotes(doc_literal_str);
-                    }
-                    return Some(doc_literal_str);
-                }
+            let mut doc_literal_str = tokens.to_string();
+            if let Lit::Str(_) = literal.lit {
+                doc_literal_str = trim_surrounding_quotes(doc_literal_str);
             }
+            return Some(doc_literal_str);
         }
     }
     None
@@ -49,7 +47,7 @@ pub(crate) fn _generate_docs(_attr: TokenStream, item: TokenStream) -> TokenStre
             if let Some(doc_str) = doc {
                 param_docs.push((name, doc_str));
             } else {
-                param_docs.push((name, format!("/")))
+                param_docs.push((name, "/".to_string()))
             }
         } else {
             param_docs.push(("mauw".to_string(), format!("{arg:?}")))

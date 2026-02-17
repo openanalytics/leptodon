@@ -30,10 +30,10 @@ use crate::errors::{AppError, ErrorTemplate};
 pub async fn file_and_error_handler(uri: Uri, request: Request<Body>) -> AxumResponse {
     let response = get_asset(uri.clone(), "/").await;
 
-    if let Ok(ok_response) = response {
-        if ok_response.status() == StatusCode::OK {
-            return ok_response.into_response();
-        }
+    if let Ok(ok_response) = response
+        && ok_response.status() == StatusCode::OK
+    {
+        return ok_response.into_response();
     }
     let mut errors = Errors::default();
     errors.insert_with_default_key(AppError::NotFound);
