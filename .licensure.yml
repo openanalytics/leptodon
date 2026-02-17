@@ -5,10 +5,11 @@ excludes:
   - \.gitignore
   - .*lock
   - \.git/.*
+  - .*logo.svg
   - \.licensure\.yml
   - README.*
   - LICENSE.*
-  - .*\.(nix|md|rst|txt|bkp|json|drawio|toml|yaml|dockerignore|env|keep|ico|png|conf)
+  - .*\.(nix|md|rst|txt|bkp|json|drawio|toml|yaml|dockerignore|tailwind|env|keep|ico|png|conf|sh)
   - .*\/target\/.+
   - .*\/node_modules\/.+
   - proxy\/.+
