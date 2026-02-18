@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-leptos-components = { path = "../../../leptos-components", default-features = false, features = [] }
+leptos-components = { path = "../..", default-features = false, features = [] }
