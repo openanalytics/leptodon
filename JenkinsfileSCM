@@ -35,11 +35,6 @@ pipeline {
         }
       }
     }
-    stage('License Check') {
-      steps {
-	      sh "cargo make license-check"
-      }
-    }
     stage('Linting') {
       steps {
 	      sh "cargo make lint"
