@@ -1,6 +1,6 @@
 use attr_docgen::generate_docs;
 use leptos::children::Children;
-use leptos::leptos_dom::logging::console_log;
+use leptos::logging::debug_log;
 use leptos::logging::error;
 use leptos::prelude::AriaAttributes;
 use leptos::prelude::ClassAttribute;
@@ -70,7 +70,7 @@ pub fn Modal(
             0.0,
         );
         start(());
-        console_log("successfully focused first-div");
+        debug_log!("modal: successfully focused first-div");
     };
 
     Effect::watch(

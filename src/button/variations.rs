@@ -1,7 +1,10 @@
+use std::time::Duration;
+
 use crate::button::ButtonProps;
 use crate::button::ButtonShape;
 use crate::button::{Button, ButtonAppearance, ButtonRef, ButtonType};
 use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::dialog::Dialog;
 use crate::dropdown::AlignmentAnchor;
 use crate::dropdown::Dropdown;
@@ -15,10 +18,13 @@ use crate::util::signals::ComponentRef;
 use attr_docgen::generate_docs;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::IntoAny;
+use leptos::prelude::Set;
+use leptos::prelude::set_timeout;
 use leptos::prelude::{Children, Get, MaybeProp, Signal, provide_context, signal};
 use leptos::prelude::{ElementChild, RwSignal, Update};
 use leptos::{IntoView, component, view};
 use leptos::{ev, slot};
+use web_sys::window;
 
 /// An icon only button meant for controlling another view (e.g. < > << >>)
 #[component]
@@ -116,6 +122,44 @@ pub fn DownloadButton(
             class="m-2"
             {..}>
             Download
+        </Button>
+    }
+}
+
+/// A button that when pressed, copies a string via the browser clipboard.
+#[generate_docs]
+#[component]
+pub fn CopyButton(
+    /// Extra button classes.
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
+    /// The string to copy to the clipboard.
+    #[prop(into)]
+    to_copy: Signal<String>,
+) -> impl IntoView {
+    let btn_text = RwSignal::new("Copy");
+    let on_copy = move |_| {
+        let _ = window()
+            .expect("Window should be present")
+            .navigator()
+            .clipboard()
+            .write_text(&to_copy.get());
+        btn_text.set("Copied!");
+        set_timeout(
+            move || {
+                btn_text.set("Copy");
+            },
+            Duration::from_secs(2),
+        );
+    };
+
+    view! {
+        <Button
+            appearance=ButtonAppearance::Transparent
+            class=class_list!("bg-white dark:bg-black", class)
+            on_click=on_copy
+        >
+            {btn_text}
         </Button>
     }
 }

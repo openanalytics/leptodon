@@ -1,11 +1,12 @@
 import type { PlaywrightTestConfig } from "@playwright/test";
 import { devices } from "@playwright/test";
+import path from "path";
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// require('dotenv').config();
+const resultsDir = path.resolve("./", "reports");
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -28,10 +29,12 @@ const config: PlaywrightTestConfig = {
   retries: 0,
   workers: undefined,
 
-  reporter: (process.env.CI ? [
-    ["list", { printSteps: true }], // another reporter
-    ["junit"]
-  ]: [["html"], ["list"]]),
+  reporter: true
+    ? [
+        ["list", { printSteps: true }], // another reporter
+        ["junit", { outputFile: `${resultsDir}/test-report-e2e.xml` }],
+      ]
+    : [["html"], ["list"]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
@@ -49,11 +52,6 @@ const config: PlaywrightTestConfig = {
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
-      },
-      launchOptions:
-      {
-        headless: false,
-        executablePath: "/nix/store/v220nbx1a94qsd3w62hxkb6g06mkrcjw-playwright-chromium"
       },
     },
 

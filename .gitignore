@@ -3,6 +3,7 @@
 .direnv
 **/target
 **/node_modules
+**/reports
 */.dist
 .!ea
 *.ics

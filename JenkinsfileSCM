@@ -57,7 +57,7 @@ pipeline {
       steps {
         sh "cargo make integration-tests"
         withChecks('Integration Tests') {
-            junit "overview/end2end/playwright-report/test-report-e2e.xml"
+            junit "overview/end2end/reports/test-report-e2e.xml"
         }
       }
     }

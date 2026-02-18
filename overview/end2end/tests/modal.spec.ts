@@ -39,6 +39,7 @@ test("Modal opens and closes.", async ({ page }) => {
   // Open again
   await toggle_button.click();
   await expect(example_modal).toBeVisible(); // This line is needed otherwise the next escape press happens to quickly for chrome.
+  await example_modal.click(); // Click to make sure its focused on chrome during tests.
 
   // Close with Escape
   await page.keyboard.press("Escape");
