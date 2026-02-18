@@ -60,6 +60,9 @@ pub fn TextInputConfig(
 #[generate_docs]
 #[component]
 pub fn TextInput(
+    /// Id for the input.
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
     /// Extra classes added to augment the default style.
     #[prop(optional, into)]
     class: MaybeProp<String>,
@@ -127,6 +130,7 @@ pub fn TextInput(
 
     view! {
         <GenericInput<String, String>
+            id
             class
             input_ref
             label
@@ -147,6 +151,9 @@ pub fn TextInput(
 /// Integrates with dropbox's zxcvbn to create non annoying and actually strong passwords.
 #[component]
 pub fn PasswordInput(
+    /// Id for the input.
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
     /// Extra classes added to augment the default style.
     #[prop(optional, into)]
     class: MaybeProp<String>,
@@ -227,6 +234,7 @@ pub fn PasswordInput(
                 <ButtonGroup>
                     <First slot:first>
                         <GenericInput<String, String>
+                            id
                             class
                             input_ref
                             label
@@ -256,6 +264,7 @@ pub fn PasswordInput(
     } else {
         view! {
             <GenericInput<String, String>
+                id
                 class
                 input_ref
                 label

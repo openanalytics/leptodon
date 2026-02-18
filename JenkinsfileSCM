@@ -45,35 +45,28 @@ pipeline {
 	      sh "cargo make lint"
       }
     }
-    stage('Unit Tests') {
+    stage('Library Unit Tests') {
       steps {
         sh "cargo make unit-tests"
-        withChecks('Back-end Unit Tests') {
-          junit "back-end/target/nextest/default/junit.xml"
+        withChecks('Unit Tests') {
+          junit "target/nextest/default/junit.xml"
         }
-        sh "junit2html back-end/target/nextest/default/junit.xml back-end/target/nextest/default/unit-tests.html"
-        publishHTML([
-	        reportDir: 'back-end/target/nextest/default/', reportFiles: 'unit-tests.html',
-	        reportName: 'Unit Tests / Back-end Test Report',
-	        allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true
-        ])
+      }
+      post {
+        always {
+            junit 'target/nextest/default/junit.xml'
+        }
       }
     }
     stage('Integration Tests') {
       steps {
         sh "cargo make integration-tests"
         withChecks('Integration Tests') {
-          junit "tests/integration/target/nextest/default/junit.xml"
+            junit "overview/end2end/playwright-report/test-report-e2e.xml"
         }
-        sh "junit2html tests/integration/target/nextest/default/junit.xml tests/integration/target/nextest/default/integration-tests.html"
-        publishHTML([
-          reportDir: 'tests/integration/target/nextest/default/', reportFiles: 'integration-tests.html',
-          reportName: 'Integration Tests / Front-end Test Report',
-          allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true
-        ])
       }
     }
-    stage('Publish Back-end') {
+    stage('Publish Demo') {
       when {
         anyOf {
           branch 'develop'
@@ -87,42 +80,12 @@ pipeline {
             -v info \
             --context ${env.WORKSPACE} \
             --cache=true \
-            --cache-repo ${env.REGISTRY}/${env.NS}/${env.CACHE_IMAGE}-back-end \
-            --destination ${env.REGISTRY}/${env.NS}/${env.IMAGE}-back-end:${env.TAG} \
-            --destination ${env.REGISTRY}/${env.NS_DEV}/${env.IMAGE}-back-end:${env.TAG} \
+            --cache-repo ${env.REGISTRY}/${env.NS}/${env.CACHE_IMAGE}-demo \
+            --destination ${env.REGISTRY}/${env.NS}/${env.IMAGE}-demo:${env.TAG} \
+            --destination ${env.REGISTRY}/${env.NS_DEV}/${env.IMAGE}-demo:${env.TAG} \
             --log-format=text \
             --log-timestamp=true \
-            --dockerfile back-end.Dockerfile
-          """
-        }
-      }
-      post {
-        always {
-          sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
-          archiveArtifacts artifacts: 'mem*.log', fingerprint: true
-        }
-      }
-    }
-    stage('Publish Front-end') {
-      when {
-        anyOf {
-          branch 'develop'
-          branch 'main'
-        }
-      }
-      steps {
-        container('kaniko') {
-          sh """
-          /kaniko/executor \
-            -v info \
-            --context ${env.WORKSPACE} \
-            --cache=true \
-            --cache-repo ${env.REGISTRY}/${env.NS}/${env.CACHE_IMAGE}-front-end \
-            --destination ${env.REGISTRY}/${env.NS}/${env.IMAGE}-front-end:${env.TAG} \
-            --destination ${env.REGISTRY}/${env.NS_DEV}/${env.IMAGE}-front-end:${env.TAG} \
-            --log-format=text \
-            --log-timestamp=true \
-            --dockerfile front-end.Dockerfile
+            --dockerfile demo/Dockerfile
           """
         }
       }

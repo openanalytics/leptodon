@@ -4,6 +4,7 @@ use leptos::either::Either;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
+use leptos::prelude::Memo;
 use leptos::prelude::Set;
 use leptos::{IntoView, logging::debug_log, view};
 use leptos_components::button_group::Pagination;
@@ -69,6 +70,8 @@ pub fn GroupedTableExample() -> impl IntoView {
         .collect::<Vec<_>>();
     let group_on = RwSignal::new(vec![]);
 
+    let group_on_memo = Memo::new(move |_| group_on.get());
+
     view! {
         <div>Group on: </div>
         <TagPicker
@@ -78,7 +81,7 @@ pub fn GroupedTableExample() -> impl IntoView {
         />
         <table>
             {move || {
-                let group_on = group_on.get();
+                let group_on = group_on_memo.get();
                 debug_log!("Running group calc on {group_on:?}");
                 let rows = LocalFlowers::new(group_on);
                 view! {

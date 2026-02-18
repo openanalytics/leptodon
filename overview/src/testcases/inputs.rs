@@ -1,4 +1,3 @@
-use leptos::prelude::AddAnyAttr;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
@@ -18,13 +17,13 @@ pub fn TestInputs() -> impl IntoView {
             {move || text_value.get()}
         </p>
         <TextInput
+            id="text-input"
             class="my-3"
             value=text_value
             text_config=TextInputConfigProps::builder()
                 .max_len(10)
                 .trim(true)
                 .build()
-            attr:data-testid="text-input"
         />
     }
 }
