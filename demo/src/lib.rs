@@ -2,6 +2,7 @@
 
 pub mod app;
 pub mod demos;
+#[rustfmt::skip]
 pub mod generated_demolist;
 
 #[cfg(feature = "hydrate")]
