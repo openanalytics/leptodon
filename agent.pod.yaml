@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    ci: leptos-components-build
+spec:
+  volumes:
+    - name: dockerconfig
+      secret:
+        secretName: oa-sa-jenkins-registry-config
+  containers:
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:v1.23.1-debug
+      resources:
+        requests:
+          memory: "8Gi"
+          cpu: 1
+        limits:
+          memory: "12Gi"
+      imagePullPolicy: Always
+    - name: leptos-components-build
+      image: registry.openanalytics.eu/openanalytics/leptos-components-build:latest
+      resources:
+        limits:
+          memory: "12Gi"
+          ephemeral-storage: "30Gi"
+          cpu: 7
+        requests:
+          memory: "8Gi"
+          ephemeral-storage: "30Gi"
+          cpu: 1
+      tty: true
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: dockerconfig
+          mountPath: /root/.docker/config.json
+          subPath: data
+      env:
+        - name: COMPOSE_HTTP_TIMEOUT
+          value: 600
+      imagePullPolicy: Always
