@@ -15,7 +15,7 @@ pub fn TestInputs() -> impl IntoView {
     let text_value = RwSignal::new(String::new());
     let u32value = RwSignal::new(0u32);
     let i128value = RwSignal::new(-1i128);
-    let f64value = RwSignal::new(3.1415);
+    let f64value = RwSignal::new(std::f64::consts::PI);
 
     view! {
         <Title text="Test Inputs"/>
