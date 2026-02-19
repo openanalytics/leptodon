@@ -47,11 +47,6 @@ pipeline {
           junit "target/nextest/default/junit.xml"
         }
       }
-      post {
-        always {
-            junit 'target/nextest/default/junit.xml'
-        }
-      }
     }
     stage('Integration Tests') {
       steps {
