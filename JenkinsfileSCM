@@ -80,7 +80,7 @@ pipeline {
             --destination ${env.REGISTRY}/${env.NS_DEV}/${env.IMAGE}-demo:${env.TAG} \
             --log-format=text \
             --log-timestamp=true \
-            --dockerfile demo/Dockerfile
+            --dockerfile demo.Dockerfile
           """
         }
       }
