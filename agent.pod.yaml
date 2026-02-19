@@ -15,8 +15,10 @@ spec:
         requests:
           memory: "8Gi"
           cpu: 1
+          ephemeral-storage: "30Gi"
         limits:
           memory: "12Gi"
+          ephemeral-storage: "30Gi"
       imagePullPolicy: Always
     - name: leptos-components-build
       image: registry.openanalytics.eu/openanalytics/leptos-components-build:latest
