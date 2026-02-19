@@ -19,6 +19,7 @@ pipeline {
     REGISTRY = 'registry.openanalytics.eu'
     IMAGE = 'leptos-components'
     CACHE_IMAGE = 'leptos-components-cache'
+    WORKSPACE = '/app'
     DOCKER_BUILDKIT = '1'
     NO_COLOR = 'true'
   }
@@ -32,6 +33,11 @@ pipeline {
             env.TAG = "${env.VERSION}"
           }
           echo "TAG is set to ${env.TAG}"
+        }
+        timestamps {
+          // Download and extract cache
+          sh "aws s3 cp s3://oa-infrastructure-cache/${IMAGE}/${env.BRANCH_NAME}/cache.tar ${env.WORKSPACE}/cache.tar --region eu-west-1 --quiet || echo 'Failed downloading cache'"
+          sh "tar -Pxf cache.tar || echo 'Failed extracting cache'"
         }
       }
     }
@@ -52,7 +58,7 @@ pipeline {
       steps {
         sh "cargo make integration-tests"
         withChecks('Integration Tests') {
-            junit "overview/end2end/reports/test-report-e2e.xml"
+          junit "overview/end2end/reports/test-report-e2e.xml"
         }
       }
     }
@@ -82,6 +88,10 @@ pipeline {
         always {
           sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
           archiveArtifacts artifacts: 'mem*.log', fingerprint: true
+
+          sh "tar -Pcf cache.tar ${env.WORKSPACE}/target ${env.WORKSPACE}/overview/target ${env.WORKSPACE}/demo/target ${env.WORKSPACE}/overview/codegen/target ${env.WORKSPACE}/attr-codegen/codegen/target ${env.WORKSPACE}/demo/codegen/target ~/.cargo/git ~/.cargo/registry"
+          sh "aws s3 cp ${env.WORKSPACE}/cache.tar s3://oa-infrastructure-cache/${NAME}/${env.BRANCH_NAME}/cache.tar --region eu-west-1 --quiet"
+          sh "du -sch cache.tar"
         }
       }
     }
