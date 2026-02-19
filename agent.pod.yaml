@@ -13,10 +13,10 @@ spec:
       image: gcr.io/kaniko-project/executor:v1.23.1-debug
       resources:
         limits:
-          memory: "14Gi"
+          memory: "16Gi"
           ephemeral-storage: "30Gi"
         requests:
-          memory: "12Gi"
+          memory: "14Gi"
           cpu: 1
           ephemeral-storage: "30Gi"
       imagePullPolicy: Always
