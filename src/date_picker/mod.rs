@@ -11,7 +11,6 @@ use chrono::Months;
 use chrono::Weekday;
 use chrono::format::ParseErrorKind;
 use leptos::html::Div;
-use leptos::leptos_dom::logging::console_log;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::CollectView;
 use leptos::prelude::Effect;
@@ -898,7 +897,7 @@ pub fn DatePicker(
                     picker_state.update(|state| state.show());
                 })
                 on:keydown=move |key: KeyboardEvent| {
-                    console_log(key.code().as_str());
+                    debug_log!("{}", key.code().as_str());
                     if key.code() == "Escape" || key.code() == "Tab" {
                         picker_state.update(|state| state.hide());
                     }

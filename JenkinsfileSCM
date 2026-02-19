@@ -19,7 +19,6 @@ pipeline {
     REGISTRY = 'registry.openanalytics.eu'
     IMAGE = 'leptos-components'
     CACHE_IMAGE = 'leptos-components-cache'
-    WORKSPACE = '/app'
     DOCKER_BUILDKIT = '1'
     NO_COLOR = 'true'
   }
@@ -89,7 +88,7 @@ pipeline {
           sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
           archiveArtifacts artifacts: 'mem*.log', fingerprint: true
 
-          sh "tar -Pcf cache.tar ${env.WORKSPACE}/target ${env.WORKSPACE}/overview/target ${env.WORKSPACE}/demo/target ${env.WORKSPACE}/overview/codegen/target ${env.WORKSPACE}/attr-codegen/codegen/target ${env.WORKSPACE}/demo/codegen/target ~/.cargo/git ~/.cargo/registry"
+          sh "tar -Pcf cache.tar ./target ${env.WORKSPACE}/overview/target ${env.WORKSPACE}/demo/target ${env.WORKSPACE}/overview/codegen/target ${env.WORKSPACE}/attr-codegen/codegen/target ${env.WORKSPACE}/demo/codegen/target /usr/local/cargo/git /usr/local/cargo/registry"
           sh "aws s3 cp ${env.WORKSPACE}/cache.tar s3://oa-infrastructure-cache/${NAME}/${env.BRANCH_NAME}/cache.tar --region eu-west-1 --quiet"
           sh "du -sch cache.tar"
         }

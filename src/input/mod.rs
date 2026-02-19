@@ -42,6 +42,9 @@ use web_sys::KeyboardEvent;
 use zxcvbn::Score;
 use zxcvbn::zxcvbn;
 
+mod number;
+pub use crate::input::number::*;
+
 pub const OA_READONLY_INPUT_CLASSES: &str = "border-0 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
 const OA_INPUT_CLASSES: &str = "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500";
 pub const PLACEHOLDER_TEXT_CLASS: &str = "text-gray-600 dark:text-gray-400";
@@ -375,7 +378,7 @@ where
         let parser = parser.clone();
         move |should_format: bool| {
             let internal_value = internal_value_signal.get();
-            debug_log!("Attempting to parse: {internal_value}");
+            debug_log!("Attempting to parse: {internal_value}, format({should_format})",);
             if let Some(parser) = parser.as_ref()
                 && !(internal_value.is_empty() && required.get())
             {
