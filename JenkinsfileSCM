@@ -17,8 +17,8 @@ pipeline {
     ).trim()
     NS = 'openanalytics'
     REGISTRY = 'registry.openanalytics.eu'
-    IMAGE = 'leptos-components-demo'
-    CACHE_IMAGE = 'leptos-components-demo-cache'
+    IMAGE = 'leptos-components'
+    CACHE_IMAGE = 'leptos-components-cache'
     DOCKER_BUILDKIT = '1'
     NO_COLOR = 'true'
   }
@@ -77,7 +77,6 @@ pipeline {
             --cache=true \
             --cache-repo ${env.REGISTRY}/${env.NS}/${env.CACHE_IMAGE}-demo \
             --destination ${env.REGISTRY}/${env.NS}/${env.IMAGE}-demo:${env.TAG} \
-            --destination ${env.REGISTRY}/${env.NS_DEV}/${env.IMAGE}-demo:${env.TAG} \
             --log-format=text \
             --log-timestamp=true \
             --dockerfile demo.Dockerfile
