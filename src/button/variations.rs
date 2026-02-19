@@ -130,6 +130,9 @@ pub fn DownloadButton(
 #[generate_docs]
 #[component]
 pub fn CopyButton(
+    /// Html id
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
     /// Extra button classes.
     #[prop(optional, into)]
     class: MaybeReactiveClass,
@@ -155,6 +158,7 @@ pub fn CopyButton(
 
     view! {
         <Button
+            id
             appearance=ButtonAppearance::Transparent
             class=class_list!("bg-white dark:bg-black", class)
             on_click=on_copy

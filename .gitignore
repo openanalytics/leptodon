@@ -17,7 +17,7 @@
 
 overview/.idea
 overview/dist
-overview/.tailwind
+**/.tailwind
 
 # Testing output
 **/playwright-report

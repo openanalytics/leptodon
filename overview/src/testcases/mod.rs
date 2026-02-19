@@ -1,5 +1,6 @@
 pub mod calendar;
 pub mod checkbox;
+pub mod copy_button;
 pub mod inputs;
 pub mod popover;
 pub mod radio;

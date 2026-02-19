@@ -1,119 +1,121 @@
+
 use leptos::{component, view};
-use leptos_router::any_nested_route::IntoAnyNestedRoute;
 use leptos_router::components::{Outlet, ParentRoute, Route};
 use leptos_router::path;
+use leptos_router::any_nested_route::IntoAnyNestedRoute;
 
 pub struct PageInfo {
     pub location: &'static str,
-    pub name: &'static str,
+    pub name: &'static str
 }
 
 pub fn page_infos() -> Vec<PageInfo> {
     vec![
+
         PageInfo {
             location: "/demo/navbar",
-            name: "Side Navbar",
+            name: "Side Navbar"
         },
         PageInfo {
             location: "/demo/badge",
-            name: "Badge",
+            name: "Badge"
         },
         PageInfo {
             location: "/demo/select",
-            name: "Select",
+            name: "Select"
         },
         PageInfo {
             location: "/demo/avatar",
-            name: "Avatar",
+            name: "Avatar"
         },
         PageInfo {
             location: "/demo/divider",
-            name: "Divider",
+            name: "Divider"
         },
         PageInfo {
             location: "/demo/toggle",
-            name: "Toggle",
+            name: "Toggle"
         },
         PageInfo {
             location: "/demo/calendar",
-            name: "Calendar",
+            name: "Calendar"
         },
         PageInfo {
             location: "/demo/textarea",
-            name: "Text Area",
+            name: "Text Area"
         },
         PageInfo {
             location: "/demo/tag_picker",
-            name: "Tag Picker",
+            name: "Tag Picker"
         },
         PageInfo {
             location: "/demo/dropdown",
-            name: "Dropdown",
+            name: "Dropdown"
         },
         PageInfo {
             location: "/demo/dialog",
-            name: "Dialog",
+            name: "Dialog"
         },
         PageInfo {
             location: "/demo/codeblock",
-            name: "Codeblock",
+            name: "Codeblock"
         },
         PageInfo {
             location: "/demo/form_input",
-            name: "Form Input",
+            name: "Form Input"
         },
         PageInfo {
             location: "/demo/modal",
-            name: "Modal",
+            name: "Modal"
         },
         PageInfo {
             location: "/demo/checkbox",
-            name: "Checkbox",
+            name: "Checkbox"
         },
         PageInfo {
             location: "/demo/heading",
-            name: "Heading",
+            name: "Heading"
         },
         PageInfo {
             location: "/demo/link",
-            name: "Link",
+            name: "Link"
         },
         PageInfo {
             location: "/demo/popover",
-            name: "Popover",
+            name: "Popover"
         },
         PageInfo {
             location: "/demo/accordion",
-            name: "Accordion",
+            name: "Accordion"
         },
         PageInfo {
             location: "/demo/themeselector",
-            name: "Theme Selector",
+            name: "Theme Selector"
         },
         PageInfo {
             location: "/demo/input",
-            name: "Inputs",
+            name: "Inputs"
         },
         PageInfo {
             location: "/demo/button",
-            name: "Button",
+            name: "Button"
         },
         PageInfo {
             location: "/demo/date_picker",
-            name: "Date Picker",
+            name: "Date Picker"
         },
         PageInfo {
             location: "/demo/spinner",
-            name: "Spinner",
+            name: "Spinner"
         },
         PageInfo {
             location: "/demo/table",
-            name: "Table",
+            name: "Table"
         },
         PageInfo {
             location: "/demo/radio",
-            name: "Radio",
-        },
+            name: "Radio"
+        }
     ]
 }
 
