@@ -34,7 +34,7 @@ COPY --from=builder /app/demo/docker-target/release/overview /app/demo
 # /target/site contains our JS/WASM/CSS, etc.
 COPY --from=builder /app/demo/target/site /app/site
 COPY --from=builder /app/demo/style /app/style
-# COPY --from=builder demo/docker-target/release/hash.txt /app/hash.txt
+COPY --from=builder /app/demo/target/release/hash.txt /app/hash.txt
 
 # Set any required env variables and
 ENV RUST_LOG="info"
