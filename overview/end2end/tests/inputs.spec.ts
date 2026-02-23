@@ -110,18 +110,11 @@ test("Decimal number input", async ({ page }) => {
 
   await number_input.press("ArrowUp"); // 1
   await expect(number_disp).toHaveText("0.01");
-  await number_input.press("1"); // 0.011
-
-  await expect(number_disp).toHaveText("0.01");
   let number_input_invalid = page.locator("#f64-input-invalid-reason");
-  await expect(number_input_invalid).toContainText("0.01"); // Input needs to be less precise, 0.01 should be the smallest unit.
 
   number_input.clear();
-  await expect(number_input_invalid).toContainText(""); // Input needs to be >= -2
+  await expect(number_input_invalid).toHaveCount(0);   // Optional input should not complain when empty.
   await number_input.press("-"); // -3
   await number_input.press("3"); // -3
   await expect(number_input_invalid).toContainText("-2"); // Input needs to be >= -2
-
-  await number_input.clear(); // ""
-  await expect(number_input_invalid).toHaveCount(0); // Optional input should not complain when empty.
 });

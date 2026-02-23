@@ -24,6 +24,7 @@ use std::ops::Rem;
 pub fn NumberInputConfig<NumberType>(
     #[prop(optional, into)] max: MaybeProp<NumberType>,
     #[prop(optional, into)] min: MaybeProp<NumberType>,
+    /// Currently unchecked for floats as they're too imprecise.
     /// Stepsize of the number input, (used as increment/decrement when using up/down arrows).
     #[prop(optional, into)]
     step: MaybeProp<NumberType>,
@@ -36,6 +37,7 @@ where
 {
 }
 
+// TODO: Decimal number support with rust_decimal, e.g. floats cannot represent 0.01 and have many other edges to deal with when calculating.
 #[generate_docs]
 #[component]
 pub fn NumberInput<NumberType>(
@@ -125,10 +127,14 @@ where
             }
         };
 
-        if let Some(step) = number_config.step.get() {
+        if let Some(step) = number_config.step.get()
+            && NumberType::is_int()
+        {
             let remainder = parsed_value.clone() % step.clone();
             if remainder != NumberType::zero() {
-                return Err(format!("Stepsize must be ${step}"));
+                return Err(format!(
+                    "Value must be divisible by {step}, current remainder: {remainder}"
+                ));
             }
         }
 
@@ -237,3 +243,13 @@ impl_intness!(i64, true);
 impl_intness!(i128, true);
 impl_intness!(f32, false);
 impl_intness!(f64, false);
+
+// #[cfg(feature = "decimal")]
+// struct Decimal {
+//     decimal: rust_decimal::Decimal
+// }
+
+// #[cfg(feature = "decimal")]
+// impl Num for Decimal {
+
+// }
