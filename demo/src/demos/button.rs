@@ -10,6 +10,7 @@ use leptos_components::button::AddButton;
 use leptos_components::button::Button;
 use leptos_components::button::ButtonAppearance;
 use leptos_components::button::ButtonShape;
+use leptos_components::button::CopyButton;
 use leptos_components::button::DeleteButton;
 use leptos_components::button::DownloadButton;
 use leptos_components::button::EditButton;
@@ -19,6 +20,7 @@ use leptos_components::button_group::Last;
 use leptos_components::heading::Heading4;
 use leptos_components::icon;
 use leptos_components::layout::FixedCenterColumn;
+use leptos_components::textarea::TextArea;
 use leptos_meta::Title;
 
 #[generate_codeblock(ButtonExample)]
@@ -66,11 +68,18 @@ pub fn ButtonGroupDemo() -> impl IntoView {
 #[generate_codeblock(StyledButtonExample)]
 #[component]
 pub fn PremadeButtonDemo() -> impl IntoView {
+    let to_copy = RwSignal::new("📋".to_string());
     view! {
         <AddButton/>
         <EditButton/>
         <DeleteButton/>
         <DownloadButton/>
+        <CopyButton class="m-2" to_copy=to_copy />
+        <br/>
+        <TextArea
+            placeholder="Paste testing area.."
+            value=RwSignal::new(String::default())
+        />
     }
 }
 

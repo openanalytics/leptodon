@@ -31,8 +31,8 @@ FROM registry.openanalytics.eu/proxy/library/debian:trixie-slim
 WORKDIR /app
 # Copy the server binary to the /app directory
 COPY --from=builder /app/demo/docker-target/release/overview /app/demo
-# /target/site contains our JS/WASM/CSS, etc.
-COPY --from=builder /app/demo/target/site /app/site
+# /docker-target/site contains our JS/WASM/CSS, etc.
+COPY --from=builder /app/demo/docker-target/site /app/site
 COPY --from=builder /app/demo/style /app/style
 COPY --from=builder /app/demo/docker-target/release/hash.txt /app/hash.txt
 

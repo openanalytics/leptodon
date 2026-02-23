@@ -45,24 +45,7 @@ pub async fn file_and_error_handler(uri: Uri, request: Request<Body>) -> AxumRes
 
 async fn get_asset(uri: Uri, root: &str) -> Result<Response<Body>, (StatusCode, String)> {
     match uri.path() {
-        "/fullcalendar.css" => get_static_file(uri.clone(), "./style").await,
         "/style.css" => get_static_file(uri.clone(), "./style").await,
-        "/flowbite.min.js" => get_static_file(uri.clone(), "./node_modules/flowbite/dist").await,
-        "/flowbite.min.js.map" => {
-            get_static_file(uri.clone(), "./node_modules/flowbite/dist").await
-        }
-        "/datepicker-full.min.js" => {
-            get_static_file(uri.clone(), "./node_modules/flowbite-datepicker/dist/js").await
-        }
-        "/core/index.global.min.js" => {
-            get_static_file(uri.clone(), "./node_modules/@fullcalendar").await
-        }
-        "/web-component/index.global.min.js" => {
-            get_static_file(uri.clone(), "./node_modules/@fullcalendar").await
-        }
-        "/daygrid/index.global.min.js" => {
-            get_static_file(uri.clone(), "./node_modules/@fullcalendar").await
-        }
         _ => get_static_file(uri.clone(), root).await,
     }
 }

@@ -8,8 +8,8 @@ use leptos_components::navbar::NavbarEndChildren;
 use leptos_components::navbar::NavbarEntries;
 use leptos_components::navbar::SideBarLink;
 use leptos_components::navbar::SideNavbar;
+use leptos_meta::HashedStylesheet;
 use leptos_meta::MetaTags;
-use leptos_meta::Stylesheet;
 use leptos_meta::Title;
 use leptos_meta::provide_meta_context;
 use leptos_router::components::Outlet;
@@ -31,6 +31,9 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <link rel="icon" type="image/svg+xml" href="/logo.svg"/>
+                <HashedStylesheet options=options.clone() id="leptos"/>
+
                 // Metadata injection is not allowed here, only use them in components down the chain
                 <AutoReload options=options.clone() />
                 <HydrationScripts options/>
@@ -75,7 +78,7 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        <Stylesheet href="/pkg/overview.css"/>
+        // <Stylesheet id="leptos" href="/pkg/overview.css"/>
 
         <Router>
             <Routes fallback=|| "Page not found.">
