@@ -37,7 +37,9 @@ use leptos::prelude::use_context;
 use leptos::{IntoView, component, view};
 use leptos_use::math::use_or;
 use std::fmt::Debug;
+use web_sys::Event;
 use web_sys::FocusEvent;
+use web_sys::InputEvent;
 use web_sys::KeyboardEvent;
 use zxcvbn::Score;
 use zxcvbn::zxcvbn;
@@ -347,6 +349,15 @@ pub fn GenericInput<T, E>(
     /// Placeholder text for the input.
     #[prop(optional, into)]
     placeholder: MaybeProp<String>,
+    /// Stepsize for number and date-inputs.
+    #[prop(optional, into)]
+    step: MaybeProp<String>,
+    /// Minimum for comparable inputs.
+    #[prop(optional, into)]
+    min: MaybeProp<String>,
+    /// Maximum for comparable inputs.
+    #[prop(optional, into)]
+    max: MaybeProp<String>,
 ) -> impl IntoView
 where
     T: Clone + PartialEq + Debug + Default + Sync + Send + 'static,
@@ -371,13 +382,17 @@ where
     let in_form = form_context.is_some();
 
     // String value bound to <input>
-    let internal_value_signal = RwSignal::new("".to_string());
+    // let internal_value_signal = RwSignal::new("".to_string());
     let invalid_reason = RwSignal::new(None);
 
     let try_parse = {
         let parser = parser.clone();
         move |should_format: bool| {
-            let internal_value = internal_value_signal.get();
+            let Some(input) = input_ref.get_untracked() else {
+                return;
+            };
+            // let internal_value = internal_value_signal.get();
+            let internal_value = input.value();
             debug_log!("Attempting to parse: {internal_value}, format({should_format})",);
             if let Some(parser) = parser.as_ref()
                 && !(internal_value.is_empty() && required.get())
@@ -427,7 +442,7 @@ where
     // If there is an error, try parsing on each key to transition in real time to a good state.
     let on_input = {
         let try_parse = try_parse.clone();
-        move |_| {
+        move |_: Event| {
             // if invalid_reason.get().is_some() {
             // Formatting should only be done when the user indicates they are done, e.g. by leaving the field (on_blur).
             // Otherwise a format can disrupt the input
@@ -442,7 +457,10 @@ where
         move |value, _, _| {
             if let Some(format) = format.as_ref() {
                 if &(last_set_value.get_untracked()) != value {
-                    internal_value_signal.set(format(value.clone()));
+                    let Some(input) = input_ref.get_untracked() else {
+                        return;
+                    };
+                    input.set_value(format(value.clone()).as_str());
                 } else {
                     debug_log!("Prevented internal format");
                 }
@@ -458,7 +476,7 @@ where
             type=move || input_type.get().as_str()
             inputmode=move || input_mode.get().as_str()
             name={name.get()}
-            bind:value=internal_value_signal
+            // bind:value=internal_value_signal
             class=class_list![
                 ("border-oa-red", move || invalid_reason.get().is_some()),
                 group_classes.unwrap_or_default(),
@@ -483,12 +501,20 @@ where
                     }
                 }
             }
+            step=step.get()
+            min=min.get()
+            max=max.get()
         />
         {
             move || {
                 if let Some(invalid_reason) = invalid_reason.get() && !in_form {
                     Either::Left(view!{
-                        <div class="text-oa-red">{ invalid_reason.to_string() }</div>
+                        <div
+                            id=id.get().map(|id| format!("{id}-invalid-reason"))
+                            class="text-oa-red"
+                        >{
+                            invalid_reason.to_string()
+                        }</div>
                     })
                 } else { Either::Right(()) }
             }

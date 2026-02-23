@@ -31,3 +31,65 @@ test("Input signal behaviours", async ({ page }) => {
   await expect(text_disp).toHaveText("");
   await expect(text_input).toHaveValue("");
 });
+
+// Check that only integers in the (0,10) range are accepted
+test("Integer number input", async ({ page }) => {
+  await page.goto("http://localhost:3000/test_inputs");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Inputs");
+
+  let number_disp = page.locator("#u32-input-display");
+  let number_input = page.locator("#u32-input");
+
+  await number_input.press("0"); // 0
+  await expect(number_disp).toHaveText("0");
+
+  await number_input.press("ArrowUp"); // 1
+  await expect(number_disp).toHaveText("1");
+  await number_input.press("1"); // 11
+  await expect(number_disp).toHaveText("1");
+
+  let number_input_invalid = page.locator("#u32-input-invalid-reason");
+  await expect(number_input_invalid).toHaveText("10"); // Input needs to be <= 10
+
+  await number_input.clear(); // ""
+  await expect(number_input_invalid).toHaveText("integer"); // Required input should tell you to input something.
+
+  await number_input.press("-"); // -
+  await number_input.press("1"); // -1
+  await expect(number_input_invalid).toHaveText("positive");
+});
+
+// Check that only integers in the (-100,10) range are accepted
+test("Integer number input", async ({ page }) => {
+  await page.goto("http://localhost:3000/test_inputs");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Inputs");
+
+  let number_disp = page.locator("#i128-input-display");
+  let number_input = page.locator("#i128-input");
+
+  await number_input.press("0"); // 0
+  await expect(number_disp).toHaveText("0");
+
+  await number_input.press("ArrowUp"); // 1
+  await expect(number_disp).toHaveText("1");
+  await number_input.press("1"); // 11
+  await expect(number_disp).toHaveText("1");
+
+  let number_input_invalid = page.locator("#i128-input-invalid-reason");
+  await expect(number_input_invalid).toHaveText("10"); // Input needs to be <= 10
+
+  await number_input.clear(); // ""
+  await expect(number_input_invalid).toHaveCount(0); // Optional input should not complain when empty.
+
+  await number_input.press("-"); // -
+  await number_input.press("1"); // -1
+  await expect(number_input_invalid).toHaveCount(0); // -1 is valid
+  await number_input.press("1"); // -11
+  await number_input.press("1"); // -111
+
+  await expect(number_input_invalid).toHaveText("-100"); // -111 is out of range.
+});

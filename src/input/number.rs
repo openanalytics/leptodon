@@ -25,10 +25,9 @@ use num_traits::NumOps;
 pub fn NumberInputConfig<NumberType>(
     #[prop(optional, into)] max: MaybeProp<NumberType>,
     #[prop(optional, into)] min: MaybeProp<NumberType>,
-    /// Maximum number of digits after the decimal separator.
-    /// Warning: the actual decimal places can get rounded sooner when the full precision on the floating type is consumed.
+    /// Stepsize of the number input, (used as increment/decrement when using up/down arrows).
     #[prop(optional, into)]
-    decimal_places: MaybeProp<u8>,
+    step: MaybeProp<NumberType>,
     /// Whether or not to trim surrounding whitespace "  My name " -> "My name"
     #[prop(default = true)]
     trim: bool,
@@ -146,20 +145,10 @@ where
     };
 
     let format = move |input: NumberType| input.to_string();
-    // Html input step also decides whether the user can enter decimal places and how many.
-    let step = if !NumberType::is_int() {
-        if let Some(places) = number_config.decimal_places.get() {
-            if places == 0 {
-                "1".to_string()
-            } else {
-                let zeroes = "0".repeat((places - 1) as usize);
-                format!("0.{}1", zeroes)
-            }
-        } else {
-            "any".to_string()
-        }
+    let step = if let Some(step) = number_config.step.get() {
+        step.to_string()
     } else {
-        "1".to_string()
+        "any".to_string()
     };
 
     view! {
@@ -177,7 +166,6 @@ where
             placeholder
             parser
             format
-            {..}
             step=step
             min=min
             max=max
