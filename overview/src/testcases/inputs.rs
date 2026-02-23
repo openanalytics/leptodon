@@ -72,7 +72,7 @@ pub fn TestInputs() -> impl IntoView {
             {move || f64value.get()}
         </p>
         <NumberInput<f64>
-            label = "Decimal between -2.00001 and 10.0005"
+            label = "Decimal between -2.01 and 10.05"
             id="f64-input"
             class="my-3"
             value=f64value

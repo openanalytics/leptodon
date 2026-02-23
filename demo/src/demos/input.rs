@@ -13,6 +13,8 @@ use leptos_components::button::EditButton;
 use leptos_components::heading::Heading4;
 use leptos_components::input::GenericInput;
 use leptos_components::input::InputType;
+use leptos_components::input::NumberInput;
+use leptos_components::input::NumberInputConfigProps;
 use leptos_components::input::PasswordInput;
 use leptos_components::input::TextInput;
 use leptos_components::layout::FixedCenterColumn;
@@ -49,6 +51,31 @@ pub fn PasswordInputDemo() -> impl IntoView {
             placeholder="Please enter your password."
             show_eye=true
             hazards=vec!["Merlijn".to_string(), "Verstraete".to_string()]
+        />
+    }
+}
+
+#[generate_codeblock(NumberInputExample)]
+#[component]
+pub fn NumberInputDemo() -> impl IntoView {
+    let value = RwSignal::new(5.5);
+
+    view! {
+        <p>
+            {move || value.get()}
+        </p>
+        <NumberInput<f64> // <- Supports u8-128,i8-128 and f32,f64
+            label = "Decimal between -2.00 and 10.15"
+            class="my-3"
+            value=value
+            number_config={
+                NumberInputConfigProps::<f64>::builder()
+                    .max(10.15)
+                    .min(-2.00)
+                    .step(0.01)
+                    .trim(true)
+                    .build()
+            }
         />
     }
 }
@@ -143,6 +170,9 @@ pub fn InputsDemoPage() -> impl IntoView {
             </p>
             <PasswordInputExample />
 
+            <Heading4 anchor="number-input">Number Input</Heading4>
+            <NumberInputExample/>
+
             <Heading4 anchor="generic-input">Generic Input</Heading4>
             <p>
                 "Internally all inputs try to use GenericInput<T, E> where T is the value of the type you are interested in and E a displayable error type.
@@ -154,6 +184,7 @@ pub fn InputsDemoPage() -> impl IntoView {
 
             <leptos_components::input::TextInputDocs />
             <leptos_components::input::PasswordInputDocs />
+            <leptos_components::input::NumberInputDocs />
             <leptos_components::input::GenericInputDocs />
         </FixedCenterColumn>
     }

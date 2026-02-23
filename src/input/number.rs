@@ -1,15 +1,11 @@
-use leptos::prelude::AddAnyAttr;
-#[allow(unused)]
-use leptos::prelude::IntoAnyAttribute;
-use std::fmt::Debug;
-use std::fmt::Display;
-
 use crate::input::GenericInput;
 use crate::input::InputMode;
 use crate::input::InputType;
 use attr_docgen::generate_docs;
 use leptos::html;
 use leptos::prelude::Get;
+#[allow(unused)]
+use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::MaybeProp;
 use leptos::prelude::NodeRef;
 use leptos::prelude::RwSignal;
@@ -18,6 +14,9 @@ use leptos::{IntoView, component, view};
 use num_traits::Num;
 use num_traits::NumCast;
 use num_traits::NumOps;
+use std::fmt::Debug;
+use std::fmt::Display;
+use std::ops::Rem;
 
 #[generate_docs]
 #[component]
@@ -89,6 +88,7 @@ where
         + std::default::Default
         + Send
         + Sync
+        + Rem<NumberType>
         + 'static,
 {
     let max = if let Some(max) = number_config.max.get() {
@@ -124,6 +124,13 @@ where
                 return Err("Please input a number".to_string());
             }
         };
+
+        if let Some(step) = number_config.step.get() {
+            let remainder = parsed_value.clone() % step.clone();
+            if remainder != NumberType::zero() {
+                return Err(format!("Stepsize must be ${step}"));
+            }
+        }
 
         if let Some(max) = number_config.max.get()
             && let Some(min) = number_config.min.get()

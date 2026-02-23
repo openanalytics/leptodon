@@ -17,7 +17,6 @@ use attr_docgen::generate_docs;
 use leptos::either::Either;
 use leptos::html;
 use leptos::logging::debug_log;
-use leptos::prelude::BindAttribute;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
@@ -39,7 +38,6 @@ use leptos_use::math::use_or;
 use std::fmt::Debug;
 use web_sys::Event;
 use web_sys::FocusEvent;
-use web_sys::InputEvent;
 use web_sys::KeyboardEvent;
 use zxcvbn::Score;
 use zxcvbn::zxcvbn;
@@ -395,7 +393,7 @@ where
             let internal_value = input.value();
             debug_log!("Attempting to parse: {internal_value}, format({should_format})",);
             if let Some(parser) = parser.as_ref()
-                && !(internal_value.is_empty() && required.get())
+                && (!internal_value.is_empty() || required.get())
             {
                 let parsed_value = parser(internal_value);
                 debug_log!("Parse result: {parsed_value:?}");
@@ -419,6 +417,20 @@ where
                     }
                 }
             } else if internal_value.is_empty() && !required.get() {
+                // Parse empty data such that cases where going from "some_input" to "" still update the value when the parser accepts this.
+                // E.g. a description field probably allows empty strings.
+                if let Some(parser) = parser.as_ref()
+                    && let Ok(parsed_value) = parser(internal_value)
+                {
+                    if !should_format {
+                        debug_log!("Preventing internal format");
+                        last_set_value.set(parsed_value.clone());
+                    }
+                    debug_log!("Updating value");
+                    value.set(parsed_value);
+                }
+
+                // debug_log!("Non-required empty field, clearing invalid status.");
                 invalid_reason.set(None);
             }
         }

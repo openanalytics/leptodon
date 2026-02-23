@@ -33,11 +33,6 @@ pipeline {
           }
           echo "TAG is set to ${env.TAG}"
         }
-        timestamps {
-          // Download and extract cache
-          sh "aws s3 cp s3://oa-infrastructure-cache/${IMAGE}/${env.BRANCH_NAME}/cache.tar ${env.WORKSPACE}/cache.tar --region eu-west-1 --quiet || echo 'Failed downloading cache'"
-          sh "tar -Pxf cache.tar || echo 'Failed extracting cache'"
-        }
       }
     }
     stage('Linting') {
@@ -87,10 +82,6 @@ pipeline {
         always {
           sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
           archiveArtifacts artifacts: 'mem*.log', fingerprint: true
-
-          sh "tar -Pcf cache.tar ./target ${env.WORKSPACE}/overview/target ${env.WORKSPACE}/demo/target ${env.WORKSPACE}/overview/codegen/target ${env.WORKSPACE}/attr-docgen/target ${env.WORKSPACE}/demo/codegen/target /usr/local/cargo/git /usr/local/cargo/registry"
-          sh "aws s3 cp ${env.WORKSPACE}/cache.tar s3://oa-infrastructure-cache/${IMAGE}/${env.BRANCH_NAME}/cache.tar --region eu-west-1"
-          sh "du -sch cache.tar"
         }
       }
     }
