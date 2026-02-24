@@ -1,3 +1,20 @@
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
 import { test, expect, Page, Locator } from "@playwright/test";
 
 // Check that the radio reactively updates its signal.
@@ -123,19 +140,19 @@ test("Tag Picker dropdown opens without scrolling the page", async ({ page }) =>
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Tag Picker");
-  
+
   // Bring tag picker into view
   await page.locator("#tag_picker").hover();
-  
+
   // Record initial scroll position
   const { scrollX: initialX, scrollY: initialY } = await page.evaluate(() => ({
     scrollX: window.scrollX,
     scrollY: window.scrollY,
   }));
-  
+
   // Click to open dropdown
   await page.locator("#tag_picker").click();
-  
+
   // Wait for dropdown to be visible
   await page.waitForSelector("#tag_picker-dropdown", { state: "visible" });
 
@@ -148,4 +165,3 @@ test("Tag Picker dropdown opens without scrolling the page", async ({ page }) =>
   expect(finalX).toBe(initialX);
   expect(finalY).toBe(initialY);
 });
-
