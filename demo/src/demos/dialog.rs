@@ -1,4 +1,29 @@
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
 use attr_docgen::generate_codeblock;
+use leptodon::button::Button;
+use leptodon::button::DialogButton;
+use leptodon::button::DialogButtonChildren;
+use leptodon::dialog::Dialog;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
+use leptodon::util::callback::BoxCallback;
+use leptodon::util::lorem::Lorem;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
@@ -6,14 +31,6 @@ use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::prelude::Update;
 use leptos::{IntoView, component, view};
-use leptos_components::button::Button;
-use leptos_components::button::DialogButton;
-use leptos_components::button::DialogButtonChildren;
-use leptos_components::dialog::Dialog;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
-use leptos_components::util::callback::BoxCallback;
-use leptos_components::util::lorem::Lorem;
 use leptos_meta::Title;
 
 #[generate_codeblock(DialogButtonExample)]
@@ -90,8 +107,8 @@ pub fn DialogDemoPage() -> impl IntoView {
             <Heading4 anchor="dialog-button">"Dialog Button"</Heading4>
             <DialogButtonExample />
 
-            <leptos_components::dialog::DialogDocs />
-            <leptos_components::button::DialogButtonDocs />
+            <leptodon::dialog::DialogDocs />
+            <leptodon::button::DialogButtonDocs />
         </FixedCenterColumn>
     }
 }

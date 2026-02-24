@@ -20,7 +20,7 @@ opt-level = 'z'
 opt-level = 1
 incremental = true
 
-[profile.dev.package.leptos-components]
+[profile.dev.package.leptodon]
 opt-level = 1
 incremental = true
 
@@ -47,7 +47,7 @@ leptos_router = { version = "0.8.10" }
 wasm-bindgen = { version = "=0.2.105", optional = true }
 
 itertools = "0.14.0"
-leptos-components = { path = "..", default-features = false, features = ["leptos"] }
+leptodon = { path = "..", default-features = false, features = ["leptos"] }
 leptos-struct-table = { version = "0.18", features = ["chrono"] }
 
 axum-extra = { version = "0.12.2", optional = true, features = ["cookie"] }
@@ -76,8 +76,8 @@ ssr = [
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
-    "leptos-components/leptos",
-    "leptos-components/ssr",
+    "leptodon/leptos",
+    "leptodon/ssr",
     "dep:leptos_axum",
     "dep:tokio",
     "dep:axum",
@@ -91,13 +91,13 @@ ssr = [
 hydrate = [
     "leptos/hydrate",
     "dep:wasm-bindgen",
-    "leptos-components/leptos",
-    "leptos-components/hydrate"
+    "leptodon/leptos",
+    "leptodon/hydrate"
 ]
 csr = [
     "leptos/csr",
-    "leptos-components/leptos",
-    "leptos-components/csr"
+    "leptodon/leptos",
+    "leptodon/csr"
 ]
 tower = ["dep:tower"]
 tower-http = ["dep:tower-http"]

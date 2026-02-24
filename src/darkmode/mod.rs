@@ -1,3 +1,20 @@
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
 // Timesheets
 //
 // Copyright (C) 2023-2025 Open Analytics NV
@@ -44,8 +61,8 @@ use crate::select::Select;
 #[derive(Debug, Hash, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum Theme {
     Light,
-    Dark,
     #[default]
+    Dark,
     FollowSystem,
 }
 
@@ -219,7 +236,7 @@ pub fn initial_theme_from_cookie() -> Theme {
     if let Some(theme) = cookies::get_raw(cookie.as_str(), "theme") {
         Theme::from(theme.as_str())
     } else {
-        Theme::FollowSystem
+        Theme::default()
     }
 }
 
@@ -230,7 +247,7 @@ pub fn initial_theme_from_cookie() -> Theme {
     use std::borrow::Cow;
 
     let Some(headers) = use_context::<http1::request::Parts>().map(|parts| parts.headers) else {
-        return Theme::FollowSystem;
+        return Theme::default();
     };
 
     let Some(Ok(head_value_bytes)) = headers
@@ -238,7 +255,7 @@ pub fn initial_theme_from_cookie() -> Theme {
         .map(|value| value.to_str())
     else {
         console_log("Failed to find cookie header".to_string().as_str());
-        return Theme::FollowSystem;
+        return Theme::default();
     };
     let parseable_value = Cow::from(head_value_bytes.to_string());
     let found = Cookie::split_parse_encoded(parseable_value).find_map(|a| match a {

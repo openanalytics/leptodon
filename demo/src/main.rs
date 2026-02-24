@@ -1,4 +1,21 @@
 #![recursion_limit = "256"]
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
 
 use cfg_if::cfg_if;
 
@@ -6,18 +23,19 @@ use cfg_if::cfg_if;
 cfg_if! {
     if #[cfg(feature = "ssr")] {
 
-        #[tokio::main]
+        #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
         async fn main() {
             use axum::Router;
             use leptos::logging::log;
             use leptos::prelude::*;
             use leptos_axum::{LeptosRoutes, generate_route_list};
+            use tower_http::compression::CompressionLayer;
             use overview::app::*;
 
             let conf = get_configuration(None).unwrap();
             let addr = conf.leptos_options.site_addr;
             let leptos_options = conf.leptos_options;
-      
+
             // Generate the list of routes in your Leptos App
             let routes = generate_route_list(App);
 
@@ -27,7 +45,8 @@ cfg_if! {
                     move || overview::app::shell(leptos_options.clone())
                 })
                 .fallback(leptos_axum::file_and_error_handler(shell))
-                .with_state(leptos_options);
+                .with_state(leptos_options)
+                .layer(CompressionLayer::new());
 
             // run our app with hyper
             // `axum::Server` is a re-export of `hyper::Server`

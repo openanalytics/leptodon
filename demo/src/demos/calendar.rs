@@ -1,19 +1,36 @@
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
 use attr_docgen::generate_codeblock;
 use chrono::Datelike;
 use chrono::Local;
 use chrono::NaiveDate;
 use chrono::NaiveTime;
 use chrono::Weekday;
+use leptodon::calendar::Calendar;
+use leptodon::calendar::CalendarEvent;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::IntoAny;
 use leptos::prelude::RwSignal;
 use leptos::prelude::signal;
 use leptos::{IntoView, component, view};
-use leptos_components::calendar::Calendar;
-use leptos_components::calendar::CalendarEvent;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 
 #[generate_codeblock(CalendarExample)]
@@ -55,8 +72,8 @@ pub fn CalendarDemoPage() -> impl IntoView {
             <Heading4 anchor="calendar">"Calendar"</Heading4>
             <CalendarExample />
 
-            <leptos_components::calendar::CalendarDocs />
-            <leptos_components::calendar::CalendarEventDocs />
+            <leptodon::calendar::CalendarDocs />
+            <leptodon::calendar::CalendarEventDocs />
         </FixedCenterColumn>
     }
 }

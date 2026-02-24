@@ -1,5 +1,27 @@
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
 use chrono::Datelike;
 use chrono::Local;
+use leptodon::class_list;
+use leptodon::popover::Popover;
+use leptodon::popover::PopoverAnchor;
+use leptodon::popover::PopoverTrigger;
+use leptodon::util::option_comp::OptionComp;
 use leptos::logging::error;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::CollectView;
@@ -11,14 +33,9 @@ use leptos::prelude::ServerFnError;
 use leptos::prelude::signal;
 use leptos::server;
 use leptos::server::LocalResource;
-use leptos_components::class_list;
-use leptos_components::popover::Popover;
-use leptos_components::popover::PopoverAnchor;
-use leptos_components::popover::PopoverTrigger;
-use leptos_components::util::option_comp::OptionComp;
 
+use leptodon::calendar::Calendar;
 use leptos::{IntoView, component, view};
-use leptos_components::calendar::Calendar;
 
 #[server]
 pub async fn read_calendar(

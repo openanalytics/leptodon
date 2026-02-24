@@ -1,13 +1,30 @@
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
+use leptodon::accordion::Accordion;
+use leptodon::accordion::AccordionEntry;
+use leptodon::button::{Button, ButtonAppearance};
+use leptodon::darkmode::ThemeSelector;
+use leptodon::icon;
+use leptodon::navbar::NavbarEndChildren;
+use leptodon::navbar::NavbarEntries;
+use leptodon::navbar::SideBarLink;
+use leptodon::navbar::SideNavbar;
 use leptos::prelude::*;
-use leptos_components::accordion::Accordion;
-use leptos_components::accordion::AccordionEntry;
-use leptos_components::button::{Button, ButtonAppearance};
-use leptos_components::darkmode::ThemeSelector;
-use leptos_components::icon;
-use leptos_components::navbar::NavbarEndChildren;
-use leptos_components::navbar::NavbarEntries;
-use leptos_components::navbar::SideBarLink;
-use leptos_components::navbar::SideNavbar;
 use leptos_meta::HashedStylesheet;
 use leptos_meta::MetaTags;
 use leptos_meta::Title;
@@ -22,7 +39,7 @@ use leptos_router::{
 use crate::generated_demolist::DemoRoutes;
 use crate::generated_demolist::page_infos;
 
-const NAME: &str = "OA Leptos-Components";
+const NAME: &str = "Leptodon";
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {

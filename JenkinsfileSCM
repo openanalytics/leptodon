@@ -3,7 +3,7 @@ pipeline {
     kubernetes {
       inheritFrom 'kaniko'
       yamlFile 'agent.pod.yaml'
-      defaultContainer 'leptos-components-build'
+      defaultContainer 'leptodon-build'
       yamlMergeStrategy merge()
     }
   }
@@ -17,8 +17,8 @@ pipeline {
     ).trim()
     NS = 'openanalytics'
     REGISTRY = 'registry.openanalytics.eu'
-    IMAGE = 'leptos-components'
-    CACHE_IMAGE = 'leptos-components-cache'
+    IMAGE = 'leptodon'
+    CACHE_IMAGE = 'leptodon-cache'
     DOCKER_BUILDKIT = '1'
     NO_COLOR = 'true'
   }
@@ -35,9 +35,14 @@ pipeline {
         }
       }
     }
+    stage('License Check') {
+      steps {
+        sh "cargo make license-check"
+      }
+    }
     stage('Linting') {
       steps {
-	      sh "cargo make lint"
+        sh "cargo make lint"
       }
     }
     stage('Library Unit Tests') {

@@ -3,7 +3,7 @@
 # getting a license header
 excludes:
   - \.gitignore
-  - .*lock
+  - .*\.lock
   - \.git/.*
   - .*logo.svg
   - \.licensure\.yml
@@ -15,6 +15,15 @@ excludes:
   - proxy\/.+
   - Jenkinsfile
   - .*Dockerfile
+  # ThawUI utilities, mixed copyright.
+  - src\/util\/signals\/component_ref\.rs
+  - src\/util\/signals\/mod\.rs
+  - src\/util\/callback\.rs
+  - src\/util\/element\.rs
+  - src\/util\/option_comp\.rs
+  - src\/util\/optional_prop\.rs
+  - overview\/src\/gen_icons\.rs
+  - demo\/src\/generated_demolist\.rs
 # Definition of the licenses used on this project and to what files
 # they should apply.
 licenses:
@@ -50,7 +59,7 @@ licenses:
   #      Name <email@example.com>. If multiple authors are provided the
   #      list is concatenated together with commas.
     template: |
-      Leptos-components
+      Leptodon
 
       Copyright (C) 2025-[year] [name of author]
 

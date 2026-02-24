@@ -1,23 +1,40 @@
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
 use derive_more::Display;
+use leptodon::button::ButtonType;
+use leptodon::checkbox::Checkbox;
+use leptodon::date_picker::DatePicker;
+use leptodon::date_picker::range_picker::DateRangePicker;
+use leptodon::form_input::FormInput;
+use leptodon::input::{InputType, PasswordInput, TextInput};
+use leptodon::link::Link;
+use leptodon::select::{MaybeSelect, Select};
+use leptodon::textarea::TextArea;
+use leptodon::toggle::Toggle;
+use leptodon::{
+    button::Button,
+    radio::{Radio, RadioOption},
+};
 use leptos::prelude::AddAnyAttr;
 #[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::{ClassAttribute, ElementChild};
 use leptos::{IntoView, component, oco::Oco, prelude::RwSignal, view};
-use leptos_components::button::ButtonType;
-use leptos_components::checkbox::Checkbox;
-use leptos_components::date_picker::DatePicker;
-use leptos_components::date_picker::range_picker::DateRangePicker;
-use leptos_components::form_input::FormInput;
-use leptos_components::input::{InputType, PasswordInput, TextInput};
-use leptos_components::link::Link;
-use leptos_components::select::{MaybeSelect, Select};
-use leptos_components::textarea::TextArea;
-use leptos_components::toggle::Toggle;
-use leptos_components::{
-    button::Button,
-    radio::{Radio, RadioOption},
-};
 use leptos_meta::Title;
 use leptos_router::components::Form;
 use strum::IntoEnumIterator;

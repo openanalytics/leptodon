@@ -1,18 +1,35 @@
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
 use attr_docgen::generate_codeblock;
 use chrono::Datelike;
 use chrono::NaiveDate;
 use chrono::Weekday;
+use leptodon::date_picker::DateMenuOption;
+use leptodon::date_picker::DatePicker;
+use leptodon::date_picker::day_highlighter;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
+use leptodon::util::callback::ArcOneCallback;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::RwSignal;
 use leptos::{IntoView, component, view};
-use leptos_components::date_picker::DateMenuOption;
-use leptos_components::date_picker::DatePicker;
-use leptos_components::date_picker::day_highlighter;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
-use leptos_components::util::callback::ArcOneCallback;
 use leptos_meta::Title;
 
 #[generate_codeblock(DatePickerExample)]
@@ -82,7 +99,7 @@ pub fn DatePickerDemoPage() -> impl IntoView {
             <Heading4 anchor="datepicker-highlighter">"DatePicker Highlighter"</Heading4>
             <DatePickerHighlighterExample />
 
-            <leptos_components::date_picker::DatePickerDocs />
+            <leptodon::date_picker::DatePickerDocs />
         </FixedCenterColumn>
     }
 }

@@ -1,4 +1,3 @@
-
 use leptos::{component, view};
 use leptos_router::components::{Outlet, ParentRoute, Route};
 use leptos_router::path;

@@ -1,3 +1,20 @@
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
 import { test, expect } from "@playwright/test";
 
 // Main table features work.
@@ -5,7 +22,7 @@ test("Table shows data", async ({ page }) => {
   await page.goto("http://localhost:3000/");
 
   await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptos components");
+  await expect(page).toHaveTitle("Leptodon");
 
   // Unsorted table for reference.
   // Detail Id	Name	Age	  Date      	Admin Editable
@@ -67,7 +84,7 @@ test("Table column drag and drop", async ({ page }) => {
   await page.goto("http://localhost:3000/");
 
   await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptos components");
+  await expect(page).toHaveTitle("Leptodon");
 
   let person_table = page.getByTestId("person-table");
   const headers = person_table.getByRole("columnheader");

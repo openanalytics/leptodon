@@ -1,3 +1,20 @@
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
 use leptos::web_sys;
 use std::ops::Range;
 
@@ -8,12 +25,12 @@ use leptos::either::Either;
 use leptos::prelude::ElementChild;
 use leptos::view;
 
+use leptodon::button::ControlButton;
+use leptodon::class_list;
+use leptodon::icon::EditIcon;
+use leptodon::icon::Icon;
+use leptodon::table::StyledHeadDragHandler;
 use leptos::prelude::*;
-use leptos_components::button::ControlButton;
-use leptos_components::class_list;
-use leptos_components::icon::EditIcon;
-use leptos_components::icon::Icon;
-use leptos_components::table::StyledHeadDragHandler;
 use leptos_struct_table::*;
 
 // Tables are implemented in the leptos-struct-table crate
@@ -63,7 +80,7 @@ fn DetailCellRenderer(
                 old.detail.show = !old.detail.show;
             });
         }>
-            <Icon icon=leptos_components::icon::DownIcon() class=class_list!(
+            <Icon icon=leptodon::icon::DownIcon() class=class_list!(
                 "w-3 h-3",
                 ("-rotate-90", move || !value.get().show)
             ) />
