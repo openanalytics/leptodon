@@ -1,14 +1,14 @@
 use attr_docgen::generate_codeblock;
+use leptodon::badge::Badge;
+use leptodon::badge::BadgePrefix;
+use leptodon::badge::BadgeSize;
+use leptodon::badge::BadgeTheme;
+use leptodon::heading::Heading4;
+use leptodon::icon::WarningIcon;
+use leptodon::layout::FixedCenterColumn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};
-use leptos_components::badge::Badge;
-use leptos_components::badge::BadgePrefix;
-use leptos_components::badge::BadgeSize;
-use leptos_components::badge::BadgeTheme;
-use leptos_components::heading::Heading4;
-use leptos_components::icon::WarningIcon;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 
 #[generate_codeblock(PlainBadgesExample)]
@@ -82,7 +82,7 @@ pub fn BadgeDemoPage() -> impl IntoView {
             <Heading4 anchor="large-bordered-badges">"Large Bordered Badges"</Heading4>
             <LargeBorderedBadgesExample />
 
-            <leptos_components::badge::BadgeDocs />
+            <leptodon::badge::BadgeDocs />
         </FixedCenterColumn>
     }
 }

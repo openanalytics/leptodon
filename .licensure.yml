@@ -50,7 +50,7 @@ licenses:
   #      Name <email@example.com>. If multiple authors are provided the
   #      list is concatenated together with commas.
     template: |
-      Leptos-components
+      Leptodon
 
       Copyright (C) 2025-[year] [name of author]
 

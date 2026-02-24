@@ -5,7 +5,7 @@ test("Test date-picker open/close", async ({ page }) => {
   await page.goto("http://localhost:3000/");
 
   await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptos components");
+  await expect(page).toHaveTitle("Leptodon");
 
   await expect(page.locator("#date_range_picker-left-popup")).toBeHidden();
   await page.locator("#date_range_picker-left").click();
@@ -19,7 +19,7 @@ test("Test date-picker focus/tab open/close", async ({ page }) => {
   await page.goto("http://localhost:3000/");
 
   await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptos components");
+  await expect(page).toHaveTitle("Leptodon");
 
   await expect(page.locator("#date_range_picker-left-popup")).toBeHidden();
   await expect(page.locator("#date_range_picker-right-popup")).toBeHidden();
@@ -39,7 +39,7 @@ test("Test date-picker selecting open/close", async ({ page }) => {
   await page.goto("http://localhost:3000/");
 
   await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptos components");
+  await expect(page).toHaveTitle("Leptodon");
 
   await expect(page.locator("#date_range_picker-left-popup")).toBeHidden();
   await expect(page.locator("#date_range_picker-right-popup")).toBeHidden();
@@ -65,7 +65,7 @@ test("Test date-picker functionality", async ({ page }) => {
   await page.goto("http://localhost:3000/");
 
   await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptos components");
+  await expect(page).toHaveTitle("Leptodon");
 
   // Select 2135-10-01 in left date-input
   let current_date = new Date();

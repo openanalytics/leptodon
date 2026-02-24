@@ -5,7 +5,7 @@ test("Button on_click", async ({ page }) => {
   await page.goto("http://localhost:3000/");
 
   await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptos components");
+  await expect(page).toHaveTitle("Leptodon");
 
   // Test generic button functionality
   await page.getByRole("button", { name: "2", exact: true }).click();

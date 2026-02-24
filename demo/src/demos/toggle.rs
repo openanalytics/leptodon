@@ -1,4 +1,8 @@
 use attr_docgen::generate_codeblock;
+use leptodon::button::Button;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
+use leptodon::toggle::Toggle;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
@@ -6,10 +10,6 @@ use leptos::prelude::Get;
 use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, prelude::RwSignal, view};
-use leptos_components::button::Button;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
-use leptos_components::toggle::Toggle;
 use leptos_meta::Title;
 
 #[generate_codeblock(ToggleExample)]
@@ -51,7 +51,7 @@ pub fn ToggleDemoPage() -> impl IntoView {
             <Heading4 anchor="toggle">"Toggle"</Heading4>
             <ToggleExample />
 
-            <leptos_components::toggle::ToggleDocs />
+            <leptodon::toggle::ToggleDocs />
         </FixedCenterColumn>
     }
 }

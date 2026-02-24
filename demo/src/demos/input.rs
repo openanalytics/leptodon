@@ -1,4 +1,16 @@
 use attr_docgen::generate_codeblock;
+use leptodon::button::AddButton;
+use leptodon::button::DeleteButton;
+use leptodon::button::DownloadButton;
+use leptodon::button::EditButton;
+use leptodon::heading::Heading4;
+use leptodon::input::GenericInput;
+use leptodon::input::InputType;
+use leptodon::input::NumberInput;
+use leptodon::input::NumberInputConfigProps;
+use leptodon::input::PasswordInput;
+use leptodon::input::TextInput;
+use leptodon::layout::FixedCenterColumn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
@@ -6,18 +18,6 @@ use leptos::prelude::IntoAny;
 #[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
 use leptos::{IntoView, component, prelude::RwSignal, view};
-use leptos_components::button::AddButton;
-use leptos_components::button::DeleteButton;
-use leptos_components::button::DownloadButton;
-use leptos_components::button::EditButton;
-use leptos_components::heading::Heading4;
-use leptos_components::input::GenericInput;
-use leptos_components::input::InputType;
-use leptos_components::input::NumberInput;
-use leptos_components::input::NumberInputConfigProps;
-use leptos_components::input::PasswordInput;
-use leptos_components::input::TextInput;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 
 #[generate_codeblock(TextInputExample)]
@@ -182,10 +182,10 @@ pub fn InputsDemoPage() -> impl IntoView {
             </p>
             <GenericInputExample/>
 
-            <leptos_components::input::TextInputDocs />
-            <leptos_components::input::PasswordInputDocs />
-            <leptos_components::input::NumberInputDocs />
-            <leptos_components::input::GenericInputDocs />
+            <leptodon::input::TextInputDocs />
+            <leptodon::input::PasswordInputDocs />
+            <leptodon::input::NumberInputDocs />
+            <leptodon::input::GenericInputDocs />
         </FixedCenterColumn>
     }
 }

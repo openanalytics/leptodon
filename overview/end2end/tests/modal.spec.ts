@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 test("Modal opens and closes.", async ({ page }) => {
   await page.goto("http://localhost:3000/");
   await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptos components");
+  await expect(page).toHaveTitle("Leptodon");
 
   const toggle_button = page.getByRole("button", { name: "Toggle Modal" });
   const example_modal = page.getByRole("dialog", { name: "Example modal" });
@@ -50,7 +50,7 @@ test("Modal opens and closes.", async ({ page }) => {
 test("Modal focus looping.", async ({ page }) => {
   await page.goto("http://localhost:3000/");
   await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptos components");
+  await expect(page).toHaveTitle("Leptodon");
 
   const toggle_button = page.getByRole("button", { name: "Toggle Modal" });
   let closeButton = page

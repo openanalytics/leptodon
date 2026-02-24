@@ -6,7 +6,7 @@ args = ["--check", "--project"]
 [tasks.build-demo]
 cwd = "demo"
 command = "cargo"
-args = ["leptos", "build", "--release", "-vv"]
+args = ["leptos", "build", "--release", "--precompress", "-vv"]
 
 # Lints
 [tasks.lint-library]
@@ -60,7 +60,7 @@ cwd = "overview"
 script = '''
 #!/bin/sh
 set +e
-cargo leptos build --release;
+cargo leptos build --precompress --release;
 target/release/overview &
 
 echo "Up and running";

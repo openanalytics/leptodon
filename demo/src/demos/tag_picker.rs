@@ -1,5 +1,9 @@
 use attr_docgen::generate_codeblock;
 use derive_more::Display;
+use leptodon::button::Button;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
+use leptodon::tag_picker::TagPicker;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::CollectView;
 use leptos::prelude::ElementChild;
@@ -7,10 +11,6 @@ use leptos::prelude::Get;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, view};
-use leptos_components::button::Button;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
-use leptos_components::tag_picker::TagPicker;
 use leptos_meta::Title;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
@@ -67,7 +67,7 @@ pub fn TagPickerDemoPage() -> impl IntoView {
             <Heading4 anchor="tag-picker">"Tag Picker"</Heading4>
             <TagPickerExample />
 
-            <leptos_components::tag_picker::TagPickerDocs />
+            <leptodon::tag_picker::TagPickerDocs />
         </FixedCenterColumn>
     }
 }

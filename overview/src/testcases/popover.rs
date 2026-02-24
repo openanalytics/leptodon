@@ -1,13 +1,13 @@
+use leptodon::button::Button;
+use leptodon::popover::Popover;
+use leptodon::popover::PopoverAnchor;
+use leptodon::popover::PopoverTrigger;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::GlobalAttributes;
 #[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
 use leptos::{IntoView, component, view};
-use leptos_components::button::Button;
-use leptos_components::popover::Popover;
-use leptos_components::popover::PopoverAnchor;
-use leptos_components::popover::PopoverTrigger;
 use leptos_meta::Title;
 
 #[component]

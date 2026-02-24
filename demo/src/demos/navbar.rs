@@ -1,8 +1,8 @@
+use leptodon::codeblock::Codeblock;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
 use leptos::html::ElementChild;
 use leptos::{IntoView, component, view};
-use leptos_components::codeblock::Codeblock;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 
 #[component]
@@ -71,7 +71,7 @@ pub fn App() -> impl IntoView {
                 "##
                 />
 
-            <leptos_components::navbar::SideNavbarDocs />
+            <leptodon::navbar::SideNavbarDocs />
         </FixedCenterColumn>
     }
 }

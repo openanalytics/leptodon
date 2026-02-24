@@ -5,7 +5,7 @@ test("Table shows data", async ({ page }) => {
   await page.goto("http://localhost:3000/");
 
   await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptos components");
+  await expect(page).toHaveTitle("Leptodon");
 
   // Unsorted table for reference.
   // Detail Id	Name	Age	  Date      	Admin Editable
@@ -67,7 +67,7 @@ test("Table column drag and drop", async ({ page }) => {
   await page.goto("http://localhost:3000/");
 
   await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptos components");
+  await expect(page).toHaveTitle("Leptodon");
 
   let person_table = page.getByTestId("person-table");
   const headers = person_table.getByRole("columnheader");

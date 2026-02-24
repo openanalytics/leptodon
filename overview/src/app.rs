@@ -2,45 +2,45 @@ use crate::demo_table::DemoTable;
 use crate::group_table::GroupedTableExample;
 use crate::web_calendar::PopulatedCalendar;
 use chrono::NaiveDate;
-use leptos::logging::log;
-use leptos::prelude::*;
-use leptos_components::accordion::Accordion;
-use leptos_components::accordion::AccordionEntry;
-use leptos_components::avatar::Avatar;
-use leptos_components::button::AddButton;
-use leptos_components::button::DeleteButton;
-use leptos_components::button::DialogButton;
-use leptos_components::button::DialogButtonChildren;
-use leptos_components::button::DownloadButton;
-use leptos_components::button::DropdownButton;
-use leptos_components::button::DropdownButtonChildren;
-use leptos_components::button::EditButton;
-use leptos_components::button::ModalButton;
-use leptos_components::button::ModalButtonChildren;
-use leptos_components::button_group::ButtonGroup;
-use leptos_components::button_group::First;
-use leptos_components::button_group::Last;
-use leptos_components::checkbox::Checkbox;
-use leptos_components::codeblock::Codeblock;
-use leptos_components::darkmode::ThemeSelector;
-use leptos_components::date_picker::DatePicker;
-use leptos_components::date_picker::range_picker::DateRangePicker;
-use leptos_components::dropdown::DropdownItem;
-use leptos_components::heading::*;
-use leptos_components::icon;
-use leptos_components::input::InputType;
-use leptos_components::link::Link;
-use leptos_components::modal::ModalFooterChildren;
-use leptos_components::navbar::NavbarEntries;
-use leptos_components::navbar::SideBarLink;
-use leptos_components::navbar::SideNavbar;
-use leptos_components::spinner::Spinner;
-use leptos_components::textarea::TextArea;
-use leptos_components::toggle::Toggle;
-use leptos_components::{
+use leptodon::accordion::Accordion;
+use leptodon::accordion::AccordionEntry;
+use leptodon::avatar::Avatar;
+use leptodon::button::AddButton;
+use leptodon::button::DeleteButton;
+use leptodon::button::DialogButton;
+use leptodon::button::DialogButtonChildren;
+use leptodon::button::DownloadButton;
+use leptodon::button::DropdownButton;
+use leptodon::button::DropdownButtonChildren;
+use leptodon::button::EditButton;
+use leptodon::button::ModalButton;
+use leptodon::button::ModalButtonChildren;
+use leptodon::button_group::ButtonGroup;
+use leptodon::button_group::First;
+use leptodon::button_group::Last;
+use leptodon::checkbox::Checkbox;
+use leptodon::codeblock::Codeblock;
+use leptodon::darkmode::ThemeSelector;
+use leptodon::date_picker::DatePicker;
+use leptodon::date_picker::range_picker::DateRangePicker;
+use leptodon::dropdown::DropdownItem;
+use leptodon::heading::*;
+use leptodon::icon;
+use leptodon::input::InputType;
+use leptodon::link::Link;
+use leptodon::modal::ModalFooterChildren;
+use leptodon::navbar::NavbarEntries;
+use leptodon::navbar::SideBarLink;
+use leptodon::navbar::SideNavbar;
+use leptodon::spinner::Spinner;
+use leptodon::textarea::TextArea;
+use leptodon::toggle::Toggle;
+use leptodon::{
     button::{Button, ButtonAppearance},
     input::TextInput,
 };
+use leptos::logging::log;
+use leptos::prelude::*;
 use leptos_meta::MetaTags;
 use leptos_meta::Stylesheet;
 use leptos_meta::Title;
@@ -110,7 +110,7 @@ fn Home() -> impl IntoView {
     let dialog_visible = RwSignal::new(false);
     let text_area_input = RwSignal::new("Hi,\nMultiline".to_string());
     view! {
-        <Title text="Leptos components" />
+        <Title text="Leptodon" />
         <SideNavbar>
             <NavbarEntries slot:entries>
                 <li><SideBarLink href="#" icon=icon::CalendarIcon()>Calendar</SideBarLink></li>
@@ -170,7 +170,7 @@ fn Home() -> impl IntoView {
                 </p>
             </DialogButton>
             <div>
-                <leptos_components::input_group::ControlledNumberInput<i32> id="controlled_number_input" class="w-96" min=-1 max=15 />
+                <leptodon::input_group::ControlledNumberInput<i32> id="controlled_number_input" class="w-96" min=-1 max=15 />
             </div>
             {
                 view! {

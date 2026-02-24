@@ -1,13 +1,13 @@
 use std::ops::RangeInclusive;
 
+use leptodon::button::Button;
+use leptodon::tag_picker::TagPicker;
 use leptos::prelude::CollectView;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, prelude::RwSignal, view};
-use leptos_components::button::Button;
-use leptos_components::tag_picker::TagPicker;
 use leptos_meta::Title;
 use strum::IntoEnumIterator;
 

@@ -1,3 +1,5 @@
+use leptodon::button::Button;
+use leptodon::checkbox::Checkbox;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::CustomAttribute;
 use leptos::prelude::ElementChild;
@@ -6,8 +8,6 @@ use leptos::prelude::Get;
 use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, prelude::RwSignal, view};
-use leptos_components::button::Button;
-use leptos_components::checkbox::Checkbox;
 use leptos_meta::Title;
 
 #[component]

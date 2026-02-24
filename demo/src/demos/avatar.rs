@@ -1,10 +1,10 @@
 use attr_docgen::generate_codeblock;
+use leptodon::avatar::Avatar;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};
-use leptos_components::avatar::Avatar;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 
 #[generate_codeblock(AvatarPlaceholderExample)]
@@ -35,7 +35,7 @@ pub fn AvatarDemoPage() -> impl IntoView {
             <Heading4 anchor="avatar">"Avatar Link"</Heading4>
             <AvatarLinkExample />
 
-            <leptos_components::avatar::AvatarDocs />
+            <leptodon::avatar::AvatarDocs />
         </FixedCenterColumn>
     }
 }

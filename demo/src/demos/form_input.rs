@@ -1,15 +1,15 @@
 use attr_docgen::generate_codeblock;
+use leptodon::button::Button;
+use leptodon::button::ButtonType;
+use leptodon::form_input::FormInput;
+use leptodon::heading::Heading4;
+use leptodon::input::InputType;
+use leptodon::input::PasswordInput;
+use leptodon::input::TextInput;
+use leptodon::layout::FixedCenterColumn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};
-use leptos_components::button::Button;
-use leptos_components::button::ButtonType;
-use leptos_components::form_input::FormInput;
-use leptos_components::heading::Heading4;
-use leptos_components::input::InputType;
-use leptos_components::input::PasswordInput;
-use leptos_components::input::TextInput;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 use leptos_router::components::Form;
 
@@ -46,9 +46,9 @@ pub fn FormInputDemoPage() -> impl IntoView {
             </p>
             <LoginFormInputExample />
 
-            <leptos_components::form_input::FormInputDocs />
-            <leptos_components::input::TextInputDocs />
-            <leptos_components::input::PasswordInputDocs />
+            <leptodon::form_input::FormInputDocs />
+            <leptodon::input::TextInputDocs />
+            <leptodon::input::PasswordInputDocs />
         </FixedCenterColumn>
     }
 }

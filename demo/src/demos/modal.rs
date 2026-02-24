@@ -1,19 +1,19 @@
 use attr_docgen::generate_codeblock;
+use leptodon::button::Button;
+use leptodon::button::ButtonAppearance;
+use leptodon::button::ModalButton;
+use leptodon::button::ModalButtonChildren;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
+use leptodon::modal::Modal;
+use leptodon::modal::ModalFooterChildren;
+use leptodon::util::lorem::Lorem;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, view};
-use leptos_components::button::Button;
-use leptos_components::button::ButtonAppearance;
-use leptos_components::button::ModalButton;
-use leptos_components::button::ModalButtonChildren;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
-use leptos_components::modal::Modal;
-use leptos_components::modal::ModalFooterChildren;
-use leptos_components::util::lorem::Lorem;
 use leptos_meta::Title;
 
 #[generate_codeblock(ModalButtonExample)]
@@ -93,8 +93,8 @@ pub fn ModalDemoPage() -> impl IntoView {
             <Heading4 anchor="modal-button">"Modal Button"</Heading4>
             <ModalButtonExample />
 
-            <leptos_components::modal::ModalDocs />
-            <leptos_components::button::ModalButtonDocs />
+            <leptodon::modal::ModalDocs />
+            <leptodon::button::ModalButtonDocs />
         </FixedCenterColumn>
     }
 }

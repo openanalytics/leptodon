@@ -7,7 +7,7 @@ cfg_if! {
     if #[cfg(feature = "ssr")] {
 
         // use axum::routing::post;
-        // use leptos_components::darkmode::update_theme;
+        // use leptodon::darkmode::update_theme;
 
         // use tower_http::services::ServeDir;
         // use axum::{

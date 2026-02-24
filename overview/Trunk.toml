@@ -1,5 +1,0 @@
-[build]
-features = ["csr", "hydrate"]
-
-[watch]
-watch = ["../src", "src", "build.rs"] # watches leptos-components

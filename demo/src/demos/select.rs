@@ -1,5 +1,11 @@
 use attr_docgen::generate_codeblock;
 use derive_more::Display;
+use leptodon::button::Button;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
+use leptodon::radio::RadioOption;
+use leptodon::select::MaybeSelect;
+use leptodon::select::Select;
 use leptos::oco::Oco;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -7,12 +13,6 @@ use leptos::prelude::Get;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, view};
-use leptos_components::button::Button;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
-use leptos_components::radio::RadioOption;
-use leptos_components::select::MaybeSelect;
-use leptos_components::select::Select;
 use leptos_meta::Title;
 
 #[generate_codeblock(MaybeSelectExample)]
@@ -114,8 +114,8 @@ pub fn SelectDemoPage() -> impl IntoView {
             <p>"The Select<T> needs a T value."</p>
             <SelectExample />
 
-            <leptos_components::select::MaybeSelectDocs />
-            <leptos_components::select::SelectDocs />
+            <leptodon::select::MaybeSelectDocs />
+            <leptodon::select::SelectDocs />
         </FixedCenterColumn>
     }
 }

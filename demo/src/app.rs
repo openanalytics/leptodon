@@ -1,13 +1,13 @@
+use leptodon::accordion::Accordion;
+use leptodon::accordion::AccordionEntry;
+use leptodon::button::{Button, ButtonAppearance};
+use leptodon::darkmode::ThemeSelector;
+use leptodon::icon;
+use leptodon::navbar::NavbarEndChildren;
+use leptodon::navbar::NavbarEntries;
+use leptodon::navbar::SideBarLink;
+use leptodon::navbar::SideNavbar;
 use leptos::prelude::*;
-use leptos_components::accordion::Accordion;
-use leptos_components::accordion::AccordionEntry;
-use leptos_components::button::{Button, ButtonAppearance};
-use leptos_components::darkmode::ThemeSelector;
-use leptos_components::icon;
-use leptos_components::navbar::NavbarEndChildren;
-use leptos_components::navbar::NavbarEntries;
-use leptos_components::navbar::SideBarLink;
-use leptos_components::navbar::SideNavbar;
 use leptos_meta::HashedStylesheet;
 use leptos_meta::MetaTags;
 use leptos_meta::Title;
@@ -22,7 +22,7 @@ use leptos_router::{
 use crate::generated_demolist::DemoRoutes;
 use crate::generated_demolist::page_infos;
 
-const NAME: &str = "OA Leptos-Components";
+const NAME: &str = "Leptodon";
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {

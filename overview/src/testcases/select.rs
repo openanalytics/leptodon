@@ -1,10 +1,10 @@
+use leptodon::button::Button;
+use leptodon::select::MaybeSelect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, prelude::RwSignal, view};
-use leptos_components::button::Button;
-use leptos_components::select::MaybeSelect;
 use leptos_meta::Title;
 
 #[component]

@@ -56,7 +56,7 @@ pub(crate) fn _generate_codeblock(attr: TokenStream, item: TokenStream) -> Token
         #[component]
         pub fn #codeblock_ident() -> impl IntoView {
             leptos::prelude::view!{
-                <leptos_components::codeblock::Codeblock code=#body />
+                <leptodon::codeblock::Codeblock code=#body />
             }
         }
 

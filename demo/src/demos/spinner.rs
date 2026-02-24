@@ -1,11 +1,11 @@
 use attr_docgen::generate_codeblock;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
+use leptodon::spinner::Spinner;
+use leptodon::spinner::SpinnerAppearance;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
-use leptos_components::spinner::Spinner;
-use leptos_components::spinner::SpinnerAppearance;
 use leptos_meta::Title;
 
 #[generate_codeblock(SpinnerExample)]
@@ -32,7 +32,7 @@ pub fn SpinnerDemoPage() -> impl IntoView {
             <Heading4 anchor="spinner">"Spinner"</Heading4>
             <SpinnerExample />
 
-            <leptos_components::spinner::SpinnerDocs />
+            <leptodon::spinner::SpinnerDocs />
         </FixedCenterColumn>
     }
 }

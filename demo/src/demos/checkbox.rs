@@ -1,14 +1,14 @@
 use attr_docgen::generate_codeblock;
+use leptodon::button::Button;
+use leptodon::checkbox::Checkbox;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, view};
-use leptos_components::button::Button;
-use leptos_components::checkbox::Checkbox;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 
 #[generate_codeblock(CheckboxExample)]
@@ -48,7 +48,7 @@ pub fn CheckboxDemoPage() -> impl IntoView {
             <Heading4 anchor="checkbox">"Checkbox"</Heading4>
             <CheckboxExample />
 
-            <leptos_components::checkbox::CheckboxDocs />
+            <leptodon::checkbox::CheckboxDocs />
         </FixedCenterColumn>
     }
 }

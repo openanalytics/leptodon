@@ -1,4 +1,12 @@
 use attr_docgen::generate_codeblock;
+use leptodon::button::Button;
+use leptodon::button::DropdownButton;
+use leptodon::button::DropdownButtonChildren;
+use leptodon::dropdown::AlignmentAnchor;
+use leptodon::dropdown::Dropdown;
+use leptodon::dropdown::DropdownItem;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
@@ -6,14 +14,6 @@ use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::prelude::signal;
 use leptos::{IntoView, component, view};
-use leptos_components::button::Button;
-use leptos_components::button::DropdownButton;
-use leptos_components::button::DropdownButtonChildren;
-use leptos_components::dropdown::AlignmentAnchor;
-use leptos_components::dropdown::Dropdown;
-use leptos_components::dropdown::DropdownItem;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 
 #[generate_codeblock(DropdownExample)]
@@ -74,9 +74,9 @@ pub fn DropdownDemoPage() -> impl IntoView {
             <Heading4 anchor="dropdown-button">"Dropdown Button"</Heading4>
             <DropdownButtonExample />
 
-            <leptos_components::dropdown::DropdownDocs />
-            <leptos_components::dropdown::DropdownItemDocs />
-            <leptos_components::button::DropdownButtonDocs />
+            <leptodon::dropdown::DropdownDocs />
+            <leptodon::dropdown::DropdownItemDocs />
+            <leptodon::button::DropdownButtonDocs />
         </FixedCenterColumn>
     }
 }

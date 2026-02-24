@@ -1,5 +1,10 @@
 use chrono::Datelike;
 use chrono::Local;
+use leptodon::class_list;
+use leptodon::popover::Popover;
+use leptodon::popover::PopoverAnchor;
+use leptodon::popover::PopoverTrigger;
+use leptodon::util::option_comp::OptionComp;
 use leptos::logging::error;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::CollectView;
@@ -11,14 +16,9 @@ use leptos::prelude::ServerFnError;
 use leptos::prelude::signal;
 use leptos::server;
 use leptos::server::LocalResource;
-use leptos_components::class_list;
-use leptos_components::popover::Popover;
-use leptos_components::popover::PopoverAnchor;
-use leptos_components::popover::PopoverTrigger;
-use leptos_components::util::option_comp::OptionComp;
 
+use leptodon::calendar::Calendar;
 use leptos::{IntoView, component, view};
-use leptos_components::calendar::Calendar;
 
 #[server]
 pub async fn read_calendar(

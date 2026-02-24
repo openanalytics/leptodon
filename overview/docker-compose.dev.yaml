@@ -18,15 +18,15 @@ services:
     # - TS_DATABASE__URL=sqlite:/tmp/target/sessions.db
     # - RUST_BACKTRACE=1
     volumes:
-    - ../:/tmp/leptos-components:ro
+    - ../:/tmp/leptodon:ro
     - ./overview-target:/tmp/target
     - ./overview-cache:/usr/local/cargo/registry/cache
     - ./overview-sccache:/tmp/sccache
-    - ./overview-node-modules:/tmp/leptos-components/overview/node_modules/
+    - ./overview-node-modules:/tmp/leptodon/overview/node_modules/
     command:
     - sh
     - -c
-    - cd /tmp/leptos-components/overview && npm install --no-package-lock && cargo leptos watch
+    - cd /tmp/leptodon/overview && npm install --no-package-lock && cargo leptos watch
 
     deploy:
       resources:

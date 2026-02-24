@@ -1,14 +1,14 @@
 use attr_docgen::generate_codeblock;
+use leptodon::button::Button;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
+use leptodon::popover::Popover;
+use leptodon::popover::PopoverAnchor;
+use leptodon::popover::PopoverTrigger;
+use leptodon::util::lorem::Lorem;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};
-use leptos_components::button::Button;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
-use leptos_components::popover::Popover;
-use leptos_components::popover::PopoverAnchor;
-use leptos_components::popover::PopoverTrigger;
-use leptos_components::util::lorem::Lorem;
 use leptos_meta::Title;
 
 #[generate_codeblock(PopoverExample)]
@@ -46,7 +46,7 @@ pub fn PopoverDemoPage() -> impl IntoView {
             Scrolling the popover into a wall is also supported."</p>
             <PopoverExample />
 
-            <leptos_components::popover::PopoverDocs />
+            <leptodon::popover::PopoverDocs />
         </FixedCenterColumn>
     }
 }

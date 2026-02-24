@@ -1,10 +1,10 @@
 use attr_docgen::generate_codeblock;
+use leptodon::darkmode::ThemeSelector;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};
-use leptos_components::darkmode::ThemeSelector;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 
 #[generate_codeblock(ThemeSelectorExample)]
@@ -25,7 +25,7 @@ pub fn ThemeSelectorDemoPage() -> impl IntoView {
             <Heading4 anchor="themeselector">"ThemeSelector"</Heading4>
             <ThemeSelectorExample />
 
-            <leptos_components::darkmode::ThemeSelectorDocs />
+            <leptodon::darkmode::ThemeSelectorDocs />
         </FixedCenterColumn>
     }
 }

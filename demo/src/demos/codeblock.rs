@@ -1,10 +1,10 @@
 use attr_docgen::generate_codeblock;
+use leptodon::codeblock::Codeblock;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};
-use leptos_components::codeblock::Codeblock;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 
 #[generate_codeblock(CodeblockExample)]
@@ -27,7 +27,7 @@ pub fn CodeblockDemoPage() -> impl IntoView {
             <Heading4 anchor="codeblock">"Codeblock"</Heading4>
             <CodeblockExample />
 
-            <leptos_components::codeblock::CodeblockDocs />
+            <leptodon::codeblock::CodeblockDocs />
         </FixedCenterColumn>
     }
 }

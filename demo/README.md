@@ -1,9 +1,9 @@
 ## Page Structure
-Demos are divided into pages divided into these files `src/demos/*.rs`. 
-Each page should cover a category of component. 
+Demos are divided into pages divided into these files `src/demos/*.rs`.
+Each page should cover a category of component.
 For example the Button page may cover ButtonGroups, specific kind of buttons etc.
-The page subdivisions are called Examples and are partially code-generated with the `#[generate_codeblock(...Example)]` proc macro. 
-The proc macro annotated functions that become an Example are named a `...Demo`. 
+The page subdivisions are called Examples and are partially code-generated with the `#[generate_codeblock(...Example)]` proc macro.
+The proc macro annotated functions that become an Example are named a `...Demo`.
 
 Together these can look as follows:
 - `ButtonPage` - Component constructing the different examples into a column layout.
@@ -13,7 +13,7 @@ Together these can look as follows:
     - `AddButtonDemo`
 
 Lastly pages contain a list of parameter-tables of the used components that users may reference.
-These tables are luckily also proc-macro `#[generate_docs]` generated functions, but reside next to the component in the leptos-components crate.
+These tables are luckily also proc-macro `#[generate_docs]` generated functions, but reside next to the component in the leptodon crate.
 
 As a result the page component is structured as follows, with the italic components having been generated.
 - `ButtonPage` - Component constructing the different examples into a column layout.
@@ -21,10 +21,10 @@ As a result the page component is structured as follows, with the italic compone
     - `DeleteButtonDemo` - Component containing the related demonstration.
   - *`AddButtonExample`*
     - `AddButtonDemo`
-  - *`leptos_components::button::DeleteButtonDocs`*
-  - *`leptos_components::button::AddButtonDocs`*
+  - *`leptodon::button::DeleteButtonDocs`*
+  - *`leptodon::button::AddButtonDocs`*
 
 ## `build.rs`
  - Runs `cargo run codegen` to generate `.tailwind` for tailwind's class generation.
- - Generates `src/generated_demolist.rs` containing a list of all demos to construct routes and sidebar entries programatically. 
+ - Generates `src/generated_demolist.rs` containing a list of all demos to construct routes and sidebar entries programatically.
    - Allows for easy alfabetical sorting and reduces maintenance burden of adding/removing entries.

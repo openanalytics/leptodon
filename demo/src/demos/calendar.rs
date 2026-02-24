@@ -4,16 +4,16 @@ use chrono::Local;
 use chrono::NaiveDate;
 use chrono::NaiveTime;
 use chrono::Weekday;
+use leptodon::calendar::Calendar;
+use leptodon::calendar::CalendarEvent;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::IntoAny;
 use leptos::prelude::RwSignal;
 use leptos::prelude::signal;
 use leptos::{IntoView, component, view};
-use leptos_components::calendar::Calendar;
-use leptos_components::calendar::CalendarEvent;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 
 #[generate_codeblock(CalendarExample)]
@@ -55,8 +55,8 @@ pub fn CalendarDemoPage() -> impl IntoView {
             <Heading4 anchor="calendar">"Calendar"</Heading4>
             <CalendarExample />
 
-            <leptos_components::calendar::CalendarDocs />
-            <leptos_components::calendar::CalendarEventDocs />
+            <leptodon::calendar::CalendarDocs />
+            <leptodon::calendar::CalendarEventDocs />
         </FixedCenterColumn>
     }
 }

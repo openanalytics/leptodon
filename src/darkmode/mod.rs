@@ -44,8 +44,8 @@ use crate::select::Select;
 #[derive(Debug, Hash, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum Theme {
     Light,
-    Dark,
     #[default]
+    Dark,
     FollowSystem,
 }
 
@@ -219,7 +219,7 @@ pub fn initial_theme_from_cookie() -> Theme {
     if let Some(theme) = cookies::get_raw(cookie.as_str(), "theme") {
         Theme::from(theme.as_str())
     } else {
-        Theme::FollowSystem
+        Theme::default()
     }
 }
 
@@ -230,7 +230,7 @@ pub fn initial_theme_from_cookie() -> Theme {
     use std::borrow::Cow;
 
     let Some(headers) = use_context::<http1::request::Parts>().map(|parts| parts.headers) else {
-        return Theme::FollowSystem;
+        return Theme::default();
     };
 
     let Some(Ok(head_value_bytes)) = headers
@@ -238,7 +238,7 @@ pub fn initial_theme_from_cookie() -> Theme {
         .map(|value| value.to_str())
     else {
         console_log("Failed to find cookie header".to_string().as_str());
-        return Theme::FollowSystem;
+        return Theme::default();
     };
     let parseable_value = Cow::from(head_value_bytes.to_string());
     let found = Cookie::split_parse_encoded(parseable_value).find_map(|a| match a {

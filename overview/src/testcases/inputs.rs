@@ -1,3 +1,8 @@
+use leptodon::heading::Heading4;
+use leptodon::input::NumberInput;
+use leptodon::input::NumberInputConfigProps;
+use leptodon::input::TextInput;
+use leptodon::input::TextInputConfigProps;
 use leptos::prelude::BindAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
@@ -5,11 +10,6 @@ use leptos::prelude::GlobalAttributes;
 #[allow(unused)]
 use leptos::prelude::IntoAnyAttribute;
 use leptos::{IntoView, component, prelude::RwSignal, view};
-use leptos_components::heading::Heading4;
-use leptos_components::input::NumberInput;
-use leptos_components::input::NumberInputConfigProps;
-use leptos_components::input::TextInput;
-use leptos_components::input::TextInputConfigProps;
 use leptos_meta::Title;
 
 #[component]

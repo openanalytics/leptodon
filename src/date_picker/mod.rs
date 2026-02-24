@@ -627,7 +627,7 @@ impl DateMenuOption {
     /// ```
     /// # use std::cmp::Ordering;
     /// # use chrono::NaiveDate;
-    /// # use leptos_components::date_picker::DateMenuOption;
+    /// # use leptodon::date_picker::DateMenuOption;
     ///
     /// let date = NaiveDate::from_ymd_opt(2025, 11, 01).unwrap();
     ///

@@ -184,9 +184,9 @@ pub struct DropdownButtonChildren {
 ///
 /// Example
 /// ```
-/// # use leptos_components::dropdown::DropdownItem;
-/// # use leptos_components::button::DropdownButtonChildren;
-/// # use leptos_components::button::DropdownButton;
+/// # use leptodon::dropdown::DropdownItem;
+/// # use leptodon::button::DropdownButtonChildren;
+/// # use leptodon::button::DropdownButton;
 /// # use leptos::logging::debug_log;
 /// leptos::view! {
 /// <DropdownButton>

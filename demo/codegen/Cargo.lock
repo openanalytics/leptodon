@@ -346,7 +346,7 @@ dependencies = [
 name = "codegen"
 version = "0.1.0"
 dependencies = [
- "leptos-components",
+ "leptodon",
 ]
 
 [[package]]
@@ -1210,6 +1210,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 
 [[package]]
+name = "leptodon"
+version = "0.1.0"
+dependencies = [
+ "attr-docgen",
+ "base64",
+ "cfg-if",
+ "chrono",
+ "const-str 0.7.0",
+ "leptos-struct-table",
+ "nucleo-matcher",
+ "num-traits",
+ "send_wrapper",
+ "walkdir",
+ "zxcvbn",
+]
+
+[[package]]
 name = "leptos"
 version = "0.8.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1246,23 +1263,6 @@ dependencies = [
  "wasm-bindgen-futures",
  "wasm_split_helpers",
  "web-sys",
-]
-
-[[package]]
-name = "leptos-components"
-version = "0.1.0"
-dependencies = [
- "attr-docgen",
- "base64",
- "cfg-if",
- "chrono",
- "const-str 0.7.0",
- "leptos-struct-table",
- "nucleo-matcher",
- "num-traits",
- "send_wrapper",
- "walkdir",
- "zxcvbn",
 ]
 
 [[package]]

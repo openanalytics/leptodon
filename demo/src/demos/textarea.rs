@@ -1,11 +1,11 @@
 use attr_docgen::generate_codeblock;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
+use leptodon::textarea::TextArea;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::RwSignal;
 use leptos::{IntoView, component, view};
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
-use leptos_components::textarea::TextArea;
 use leptos_meta::Title;
 
 #[generate_codeblock(TextAreaExample)]
@@ -33,7 +33,7 @@ pub fn TextAreaDemoPage() -> impl IntoView {
             <Heading4 anchor="textarea">"TextArea"</Heading4>
             <TextAreaExample />
 
-            <leptos_components::textarea::TextAreaDocs />
+            <leptodon::textarea::TextAreaDocs />
         </FixedCenterColumn>
     }
 }

@@ -1,11 +1,11 @@
 use attr_docgen::generate_codeblock;
+use leptodon::accordion::Accordion;
+use leptodon::accordion::AccordionEntry;
+use leptodon::heading::Heading4;
+use leptodon::layout::FixedCenterColumn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};
-use leptos_components::accordion::Accordion;
-use leptos_components::accordion::AccordionEntry;
-use leptos_components::heading::Heading4;
-use leptos_components::layout::FixedCenterColumn;
 use leptos_meta::Title;
 
 #[generate_codeblock(AccordionExample)]
@@ -34,8 +34,8 @@ pub fn AccordionDemoPage() -> impl IntoView {
             <Heading4 anchor="accordion">"Accordion"</Heading4>
             <AccordionExample />
 
-            <leptos_components::accordion::AccordionDocs />
-            <leptos_components::accordion::AccordionEntryDocs />
+            <leptodon::accordion::AccordionDocs />
+            <leptodon::accordion::AccordionEntryDocs />
         </FixedCenterColumn>
     }
 }

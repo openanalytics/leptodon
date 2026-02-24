@@ -1,9 +1,9 @@
+use leptodon::button::Button;
+use leptodon::button::CopyButton;
+use leptodon::textarea::TextArea;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, prelude::RwSignal, view};
-use leptos_components::button::Button;
-use leptos_components::button::CopyButton;
-use leptos_components::textarea::TextArea;
 use leptos_meta::Title;
 
 #[component]

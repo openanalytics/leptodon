@@ -346,7 +346,7 @@ dependencies = [
 name = "codegen"
 version = "0.1.0"
 dependencies = [
- "leptos-components",
+ "leptodon",
  "syn",
 ]
 
@@ -1250,7 +1250,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "leptos-components"
+name = "leptodon"
 version = "0.1.0"
 dependencies = [
  "attr-docgen",
