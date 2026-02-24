@@ -1676,6 +1676,37 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 
 [[package]]
+name = "leptodon"
+version = "0.1.0"
+dependencies = [
+ "attr-docgen",
+ "axum 0.8.7",
+ "axum-extra 0.9.6",
+ "base64",
+ "cfg-if",
+ "chrono",
+ "const-str 0.7.0",
+ "http",
+ "leptos",
+ "leptos-struct-table",
+ "leptos-use",
+ "leptos_axum",
+ "leptos_meta",
+ "leptos_router",
+ "nucleo-matcher",
+ "num-traits",
+ "reactive_stores 0.2.5",
+ "rstml-to-string-macro",
+ "send_wrapper",
+ "serde",
+ "uuid",
+ "walkdir",
+ "wasm-cookies",
+ "web-sys",
+ "zxcvbn",
+]
+
+[[package]]
 name = "leptos"
 version = "0.8.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1716,37 +1747,6 @@ dependencies = [
  "wasm-bindgen-futures",
  "wasm_split_helpers",
  "web-sys",
-]
-
-[[package]]
-name = "leptodon"
-version = "0.1.0"
-dependencies = [
- "attr-docgen",
- "axum 0.8.7",
- "axum-extra 0.9.6",
- "base64",
- "cfg-if",
- "chrono",
- "const-str 0.7.0",
- "http",
- "leptos",
- "leptos-struct-table",
- "leptos-use",
- "leptos_axum",
- "leptos_meta",
- "leptos_router",
- "nucleo-matcher",
- "num-traits",
- "reactive_stores 0.2.5",
- "rstml-to-string-macro",
- "send_wrapper",
- "serde",
- "uuid",
- "walkdir",
- "wasm-cookies",
- "web-sys",
- "zxcvbn",
 ]
 
 [[package]]
@@ -2320,8 +2320,8 @@ dependencies = [
  "http",
  "ical",
  "itertools 0.14.0",
- "leptos",
  "leptodon",
+ "leptos",
  "leptos-struct-table",
  "leptos_axum",
  "leptos_meta",

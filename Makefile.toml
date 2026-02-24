@@ -81,3 +81,17 @@ fi
 kill $! && echo "killed server";
 
 '''
+
+[tasks.tests]
+run_task = { name = [
+    "unit-tests",
+    "integration-tests"
+] }
+
+# Tries to run the same checks as the CI, locally.
+[tasks.mimic-ci]
+run_task = { name = [
+    "license-check",
+    "lint",
+    "tests"
+] }
