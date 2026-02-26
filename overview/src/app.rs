@@ -52,6 +52,7 @@ use leptodon::navbar::SideBarLink;
 use leptodon::navbar::SideNavbar;
 use leptodon::spinner::Spinner;
 use leptodon::textarea::TextArea;
+use leptodon::toast::Toaster;
 use leptodon::toggle::Toggle;
 use leptodon::{
     button::{Button, ButtonAppearance},
@@ -114,13 +115,6 @@ pub fn App() -> impl IntoView {
     }
 }
 
-// #[component]
-// fn Home() -> impl IntoView {
-//     view! {
-//         <p>Hello World!</p>
-//     }
-// }
-
 #[component]
 fn Home() -> impl IntoView {
     let (count, set_count) = signal(1);
@@ -130,6 +124,7 @@ fn Home() -> impl IntoView {
     let text_area_input = RwSignal::new("Hi,\nMultiline".to_string());
     view! {
         <Title text="Leptodon" />
+        <Toaster>
         <SideNavbar>
             <NavbarEntries slot:entries>
                 <li><SideBarLink href="#" icon=icon::CalendarIcon()>Calendar</SideBarLink></li>
@@ -278,6 +273,7 @@ fn Home() -> impl IntoView {
             <crate::gen_icons::IconList />
         </main>
         </SideNavbar>
+        </Toaster>
     }
 }
 
