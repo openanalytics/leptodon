@@ -34,18 +34,12 @@
 // If not, see <http://www.apache.org/licenses/>
 
 use attr_docgen::generate_docs;
-use std::fmt::Display;
-use std::str::FromStr;
-// Do not remove until leptos is upgraded above 0.8.14
-use leptos::leptos_dom::logging::console_log;
 use leptos::logging::debug_log;
 use leptos::oco::Oco;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
-#[allow(unused)]
-use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Memo;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Signal;
@@ -54,6 +48,8 @@ use leptos::{prelude::ServerFnError, *};
 use leptos_meta::Html;
 use leptos_meta::Meta;
 use leptos_use::use_preferred_dark;
+use std::fmt::Display;
+use std::str::FromStr;
 
 use crate::radio::RadioOption;
 use crate::select::Select;
@@ -135,7 +131,7 @@ pub fn fetch_ssr_tailwind_class() -> String {
         return "".to_string();
     }
     debug_log!("Final theme: {theme:?}");
-    console_log(format!("Final theme: {theme:?}").as_str());
+    // console_log(format!("Final theme: {theme:?}").as_str());
     let resulting_theme = match theme {
         Theme::Light => "light",
         Theme::FollowSystem if browser_prefers_darkmode().get() => "dark",
@@ -143,7 +139,7 @@ pub fn fetch_ssr_tailwind_class() -> String {
         Theme::Dark => "dark",
     };
     debug_log!("Resulting theme: {resulting_theme:?}");
-    console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
+    // console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
     resulting_theme.to_string()
 }
 
@@ -157,20 +153,19 @@ pub fn ThemeSelector() -> impl IntoView {
     let selected_theme = RwSignal::new(cookie_theme);
     let resulting_light_dark = Memo::new(move |_| {
         let theme = selected_theme.get();
-        let resulting_theme = match theme {
+        // console_log(format!("Resulting DL theme: {resulting_theme:?}").as_str());
+        match theme {
             Theme::Light => "light",
             Theme::FollowSystem if browser_prefers_dark.get() => "dark light",
             Theme::FollowSystem => "light dark",
             Theme::Dark => "dark",
-        };
-        console_log(format!("Resulting DL theme: {resulting_theme:?}").as_str());
-        resulting_theme
+        }
     });
 
     let resulting_dark = Memo::new(move |_| {
         let theme = selected_theme.get();
         debug_log!("Final theme: {theme:?}");
-        console_log(format!("Final theme: {theme:?}").as_str());
+        // console_log(format!("Final theme: {theme:?}").as_str());
         let resulting_theme = match theme {
             Theme::Light => "light",
             Theme::FollowSystem if browser_prefers_dark.get() => "dark",
@@ -178,7 +173,7 @@ pub fn ThemeSelector() -> impl IntoView {
             Theme::Dark => "dark",
         };
         debug_log!("Resulting theme: {resulting_theme:?}");
-        console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
+        // console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
         resulting_theme
     });
 
@@ -254,7 +249,7 @@ pub fn initial_theme_from_cookie() -> Theme {
         .get(axum::http::header::COOKIE)
         .map(|value| value.to_str())
     else {
-        console_log("Failed to find cookie header".to_string().as_str());
+        debug_log!("Failed to find cookie header");
         return Theme::default();
     };
     let parseable_value = Cow::from(head_value_bytes.to_string());
@@ -265,9 +260,7 @@ pub fn initial_theme_from_cookie() -> Theme {
             {
                 Some(theme)
             } else {
-                console_log(
-                    format!("Failed to decode {}={}", cookie.name(), cookie.value()).as_str(),
-                );
+                debug_log!("Failed to decode {}={}", cookie.name(), cookie.value());
                 None
             }
         }

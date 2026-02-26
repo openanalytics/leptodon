@@ -22,8 +22,6 @@ use crate::link::Link;
 use crate::{class_list, icon};
 use attr_docgen::generate_docs;
 use leptos::prelude::Get;
-#[allow(unused)]
-use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::MaybeProp;
 use leptos::prelude::{AddAnyAttr, IntoAny, OnAttribute, RwSignal, Set, Update};
 use leptos::prelude::{AriaAttributes, Children};

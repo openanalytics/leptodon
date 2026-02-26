@@ -24,8 +24,6 @@ use leptos::prelude::BindAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
-#[allow(unused)]
-use leptos::prelude::IntoAnyAttribute;
 use leptos::{IntoView, component, prelude::RwSignal, view};
 use leptos_meta::Title;
 

@@ -31,8 +31,6 @@ use leptodon::{
     radio::{Radio, RadioOption},
 };
 use leptos::prelude::AddAnyAttr;
-#[allow(unused)]
-use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::{ClassAttribute, ElementChild};
 use leptos::{IntoView, component, oco::Oco, prelude::RwSignal, view};
 use leptos_meta::Title;

@@ -95,8 +95,6 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        // <Stylesheet id="leptos" href="/pkg/overview.css"/>
-
         <Router>
             <Routes fallback=|| "Page not found.">
                 <ParentRoute path=StaticSegment("/") view=RouteShell>

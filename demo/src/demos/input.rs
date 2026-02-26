@@ -21,6 +21,7 @@ use leptodon::button::DeleteButton;
 use leptodon::button::DownloadButton;
 use leptodon::button::EditButton;
 use leptodon::heading::Heading4;
+use leptodon::input::FileUpload;
 use leptodon::input::GenericInput;
 use leptodon::input::InputType;
 use leptodon::input::NumberInput;
@@ -32,8 +33,6 @@ use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::IntoAny;
-#[allow(unused)]
-use leptos::prelude::IntoAnyAttribute;
 use leptos::{IntoView, component, prelude::RwSignal, view};
 use leptos_meta::Title;
 
@@ -93,6 +92,19 @@ pub fn NumberInputDemo() -> impl IntoView {
                     .trim(true)
                     .build()
             }
+        />
+    }
+}
+
+#[generate_codeblock(FileUploadExample)]
+#[component]
+pub fn FileUploadDemo() -> impl IntoView {
+    view! {
+        <FileUpload
+            required=true
+            label="Upload your receipt"
+            name="receipt"
+            accept=".pdf"
         />
     }
 }

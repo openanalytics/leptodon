@@ -15,13 +15,20 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-pub mod calendar;
-pub mod checkbox;
-pub mod copy_button;
-pub mod inputs;
-pub mod popover;
-pub mod radio;
-pub mod select;
-pub mod tag_picker;
-pub mod toggle;
-pub mod upload;
+use leptodon::input::FileUpload;
+use leptos::{IntoView, component, view};
+use leptos_meta::Title;
+
+#[component]
+pub fn TestUpload() -> impl IntoView {
+    view! {
+        <Title text="Test Upload"/>
+
+        <FileUpload
+            id="file-upload"
+            name="file-upload"
+            accept="image/*"
+            multiple=true
+        />
+    }
+}

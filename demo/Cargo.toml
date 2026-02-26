@@ -1,13 +1,13 @@
 # cargo-features = ["codegen-backend"]
 
 [package]
-name = "overview"
+name = "demo"
 version = "0.1.0"
 edition = "2024"
 resolver = "2"
 
 [lib]
-name = "overview"
+name = "demo"
 crate-type = ["cdylib", "rlib"]
 
 [profile.release]
@@ -39,12 +39,12 @@ tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
 console_log = "1"
 console_error_panic_hook = "0.1"
 
-leptos = { version = "0.8.14", features = ["rkyv", "tracing"] }
+leptos = { version = "0.8.16", features = ["rkyv", "tracing"] }
 leptos_axum = { version = "0.8.7", optional = true }
 leptos_meta = { version = "0.8.5" }
 leptos_router = { version = "0.8.10" }
 
-wasm-bindgen = { version = "=0.2.105", optional = true }
+wasm-bindgen = { version = "=0.2.108", optional = true }
 
 itertools = "0.14.0"
 leptodon = { path = "..", default-features = false, features = ["leptos"] }
@@ -120,7 +120,7 @@ panic = "abort"
 # Disabling (thus enabling this option) the erasure of components causes large linker errors in this project.
 
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
-output-name = "overview"
+output-name = "demo"
 
 # The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
 # Optional, defaults to "/site" in the Cargo target directory. Env: LEPTOS_SITE_ROOT.

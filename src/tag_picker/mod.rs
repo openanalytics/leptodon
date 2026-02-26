@@ -29,8 +29,6 @@ use leptos::prelude::Get;
 use leptos::prelude::GetUntracked;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::IntoAny;
-#[allow(unused)]
-use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Memo;
 use leptos::prelude::NodeRef;
 use leptos::prelude::Notify;

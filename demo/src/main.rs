@@ -30,7 +30,7 @@ cfg_if! {
             use leptos::prelude::*;
             use leptos_axum::{LeptosRoutes, generate_route_list};
             use tower_http::compression::CompressionLayer;
-            use overview::app::*;
+            use demo::app::*;
 
             let conf = get_configuration(None).unwrap();
             let addr = conf.leptos_options.site_addr;
@@ -42,7 +42,7 @@ cfg_if! {
             let app = Router::new()
                 .leptos_routes(&leptos_options, routes, {
                     let leptos_options = leptos_options.clone();
-                    move || overview::app::shell(leptos_options.clone())
+                    move || demo::app::shell(leptos_options.clone())
                 })
                 .fallback(leptos_axum::file_and_error_handler(shell))
                 .with_state(leptos_options)
@@ -64,7 +64,7 @@ cfg_if! {
             // see lib.rs for hydration function instead
 
             use leptos::mount::mount_to_body;
-            use overview_lib::app::App;
+            use demo_lib::app::App;
 
             mount_to_body(App)
         }

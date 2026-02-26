@@ -105,6 +105,8 @@ fn generate_demo_pages() -> Result<(), Error> {
     }
     println!("cargo::warning={:?} demos.", &page_infos.len());
 
+    page_infos.sort_by_key(|info| info.display_name.clone());
+
     let page_info_entries = page_infos
         .iter()
         .map(|page_info| {

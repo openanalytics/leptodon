@@ -21,8 +21,6 @@ use crate::input::InputType;
 use attr_docgen::generate_docs;
 use leptos::html;
 use leptos::prelude::Get;
-#[allow(unused)]
-use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::MaybeProp;
 use leptos::prelude::NodeRef;
 use leptos::prelude::RwSignal;

@@ -17,25 +17,19 @@
 * You should have received a copy of the Apache License along with this program.
 * If not, see <http://www.apache.org/licenses/>
 */
-/*
-* Timesheets
-*
-* Copyright (C) 2023-2025 Open Analytics NV
-*
-* ===========================================================================
-*
-* This program is free software: you can redistribute it and/or modify it
-* under the terms of the Apache License as published by The Apache Software
-* Foundation, either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the Apache License for more details.
-*
-* You should have received a copy of the Apache License along with this program.
-* If not, see <http://www.apache.org/licenses/>
-*/
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+[type="text"]:focus, [type="email"]:focus, [type="url"]:focus, [type="password"]:focus, [type="number"]:focus, [type="date"]:focus, [type="datetime-local"]:focus, [type="month"]:focus, [type="search"]:focus, [type="tel"]:focus, [type="time"]:focus, [type="week"]:focus, [multiple]:focus, textarea:focus, select:focus {
+  outline-offset: 2px;
+  --tw-ring-inset: var(--tw-empty, /*!*/ /*!*/);
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(50 166 211);
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-shadow: 0 0 #0000 !important;
+
+  border-color: rgb(50 166 211) !important;
+  outline: 2px solid #0000;
+}

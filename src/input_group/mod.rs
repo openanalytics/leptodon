@@ -1,3 +1,4 @@
+use leptos::logging::debug_log;
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV
@@ -15,7 +16,6 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use leptos::logging::log;
 use leptos::prelude::Children;
 use leptos::prelude::ChildrenFragment;
 use leptos::prelude::ClassAttribute;
@@ -47,7 +47,7 @@ pub fn GroupItemContextProvider(
     children: Children,
 ) -> impl IntoView {
     if let Some(class) = class.get() {
-        log!("Providing the {class} context");
+        debug_log!("Providing the {class} context");
         provide_context::<GroupItemClassContext>(GroupItemClassContext { class });
     }
     view! {

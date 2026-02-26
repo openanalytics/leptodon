@@ -39,12 +39,12 @@ tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
 console_log = "1"
 console_error_panic_hook = "0.1"
 
-leptos = { version = "0.8.14", features = ["rkyv", "tracing"] }
+leptos = { version = "0.8.16", features = ["rkyv", "tracing"] }
 leptos_axum = { version = "0.8.7", optional = true }
 leptos_meta = { version = "0.8.5" }
 leptos_router = { version = "0.8.10" }
 
-wasm-bindgen = { version = "=0.2.105", optional = true }
+wasm-bindgen = { version = "=0.2.108", optional = true }
 
 itertools = "0.14.0"
 leptodon = { path = "..", default-features = false, features = ["leptos"] }
@@ -141,7 +141,7 @@ end2end-dir = "end2end"
 browserquery = "defaults"
 
 # The environment Leptos will run in, usually either "DEV" or "PROD"
-env = "DEV"
+env = "dev"
 bin-features = ["ssr"]
 bin-default-features = false
 lib-features = ["hydrate"]

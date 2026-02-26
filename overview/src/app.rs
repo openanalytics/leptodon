@@ -43,6 +43,7 @@ use leptodon::date_picker::range_picker::DateRangePicker;
 use leptodon::dropdown::DropdownItem;
 use leptodon::heading::*;
 use leptodon::icon;
+use leptodon::input::FileUpload;
 use leptodon::input::InputType;
 use leptodon::link::Link;
 use leptodon::modal::ModalFooterChildren;
@@ -106,6 +107,7 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_popover") view=crate::testcases::popover::TestPopover/>
                 <Route path=StaticSegment("/test_calendar") view=crate::testcases::calendar::TestCalendar/>
                 <Route path=StaticSegment("/test_copy_button") view=crate::testcases::copy_button::TestCopyButton/>
+                <Route path=StaticSegment("/test_upload") view=crate::testcases::upload::TestUpload/>
                 <Route path=StaticSegment("/forms") view=crate::forms::Forms/>
             </Routes>
         </Router>
@@ -139,6 +141,7 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
+            <FileUpload multiple=true accept="image/png" />
             <Spinner />
             <Heading1 anchor="the-largest-heading">The Largest Heading</Heading1>
             <Heading2 class="color-red-500">The 2nd Largest Heading</Heading2>
@@ -285,12 +288,12 @@ pub fn AnyAccordion() -> AnyView {
             <AccordionEntry title="What is Flowbite?">
                 <p class="mb-2 text-body">Flowbite is an open - source library of interactive components built on top of
                 Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
-                <p class="mb-2 text-body">Check out this guide to learn how to<a href="/docs/getting-started/introduction/" class="text-fg-brand hover:underline">get started</a>and start developing websites even faster with components on top of Tailwind
-                CSS.</p>
+                <p class="mb-2 text-body">"Check out this guide to learn how to "<Link href="/docs/getting-started/introduction/">get started</Link>" and start developing websites even faster with components on top of Tailwind
+                CSS."</p>
 
                 <Accordion>
                     <AccordionEntry title="What about version 2.7.2?">
-                        <p class="mb-2 text-body">Version 2.7.2 is available at <a href="https://web.archive.org/web/20240328025144/https://flowbite.com/docs/components/dropdowns/">this location</a></p>
+                        <p class="mb-2 text-body">"Version 2.7.2 is available at "<Link href="https://web.archive.org/web/20240328025144/https://flowbite.com/docs/components/dropdowns/">this location</Link></p>
                     </AccordionEntry>
                 </Accordion>
             </AccordionEntry>

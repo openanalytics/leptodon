@@ -26,8 +26,6 @@ use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::IntoAny;
-#[allow(unused_imports)]
-use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;

@@ -34,8 +34,6 @@ use leptodon::textarea::TextArea;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
-#[allow(unused)]
-use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Update;
 use leptos::{IntoView, component, prelude::RwSignal, view};
 use leptos_meta::Title;

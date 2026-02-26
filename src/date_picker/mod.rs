@@ -702,7 +702,7 @@ pub fn DatePicker(
 
     #[prop(into)] value: RwSignal<Option<NaiveDate>>,
     /// A function which maps a DayMenuOption -> String (css class) to style special days on the date-picker.
-    #[prop(default = day_highlighter(value).into(), into)]
+    #[prop(default = day_highlighter(*value).into(), into)]
     highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
 
     #[prop(optional)] required: bool,

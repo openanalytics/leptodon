@@ -17,25 +17,6 @@
 * You should have received a copy of the Apache License along with this program.
 * If not, see <http://www.apache.org/licenses/>
 */
-/*
-* Timesheets
-*
-* Copyright (C) 2023-2025 Open Analytics NV
-*
-* ===========================================================================
-*
-* This program is free software: you can redistribute it and/or modify it
-* under the terms of the Apache License as published by The Apache Software
-* Foundation, either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the Apache License for more details.
-*
-* You should have received a copy of the Apache License along with this program.
-* If not, see <http://www.apache.org/licenses/>
-*/
 
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
@@ -1158,6 +1139,10 @@ input:checked + .toggle-bg {
   left: 0px;
 }
 
+.left-\[-5\.5px\] {
+  left: -5.5px;
+}
+
 .left-auto {
   left: auto;
 }
@@ -1182,6 +1167,14 @@ input:checked + .toggle-bg {
   top: 0.5rem;
 }
 
+.left-\[-0\.22px\] {
+  left: -0.22px;
+}
+
+.left-\[-0\.22rem\] {
+  left: -0.22rem;
+}
+
 .-z-\[1000\] {
   z-index: -1000;
 }
@@ -1204,6 +1197,10 @@ input:checked + .toggle-bg {
 
 .z-50 {
   z-index: 50;
+}
+
+.z-\[-1\] {
+  z-index: -1;
 }
 
 .z-\[1000\] {
@@ -1397,10 +1394,6 @@ input:checked + .toggle-bg {
   display: none;
 }
 
-.\!h-5 {
-  height: 1.25rem !important;
-}
-
 .h-1\.5 {
   height: 0.375rem;
 }
@@ -1449,6 +1442,10 @@ input:checked + .toggle-bg {
   height: 100vh;
 }
 
+.h-\[1lh\] {
+  height: 1lh;
+}
+
 .h-\[300vh\] {
   height: 300vh;
 }
@@ -1474,10 +1471,6 @@ input:checked + .toggle-bg {
   height: 100vh;
 }
 
-.h-\[1lh\] {
-  height: 1lh;
-}
-
 .max-h-\[50vh\] {
   max-height: 50vh;
 }
@@ -1488,10 +1481,6 @@ input:checked + .toggle-bg {
 
 .min-h-full {
   min-height: 100%;
-}
-
-.\!w-5 {
-  width: 1.25rem !important;
 }
 
 .w-1\.5 {
@@ -1558,6 +1547,10 @@ input:checked + .toggle-bg {
   width: 13ch;
 }
 
+.w-\[1lh\] {
+  width: 1lh;
+}
+
 .w-\[300vw\] {
   width: 300vw;
 }
@@ -1578,17 +1571,13 @@ input:checked + .toggle-bg {
   width: calc(90% - 2.5rem);
 }
 
-.w-full {
-  width: 100%;
-}
-
 .w-fit {
   width: -moz-fit-content;
   width: fit-content;
 }
 
-.w-\[1lh\] {
-  width: 1lh;
+.w-full {
+  width: 100%;
 }
 
 .max-w-2xl {
@@ -1726,6 +1715,14 @@ input:checked + .toggle-bg {
 
 .resize {
   resize: both;
+}
+
+.list-inside {
+  list-style-position: inside;
+}
+
+.list-disc {
+  list-style-type: disc;
 }
 
 .appearance-none {
@@ -1985,6 +1982,10 @@ input:checked + .toggle-bg {
   border-inline-start-width: 0px;
 }
 
+.border-s-2 {
+  border-inline-start-width: 2px;
+}
+
 .border-t {
   border-top-width: 1px;
 }
@@ -2172,16 +2173,12 @@ input:checked + .toggle-bg {
   background-color: rgb(253 246 178 / var(--tw-bg-opacity, 1));
 }
 
-.fill-black {
-  fill: #000000;
-}
-
-.fill-white {
-  fill: #ffffff;
-}
-
 .fill-oa-gray {
   fill: #e6e6e6;
+}
+
+.stroke-oa-gray {
+  stroke: #e6e6e6;
 }
 
 .p-0\.5 {
@@ -2217,19 +2214,14 @@ input:checked + .toggle-bg {
   padding-right: 0.75rem !important;
 }
 
-.px-1\.5 {
-  padding-left: 0.375rem;
-  padding-right: 0.375rem;
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
 
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
-}
-
-.px-2\.5 {
-  padding-left: 0.625rem;
-  padding-right: 0.625rem;
 }
 
 .px-3 {
@@ -2275,11 +2267,6 @@ input:checked + .toggle-bg {
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
-}
-
-.px-1 {
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
 }
 
 .pb-4 {
@@ -2490,6 +2477,11 @@ input:checked + .toggle-bg {
   color: rgb(114 59 19 / var(--tw-text-opacity, 1));
 }
 
+.text-gray-50 {
+  --tw-text-opacity: 1;
+  color: rgb(249 250 251 / var(--tw-text-opacity, 1));
+}
+
 .opacity-0 {
   opacity: 0;
 }
@@ -2500,6 +2492,12 @@ input:checked + .toggle-bg {
 
 .opacity-40 {
   opacity: 0.4;
+}
+
+.\!shadow-sm {
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color) !important;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
 }
 
 .shadow {
@@ -2518,6 +2516,11 @@ input:checked + .toggle-bg {
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.\!outline-none {
+  outline: 2px solid transparent !important;
+  outline-offset: 2px !important;
 }
 
 .outline {
@@ -2585,6 +2588,56 @@ input:checked + .toggle-bg {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
+[type="text"]:focus, [type="email"]:focus, [type="url"]:focus, [type="password"]:focus, [type="number"]:focus, [type="date"]:focus, [type="datetime-local"]:focus, [type="month"]:focus, [type="search"]:focus, [type="tel"]:focus, [type="time"]:focus, [type="week"]:focus, [multiple]:focus, textarea:focus, select:focus {
+  outline-offset: 2px;
+  --tw-ring-inset: var(--tw-empty, /*!*/ /*!*/);
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(50 166 211);
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-shadow: 0 0 #0000 !important;
+  border-color: rgb(50 166 211) !important;
+  outline: 2px solid #0000;
+}
+
+.marker\:text-gray-300 *::marker {
+  color: rgb(209 213 219 );
+}
+
+.marker\:text-gray-300::marker {
+  color: rgb(209 213 219 );
+}
+
+.placeholder\:text-gray-600::-moz-placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity, 1));
+}
+
+.placeholder\:text-gray-600::placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity, 1));
+}
+
+.before\:relative::before {
+  content: var(--tw-content);
+  position: relative;
+}
+
+.before\:left-\[\]::before {
+  content: var(--tw-content);
+  left: ;
+}
+
+.before\:left-\[-4px\]::before {
+  content: var(--tw-content);
+  left: -4px;
+}
+
+.before\:left-\[-0\.35rem\]::before {
+  content: var(--tw-content);
+  left: -0.35rem;
+}
+
 .before\:order-last::before {
   content: var(--tw-content);
   order: 9999;
@@ -2600,6 +2653,12 @@ input:checked + .toggle-bg {
   font-weight: 300;
 }
 
+.before\:text-gray-300::before {
+  content: var(--tw-content);
+  --tw-text-opacity: 1;
+  color: rgb(209 213 219 / var(--tw-text-opacity, 1));
+}
+
 .before\:opacity-40::before {
   content: var(--tw-content);
   opacity: 0.4;
@@ -2607,6 +2666,16 @@ input:checked + .toggle-bg {
 
 .before\:content-\[--sort-priority\]::before {
   --tw-content: var(--sort-priority);
+  content: var(--tw-content);
+}
+
+.before\:content-\[\'\'\]::before {
+  --tw-content: '';
+  content: var(--tw-content);
+}
+
+.before\:content-\[\'\2022\'\]::before {
+  --tw-content: '•';
   content: var(--tw-content);
 }
 
@@ -3136,12 +3205,12 @@ input:checked + .toggle-bg {
   background-color: rgb(99 49 18 / var(--tw-bg-opacity, 1));
 }
 
-.dark\:fill-white:where(.dark, .dark *) {
-  fill: #ffffff;
-}
-
 .dark\:fill-black:where(.dark, .dark *) {
   fill: #000000;
+}
+
+.dark\:stroke-gray-700:where(.dark, .dark *) {
+  stroke: #374151;
 }
 
 .dark\:text-blue-300:where(.dark, .dark *) {
@@ -3189,6 +3258,11 @@ input:checked + .toggle-bg {
   color: rgb(50 166 211 / var(--tw-text-opacity, 1));
 }
 
+.dark\:text-oa-gray:where(.dark, .dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(230 230 230 / var(--tw-text-opacity, 1));
+}
+
 .dark\:text-red-300:where(.dark, .dark *) {
   --tw-text-opacity: 1;
   color: rgb(248 180 180 / var(--tw-text-opacity, 1));
@@ -3209,9 +3283,9 @@ input:checked + .toggle-bg {
   color: rgb(250 202 21 / var(--tw-text-opacity, 1));
 }
 
-.dark\:text-oa-gray:where(.dark, .dark *) {
+.dark\:text-gray-50:where(.dark, .dark *) {
   --tw-text-opacity: 1;
-  color: rgb(230 230 230 / var(--tw-text-opacity, 1));
+  color: rgb(249 250 251 / var(--tw-text-opacity, 1));
 }
 
 .dark\:placeholder-gray-400:where(.dark, .dark *)::-moz-placeholder {
@@ -3226,6 +3300,16 @@ input:checked + .toggle-bg {
 
 .dark\:ring-offset-gray-800:where(.dark, .dark *) {
   --tw-ring-offset-color: #1F2937;
+}
+
+.dark\:placeholder\:text-gray-400:where(.dark, .dark *)::-moz-placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity, 1));
+}
+
+.dark\:placeholder\:text-gray-400:where(.dark, .dark *)::placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity, 1));
 }
 
 .dark\:hover\:bg-blue-700:hover:where(.dark, .dark *) {

@@ -32,8 +32,6 @@ use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
-#[allow(unused)]
-use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::MaybeProp;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
