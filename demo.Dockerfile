@@ -30,7 +30,7 @@ RUN cargo make build-demo
 FROM registry.openanalytics.eu/proxy/library/debian:trixie-slim
 WORKDIR /app
 # Copy the server binary to the /app directory
-COPY --from=builder /app/demo/docker-target/release/overview /app/demo
+COPY --from=builder /app/demo/docker-target/release/demo /app/demo
 # /docker-target/site contains our JS/WASM/CSS, etc.
 COPY --from=builder /app/demo/docker-target/site /app/site
 COPY --from=builder /app/demo/style /app/style
