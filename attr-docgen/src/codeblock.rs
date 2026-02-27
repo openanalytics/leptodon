@@ -38,17 +38,6 @@ pub(crate) fn _generate_codeblock(attr: TokenStream, item: TokenStream) -> Token
                 };
                 example_name = identifier.to_string();
             }
-            // 1 => {
-            //     let TokenTree::Punct(_) = token else {
-            //         wrong_attrs();
-            //     };
-            // }
-            // 2 => {
-            //     let TokenTree::Literal(title) = token else {
-            //         wrong_attrs();
-            //     };
-            //     heading_value = trim_surrounding_quotes(title.to_string());
-            // }
             _ => {
                 panic!("Too many arguments for generate_codeblock, expected 2 identifiers.");
             }
@@ -80,11 +69,11 @@ pub(crate) fn _generate_codeblock(attr: TokenStream, item: TokenStream) -> Token
         #[component]
         pub fn #example_ident() -> impl IntoView {
             leptos::prelude::view! {
-                <div class="flex flex-col border-1 border border-black rounded-lg shadow-sm w-fit p-4 min-w-[50vw]">
+                <div class="flex mb-3 flex-col border-1 border rounded-lg shadow w-fit p-4 min-w-[50vw] dark:bg-[#1F2937] dark:border-gray-600">
                     <div class="p-3">
                         <#demo_ident />
                     </div>
-                    <hr class="my-4"></hr>
+                    <leptodon::divider::HorizontalLine />
                     <#codeblock_ident />
                 </div>
             }

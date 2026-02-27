@@ -15,16 +15,4 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use attr_docgen::generate_docs;
-use leptos::IntoView;
-use leptos::component;
-use leptos::prelude::ClassAttribute;
-use leptos::view;
-
-#[generate_docs]
-#[component]
-pub fn HorizontalLine() -> impl IntoView {
-    view! {
-        <hr class="my-4 dark:border-gray-600" />
-    }
-}
+include!(concat!(env!("OUT_DIR"), "/generated.rs"));

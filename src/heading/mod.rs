@@ -30,7 +30,7 @@ use leptos::{component, prelude::Children};
 use crate::class_list;
 use crate::class_list::reactive_class::MaybeReactiveClass;
 
-const HEADER_CLASS: &str = "font-bold relative text-gray-900 dark:text-gray-100";
+const HEADER_CLASS: &str = "font-bold relative text-gray-900 dark:text-gray-100 tracking-wide";
 
 #[component]
 fn HeadingAnchor(
@@ -62,11 +62,14 @@ pub fn Heading1(
     /// Extra heading classes
     #[prop(optional, into)]
     class: MaybeReactiveClass,
+    /// Whether to have a default amount of spacing around the header.
+    #[prop(default = true)]
+    default_spacing: bool,
     /// Heading text
     children: Children,
 ) -> impl IntoView {
     view! {
-        <h1 class=class_list!("text-5xl", HEADER_CLASS, class)>
+        <h1 class=class_list!("text-5xl", HEADER_CLASS, ("my-3", default_spacing), class)>
             {children()}
             <MaybeHeadingAnchor anchor/>
         </h1>
@@ -81,11 +84,14 @@ pub fn Heading2(
     /// Extra heading classes
     #[prop(optional, into)]
     class: MaybeReactiveClass,
+    /// Whether to have a default amount of spacing around the header.
+    #[prop(default = true)]
+    default_spacing: bool,
     /// Heading contents
     children: Children,
 ) -> impl IntoView {
     view! {
-        <h2 class=class_list!("text-4xl", HEADER_CLASS, class)>
+        <h2 class=class_list!("text-4xl", HEADER_CLASS, ("my-2.5", default_spacing), class)>
             {children()}
             <MaybeHeadingAnchor anchor/>
         </h2>
@@ -100,11 +106,14 @@ pub fn Heading3(
     /// Extra heading classes
     #[prop(optional, into)]
     class: MaybeReactiveClass,
+    /// Whether to have a default amount of spacing around the header.
+    #[prop(default = true)]
+    default_spacing: bool,
     /// Heading contents
     children: Children,
 ) -> impl IntoView {
     view! {
-        <h3 class=class_list!("text-3xl", HEADER_CLASS, class)>
+        <h3 class=class_list!("text-3xl", HEADER_CLASS, ("my-2", default_spacing), class)>
             {children()}
             <MaybeHeadingAnchor anchor/>
         </h3>
@@ -119,11 +128,14 @@ pub fn Heading4(
     /// Extra heading classes
     #[prop(optional, into)]
     class: MaybeReactiveClass,
+    /// Whether to have a default amount of spacing around the header.
+    #[prop(default = true)]
+    default_spacing: bool,
     /// Heading contents
     children: Children,
 ) -> impl IntoView {
     view! {
-        <h4 class=class_list!("text-2xl", HEADER_CLASS, class)>
+        <h4 class=class_list!("text-2xl", HEADER_CLASS, ("my-1.5", default_spacing), class)>
             {children()}
             <MaybeHeadingAnchor anchor/>
         </h4>
@@ -138,11 +150,14 @@ pub fn Heading5(
     /// Extra heading classes
     #[prop(optional, into)]
     class: MaybeReactiveClass,
+    /// Whether to have a default amount of spacing around the header.
+    #[prop(default = true)]
+    default_spacing: bool,
     /// Heading contents
     children: Children,
 ) -> impl IntoView {
     view! {
-        <h5 class=class_list!("text-xl", HEADER_CLASS, class)>
+        <h5 class=class_list!("text-xl", HEADER_CLASS, ("my-1", default_spacing), class)>
             {children()}
             <MaybeHeadingAnchor anchor/>
         </h5>
@@ -157,11 +172,14 @@ pub fn Heading6(
     /// Extra heading classes
     #[prop(optional, into)]
     class: MaybeReactiveClass,
+    /// Whether to have a default amount of spacing around the header.
+    #[prop(default = true)]
+    default_spacing: bool,
     /// Heading contents
     children: Children,
 ) -> impl IntoView {
     view! {
-        <h6 class=class_list!("text-lg", HEADER_CLASS, class)>
+        <h6 class=class_list!("text-lg", HEADER_CLASS, ("my-0.5", default_spacing), class)>
             {children()}
             <MaybeHeadingAnchor anchor/>
         </h6>

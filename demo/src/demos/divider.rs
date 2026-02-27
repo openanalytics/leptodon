@@ -46,8 +46,6 @@ pub fn DividerDemoPage() -> impl IntoView {
         <FixedCenterColumn>
             <Heading4 anchor="divider">"Divider"</Heading4>
             <DividerExample />
-
-            <leptodon::divider::HorizontalLineDocs />
         </FixedCenterColumn>
     }
 }

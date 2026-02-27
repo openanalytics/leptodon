@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 leptodon = { path = "../..", default-features = false, features = [] }
+attr-docgen = { path = "../../attr-docgen", default-features = false, features = [] }

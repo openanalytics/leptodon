@@ -53,8 +53,10 @@ fn main() -> Result<(), Error> {
     fs::write(
         &dest_path,
         format!(
-            "pub fn all() -> &'static str {{
-            r#####\"{all_src}\"#####
+            "pub fn all_token() -> proc_macro::TokenStream {{
+    quote::quote! {{
+        r#####\"{all_src}\"#####
+    }}.into()
         }}
         "
         ),

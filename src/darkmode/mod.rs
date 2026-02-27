@@ -38,7 +38,6 @@ use leptos::logging::debug_log;
 use leptos::oco::Oco;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::Effect;
-use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::Memo;
 use leptos::prelude::RwSignal;
@@ -75,9 +74,9 @@ impl RadioOption for Theme {
 impl Display for Theme {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Theme::Light => f.write_str("light"),
-            Theme::Dark => f.write_str("dark"),
-            Theme::FollowSystem => f.write_str("follow_system"),
+            Theme::Light => f.write_str("Light theme"),
+            Theme::Dark => f.write_str("Dark theme"),
+            Theme::FollowSystem => f.write_str("Follow system-theme"),
         }
     }
 }
@@ -113,10 +112,11 @@ pub async fn update_theme(new_theme: Theme) -> Result<Theme, ServerFnError> {
         use_context::<ResponseOptions>().expect("to have leptos_axum::ResponseOptions provided");
     let mut response_parts = ResponseParts::default();
     let mut headers = HeaderMap::new();
+    let theme_value = new_theme.value();
     headers.insert(
         SET_COOKIE,
         HeaderValue::from_str(&format!(
-            "{THEME_COOKIE}={new_theme}; Path=/; Max-Age=186400; SameSite=Strict"
+            "{THEME_COOKIE}={theme_value}; Path=/; Max-Age=186400; SameSite=Strict"
         ))
         .expect("to create header value"),
     );
@@ -205,8 +205,8 @@ pub fn ThemeSelector() -> impl IntoView {
             name="color-scheme"
             content=move || resulting_light_dark.get()
         />
-        <label for="theme">Choose theme:</label>
         <Select<Theme>
+            required=true
             name="theme"
             selected=selected_theme
             options=RwSignal::new(vec![Theme::Light, Theme::Dark, Theme::FollowSystem])
@@ -255,9 +255,9 @@ pub fn initial_theme_from_cookie() -> Theme {
     let parseable_value = Cow::from(head_value_bytes.to_string());
     let found = Cookie::split_parse_encoded(parseable_value).find_map(|a| match a {
         Ok(cookie) => {
-            if let Ok(theme) = Theme::from_str(cookie.value_trimmed())
-                && cookie.name() == THEME_COOKIE
-            {
+            if cookie.name() != THEME_COOKIE {
+                None
+            } else if let Ok(theme) = Theme::from_str(cookie.value_trimmed()) {
                 Some(theme)
             } else {
                 debug_log!("Failed to decode {}={}", cookie.name(), cookie.value());

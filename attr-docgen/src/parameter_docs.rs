@@ -98,7 +98,7 @@ pub(crate) fn _generate_docs(_attr: TokenStream, item: TokenStream) -> TokenStre
 
             leptos::prelude::view! {
                 <div class="py-2">
-                    <crate::heading::Heading5>#table_name_ident</crate::heading::Heading5>
+                    <crate::heading::Heading5 class="mb-2 mt-2">#table_name_ident</crate::heading::Heading5>
                     <table class="table table-striped table-bordered">
                         <thead>
                             <tr class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-300">

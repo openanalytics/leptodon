@@ -51,7 +51,7 @@ pub fn Select<T>(
     /// This name is submitted along with the control's value when the form data is submitted.
     #[prop(optional, into)]
     name: MaybeProp<String>,
-    #[prop(optional, into)] label: String,
+    #[prop(optional, into)] label: MaybeProp<String>,
     #[prop(optional, into)] required: bool,
     #[prop(into)] selected: RwSignal<T>,
     // TODO:
@@ -120,7 +120,7 @@ pub fn MaybeSelect<T>(
     name: MaybeProp<String>,
     /// Label obove the select.
     #[prop(optional, into)]
-    label: String,
+    label: MaybeProp<String>,
     /// Shown as default option, this option cannot be submitted while this select is required.
     #[prop(default = " -- select an option -- ".to_string(), into)]
     placeholder: String,
@@ -207,12 +207,22 @@ where
                         when=move || { !options.get().is_empty() }
                         fallback=|| view! { <option disabled=true selected=true>No options</option> }
                     >
-                        // Placeholder option
-                        <option
-                            value=""
-                            disabled=true
-                            selected=move || { selected.get().is_none() && required }
-                        >{ placeholder.clone() }</option>
+                       {
+                           let placeholder = placeholder.clone();
+                           view! {
+                               <Show
+                                    when=move || { required }
+                                    fallback=|| ().into_any()
+                                >
+                                    // Placeholder option
+                                    <option
+                                        value=""
+                                        disabled=true
+                                        selected=move || { selected.get().is_none() && required }
+                                    >{ placeholder.clone() }</option>
+                                </Show>
+                           }
+                       }
                     </Show>
                     <Show
                         when=move || { !required }

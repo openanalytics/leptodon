@@ -15,13 +15,18 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use std::fs;
 use std::io::Error;
+use std::io::Write;
 use std::path::Path;
 
+fn attr_all() -> &'static str {
+    attr_docgen::generate_all_source!()
+}
+
 fn main() -> Result<(), Error> {
-    // Unavailable due to https://github.com/leptos-rs/leptos/issues/3813
-    let dest_path = Path::new("../").join(".tailwind");
-    fs::write(&dest_path, leptodon::include_generated::all())?;
+    // buil.rs is unavailable due to https://github.com/leptos-rs/leptos/issues/3813
+    let mut dest = std::fs::File::create(Path::new("../").join(".tailwind"))?;
+    write!(dest, "{}", leptodon::include_generated::all())?;
+    write!(dest, "{}", attr_all())?;
     Ok(())
 }

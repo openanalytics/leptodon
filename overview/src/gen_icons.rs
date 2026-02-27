@@ -6,6 +6,11 @@ use leptos::{IntoView, component, view};
 pub fn IconList() -> impl IntoView {
     view! {
             <span>
+                <Icon icon=leptodon::icon::HomeIcon() class="border-2 border-solid w-24 h-24"/>
+                HomeIcon
+            </span>
+
+            <span>
                 <Icon icon=leptodon::icon::HamburgerIcon() class="border-2 border-solid w-24 h-24"/>
                 HamburgerIcon
             </span>
@@ -277,4 +282,4 @@ pub fn IconList() -> impl IntoView {
     }
 }
 
-// 76
+// 77

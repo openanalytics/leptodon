@@ -89,7 +89,7 @@ where
 #[component]
 pub fn Label(
     #[prop(optional, into)] label: MaybeProp<String>,
-    /// Displays a red star to indicate an input is required to be completed.
+    /// Displays a red star in front of the label to indicate an input is required to be completed.
     required: bool,
     /// The labeled element
     children: Children,

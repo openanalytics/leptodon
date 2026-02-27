@@ -17,6 +17,7 @@
 // If not, see <http://www.apache.org/licenses/>
 use attr_docgen::generate_codeblock;
 use leptodon::heading::Heading4;
+use leptodon::heading::Heading6;
 use leptodon::layout::FixedCenterColumn;
 use leptodon::textarea::TextArea;
 use leptos::prelude::ClassAttribute;
@@ -30,9 +31,10 @@ use leptos_meta::Title;
 pub fn TextAreaDemo() -> impl IntoView {
     let value = RwSignal::new("".to_string());
     view! {
-        <p>Synced textareas!</p>
+        <Heading6>Synced textareas!</Heading6>
         <TextArea
             label="Magically linked"
+            class="mb-2"
             required=true
             placeholder="Enter your magic words."
             value

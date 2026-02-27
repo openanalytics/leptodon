@@ -73,7 +73,7 @@ pub fn Modal(
     let first_button: ComponentRef<ButtonRef> = ComponentRef::new();
 
     let warp_focus = move || {
-        let Some(first_button): Option<ButtonRef> = first_button.get() else {
+        let Some(first_button): Option<ButtonRef> = first_button.get_untracked() else {
             error!("Internal modal first-div reference is not mounted!");
             return;
         };

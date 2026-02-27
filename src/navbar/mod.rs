@@ -32,7 +32,7 @@ use leptos::{IntoView, component};
 use leptos_router::components::ToHref;
 
 const SIDEBAR_CLASSES: &str = "fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 lg:translate-x-0 dark:bg-gray-800 dark:border-gray-700";
-
+const SIDEBAR_LINK_TEXT: &str = "text-gray-800 dark:text-gray-100 aria-current-page:text-oa-blue";
 #[generate_docs]
 #[component]
 pub fn SideBarLink<H>(
@@ -44,7 +44,11 @@ where
     H: ToHref + Send + Sync + 'static,
 {
     view! {
-        <Link href {..}  class=class_list!(OA_TRANSPARENT_BUTTON_CLASSES, "w-full rounded-lg aria-current-page:bg-oa-gray dark:aria-current-page:bg-gray-700")>
+        <Link href colorless=true class=class_list!(
+            OA_TRANSPARENT_BUTTON_CLASSES,
+            SIDEBAR_LINK_TEXT,
+            "w-full rounded-lg aria-current-page:bg-oa-gray dark:aria-current-page:bg-gray-700"
+        )>
             {if let Some(icon) = icon.get() {
                 view! { <Icon icon=icon /> }.into_any()
             } else {
@@ -140,7 +144,7 @@ pub fn SideNavbar(
             ]
             on:click=move |_| visible.set(false)
         />
-        <div class="p-4 mt-16 lg:ml-64 min-h-full">
+        <div class="p-4 mt-20 lg:ml-64 min-h-full">
             {children().into_any()}
         </div>
     }

@@ -16,15 +16,15 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use attr_docgen::generate_docs;
-use leptos::prelude::MaybeProp;
 use leptos::prelude::{AddAnyAttr, IntoAny};
 use leptos::{IntoView, component, oco::Oco, prelude::Children, view};
 use leptos_router::components::A;
 use leptos_router::components::ToHref;
 
 use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 
-const LINK_CLASSES: &str = "text-oa-blue hover:underline";
+const LINK_CLASSES: &str = "hover:underline";
 
 #[generate_docs]
 /// See [[A](leptos_router::components::A)]
@@ -33,7 +33,7 @@ pub fn Link<H>(
     /// Used to calculate the link's `href` attribute. Will be resolved relative
     /// to the current route.
     href: H,
-    #[prop(optional, into)] class: MaybeProp<String>,
+    #[prop(optional, into)] class: MaybeReactiveClass,
     /// Where to display the linked URL, as the name for a browsing context (a tab, window, or `<iframe>`).
     #[prop(default = Oco::Borrowed(""), into)]
     target: Oco<'static, str>,
@@ -41,6 +41,9 @@ pub fn Link<H>(
     /// if false, link is marked aria-active if the current route starts with it.
     #[prop(optional)]
     exact: bool,
+    /// Whether this link should not change the text-color of its [children]
+    #[prop(optional)]
+    colorless: bool,
     /// If `true`, and when `href` has a trailing slash, `aria-current` will only be set if `current_url` also has
     /// a trailing slash.
     #[prop(optional)]
@@ -55,7 +58,7 @@ where
     H: ToHref + Send + Sync + 'static,
 {
     view! {
-        <A href target exact strict_trailing_slash scroll {..} class=class_list![class, LINK_CLASSES]>
+        <A href target exact strict_trailing_slash scroll {..} class=class_list![class, LINK_CLASSES, ("text-oa-blue", move || !colorless)]>
             {children().into_any()}
         </A>
     }

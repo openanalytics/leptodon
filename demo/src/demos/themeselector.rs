@@ -28,7 +28,7 @@ use leptos_meta::Title;
 #[component]
 pub fn ThemeSelectorDemo() -> impl IntoView {
     view! {
-        <p>Using multiple theme-selectors on the same page (as done here) does not work correctly.</p>
+        <p>"Using multiple theme-selectors on the same page (as done here) does not work correctly.\nIf you need this behaviour, please open an issue."</p>
         <ThemeSelector/>
     }
 }
@@ -41,8 +41,6 @@ pub fn ThemeSelectorDemoPage() -> impl IntoView {
         <FixedCenterColumn>
             <Heading4 anchor="themeselector">"ThemeSelector"</Heading4>
             <ThemeSelectorExample />
-
-            <leptodon::darkmode::ThemeSelectorDocs />
         </FixedCenterColumn>
     }
 }

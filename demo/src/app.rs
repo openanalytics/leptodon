@@ -15,8 +15,6 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use leptodon::accordion::Accordion;
-use leptodon::accordion::AccordionEntry;
 use leptodon::button::{Button, ButtonAppearance};
 use leptodon::darkmode::ThemeSelector;
 use leptodon::icon;
@@ -77,7 +75,7 @@ pub fn RouteShell() -> impl IntoView {
         <main>
             <SideNavbar>
                 <NavbarEntries slot:entries>
-                    <li><SideBarLink href="#" icon=icon::BillingIcon()>Home</SideBarLink></li>
+                    <li><SideBarLink href="#" icon=icon::HomeIcon()>Home</SideBarLink></li>
                     {demo_links}
                 </NavbarEntries>
                 <NavbarEndChildren slot:end>
@@ -106,13 +104,6 @@ pub fn App() -> impl IntoView {
     }
 }
 
-// #[component]
-// fn Home() -> impl IntoView {
-//     view! {
-//         <p>Hello World!</p>
-//     }
-// }
-
 #[component]
 fn Home() -> impl IntoView {
     view! {
@@ -120,50 +111,13 @@ fn Home() -> impl IntoView {
         <main class="flex justify-center align-center min-h-full">
             <div>
                 <h1 class="font-bold text-4xl">{NAME}</h1>
-                <h2 class="text-xl">A ThawUI inspired component library for the leptos web-framework.</h2>
-                <Button appearance=ButtonAppearance::Primary>Docs</Button>
-                <Button>Crate</Button>
-                <Button>Github</Button>
+                <h2 class="text-xl mb-2">"Your Leptos UI toolkit for data science."</h2>
+                <a href="https://docs.rs/leptodon/latest">
+                    <Button appearance=ButtonAppearance::Primary>Docs</Button>
+                </a>
+                <a href="https://crates.io/crates/leptodon"><Button>Crate</Button></a>
+                <a href="https://github.com/openanalytics/leptodon"><Button>Github</Button></a>
             </div>
         </main>
     }
-}
-
-#[component]
-pub fn AnyAccordion() -> AnyView {
-    view!{
-        <Accordion>
-            <AccordionEntry title="What is Flowbite?">
-                <p class="mb-2 text-body">Flowbite is an open - source library of interactive components built on top of
-                Tailwind CSS including buttons, dropdowns, modals, navbars, and more.</p>
-                <p class="mb-2 text-body">Check out this guide to learn how to<a href="/docs/getting-started/introduction/" class="text-fg-brand hover:underline">get started</a>and start developing websites even faster with components on top of Tailwind
-                CSS.</p>
-
-                <Accordion>
-                    <AccordionEntry title="What about version 2.7.2?">
-                        <p class="mb-2 text-body">Version 2.7.2 is available at <a href="https://web.archive.org/web/20240328025144/https://flowbite.com/docs/components/dropdowns/">this location</a></p>
-                    </AccordionEntry>
-                </Accordion>
-            </AccordionEntry>
-        </Accordion>
-    }.into_any()
-}
-
-#[component]
-pub fn Settings(children: Children) -> AnyView {
-    view! {
-        <section class="bg-white dark:bg-gray-900">
-            <div class="grid max-w-screen-xl px-4 py-4 mx-auto lg:gap-8 xl:gap-0">
-                <div class="mr-auto">
-                    <h2
-                        id="settings-title"
-                        class="max-w-2xl mb-4 text-xl font-medium tracking-tight leading-none md:text-2xl xl:text-3xl dark:text-white"
-                    >
-                        "Settings"
-                    </h2>
-                    <div class="max-w-2xl mb-6 lg:mb-8">{children()}</div>
-                </div>
-            </div>
-        </section>
-    }.into_any()
 }

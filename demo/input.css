@@ -33,3 +33,7 @@
   border-color: rgb(50 166 211) !important;
   outline: 2px solid #0000;
 }
+
+html.dark {
+    background-color: #111827;
+}

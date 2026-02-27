@@ -18,6 +18,7 @@
 use proc_macro::TokenStream;
 
 mod codeblock;
+mod include_generated;
 mod parameter_docs;
 mod util;
 
@@ -29,4 +30,9 @@ pub fn generate_codeblock(attr: TokenStream, item: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn generate_docs(attr: TokenStream, item: TokenStream) -> TokenStream {
     parameter_docs::_generate_docs(attr, item)
+}
+
+#[proc_macro]
+pub fn generate_all_source(_: TokenStream) -> TokenStream {
+    include_generated::all_token()
 }

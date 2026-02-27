@@ -16,9 +16,11 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use leptodon::codeblock::Codeblock;
+use leptodon::divider::HorizontalLine;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
 use leptos::html::ElementChild;
+use leptos::prelude::ClassAttribute;
 use leptos::{IntoView, component, view};
 use leptos_meta::Title;
 
@@ -29,8 +31,13 @@ pub fn SideNavbarDemoPage() -> impl IntoView {
 
         <FixedCenterColumn>
             <Heading4 anchor="side-navbar">"SideNavbar"</Heading4>
-            <p>"No demo here since it conflicts with the existing navigation 🥹."</p>
-            <Codeblock code=r##"
+            <div class="flex mb-3 flex-col border-1 border rounded-lg shadow w-fit p-4 min-w-[50vw] dark:bg-[#1F2937] dark:border-gray-600">
+                <div class="p-3">
+                    <p>"No demo here since it conflicts with the existing navigation 🥹."</p>
+                </div>
+                <HorizontalLine />
+
+                <Codeblock code=r##"
 <SideNavbar>
     <NavbarEntries slot:entries>
         <li><SideBarLink href="/">Home</SideBarLink></li>
@@ -40,15 +47,21 @@ pub fn SideNavbarDemoPage() -> impl IntoView {
     </NavbarEndChildren>
     "Page content"
 </SideNavbar>
-            "##/>
+                "##/>
+            </div>
 
             <Heading4 anchor="route-shell">"Route shell"</Heading4>
+            <div class="flex mb-3 flex-col border-1 border rounded-lg shadow w-fit p-4 min-w-[50vw] dark:bg-[#1F2937] dark:border-gray-600">
+                <div class="p-3">
             "
             Leptos supports having a component wrap content on a set of routes.
             This is useful when splitting your website into pages but wanting to reuse the same navbar.
 
             For this website the route-shell looks somewhat as follows:"
-            <Codeblock code=r##"
+                </div>
+                <HorizontalLine />
+
+                <Codeblock code=r##"
 #[component]
 pub fn RouteShell() -> impl IntoView {
     let demo_links = ...;
@@ -86,6 +99,7 @@ pub fn App() -> impl IntoView {
 }
                 "##
                 />
+            </div>
 
             <leptodon::navbar::SideNavbarDocs />
         </FixedCenterColumn>
