@@ -52,7 +52,7 @@ use leptodon::navbar::SideBarLink;
 use leptodon::navbar::SideNavbar;
 use leptodon::spinner::Spinner;
 use leptodon::textarea::TextArea;
-use leptodon::toast::ToastDetails;
+use leptodon::toast::Toast;
 use leptodon::toast::Toaster;
 use leptodon::toast::ToasterContext;
 use leptodon::toggle::Toggle;
@@ -139,12 +139,12 @@ fn Home() -> impl IntoView {
                 <ThemeSelector />
             </Settings>
             <Button on_click=move |_| {
-                if let Some(context) = use_context::<ToasterContext>() {
-                    (context.show_toast)(ToastDetails {
-                        view: (|| view!{ "hi" }).into()
-                    });
+                if let Some(toast_ctx) = use_context::<ToasterContext>() {
+                    let (show_toast, dismiss_toast) = toast_ctx.use_toast();
+                    show_toast((move || view! {
+                        <Toast title="Example toast" message="Don't forget to drink water!" dismiss=dismiss_toast />
+                    }).into());
                 }
-
             }>"Show Toast"</Button>
             <FileUpload multiple=true accept="image/png" />
             <Spinner />
