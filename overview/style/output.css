@@ -1203,6 +1203,10 @@ input:checked + .toggle-bg {
   z-index: 500;
 }
 
+.z-\[400\] {
+  z-index: 400;
+}
+
 .col-\[1\] {
   grid-column: 1;
 }
@@ -1295,6 +1299,10 @@ input:checked + .toggle-bg {
   margin-inline-end: 0.75rem;
 }
 
+.me-3\.5 {
+  margin-inline-end: 0.875rem;
+}
+
 .ml-2 {
   margin-left: 0.5rem;
 }
@@ -1317,10 +1325,6 @@ input:checked + .toggle-bg {
 
 .ms-2 {
   margin-inline-start: 0.5rem;
-}
-
-.ms-2\.5 {
-  margin-inline-start: 0.625rem;
 }
 
 .ms-3 {
@@ -1347,8 +1351,12 @@ input:checked + .toggle-bg {
   margin-top: 1px;
 }
 
-.box-border {
-  box-sizing: border-box;
+.ms-1 {
+  margin-inline-start: 0.25rem;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
 }
 
 .line-clamp-3 {
@@ -1533,10 +1541,6 @@ input:checked + .toggle-bg {
 
 .w-64 {
   width: 16rem;
-}
-
-.w-8 {
-  width: 2rem;
 }
 
 .w-96 {
@@ -1803,12 +1807,12 @@ input:checked + .toggle-bg {
   gap: 0.75rem;
 }
 
-.gap-px {
-  gap: 1px;
-}
-
 .gap-4 {
   gap: 1rem;
+}
+
+.gap-px {
+  gap: 1px;
 }
 
 .-space-x-px > :not([hidden]) ~ :not([hidden]) {
@@ -1962,6 +1966,10 @@ input:checked + .toggle-bg {
   border-bottom-width: 1px;
 }
 
+.border-e {
+  border-inline-end-width: 1px;
+}
+
 .border-e-0 {
   border-inline-end-width: 0px;
 }
@@ -1980,10 +1988,6 @@ input:checked + .toggle-bg {
 
 .border-r-2 {
   border-right-width: 2px;
-}
-
-.border-s {
-  border-inline-start-width: 1px;
 }
 
 .border-s-0 {
@@ -2071,10 +2075,6 @@ input:checked + .toggle-bg {
   border-color: rgb(249 128 128 / var(--tw-border-opacity, 1));
 }
 
-.border-transparent {
-  border-color: transparent;
-}
-
 .border-yellow-400 {
   --tw-border-opacity: 1;
   border-color: rgb(227 160 8 / var(--tw-border-opacity, 1));
@@ -2106,6 +2106,10 @@ input:checked + .toggle-bg {
 .bg-codeblock-light {
   --tw-bg-opacity: 1;
   background-color: rgb(250 253 255 / var(--tw-bg-opacity, 1));
+}
+
+.bg-danger-soft {
+  background-color: var(--danger-soft);
 }
 
 .bg-gray-100 {
@@ -2157,9 +2161,17 @@ input:checked + .toggle-bg {
   background-color: rgb(229 35 35 / var(--tw-bg-opacity, 1));
 }
 
+.bg-oa-soft {
+  background-color: #32a6d310;
+}
+
 .bg-red-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(253 232 232 / var(--tw-bg-opacity, 1));
+}
+
+.bg-success-soft {
+  background-color: var(--success-soft);
 }
 
 .bg-teal-100 {
@@ -2169,6 +2181,10 @@ input:checked + .toggle-bg {
 
 .bg-transparent {
   background-color: transparent;
+}
+
+.bg-warning-soft {
+  background-color: var(--warning-soft);
 }
 
 .bg-white {
@@ -2183,6 +2199,10 @@ input:checked + .toggle-bg {
 .bg-yellow-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(253 246 178 / var(--tw-bg-opacity, 1));
+}
+
+.\!bg-warning-soft {
+  background-color: var(--warning-soft) !important;
 }
 
 .fill-oa-gray {
@@ -2285,12 +2305,12 @@ input:checked + .toggle-bg {
   padding-bottom: 1rem;
 }
 
-.ps-3 {
-  padding-inline-start: 0.75rem;
+.pe-2\.5 {
+  padding-inline-end: 0.625rem;
 }
 
-.ps-3\.5 {
-  padding-inline-start: 0.875rem;
+.ps-3 {
+  padding-inline-start: 0.75rem;
 }
 
 .pt-2 {
@@ -2373,10 +2393,6 @@ input:checked + .toggle-bg {
   text-transform: uppercase;
 }
 
-.leading-5 {
-  line-height: 1.25rem;
-}
-
 .leading-6 {
   line-height: 1.5rem;
 }
@@ -2410,6 +2426,10 @@ input:checked + .toggle-bg {
 .text-blue-800 {
   --tw-text-opacity: 1;
   color: rgb(30 66 159 / var(--tw-text-opacity, 1));
+}
+
+.text-danger {
+  color: var(--danger);
 }
 
 .text-gray-400 {
@@ -2482,6 +2502,14 @@ input:checked + .toggle-bg {
   color: rgb(155 28 28 / var(--tw-text-opacity, 1));
 }
 
+.text-success {
+  color: var(--success);
+}
+
+.text-warning {
+  color: var(--warning);
+}
+
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
@@ -2495,6 +2523,10 @@ input:checked + .toggle-bg {
 .text-yellow-800 {
   --tw-text-opacity: 1;
   color: rgb(114 59 19 / var(--tw-text-opacity, 1));
+}
+
+.\!text-warning {
+  color: var(--warning) !important;
 }
 
 .opacity-0 {
@@ -2613,6 +2645,24 @@ input:checked + .toggle-bg {
   --tw-shadow: 0 0 #0000 !important;
   border-color: rgb(50 166 211) !important;
   outline: 2px solid #0000;
+}
+
+html {
+  --success: #047857;
+  --success-soft: #04785710;
+  --warning: #7E2A0C;
+  --warning-soft: #7E2A0C10;
+  --danger: #C70036;
+  --danger-soft: #C7003610;
+}
+
+html.dark {
+  --success: #059669;
+  --success-soft: #05966910;
+  --warning: #FFB86A;
+  --warning-soft: #FFB86A10;
+  --danger: #C70036;
+  --danger-soft: #C7003610;
 }
 
 .placeholder\:text-gray-600::-moz-placeholder {

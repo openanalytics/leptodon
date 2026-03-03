@@ -109,7 +109,7 @@ pub fn TableDemoPage() -> impl IntoView {
         <FixedCenterColumn>
             <Heading4 anchor="group-table">"Grouped Table"</Heading4>
             <p>
-                "When using paginated tables there is currenlty a bug that causes a scroll-to-top. To reduce the frequency of this issue you can increase your data-load chunks."
+                "When using paginated tables there is currently a bug that causes a scroll-to-top. To reduce the frequency of this issue you can increase your data-load chunks."
             </p>
             <GroupedTableExample />
         </FixedCenterColumn>

@@ -53,6 +53,7 @@ use leptodon::navbar::SideNavbar;
 use leptodon::spinner::Spinner;
 use leptodon::textarea::TextArea;
 use leptodon::toast::Toast;
+use leptodon::toast::ToastAppearance;
 use leptodon::toast::Toaster;
 use leptodon::toast::ToasterContext;
 use leptodon::toggle::Toggle;
@@ -111,6 +112,7 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_calendar") view=crate::testcases::calendar::TestCalendar/>
                 <Route path=StaticSegment("/test_copy_button") view=crate::testcases::copy_button::TestCopyButton/>
                 <Route path=StaticSegment("/test_upload") view=crate::testcases::upload::TestUpload/>
+                <Route path=StaticSegment("/test_toast") view=crate::testcases::toast::TestToast/>
                 <Route path=StaticSegment("/forms") view=crate::forms::Forms/>
             </Routes>
         </Router>
@@ -143,6 +145,22 @@ fn Home() -> impl IntoView {
                     let (show_toast, dismiss_toast) = toast_ctx.use_toast();
                     show_toast((move || view! {
                         <Toast title="Example toast" message="Don't forget to drink water!" dismiss=dismiss_toast />
+                    }).into());
+                    let (show_toast, dismiss_toast) = toast_ctx.use_toast();
+                    show_toast((move || view! {
+                        <Toast title="Example toast" message="Don't forget to drink water!" dismiss=dismiss_toast />
+                    }).into());
+                    let (show_toast, dismiss_toast) = toast_ctx.use_toast();
+                    show_toast((move || view! {
+                        <Toast appearance=ToastAppearance::Success title="Example toast2" message="Don't forget to drink water!" dismiss=dismiss_toast />
+                    }).into());
+                    let (show_toast, dismiss_toast) = toast_ctx.use_toast();
+                    show_toast((move || view! {
+                        <Toast appearance=ToastAppearance::Warning title="Example toast3" dismiss=dismiss_toast />
+                    }).into());
+                    let (show_toast, dismiss_toast) = toast_ctx.use_toast();
+                    show_toast((move || view! {
+                        <Toast appearance=ToastAppearance::Danger message="Don't forget to drink water!" dismiss=dismiss_toast />
                     }).into());
                 }
             }>"Show Toast"</Button>

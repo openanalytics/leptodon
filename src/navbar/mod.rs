@@ -60,10 +60,10 @@ where
 }
 
 #[component]
-fn OALogoLink() -> impl IntoView {
+fn LeptodonLogoLink() -> impl IntoView {
     view! {
-        <a href="https://www.openanalytics.eu/" class="flex items-center ms-2 md:me-24">
-            <img src="/logo.svg" class="h-8 me-3" alt="OA Logo"/>
+        <a href="https://leptodon.dev/" class="flex items-center ms-2 md:me-24">
+            <img src="/logo.svg" class="h-8 me-3" alt="Leptodon Logo"/>
             Leptodon
         </a>
     }
@@ -96,7 +96,7 @@ pub fn SideNavbar(
     #[prop(optional, default=NavbarEndChildren { children: Box::new(|| ().into_any()) })]
     end: NavbarEndChildren,
     /// Slot for branding
-    #[prop(optional, default=NavbarLogo { children: Box::new(|| OALogoLink().into_any()) })]
+    #[prop(optional, default=NavbarLogo { children: Box::new(|| LeptodonLogoLink().into_any()) })]
     logo: NavbarLogo,
     /// Slot for sidebar entries
     #[prop(optional, default=NavbarEntries { children: Box::new(|| ().into_any()) })]

@@ -25,13 +25,7 @@ test("test calendar", async ({ page }) => {
   await expect(page).toHaveTitle("Test Calendar");
 
   // Mock date
-  await page.addInitScript(`
-    const fixedDate = new Date('2026-02-02T00:00:00Z');
-    const originalDateNow = Date.now;
-    Object.defineProperty(Date, 'now', {
-      get: () => fixedDate.getTime()
-    });
-  `);
+  await page.clock.install({ time: new Date("2026-02-02T00:00:00Z")  });
 
   // Assert current mocked date
   await page.getByText("February").click();

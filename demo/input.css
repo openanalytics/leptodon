@@ -34,6 +34,21 @@
   outline: 2px solid #0000;
 }
 
+html {
+    --success: #047857;
+    --success-soft: #04785710;
+    --warning: #7E2A0C;
+    --warning-soft: #7E2A0C10;
+    --danger: #C70036;
+    --danger-soft: #C7003610;
+}
+
 html.dark {
     background-color: #111827;
+    --success: #059669;
+    --success-soft: #05966910;
+    --warning: #FFB86A;
+    --warning-soft: #FFB86A10;
+    --danger: #C70036;
+    --danger-soft: #C7003610;
 }

@@ -15,6 +15,7 @@ module.exports = {
     colors: {
       "oa-blue-lighter": "#5bb8dc",
       "oa-blue": "#32a6d3",
+      "oa-soft": "#32a6d310",
       "oa-blue-darker": "#00729c",
       "oa-red": "#e52323",
       "oa-red-darker": "#be1717",
@@ -24,6 +25,12 @@ module.exports = {
       "oa-docs-blue": "#30638e",
       "codeblock-light": "#fafdff",
       "codeblock-dark": "#04121B",
+      success: "var(--success)",
+      "success-soft": "var(--success-soft)",
+      warning: "var(--warning)",
+      "warning-soft": "var(--warning-soft)",
+      danger: "var(--danger)",
+      "danger-soft": "var(--danger-soft)",
     },
     extend: {
       aria: {

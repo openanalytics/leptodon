@@ -112,6 +112,10 @@ pub fn page_infos() -> Vec<PageInfo> {
             name: "Theme Selector"
         },
         PageInfo {
+            location: "/demo/toast",
+            name: "Toast"
+        },
+        PageInfo {
             location: "/demo/toggle",
             name: "Toggle"
         }
@@ -147,6 +151,7 @@ pub fn DemoRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
             <Route path=path!("/tag_picker") view=crate::demos::tag_picker::TagPickerDemoPage/>
             <Route path=path!("/textarea") view=crate::demos::textarea::TextAreaDemoPage/>
             <Route path=path!("/themeselector") view=crate::demos::themeselector::ThemeSelectorDemoPage/>
+            <Route path=path!("/toast") view=crate::demos::toast::ToastDemoPage/>
             <Route path=path!("/toggle") view=crate::demos::toggle::ToggleDemoPage/>
         </ParentRoute>
     }

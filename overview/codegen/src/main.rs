@@ -49,8 +49,7 @@ fn gen_icons() -> Result<(), Error> {
                 {}
             </span>
 "#,
-                    item_fn.sig.ident,
-                    item_fn.sig.ident
+                    item_fn.sig.ident, item_fn.sig.ident
                 )
             }
             _ => String::new(),
@@ -60,9 +59,9 @@ fn gen_icons() -> Result<(), Error> {
     fs::write(
         icons,
         format!(
-            r#"use leptos::prelude::ElementChild;
+            r#"use leptodon::icon::Icon;
+use leptos::prelude::ElementChild;
 use leptos::{{IntoView, component, view}};
-use leptodon::icon::Icon;
 
 #[component]
 pub fn IconList() -> impl IntoView {{
