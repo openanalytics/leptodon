@@ -1235,10 +1235,6 @@ input:checked + .toggle-bg {
   grid-column: 7;
 }
 
-.float-end {
-  float: inline-end;
-}
-
 .m-0 {
   margin: 0px;
 }
@@ -1363,20 +1359,12 @@ input:checked + .toggle-bg {
   margin-top: 5rem;
 }
 
-.mt-px {
-  margin-top: 1px;
-}
-
-.mt-\[40vh\] {
-  margin-top: 40vh;
-}
-
-.mt-\[10vh\] {
-  margin-top: 10vh;
-}
-
 .mt-\[20vh\] {
   margin-top: 20vh;
+}
+
+.mt-px {
+  margin-top: 1px;
 }
 
 .line-clamp-3 {
@@ -1487,10 +1475,6 @@ input:checked + .toggle-bg {
   height: 100vh;
 }
 
-.h-\[50vh\] {
-  height: 50vh;
-}
-
 .max-h-\[50vh\] {
   max-height: 50vh;
 }
@@ -1584,10 +1568,6 @@ input:checked + .toggle-bg {
   width: 100%;
 }
 
-.w-\[50vh\] {
-  width: 50vh;
-}
-
 .min-w-\[50vw\] {
   min-width: 50vw;
 }
@@ -1600,12 +1580,12 @@ input:checked + .toggle-bg {
   max-width: 40vw;
 }
 
-.max-w-sm {
-  max-width: 24rem;
-}
-
 .max-w-\[50vw\] {
   max-width: 50vw;
+}
+
+.max-w-sm {
+  max-width: 24rem;
 }
 
 .flex-1 {
@@ -3075,10 +3055,6 @@ html.dark {
 @media (min-width: 1024px) {
   .lg\:ml-64 {
     margin-left: 16rem;
-  }
-
-  .lg\:mt-\[\] {
-    margin-top: ;
   }
 
   .lg\:mt-\[10vh\] {

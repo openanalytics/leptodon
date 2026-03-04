@@ -102,8 +102,9 @@ pub fn FileUploadDemo() -> impl IntoView {
     view! {
         <FileUpload
             required=true
-            label="Upload your receipt"
-            name="receipt"
+            multiple=true
+            label="Upload your receipt(s)"
+            name="receipts"
             accept=".pdf"
         />
     }
@@ -202,6 +203,9 @@ pub fn InputsDemoPage() -> impl IntoView {
             <Heading4 anchor="number-input">Number Input</Heading4>
             <NumberInputExample/>
 
+            <Heading4 anchor="file-upload">File Upload</Heading4>
+            <FileUploadExample/>
+
             <Heading4 anchor="generic-input">Generic Input</Heading4>
             <p>
                 "Internally all inputs try to use GenericInput<T, E> where T is the value of the type you are interested in and E a displayable error type.
@@ -214,6 +218,7 @@ pub fn InputsDemoPage() -> impl IntoView {
             <leptodon::input::TextInputDocs />
             <leptodon::input::PasswordInputDocs />
             <leptodon::input::NumberInputDocs />
+            <leptodon::input::FileUploadDocs />
             <leptodon::input::GenericInputDocs />
         </FixedCenterColumn>
     }
