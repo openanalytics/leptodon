@@ -12,6 +12,7 @@
 
 # Kaniko logfiles may not dirty the git view for cargo package.
 *.log
+*.crate
 
 **/*-cache
 **/*-node-modules
