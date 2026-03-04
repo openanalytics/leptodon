@@ -1303,8 +1303,8 @@ input:checked + .toggle-bg {
   margin-bottom: 0.5rem;
 }
 
-.mb-4 {
-  margin-bottom: 1rem;
+.mb-3 {
+  margin-bottom: 0.75rem;
 }
 
 .mb-4 {
@@ -1351,12 +1351,12 @@ input:checked + .toggle-bg {
   margin-top: 0.25rem;
 }
 
-.mt-16 {
-  margin-top: 4rem;
-}
-
 .mt-2 {
   margin-top: 0.5rem;
+}
+
+.mt-20 {
+  margin-top: 5rem;
 }
 
 .mt-px {
@@ -1564,16 +1564,16 @@ input:checked + .toggle-bg {
   width: 100%;
 }
 
+.min-w-\[50vw\] {
+  min-width: 50vw;
+}
+
 .max-w-2xl {
   max-width: 42rem;
 }
 
 .max-w-\[40vw\] {
   max-width: 40vw;
-}
-
-.max-w-screen-xl {
-  max-width: 1280px;
 }
 
 .max-w-sm {
@@ -1851,6 +1851,12 @@ input:checked + .toggle-bg {
 
 .overflow-x-hidden {
   overflow-x: hidden;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .text-wrap {
@@ -2188,6 +2194,10 @@ input:checked + .toggle-bg {
   padding: 0.625rem;
 }
 
+.p-3 {
+  padding: 0.75rem;
+}
+
 .p-4 {
   padding: 1rem;
 }
@@ -2359,8 +2369,8 @@ input:checked + .toggle-bg {
   line-height: 1.625;
 }
 
-.tracking-tight {
-  letter-spacing: -0.025em;
+.tracking-wide {
+  letter-spacing: 0.025em;
 }
 
 .text-black {
@@ -2592,7 +2602,6 @@ input:checked + .toggle-bg {
   border-color: rgb(50 166 211) !important;
   outline: 2px solid #0000;
 }
-
 
 html {
   --success: #047857;
@@ -3001,6 +3010,11 @@ html.dark {
   background-color: rgb(230 230 230 / var(--tw-bg-opacity, 1));
 }
 
+.aria-current-page\:text-oa-blue[aria-current="page"] {
+  --tw-text-opacity: 1;
+  color: rgb(50 166 211 / var(--tw-text-opacity, 1));
+}
+
 @media (min-width: 768px) {
   .md\:inset-0 {
     inset: 0px;
@@ -3103,6 +3117,11 @@ html.dark {
 .dark\:bg-\[\#030712\]:where(.dark, .dark *) {
   --tw-bg-opacity: 1;
   background-color: rgb(3 7 18 / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-\[\#1F2937\]:where(.dark, .dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
 }
 
 .dark\:bg-black:where(.dark, .dark *) {

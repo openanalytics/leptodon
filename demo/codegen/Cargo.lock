@@ -1272,7 +1272,6 @@ dependencies = [
  "leptos-struct-table",
  "nucleo-matcher",
  "num-traits",
- "reactive_graph",
  "send_wrapper",
  "walkdir",
  "zxcvbn",

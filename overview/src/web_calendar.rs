@@ -101,7 +101,7 @@ fn ics_events(month: u32, year: i32) -> Option<Vec<crate::ical_property::Event>>
 #[component]
 pub fn PopulatedCalendar() -> impl IntoView {
     let test_date = Local.from_utc_datetime(
-        &NaiveDate::from_ymd_opt(2026, 02, 10)
+        &NaiveDate::from_ymd_opt(2026, 2, 10)
             .expect("real date")
             .and_hms_opt(1, 1, 1)
             .expect("real time"),

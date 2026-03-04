@@ -1199,12 +1199,12 @@ input:checked + .toggle-bg {
   z-index: 1001;
 }
 
-.z-\[500\] {
-  z-index: 500;
-}
-
 .z-\[400\] {
   z-index: 400;
+}
+
+.z-\[500\] {
+  z-index: 500;
 }
 
 .col-\[1\] {
@@ -1259,6 +1259,31 @@ input:checked + .toggle-bg {
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
+}
+
+.my-0\.5 {
+  margin-top: 0.125rem;
+  margin-bottom: 0.125rem;
+}
+
+.my-1 {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.my-1\.5 {
+  margin-top: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.my-2\.5 {
+  margin-top: 0.625rem;
+  margin-bottom: 0.625rem;
 }
 
 .my-3 {
@@ -1331,16 +1356,16 @@ input:checked + .toggle-bg {
   margin-inline-start: 0.75rem;
 }
 
-.ms-auto {
-  margin-inline-start: auto;
-}
-
-.mt-16 {
-  margin-top: 4rem;
+.mt-1 {
+  margin-top: 0.25rem;
 }
 
 .mt-2 {
   margin-top: 0.5rem;
+}
+
+.mt-20 {
+  margin-top: 5rem;
 }
 
 .mt-\[150vh\] {
@@ -1349,14 +1374,6 @@ input:checked + .toggle-bg {
 
 .mt-px {
   margin-top: 1px;
-}
-
-.ms-1 {
-  margin-inline-start: 0.25rem;
-}
-
-.mt-1 {
-  margin-top: 0.25rem;
 }
 
 .line-clamp-3 {
@@ -2201,14 +2218,6 @@ input:checked + .toggle-bg {
   background-color: rgb(253 246 178 / var(--tw-bg-opacity, 1));
 }
 
-.\!bg-warning-soft {
-  background-color: var(--warning-soft) !important;
-}
-
-.fill-oa-gray {
-  fill: #e6e6e6;
-}
-
 .stroke-oa-gray {
   stroke: #e6e6e6;
 }
@@ -2413,6 +2422,10 @@ input:checked + .toggle-bg {
   letter-spacing: -0.025em;
 }
 
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+
 .text-black {
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity, 1));
@@ -2523,10 +2536,6 @@ input:checked + .toggle-bg {
 .text-yellow-800 {
   --tw-text-opacity: 1;
   color: rgb(114 59 19 / var(--tw-text-opacity, 1));
-}
-
-.\!text-warning {
-  color: var(--warning) !important;
 }
 
 .opacity-0 {
@@ -3053,6 +3062,11 @@ html.dark {
   background-color: rgb(230 230 230 / var(--tw-bg-opacity, 1));
 }
 
+.aria-current-page\:text-oa-blue[aria-current="page"] {
+  --tw-text-opacity: 1;
+  color: rgb(50 166 211 / var(--tw-text-opacity, 1));
+}
+
 @media (min-width: 768px) {
   .md\:inset-0 {
     inset: 0px;
@@ -3245,10 +3259,6 @@ html.dark {
 .dark\:bg-yellow-900:where(.dark, .dark *) {
   --tw-bg-opacity: 1;
   background-color: rgb(99 49 18 / var(--tw-bg-opacity, 1));
-}
-
-.dark\:fill-black:where(.dark, .dark *) {
-  fill: #000000;
 }
 
 .dark\:stroke-gray-700:where(.dark, .dark *) {
