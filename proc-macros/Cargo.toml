@@ -1,5 +1,5 @@
 [package]
-publish = false
+publish = true
 name = "leptodon-proc-macros"
 description = "Procedural macros crate for Leptodon (your Leptos UI toolkit for data science)."
 license-file = "../LICENSE"

@@ -1,5 +1,6 @@
 [package]
 name = "leptodon"
+publish = true
 version = "0.1.0"
 edition = "2024"
 description = "your Leptos UI toolkit for data science"
