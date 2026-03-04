@@ -24,8 +24,8 @@ use crate::{
     popover::{Popover, PopoverAnchor, PopoverTrigger},
     util::{callback::ArcOneCallback, option_comp::OptionComp},
 };
-use attr_docgen::generate_docs;
 use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveTime, Weekday};
+use leptodon_proc_macros::generate_docs;
 use leptos::{either::Either, logging::error, prelude::*, tachys::view::any_view::AnyView};
 use leptos_use::{CalendarDate, UseCalendarOptions, UseCalendarReturn, use_calendar_with_options};
 use std::{fmt, iter, ops::Deref};
@@ -81,7 +81,7 @@ pub fn Calendar(
     #[prop(default = RwSignal::new(Box::new(&WORK_WEEK)), into)] show_days: RwSignal<
         Box<&'static [Weekday]>,
     >,
-    #[prop(default = Local::now().date_naive(), into)] initial_date: NaiveDate,
+    #[prop(default = local_date_time.get().date_naive(), into)] initial_date: NaiveDate,
     #[prop(optional, into)] children: Option<CalendarChildrenFn>,
 ) -> impl IntoView {
     // Calendar helper object which backs the calendar view

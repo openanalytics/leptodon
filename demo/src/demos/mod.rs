@@ -40,6 +40,7 @@ pub mod table;
 pub mod tag_picker;
 pub mod textarea;
 pub mod themeselector;
+pub mod toast;
 pub mod toggle;
 
 // text-left

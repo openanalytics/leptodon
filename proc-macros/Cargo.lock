@@ -68,18 +68,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "attr-docgen"
-version = "0.1.0"
-dependencies = [
- "comrak",
- "proc-macro2",
- "quote",
- "syn",
- "syntect",
- "walkdir",
-]
-
-[[package]]
 name = "base64"
 version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -410,6 +398,18 @@ name = "jetscii"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "47f142fe24a9c9944451e8349de0a56af5f3e7226dc46f3ed4d4ecc0b85af75e"
+
+[[package]]
+name = "leptodon-proc-macros"
+version = "0.1.0"
+dependencies = [
+ "comrak",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "syntect",
+ "walkdir",
+]
 
 [[package]]
 name = "libc"

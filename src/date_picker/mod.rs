@@ -15,26 +15,23 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use attr_docgen::generate_docs;
-use chrono::Days;
-use leptos::logging::debug_log;
-use leptos::prelude::GetUntracked;
-use leptos::prelude::GlobalAttributes;
-// Do not remove until leptos is upgraded above 0.8.14
 use chrono::Datelike;
+use chrono::Days;
 use chrono::Local;
 use chrono::Month;
 use chrono::Months;
 use chrono::Weekday;
 use chrono::format::ParseErrorKind;
+use leptodon_proc_macros::generate_docs;
 use leptos::html::Div;
+use leptos::logging::debug_log;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::CollectView;
 use leptos::prelude::Effect;
 use leptos::prelude::FlattenOptionRefOption;
+use leptos::prelude::GetUntracked;
+use leptos::prelude::GlobalAttributes;
 use leptos::prelude::IntoAny;
-#[allow(unused)]
-use leptos::prelude::IntoAnyAttribute;
 use leptos::prelude::Memo;
 use leptos::prelude::NodeRef;
 use leptos::prelude::NodeRefAttribute;
@@ -814,19 +811,19 @@ pub fn DatePicker(
                 }.into_any(),
                 DatePickerMenu::Month => view! {
                     <MonthPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
-                    max_date min_date
+                        max_date min_date
                     />
                 }
                 .into_any(),
                 DatePickerMenu::Year => view! {
                     <YearPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
-                    max_date min_date
+                        max_date min_date
                     />
                 }
                 .into_any(),
                 DatePickerMenu::Decenia => view! {
                     <DeceniumPickerMenu month_by_date=month_by_date.clone() highlighter current_date picker_state
-                    max_date min_date
+                        max_date min_date
                     />
                 }
                 .into_any(),

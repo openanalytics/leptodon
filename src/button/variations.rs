@@ -32,7 +32,7 @@ use crate::modal::{Modal, ModalFooterChildren};
 use crate::util::callback::BoxCallback;
 use crate::util::callback::BoxOneCallback;
 use crate::util::signals::ComponentRef;
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::IntoAny;
 use leptos::prelude::Set;

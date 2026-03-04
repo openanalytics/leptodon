@@ -17,7 +17,7 @@
 // If not, see <http://www.apache.org/licenses/>
 use crate::class_list;
 use crate::util::shared_id::shared_id;
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::leptos_dom::logging::console_log;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};

@@ -52,6 +52,10 @@ use leptodon::navbar::SideBarLink;
 use leptodon::navbar::SideNavbar;
 use leptodon::spinner::Spinner;
 use leptodon::textarea::TextArea;
+use leptodon::toast::Toast;
+use leptodon::toast::ToastAppearance;
+use leptodon::toast::Toaster;
+use leptodon::toast::ToasterContext;
 use leptodon::toggle::Toggle;
 use leptodon::{
     button::{Button, ButtonAppearance},
@@ -108,18 +112,12 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_calendar") view=crate::testcases::calendar::TestCalendar/>
                 <Route path=StaticSegment("/test_copy_button") view=crate::testcases::copy_button::TestCopyButton/>
                 <Route path=StaticSegment("/test_upload") view=crate::testcases::upload::TestUpload/>
+                <Route path=StaticSegment("/test_toast") view=crate::testcases::toast::TestToast/>
                 <Route path=StaticSegment("/forms") view=crate::forms::Forms/>
             </Routes>
         </Router>
     }
 }
-
-// #[component]
-// fn Home() -> impl IntoView {
-//     view! {
-//         <p>Hello World!</p>
-//     }
-// }
 
 #[component]
 fn Home() -> impl IntoView {
@@ -130,6 +128,7 @@ fn Home() -> impl IntoView {
     let text_area_input = RwSignal::new("Hi,\nMultiline".to_string());
     view! {
         <Title text="Leptodon" />
+        <Toaster>
         <SideNavbar>
             <NavbarEntries slot:entries>
                 <li><SideBarLink href="#" icon=icon::CalendarIcon()>Calendar</SideBarLink></li>
@@ -141,6 +140,30 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
+            <Button on_click=move |_| {
+                if let Some(toast_ctx) = use_context::<ToasterContext>() {
+                    let (show_toast, dismiss_toast) = toast_ctx.use_toast();
+                    show_toast((move || view! {
+                        <Toast title="Example toast" message="Don't forget to drink water!" dismiss=dismiss_toast />
+                    }).into());
+                    let (show_toast, dismiss_toast) = toast_ctx.use_toast();
+                    show_toast((move || view! {
+                        <Toast title="Example toast" message="Don't forget to drink water!" dismiss=dismiss_toast />
+                    }).into());
+                    let (show_toast, dismiss_toast) = toast_ctx.use_toast();
+                    show_toast((move || view! {
+                        <Toast appearance=ToastAppearance::Success title="Example toast2" message="Don't forget to drink water!" dismiss=dismiss_toast />
+                    }).into());
+                    let (show_toast, dismiss_toast) = toast_ctx.use_toast();
+                    show_toast((move || view! {
+                        <Toast appearance=ToastAppearance::Warning title="Example toast3" dismiss=dismiss_toast />
+                    }).into());
+                    let (show_toast, dismiss_toast) = toast_ctx.use_toast();
+                    show_toast((move || view! {
+                        <Toast appearance=ToastAppearance::Danger message="Don't forget to drink water!" dismiss=dismiss_toast />
+                    }).into());
+                }
+            }>"Show Toast"</Button>
             <FileUpload multiple=true accept="image/png" />
             <Spinner />
             <Heading1 anchor="the-largest-heading">The Largest Heading</Heading1>
@@ -278,6 +301,7 @@ fn Home() -> impl IntoView {
             <crate::gen_icons::IconList />
         </main>
         </SideNavbar>
+        </Toaster>
     }
 }
 

@@ -2,6 +2,10 @@
 name = "leptodon"
 version = "0.1.0"
 edition = "2024"
+description = "your Leptos UI toolkit for data science"
+license-file = "LICENSE"
+homepage = "https://leptodon.dev"
+repository = "https://github.com/openanalytics/leptodon"
 resolver = "3"
 
 [dependencies]
@@ -11,7 +15,7 @@ leptos_meta = { version = "0.8.6", optional = true }
 leptos_router = { version = "0.8.12", optional = true }
 leptos_axum = { version = "0.8.8", optional = true }
 leptos-use = { version = "0.18", features = ["use_calendar", "on_click_outside", "math"], optional = true }
-attr-docgen = { path="./attr-docgen"}
+leptodon-proc-macros = { version = "0.1.0", path="./proc-macros"}
 
 reactive_stores = { version = "0.3.1", optional = true }
 uuid = { version = "1.21.0",  features = ["v4", "js"], optional = true }

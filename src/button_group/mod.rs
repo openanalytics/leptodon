@@ -16,7 +16,7 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use crate::input_group::GroupItemClassContext;
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::context::Provider;
 use leptos::prelude::ChildrenFn;
 use leptos::prelude::ClassAttribute;

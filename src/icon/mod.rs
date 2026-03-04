@@ -814,10 +814,7 @@ pub fn WarningIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon! {
-        icon_data!(&HTML, 20)
-            .set_class(Some("text-gray-400 dark:text-gray-200"))
-    };
+    return_lazified_icon!(icon_data!(&HTML, 20));
 }
 
 pub fn CancelIcon() -> IconRef {

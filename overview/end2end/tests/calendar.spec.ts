@@ -24,14 +24,8 @@ test("test calendar", async ({ page }) => {
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Calendar");
 
-  // Mock date
-  await page.addInitScript(`
-    const fixedDate = new Date('2026-02-02T00:00:00Z');
-    const originalDateNow = Date.now;
-    Object.defineProperty(Date, 'now', {
-      get: () => fixedDate.getTime()
-    });
-  `);
+  // Mock date (This does not work for wasm :/)
+  // await page.clock.install({ time: new Date("2026-02-02T00:00:00Z")  });
 
   // Assert current mocked date
   await page.getByText("February").click();

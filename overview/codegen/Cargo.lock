@@ -122,18 +122,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "attr-docgen"
-version = "0.1.0"
-dependencies = [
- "comrak",
- "proc-macro2",
- "quote",
- "syn",
- "syntect",
- "walkdir",
-]
-
-[[package]]
 name = "attribute-derive"
 version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1194,9 +1182,9 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "2.12.1"
+version = "2.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ad4bb2b565bca0645f4d68c5c9af97fba094e9791da685bf83cb5f3ce74acf2"
+checksum = "7714e70437a7dc3ac8eb7e6f8df75fd8eb422675fc7678aff7364301092b1017"
 dependencies = [
  "equivalent",
  "hashbrown 0.16.1",
@@ -1264,17 +1252,29 @@ checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 name = "leptodon"
 version = "0.1.0"
 dependencies = [
- "attr-docgen",
  "base64",
  "cfg-if",
  "chrono",
  "const-str 1.1.0",
+ "leptodon-proc-macros",
  "leptos-struct-table",
  "nucleo-matcher",
  "num-traits",
  "send_wrapper",
  "walkdir",
  "zxcvbn",
+]
+
+[[package]]
+name = "leptodon-proc-macros"
+version = "0.1.0"
+dependencies = [
+ "comrak",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "syntect",
+ "walkdir",
 ]
 
 [[package]]
@@ -1893,9 +1893,9 @@ checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
 
 [[package]]
 name = "reactive_graph"
-version = "0.2.12"
+version = "0.2.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17f0df355582937223ea403e52490201d65295bd6981383c69bfae5a1f8730c2"
+checksum = "35774620b3da884a07341e9e36612e1509b1eb0553ef3bb76f1547dd1b797417"
 dependencies = [
  "any_spawner",
  "async-lock",

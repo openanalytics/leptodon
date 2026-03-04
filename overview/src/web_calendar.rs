@@ -17,6 +17,8 @@
 // If not, see <http://www.apache.org/licenses/>
 use chrono::Datelike;
 use chrono::Local;
+use chrono::NaiveDate;
+use chrono::TimeZone;
 use leptodon::class_list;
 use leptodon::popover::Popover;
 use leptodon::popover::PopoverAnchor;
@@ -98,8 +100,13 @@ fn ics_events(month: u32, year: i32) -> Option<Vec<crate::ical_property::Event>>
 
 #[component]
 pub fn PopulatedCalendar() -> impl IntoView {
-    let local_date = Local::now();
-    let (presented_month_reader, presented_month_writer) = signal(local_date.date_naive());
+    let test_date = Local.from_utc_datetime(
+        &NaiveDate::from_ymd_opt(2026, 2, 10)
+            .expect("real date")
+            .and_hms_opt(1, 1, 1)
+            .expect("real time"),
+    );
+    let (presented_month_reader, presented_month_writer) = signal(test_date.date_naive());
     let async_data = LocalResource::new(move || {
         let presented_month = presented_month_reader.get();
         read_calendar(presented_month.month(), presented_month.year())
@@ -193,7 +200,8 @@ pub fn PopulatedCalendar() -> impl IntoView {
             .into_any(),
         ]
     };
+
     view! {
-        <Calendar children presented_month_writer />
+        <Calendar children presented_month_writer local_date_time=test_date />
     }
 }

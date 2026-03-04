@@ -129,18 +129,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0"
 
 [[package]]
-name = "attr-docgen"
-version = "0.1.0"
-dependencies = [
- "comrak",
- "proc-macro2",
- "quote",
- "syn",
- "syntect",
- "walkdir",
-]
-
-[[package]]
 name = "attribute-derive"
 version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1525,7 +1513,6 @@ checksum = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
 name = "leptodon"
 version = "0.1.0"
 dependencies = [
- "attr-docgen",
  "axum",
  "axum-extra",
  "base64",
@@ -1534,6 +1521,7 @@ dependencies = [
  "console_error_panic_hook",
  "const-str",
  "http",
+ "leptodon-proc-macros",
  "leptos",
  "leptos-struct-table",
  "leptos-use",
@@ -1552,6 +1540,18 @@ dependencies = [
  "wasm-cookies",
  "web-sys",
  "zxcvbn",
+]
+
+[[package]]
+name = "leptodon-proc-macros"
+version = "0.1.0"
+dependencies = [
+ "comrak",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "syntect",
+ "walkdir",
 ]
 
 [[package]]

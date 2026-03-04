@@ -21,7 +21,7 @@ use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
 use crate::spinner::Spinner;
 use crate::util::callback::ArcOneCallback;
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::either::Either;
 use leptos::prelude::AriaAttributes;
 use leptos::prelude::{AnyView, Children, ClassAttribute, ElementChild, IntoAny, MaybeProp};

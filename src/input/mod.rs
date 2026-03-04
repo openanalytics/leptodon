@@ -30,7 +30,7 @@ use crate::icon::ShowIcon;
 use crate::input_group::GroupItemClassContext;
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::either::Either;
 use leptos::html;
 use leptos::logging::debug_log;

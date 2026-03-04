@@ -15,7 +15,6 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use attr_docgen::generate_codeblock;
 use leptodon::button::AddButton;
 use leptodon::button::DeleteButton;
 use leptodon::button::DownloadButton;
@@ -29,6 +28,7 @@ use leptodon::input::NumberInputConfigProps;
 use leptodon::input::PasswordInput;
 use leptodon::input::TextInput;
 use leptodon::layout::FixedCenterColumn;
+use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
