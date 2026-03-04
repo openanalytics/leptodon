@@ -96,7 +96,7 @@ pipeline {
       }
       post {
         success {
-          sh "cp target/package/*.crate ${env.WORKSPACE}"
+          sh "cp proc-macros/target/package/*.crate ${env.WORKSPACE}"
           archiveArtifacts artifacts: '*.crate', fingerprint: true
         }
       }
