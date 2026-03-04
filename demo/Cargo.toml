@@ -65,7 +65,7 @@ regex = { version = "1.12", optional = true }
 anyhow = { version = "1.0.102", optional = true }
 dateparser = { version = "0.2.1", optional = true }
 rrule = { version = "0.14", features = ["serde"] }
-attr-docgen = { path = "../attr-docgen" }
+leptodon-proc-macros = { path = "../proc-macros" }
 
 serde = "1"
 strum_macros = "0.28.0"

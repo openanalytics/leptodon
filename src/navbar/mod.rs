@@ -20,7 +20,7 @@ use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
 use crate::link::Link;
 use crate::{class_list, icon};
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::prelude::Get;
 use leptos::prelude::MaybeProp;
 use leptos::prelude::{AddAnyAttr, IntoAny, OnAttribute, RwSignal, Set, Update};
@@ -62,7 +62,7 @@ where
 #[component]
 fn LeptodonLogoLink() -> impl IntoView {
     view! {
-        <a href="https://leptodon.dev/" class="flex items-center ms-2 md:me-24">
+        <a href="/" class="flex items-center ms-2 md:me-24">
             <img src="/logo.svg" class="h-8 me-3" alt="Leptodon Logo"/>
             Leptodon
         </a>

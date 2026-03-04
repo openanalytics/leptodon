@@ -18,7 +18,7 @@
 use crate::input::GenericInput;
 use crate::input::InputMode;
 use crate::input::InputType;
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::html;
 use leptos::prelude::Get;
 use leptos::prelude::MaybeProp;

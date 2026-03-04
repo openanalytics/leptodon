@@ -17,9 +17,9 @@ repos:
   # name: run Leptos view! macro formatter
   # always_run: true
   # language: script
-  # entry: /bin/sh -c 'leptosfmt ./src ./overview/src ./demo/src ./attr-docgen/src'
+  # entry: /bin/sh -c 'leptosfmt ./src ./overview/src ./demo/src ./proc-macros/src'
   - id: run-rustfmt
     name: run Rust formatter
     always_run: true
     language: script
-    entry: /bin/sh -c 'rustfmt --edition 2024 ./src/lib.rs ./overview/src/lib.rs ./demo/src/lib.rs ./attr-docgen/src/lib.rs'
+    entry: /bin/sh -c 'rustfmt --edition 2024 ./src/lib.rs ./overview/src/lib.rs ./demo/src/lib.rs ./proc-macros/src/lib.rs'

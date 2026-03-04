@@ -17,7 +17,7 @@
 // If not, see <http://www.apache.org/licenses/>
 use std::marker::PhantomData;
 
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::context::Provider;
 use leptos::prelude::{ClassAttribute, ElementChild, Get, IntoAny, MaybeProp, RwSignal, Show};
 use leptos::{IntoView, component, prelude::Children, view};

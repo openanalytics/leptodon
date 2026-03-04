@@ -24,8 +24,8 @@ use crate::{
     popover::{Popover, PopoverAnchor, PopoverTrigger},
     util::{callback::ArcOneCallback, option_comp::OptionComp},
 };
-use attr_docgen::generate_docs;
 use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveTime, Weekday};
+use leptodon_proc_macros::generate_docs;
 use leptos::{either::Either, logging::error, prelude::*, tachys::view::any_view::AnyView};
 use leptos_use::{CalendarDate, UseCalendarOptions, UseCalendarReturn, use_calendar_with_options};
 use std::{fmt, iter, ops::Deref};

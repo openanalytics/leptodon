@@ -20,7 +20,7 @@ use std::io::Write;
 use std::path::Path;
 
 fn attr_all() -> &'static str {
-    attr_docgen::generate_all_source!()
+    leptodon_proc_macros::generate_all_source!()
 }
 
 fn main() -> Result<(), Error> {

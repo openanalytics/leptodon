@@ -15,7 +15,6 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use attr_docgen::generate_codeblock;
 use leptodon::button::Button;
 use leptodon::button::DialogButton;
 use leptodon::button::DialogButtonChildren;
@@ -24,6 +23,7 @@ use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
 use leptodon::util::callback::BoxCallback;
 use leptodon::util::lorem::Lorem;
+use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;

@@ -15,7 +15,6 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use attr_docgen::generate_codeblock;
 use leptodon::button::Button;
 use leptodon::button::ButtonType;
 use leptodon::form_input::FormInput;
@@ -24,6 +23,7 @@ use leptodon::input::InputType;
 use leptodon::input::PasswordInput;
 use leptodon::input::TextInput;
 use leptodon::layout::FixedCenterColumn;
+use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};

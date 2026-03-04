@@ -15,7 +15,7 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::IntoView;
 use leptos::prelude::AriaAttributes;
 use leptos::prelude::ClassAttribute;

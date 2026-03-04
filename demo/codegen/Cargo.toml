@@ -5,4 +5,4 @@ edition = "2024"
 
 [dependencies]
 leptodon = { path = "../..", default-features = false, features = [] }
-attr-docgen = { path = "../../attr-docgen", default-features = false, features = [] }
+leptodon-proc-macros = { path = "../../proc-macros", default-features = false, features = [] }

@@ -18,7 +18,7 @@
 use crate::class_list;
 use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::either::Either;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};

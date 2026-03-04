@@ -108,7 +108,12 @@ pub fn App() -> impl IntoView {
 fn Home() -> impl IntoView {
     view! {
         <Title text=NAME />
-        <main class="flex justify-center align-center min-h-full">
+        <main class="flex justify-center align-center items-center min-h-full mt-[20vh] lg:mt-[10vh] flex-col sm:flex-row">
+            <img
+                src="/logo.svg"
+                class="max-w-[50vw] md:max-w-[40vw]"
+                alt="Leptodon logo, a bird (Leptodon) with tools as feathers."
+            />
             <div>
                 <h1 class="font-bold text-4xl">{NAME}</h1>
                 <h2 class="text-xl mb-2">"Your Leptos UI toolkit for data science."</h2>

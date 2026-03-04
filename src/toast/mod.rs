@@ -30,7 +30,7 @@ use crate::icon::icon_data::IconRef;
 use crate::util::callback::ArcOneCallback;
 use crate::util::option_comp::OptionComp;
 use crate::util::shared_id::shared_id;
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::context::Provider;
 use leptos::logging::debug_log;
 use leptos::prelude::Callable;

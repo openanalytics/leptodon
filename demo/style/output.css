@@ -1235,6 +1235,10 @@ input:checked + .toggle-bg {
   grid-column: 7;
 }
 
+.float-end {
+  float: inline-end;
+}
+
 .m-0 {
   margin: 0px;
 }
@@ -1363,6 +1367,18 @@ input:checked + .toggle-bg {
   margin-top: 1px;
 }
 
+.mt-\[40vh\] {
+  margin-top: 40vh;
+}
+
+.mt-\[10vh\] {
+  margin-top: 10vh;
+}
+
+.mt-\[20vh\] {
+  margin-top: 20vh;
+}
+
 .line-clamp-3 {
   overflow: hidden;
   display: -webkit-box;
@@ -1471,6 +1487,10 @@ input:checked + .toggle-bg {
   height: 100vh;
 }
 
+.h-\[50vh\] {
+  height: 50vh;
+}
+
 .max-h-\[50vh\] {
   max-height: 50vh;
 }
@@ -1564,6 +1584,10 @@ input:checked + .toggle-bg {
   width: 100%;
 }
 
+.w-\[50vh\] {
+  width: 50vh;
+}
+
 .min-w-\[50vw\] {
   min-width: 50vw;
 }
@@ -1578,6 +1602,10 @@ input:checked + .toggle-bg {
 
 .max-w-sm {
   max-width: 24rem;
+}
+
+.max-w-\[50vw\] {
+  max-width: 50vw;
 }
 
 .flex-1 {
@@ -3015,6 +3043,12 @@ html.dark {
   color: rgb(50 166 211 / var(--tw-text-opacity, 1));
 }
 
+@media (min-width: 640px) {
+  .sm\:flex-row {
+    flex-direction: row;
+  }
+}
+
 @media (min-width: 768px) {
   .md\:inset-0 {
     inset: 0px;
@@ -3022,6 +3056,10 @@ html.dark {
 
   .md\:me-24 {
     margin-inline-end: 6rem;
+  }
+
+  .md\:max-w-\[40vw\] {
+    max-width: 40vw;
   }
 
   .md\:p-5 {
@@ -3037,6 +3075,14 @@ html.dark {
 @media (min-width: 1024px) {
   .lg\:ml-64 {
     margin-left: 16rem;
+  }
+
+  .lg\:mt-\[\] {
+    margin-top: ;
+  }
+
+  .lg\:mt-\[10vh\] {
+    margin-top: 10vh;
   }
 
   .lg\:hidden {

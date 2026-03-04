@@ -22,7 +22,7 @@ use crate::{
     class_list::reactive_class::MaybeReactiveClass,
     util::{callback::BoxCallback, element::Element},
 };
-use attr_docgen::generate_docs;
+use leptodon_proc_macros::generate_docs;
 use leptos::{
     ev::{click, mouseenter, mouseleave, on},
     html::Div,

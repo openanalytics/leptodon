@@ -22,7 +22,7 @@ A couple tools are required to work on this project:
 ### Project layout
 - [demo](./demo): leptos-ssr demo application, serves as developer-docs where they can preview demonstrations of leptodon's components.
   - [overview/codegen](./overview/codegen): Generates a .tailwind file (containing all leptodon's source code for tailwind to generate css against).
-- [attr-docgen](./attr-docgen): Code-generation for the demo, see the [demo README](./demo/README.md) for more info on how this is used.
+- [proc-macros](./proc-macros): Code-generation for the demo, see the [demo README](./demo/README.md) for more info on how this is used.
 - [overview](./overview): leptos-ssr testing application, a suite of [playwright](https://playwright.dev/) tests is ran against this application, also serves as dev-zone for new components.
   - [overview/end2end](./overview/end2end): The affordmentioned playwright tests.
   - [overview/codegen](./overview/codegen): Generates both the .tailwind file (containing all leptodon's source code for tailwind to generate css against) as well as an IconList component.
