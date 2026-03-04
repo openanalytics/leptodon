@@ -47,14 +47,14 @@ where
         <Link href colorless=true class=class_list!(
             OA_TRANSPARENT_BUTTON_CLASSES,
             SIDEBAR_LINK_TEXT,
-            "w-full rounded-lg aria-current-page:bg-oa-gray dark:aria-current-page:bg-gray-700"
+            "w-full rounded-lg aria-current-page:bg-oa-gray dark:aria-current-page:bg-gray-700 flex justify-between"
         )>
-            {if let Some(icon) = icon.get() {
-                view! { <Icon icon=icon /> }.into_any()
-            } else {
-                ().into_any()
-            }}
            {children()}
+           {if let Some(icon) = icon.get() {
+               view! { <Icon icon=icon /> }.into_any()
+           } else {
+               ().into_any()
+           }}
         </Link>
     }
 }

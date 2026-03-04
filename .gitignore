@@ -10,6 +10,9 @@
 .zed
 .idea
 
+# Kaniko logfiles may not dirty the git view for cargo package.
+*.log
+
 **/*-cache
 **/*-node-modules
 **/*-sccache

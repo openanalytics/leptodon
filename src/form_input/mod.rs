@@ -96,8 +96,8 @@ pub fn Label(
 ) -> impl IntoView {
     if let Some(label) = label.get() {
         view! {
-            <label class="block text-sm font-medium text-heading text-gray-900 dark:text-gray-100">
-                <div>
+            <label class="block">
+                <div class="text-sm font-semibold text-heading text-gray-900 dark:text-gray-100">
                     <RequiredStar required/>
                     {label}
                 </div>

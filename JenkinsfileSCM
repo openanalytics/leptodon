@@ -92,12 +92,11 @@ pipeline {
     }
     stage('Package leptodon-proc-macros') {
       steps {
-        sh "cd proc-macros"
-        sh "cargo package"
+        sh "cd proc-macros; cargo package"
       }
       post {
         success {
-          sh "cp target/package/*.crate ${env.WORKSPACE}"
+          sh "cp proc-macros/target/package/*.crate ${env.WORKSPACE}"
           archiveArtifacts artifacts: '*.crate', fingerprint: true
         }
       }
@@ -110,8 +109,7 @@ pipeline {
         CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
       }
       steps {
-        sh "cd proc-macros"
-        sh "cargo publish"
+        sh "cd proc-macros; cargo publish"
       }
     }
     stage('Package Leptodon') {

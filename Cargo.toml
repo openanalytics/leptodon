@@ -10,14 +10,15 @@ resolver = "3"
 
 [dependencies]
 console_error_panic_hook = { version = "0.1", optional = true }
-leptos = { version = "0.8.16", optional = true }
+leptos = { version = "0.8.17", optional = true }
 leptos_meta = { version = "0.8.6", optional = true }
 leptos_router = { version = "0.8.12", optional = true }
 leptos_axum = { version = "0.8.8", optional = true }
 leptos-use = { version = "0.18", features = ["use_calendar", "on_click_outside", "math"], optional = true }
 leptodon-proc-macros = { version = "0.1.0", path="./proc-macros"}
 
-reactive_stores = { version = "0.3.1", optional = true }
+# Bumping reactive_stores causes hydration errors.
+reactive_stores = { version = "=0.3.1", optional = true }
 uuid = { version = "1.21.0",  features = ["v4", "js"], optional = true }
 
 # Pinned together, updating wasm-bindgen beyond 0.2.108 breaks the leptos-wasm loading

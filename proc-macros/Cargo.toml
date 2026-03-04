@@ -13,7 +13,7 @@ edition = "2024"
 proc-macro = true
 
 [dependencies]
-quote = "1.0.44"
+quote = "1.0.45"
 comrak = "0.50.0"
 proc-macro2 = "1.0.106"
 syn = "2.0.117"

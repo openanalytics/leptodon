@@ -69,7 +69,7 @@ pub(crate) fn _generate_codeblock(attr: TokenStream, item: TokenStream) -> Token
         #[component]
         pub fn #example_ident() -> impl IntoView {
             leptos::prelude::view! {
-                <div class="flex mb-3 flex-col border-1 border rounded-lg shadow w-fit p-4 min-w-[50vw] dark:bg-[#1F2937] dark:border-gray-600">
+                <div class="flex mb-3 mt-0.5 flex-col border-1 border rounded-lg shadow w-fit p-4 min-w-[50vw] dark:bg-[#1F2937] dark:border-gray-600">
                     <div class="p-3">
                         <#demo_ident />
                     </div>

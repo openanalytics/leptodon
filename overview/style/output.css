@@ -3350,6 +3350,10 @@ html.dark {
   color: rgb(156 163 175 / var(--tw-placeholder-opacity, 1));
 }
 
+.dark\:outline-white:where(.dark, .dark *) {
+  outline-color: #ffffff;
+}
+
 .dark\:ring-offset-gray-800:where(.dark, .dark *) {
   --tw-ring-offset-color: #1F2937;
 }

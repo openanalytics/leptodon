@@ -5,11 +5,11 @@ Your [Leptos](https://github.com/leptos-rs/) UI toolkit.
 
 ## Getting started
 1. Use the template repository: //TODO: ... fill in
-2. Pick and place components from: https://leptodon.openanalytics.eu
+2. Pick and place components from: https://leptodon.dev
 
 ## Contributing
 1. Please enable the pre-commit hook for code styling.
-2. `cargo make mimic-ci`
+2. `cargo make mimic-ci` to locally test.
 
 ### Dev-dependencies
 A couple tools are required to work on this project:
