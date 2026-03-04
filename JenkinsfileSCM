@@ -92,8 +92,7 @@ pipeline {
     }
     stage('Package leptodon-proc-macros') {
       steps {
-        sh "cd proc-macros"
-        sh "cargo package"
+        sh "cd proc-macros; cargo package"
       }
       post {
         success {
@@ -110,8 +109,7 @@ pipeline {
         CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
       }
       steps {
-        sh "cd proc-macros"
-        sh "cargo publish"
+        sh "cd proc-macros; cargo publish"
       }
     }
     stage('Package Leptodon') {
