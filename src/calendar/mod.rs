@@ -81,7 +81,7 @@ pub fn Calendar(
     #[prop(default = RwSignal::new(Box::new(&WORK_WEEK)), into)] show_days: RwSignal<
         Box<&'static [Weekday]>,
     >,
-    #[prop(default = Local::now().date_naive(), into)] initial_date: NaiveDate,
+    #[prop(default = local_date_time.get().date_naive(), into)] initial_date: NaiveDate,
     #[prop(optional, into)] children: Option<CalendarChildrenFn>,
 ) -> impl IntoView {
     // Calendar helper object which backs the calendar view
