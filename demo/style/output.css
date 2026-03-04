@@ -1367,6 +1367,10 @@ input:checked + .toggle-bg {
   margin-top: 1px;
 }
 
+.mt-0\.5 {
+  margin-top: 0.125rem;
+}
+
 .line-clamp-3 {
   overflow: hidden;
   display: -webkit-box;
@@ -3301,6 +3305,10 @@ html.dark {
 .dark\:placeholder-gray-400:where(.dark, .dark *)::placeholder {
   --tw-placeholder-opacity: 1;
   color: rgb(156 163 175 / var(--tw-placeholder-opacity, 1));
+}
+
+.dark\:outline-white:where(.dark, .dark *) {
+  outline-color: #ffffff;
 }
 
 .dark\:ring-offset-gray-800:where(.dark, .dark *) {

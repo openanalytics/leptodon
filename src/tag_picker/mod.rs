@@ -321,7 +321,7 @@ where
                             <li
                                 class=class_list!(
                                     TAG_LIST_ITEM_CLASSES,
-                                    ("outline outline-black outline-2", move || i == 0 && !search_filter.get().is_empty())
+                                    ("outline outline-black dark:outline-white outline-2", move || i == 0 && !search_filter.get().is_empty())
                                 )
                                 on:click={
                                     let tag = tag.clone();
