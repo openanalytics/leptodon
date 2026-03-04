@@ -90,8 +90,31 @@ pipeline {
         }
       }
     }
-    // TODO: also package the proc-macros crate
-    stage('Package Crates') {
+    stage('Package leptodon-proc-macros') {
+      steps {
+        sh "cd proc-macros"
+        sh "cargo package"
+      }
+      post {
+        success {
+          sh "cp target/package/*.crate ${env.WORKSPACE}"
+          archiveArtifacts artifacts: '*.crate', fingerprint: true
+        }
+      }
+    }
+    stage('Publish leptodon-proc-macros') {
+      when {
+        branch 'main'
+      }
+      environment {
+        CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
+      }
+      steps {
+        sh "cd proc-macros"
+        sh "cargo publish"
+      }
+    }
+    stage('Package Leptodon') {
       steps {
         sh "cargo package"
       }
@@ -102,8 +125,7 @@ pipeline {
         }
       }
     }
-    // TODO: also first publish the proc-macros crate
-    stage('Publish Crates') {
+    stage('Publish Leptodon Crate') {
       when {
         branch 'main'
       }
@@ -111,8 +133,7 @@ pipeline {
         CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
       }
       steps {
-        // TODO: remove dry-run once we are ready to publish
-        sh "cargo publish --dry-run"
+        sh "cargo publish"
       }
     }
   }
