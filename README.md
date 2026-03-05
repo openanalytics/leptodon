@@ -1,7 +1,14 @@
-Leptodon
-==============
+<h1 align="center"><img alt="Leptodon Logo" width="50%" src="https://scm.openanalytics.eu/git/leptodon/raw/branch/develop/assets/banner.svg"></h1>
+<h3 align="center">Your <a href="https://github.com/leptos-rs">Leptos</a> UI toolkit for data science.</h3>
+<p align="center">
+    <a href="https://crates.io/crates/leptodon"><img alt="Latest Version" src="https://img.shields.io/crates/v/leptodon"></a>
+    <a href="https://github.com/openanalytics/leptodon/blob/main/LICENSE"><img alt="GitHub License" src="https://img.shields.io/crates/l/leptodon"></a>
+    <a href="https://docs.rs/leptodon/0.1.0/leptodon/"><img alt="GitHub Release" src="https://img.shields.io/docsrs/leptodon"></a>
+</p>
 
-Your [Leptos](https://github.com/leptos-rs/) UI toolkit.
+<p align="center">
+    <a href="#getting-started">Getting Started</a> | <a href="https://leptodon.dev">Documentation</a> | <a href="todo">Template</a>
+</p>
 
 ## Getting started
 1. Use the template repository: //TODO: ... fill in
