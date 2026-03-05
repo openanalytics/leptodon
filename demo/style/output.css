@@ -1347,6 +1347,10 @@ input:checked + .toggle-bg {
   margin-inline-start: 0.75rem;
 }
 
+.mt-0\.5 {
+  margin-top: 0.125rem;
+}
+
 .mt-1 {
   margin-top: 0.25rem;
 }
@@ -1365,10 +1369,6 @@ input:checked + .toggle-bg {
 
 .mt-px {
   margin-top: 1px;
-}
-
-.mt-0\.5 {
-  margin-top: 0.125rem;
 }
 
 .line-clamp-3 {

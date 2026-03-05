@@ -23,6 +23,7 @@ use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
 use leptodon::modal::Modal;
 use leptodon::modal::ModalFooterChildren;
+use leptodon::paragraph::Paragraph;
 use leptodon::util::lorem::Lorem;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
@@ -39,11 +40,11 @@ pub fn ModalButtonDemo() -> impl IntoView {
     let last_action = RwSignal::new("");
     let modal_visible = RwSignal::new(false);
     view! {
-        <p>
+        <Paragraph>
             "Shown: " {move || format!("{:?}", modal_visible.get())}
             <br/>
             "Last modal action: " { move || last_action.get()}
-        </p>
+        </Paragraph>
         <ModalButton modal_title="Example modal?" modal_visible>
             <ModalButtonChildren slot:button_children>Toggle Modal</ModalButtonChildren>
             <ModalFooterChildren slot:modal_footer>
@@ -74,9 +75,9 @@ pub fn ModalButtonDemo() -> impl IntoView {
 pub fn ModalDemo() -> impl IntoView {
     let visible = RwSignal::new(false);
     view! {
-        <p>
+        <Paragraph>
             "Shown: " {move || format!("{:?}", visible.get())}
-        </p>
+        </Paragraph>
         <Modal title="Example modal?" visible>
             <ModalFooterChildren slot:footer>
                 <Button>Modal action 3</Button>

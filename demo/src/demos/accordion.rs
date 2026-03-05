@@ -1,24 +1,8 @@
-// Leptodon
-//
-// Copyright (C) 2025-2026 Open Analytics NV
-//
-// ===========================================================================
-//
-// This program is free software: you can redistribute it and/or modify it
-// under the terms of the Apache License as published by The Apache Software
-// Foundation, either version 2 of the License, or (at your option) any later
-// version.
-//
-// This program is distributed in the hope that it will be useful, but WITHOUT
-// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
-//
-// You should have received a copy of the Apache License along with this program.
-// If not, see <http://www.apache.org/licenses/>
 use leptodon::accordion::Accordion;
 use leptodon::accordion::AccordionEntry;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::util::lorem::Lorem;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -31,10 +15,10 @@ pub fn AccordionDemo() -> impl IntoView {
     view! {
         <Accordion>
             <AccordionEntry title="An outer accordion">
-                <p>Est eveniet aut necessitatibus sunt accusantium mollitia accusantium. Nihil aperiam est dolor numquam. Incidunt qui cum sapiente distinctio deleniti quisquam. Asperiores ea sint voluptas et eum reiciendis. Et quos quasi aspernatur voluptatum eos id. Rerum quaerat suscipit cupiditate.</p>
-                <Accordion>
+                <Lorem sentences=4/>
+                <Accordion class="mt-2">
                     <AccordionEntry title="Sub accordion">
-                        <p>Est eveniet aut necessitatibus sunt accusantium mollitia accusantium. Nihil aperiam est dolor numquam. Incidunt qui cum sapiente distinctio deleniti quisquam. Asperiores ea sint voluptas et eum reiciendis. Et quos quasi aspernatur voluptatum eos id. Rerum quaerat suscipit cupiditate.</p>
+                        <Lorem sentences=4/>
                     </AccordionEntry>
                 </Accordion>
             </AccordionEntry>

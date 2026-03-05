@@ -23,6 +23,7 @@ use leptodon::input::InputType;
 use leptodon::input::PasswordInput;
 use leptodon::input::TextInput;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -56,11 +57,11 @@ pub fn FormInputDemoPage() -> impl IntoView {
 
         <FixedCenterColumn>
             <Heading4 anchor="login-form-input">"Login FormInput"</Heading4>
-            <p>
+            <Paragraph>
                 "Form inputs should be used for input- and button-groups that require a label or form-feedback."
                 <br/>
                 "Some elements with postfix labels should not be labelled via <FormInput<E>>"
-            </p>
+            </Paragraph>
             <LoginFormInputExample />
 
             <leptodon::form_input::FormInputDocs />

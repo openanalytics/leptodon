@@ -19,6 +19,7 @@ use derive_more::Display;
 use leptodon::button::Button;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon::tag_picker::TagPicker;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
@@ -54,7 +55,7 @@ pub fn TagPickerDemo() -> impl IntoView {
     let elements = RwSignal::new(Element::iter().collect::<Vec<_>>());
     let selected = RwSignal::new(vec![]);
     view! {
-        <p>
+        <Paragraph>
             "Selected: "
             {move || selected.get()
                 .iter()
@@ -64,7 +65,7 @@ pub fn TagPickerDemo() -> impl IntoView {
                     }
                 })
                 .collect_view()}
-        </p>
+        </Paragraph>
         <TagPicker
             selected=selected
             tags=elements

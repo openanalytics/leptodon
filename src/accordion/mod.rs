@@ -16,12 +16,15 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::util::shared_id::shared_id;
 use leptodon_proc_macros::generate_docs;
 use leptos::leptos_dom::logging::console_log;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
 
+const ACCORDION_CONTAINER_CLASS: &str =
+    "rounded-lg border border-default dark:border-gray-700 overflow-hidden shadow-sm";
 const ACCORDION_HEADING_CLASSES: &str = "flex items-center justify-between w-full p-5 font-medium rtl:text-right text-body border border-t-0 border-x-0 border-b-default dark:border-gray-700 hover:text-heading gap-3 hover:bg-gray-50 hover:dark:bg-gray-900";
 const ACCORDION_BODY_CLASSES: &str =
     "border dark:border-gray-700 border-s-0 border-e-0 border-t-0 border-b-default";
@@ -73,6 +76,9 @@ pub fn AccordionEntry(
 /// A stack of expandable/collapseable sections.
 #[component]
 pub fn Accordion<T>(
+    #[prop(optional, into)]
+    /// Extra class to style
+    class: MaybeReactiveClass,
     /// A set accordion entries, see [AccordionEntry]
     children: TypedChildren<T>,
 ) -> impl IntoView
@@ -80,7 +86,7 @@ where
     T: AddAnyAttr + IntoView + Send + 'static,
 {
     view! {
-        <div id="accordion-collapse" data-accordion="collapse" class="rounded-lg border border-default dark:border-gray-700 overflow-hidden shadow-sm">
+        <div id="accordion-collapse" data-accordion="collapse" class=class_list!(ACCORDION_CONTAINER_CLASS, class)>
             { children.into_inner()() }
         </div>
     }

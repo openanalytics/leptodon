@@ -19,6 +19,7 @@ use leptodon::button::Button;
 use leptodon::checkbox::Checkbox;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -33,9 +34,9 @@ use leptos_meta::Title;
 pub fn CheckboxDemo() -> impl IntoView {
     let checked = RwSignal::new(true);
     view! {
-        <p>
+        <Paragraph>
             {move || checked.get().to_string()}
-        </p>
+        </Paragraph>
         <Checkbox
             class="my-3"
             checked=checked

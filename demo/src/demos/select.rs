@@ -19,6 +19,7 @@ use derive_more::Display;
 use leptodon::button::Button;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon::radio::RadioOption;
 use leptodon::select::MaybeSelect;
 use leptodon::select::Select;
@@ -58,7 +59,7 @@ pub fn MaybeSelectDemo() -> impl IntoView {
     ]);
     let selected = RwSignal::new(None);
     view! {
-        <p>"Selected option: "{move || format!("{:?}", selected.get())}</p>
+        <Paragraph>"Selected option: "{move || format!("{:?}", selected.get())}</Paragraph>
         <MaybeSelect
             name="select_station"
             label="Select Stations"
@@ -101,7 +102,7 @@ pub fn SelectDemo() -> impl IntoView {
     ]);
     let selected = RwSignal::new(SelectStation::Select1);
     view! {
-        <p>"Selected option: "{move || format!("{:?}", selected.get())}</p>
+        <Paragraph>"Selected option: "{move || format!("{:?}", selected.get())}</Paragraph>
         <Select
             name="select_station"
             label="Select Stations"
@@ -124,11 +125,11 @@ pub fn SelectDemoPage() -> impl IntoView {
 
         <FixedCenterColumn>
             <Heading4 anchor="maybe-select">"MaybeSelect"</Heading4>
-            <p>"The MaybeSelect<T> needs an Option<T> value."</p>
+            <Paragraph>"The MaybeSelect<T> needs an Option<T> value."</Paragraph>
             <MaybeSelectExample />
 
             <Heading4 anchor="select">"Select"</Heading4>
-            <p>"The Select<T> needs a T value."</p>
+            <Paragraph>"The Select<T> needs a T value."</Paragraph>
             <SelectExample />
 
             <leptodon::select::MaybeSelectDocs />

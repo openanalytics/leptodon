@@ -23,6 +23,7 @@ use leptodon::date_picker::DatePicker;
 use leptodon::date_picker::day_highlighter;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon::util::callback::ArcOneCallback;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
@@ -37,9 +38,9 @@ use leptos_meta::Title;
 pub fn DatePickerDemo() -> impl IntoView {
     let value = RwSignal::new(None);
     view! {
-        <p>
+        <Paragraph>
             {move || format!("{:?}", value.get())}
-        </p>
+        </Paragraph>
         <DatePicker
             class="my-3"
             min_date=NaiveDate::from_ymd_opt(1900, 1, 1).expect("valid date")
@@ -71,9 +72,9 @@ pub fn DatePickerHighlighterDemo() -> impl IntoView {
         format!("{base} {weekend_red}")
     });
     view! {
-        <p>
+        <Paragraph>
             {move || format!("{:?}", value.get())}
-        </p>
+        </Paragraph>
         <DatePicker
             class="my-3"
             min_date=NaiveDate::from_ymd_opt(1900, 1, 1).expect("valid date")

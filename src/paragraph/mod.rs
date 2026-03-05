@@ -15,33 +15,35 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use leptodon::darkmode::ThemeSelector;
-use leptodon::heading::Heading4;
-use leptodon::layout::FixedCenterColumn;
-use leptodon::paragraph::Paragraph;
-use leptodon_proc_macros::generate_codeblock;
+use leptodon_proc_macros::generate_docs;
+use leptos::IntoView;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
-use leptos::{IntoView, component, view};
-use leptos_meta::Title;
+use leptos::view;
+use leptos::{component, prelude::Children};
 
-#[generate_codeblock(ThemeSelectorExample)]
+use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
+
+const PARAGRAPH_CLASS: &str = "text-gray-900 dark:text-gray-100";
+const PARAGRAPH_SPACING_CLASS: &str = "mb-1";
+
+/// `<p>` replacement component, mainly to add a default amount of padding.
+#[generate_docs]
 #[component]
-pub fn ThemeSelectorDemo() -> impl IntoView {
+pub fn Paragraph(
+    /// Extra paragraph classes
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
+    /// Whether to have a default amount of spacing around the header.
+    #[prop(default = true)]
+    default_spacing: bool,
+    /// Heading text
+    children: Children,
+) -> impl IntoView {
     view! {
-        <Paragraph>"Using multiple theme-selectors on the same page (as done here) does not work correctly.\nIf you need this behaviour, please open an issue."</Paragraph>
-        <ThemeSelector/>
-    }
-}
-
-#[component]
-pub fn ThemeSelectorDemoPage() -> impl IntoView {
-    view! {
-        <Title text="ThemeSelector"/>
-
-        <FixedCenterColumn>
-            <Heading4 anchor="themeselector">"ThemeSelector"</Heading4>
-            <ThemeSelectorExample />
-        </FixedCenterColumn>
+        <p class=class_list!(PARAGRAPH_CLASS, (PARAGRAPH_SPACING_CLASS, default_spacing), class)>
+            {children()}
+        </p>
     }
 }
