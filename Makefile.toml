@@ -95,3 +95,40 @@ run_task = { name = [
     "lint",
     "tests"
 ] }
+
+# Publish tasks
+[tasks.publish-if-missing]
+script = '''
+#!/bin/sh
+set +e
+crate=${1:-${PUBLISH_CRATE?Expecting <crate> argument or PUBLISH_CRATE env variable. E.g. leptodon, leptodon-proc-macros}}
+path=${2:-${PUBLISH_PATH?Expecting <path> argument or PUBLISH_PATH env variable, wherin the Cargo.toml can be found. E.g. leptodon-proc-macros}}
+
+cd $path;
+
+local_version=$(
+    cargo info $crate -q --color never |\
+        grep -oP '^version:\s*\K[^\s]+'
+);
+remote_version=$(
+    cargo search --quiet --limit 1 --color never $crate |\
+        grep -oP "$crate\s*=\s*\"\K[^\"]+"
+);
+
+if [ "$local_version" != "$remote_version" ]; then
+    echo "Local '$local_version' != '$remote_version'.";
+    echo "Starting to publish.";
+    cargo publish;
+else
+    echo "Version already match!"
+    echo "Skipping publishing of $crate.";
+fi
+'''
+
+[tasks.publish-leptodon-if-missing]
+env = { "PUBLISH_CRATE" = "leptodon", "PUBLISH_PATH" = "./" }
+run_task = "publish-if-missing"
+
+[tasks.publish-leptodon-proc-macros-if-missing]
+env = { "PUBLISH_CRATE" = "leptodon-proc-macros", "PUBLISH_PATH" = "./proc-macros" }
+run_task = "publish-if-missing"
