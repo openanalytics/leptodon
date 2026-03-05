@@ -2,7 +2,7 @@
 publish = true
 name = "leptodon-proc-macros"
 description = "Procedural macros crate for Leptodon (your Leptos UI toolkit for data science)."
-license-file = "../LICENSE"
+license = "Apache-2.0"
 repository = "https://github.com/openanalytics/leptodon"
 version = "0.1.0"
 edition = "2024"
