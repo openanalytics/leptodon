@@ -3,7 +3,8 @@ repos:
   rev: v4.6.0
   hooks:
   - id: check-merge-conflict
-  - id: end-of-file-fixer
+  # Something was clearing files upon commit, this is the current prime suspect.
+  # - id: end-of-file-fixer
   - id: trailing-whitespace
   - id: check-added-large-files
   - id: check-case-conflict
