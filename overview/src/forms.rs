@@ -147,9 +147,7 @@ pub fn Forms() -> impl IntoView {
                     <PasswordInput name="password" placeholder="*******************" hazards=vec!["Merlijn".to_string()] show_eye=true />
                 </FormInput<String>>
                 <Checkbox required=true checked=RwSignal::new(false)>
-                    <span class="whitespace-pre-wrap">
-                        Accept <Link class="inline-block" href="/terms"> terms </Link> and conditions
-                    </span>
+                    "Accept "<Link class="inline-block" href="/terms">"terms"</Link>" and conditions"
                 </Checkbox>
                 <br/>
                 <Toggle required=true checked=RwSignal::new(false)>
@@ -159,9 +157,9 @@ pub fn Forms() -> impl IntoView {
                 <FormInput<String> label="End date" required=true>
                     <DatePicker name="end-date" value=RwSignal::new(None) />
                 </FormInput<String>>
-                <FormInput<String> label="Period" required=true>
+                //<FormInput<String> label="Period" required=true>
                     <DateRangePicker name="period" />
-                </FormInput<String>>
+                //</FormInput<String>>
                 <FormInput<String> label="Notes" required=true>
                     <TextArea value=RwSignal::new("".to_string()) name="notes" />
                 </FormInput<String>>

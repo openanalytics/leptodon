@@ -185,7 +185,6 @@ fn Home() -> impl IntoView {
             <Link href="https://www.openanalytics.eu/">"Click here"</Link>
             <DropdownButton {..} data-testid="test-dropdown">
                 <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>
-                // <li>hi</li>
                 <DropdownItem label="Entry-1" on_click=move |e| { log!("{:?}", e); } {..} data-testid="test-dropdown-item1" />
             </DropdownButton>
             <ModalButton id="modal-button1" modal_title="Example modal" modal_visible>

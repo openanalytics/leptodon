@@ -686,24 +686,36 @@ pub fn day_highlighter(
 #[generate_docs]
 #[component]
 pub fn DatePicker(
-    #[prop(optional, into)] id: MaybeProp<String>,
-    #[prop(optional, into)] name: MaybeProp<String>,
-    #[prop(optional, into)] class: MaybeProp<String>,
-    #[prop(default = "yyyy-mm-dd".into(), into)] placeholder: MaybeProp<String>,
+    /// Html-identifier
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
+    /// Used as a key for this field's value during form-submission.
+    #[prop(optional, into)]
+    name: MaybeProp<String>,
+    /// Extra styling classes
+    #[prop(optional, into)]
+    class: MaybeProp<String>,
+    /// Shown as a hint when the input is empty.
+    #[prop(default = "yyyy-mm-dd".into(), into)]
+    placeholder: MaybeProp<String>,
     /// Asserts that min_date <= value
     #[prop(optional, into)]
     min_date: MaybeProp<NaiveDate>,
     /// Asserts that max_date >= value
     #[prop(optional, into)]
     max_date: MaybeProp<NaiveDate>,
-
-    #[prop(into)] value: RwSignal<Option<NaiveDate>>,
+    /// Current value of the date_picker.
+    #[prop(into)]
+    value: RwSignal<Option<NaiveDate>>,
     /// A function which maps a DayMenuOption -> String (css class) to style special days on the date-picker.
     #[prop(default = day_highlighter(*value).into(), into)]
     highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
-
-    #[prop(optional)] required: bool,
-    #[prop(optional, into)] label: MaybeProp<String>,
+    /// Whether this input is required to be set in order to submit a surrounding form.
+    #[prop(optional)]
+    required: bool,
+    /// Label shown above this date_picker input.
+    #[prop(optional, into)]
+    label: MaybeProp<String>,
 ) -> impl IntoView {
     // Extra internal state for hiding and which menu is active.
     let picker_state = RwSignal::new(DatePickerState::default());
@@ -748,6 +760,7 @@ pub fn DatePicker(
 
         Ok(date)
     });
+
     // Input formatter
     let format = BoxOneCallback::new(|date: Option<NaiveDate>| {
         if let Some(date) = date {
@@ -905,8 +918,8 @@ pub fn DatePicker(
 
     type OptDate = Option<NaiveDate>;
     view! {
-        <div node_ref=target>
-            <GenericInput<OptDate, String> id=date_picker_id.get() name class placeholder label parser format value required
+        <div class=class.get() node_ref=target>
+            <GenericInput<OptDate, String> id=date_picker_id.get() name placeholder label parser format value required
                 on_focus=ArcOneCallback::new(move |_| {
                     picker_state.update(|state| state.show());
                 })

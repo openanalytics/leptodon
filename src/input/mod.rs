@@ -171,6 +171,7 @@ pub fn TextInput(
 
 #[generate_docs]
 /// Integrates with dropbox's zxcvbn to create non annoying and actually strong passwords.
+/// Supports being wrapped in <FormInput<String>>.
 #[component]
 pub fn PasswordInput(
     /// Id for the input.
@@ -199,6 +200,10 @@ pub fn PasswordInput(
     /// Clicking the button toggles the input between plaintext and password mode.
     #[prop(default = false)]
     show_eye: bool,
+    /// Whether or not to validate the password to be strong enough using zxcvbn.
+    /// You should only use this for registration.
+    #[prop(default = true)]
+    validate_strength: bool,
     /// Binds to the value of the input.
     /// Passwords support all characters.
     #[prop(optional, into)]
@@ -214,6 +219,9 @@ pub fn PasswordInput(
     placeholder: MaybeProp<String>,
 ) -> impl IntoView {
     let parser = ArcOneCallback::new(move |input: String| {
+        if !validate_strength {
+            return Ok(input);
+        }
         let hazard_strs: Vec<&str> = hazards.iter().map(|s| s.as_ref()).collect();
         let entropy = zxcvbn(input.as_str(), hazard_strs.as_slice());
 
@@ -278,6 +286,7 @@ pub fn PasswordInput(
                             icon=Signal::derive(move || {
                                 if password_vis.get() { HideIcon() } else { ShowIcon() }
                             })
+                            default_spacing=false
                         ></Button>
                     </Last>
                 </ButtonGroup>
@@ -380,8 +389,6 @@ where
     T: Clone + PartialEq + Debug + Default + Sync + Send + 'static,
     E: Clone + Send + Sync + Debug + std::fmt::Display + 'static,
 {
-    // let input_ref = NodeRef::<html::Input>::new();
-    // comp_ref.load(InputRef { input_ref });
     let group_context = use_context::<GroupItemClassContext>();
     let group_classes = group_context.map(|item| item.class);
     let in_group = use_context::<InGroupContext>().unwrap_or(InGroupContext { in_group: false });
@@ -398,8 +405,6 @@ where
     let required = use_or(required, form_required);
     let in_form = form_context.is_some();
 
-    // String value bound to <input>
-    // let internal_value_signal = RwSignal::new("".to_string());
     let invalid_reason = RwSignal::new(None);
 
     let try_parse = {
@@ -408,7 +413,7 @@ where
             let Some(input) = input_ref.get_untracked() else {
                 return;
             };
-            // let internal_value = internal_value_signal.get();
+
             let internal_value = input.value();
             debug_log!("Attempting to parse: {internal_value}, format({should_format})",);
             if let Some(parser) = parser.as_ref()
@@ -474,11 +479,9 @@ where
     let on_input = {
         let try_parse = try_parse.clone();
         move |_: Event| {
-            // if invalid_reason.get().is_some() {
             // Formatting should only be done when the user indicates they are done, e.g. by leaving the field (on_blur).
             // Otherwise a format can disrupt the input
             try_parse(false);
-            // }
         }
     };
 
@@ -507,14 +510,12 @@ where
             type=move || input_type.get().as_str()
             inputmode=move || input_mode.get().as_str()
             name={name.get()}
-            // bind:value=internal_value_signal
             class=class_list![
                 ("border-oa-red", move || invalid_reason.get().is_some()),
                 group_classes.unwrap_or_default(),
                 if in_group.in_group { "rounded-none border-r-0 !mr-0" } else { "" },
                 (OA_READONLY_INPUT_CLASSES, move || readonly.get()),
-                (OA_INPUT_CLASSES, move || !readonly.get()),
-                class
+                (OA_INPUT_CLASSES, move || !readonly.get())
             ]
             disabled={readonly.get()}
             readonly={readonly.get()}
@@ -556,14 +557,18 @@ where
         && !in_form
     {
         Either::Left(view! {
-            <div>
+            <div class=class.get()>
                 <Label required=required.get() label>
                     {standalone_input}
                 </Label>
             </div>
         })
     } else {
-        Either::Right(standalone_input)
+        Either::Right(view! {
+            <div class=class.get()>
+                {standalone_input}
+            </div>
+        })
     }
 }
 
