@@ -1,5 +1,5 @@
 <h1 align="center"><img alt="Leptodon Logo" width="50%" src="https://scm.openanalytics.eu/git/leptodon/raw/branch/develop/assets/banner.svg"></h1>
-<h3 align="center">Your <a href="https://github.com/leptos-rs">Leptos</a> UI toolkit for data science.</h3>
+<h3 align="center">Your <a href="https://github.com/leptos-rs">Leptos</a> UI toolkit.</h3>
 <p align="center">
     <a href="https://crates.io/crates/leptodon"><img alt="Latest Version" src="https://img.shields.io/crates/v/leptodon"></a>
     <a href="https://github.com/openanalytics/leptodon/blob/main/LICENSE"><img alt="GitHub License" src="https://img.shields.io/crates/l/leptodon"></a>

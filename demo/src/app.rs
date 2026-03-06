@@ -116,7 +116,7 @@ fn Home() -> impl IntoView {
             />
             <div>
                 <h1 class="font-bold text-4xl">{NAME}</h1>
-                <h2 class="text-xl mb-2">"Your Leptos UI toolkit for data science."</h2>
+                <h2 class="text-xl mb-2">"Your Leptos UI toolkit."</h2>
                 <a href="https://docs.rs/leptodon/latest">
                     <Button appearance=ButtonAppearance::Primary>Docs</Button>
                 </a>
