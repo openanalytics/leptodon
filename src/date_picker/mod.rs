@@ -720,7 +720,7 @@ fn date_in_range(
     {
         return RangeOrdering::Greater(max_date);
     }
-    return RangeOrdering::Contains;
+    RangeOrdering::Contains
 }
 
 #[generate_docs]
@@ -834,7 +834,8 @@ pub fn DatePicker(
             .unwrap_or(Local::now().date_naive())
     });
 
-    if let Some(date) = value.get()
+    let initial_value = value.get_untracked();
+    if let Some(date) = initial_value
         // Out of range
         && date_in_range(date, min_date, max_date) != RangeOrdering::Contains
     {
@@ -842,8 +843,8 @@ pub fn DatePicker(
         value.set(None);
     }
 
-    let input_value = RwSignal::new(value.get());
-    let last_value = RwSignal::new(value.get());
+    let input_value = RwSignal::new(initial_value);
+    let last_value = RwSignal::new(initial_value);
 
     // Copy external changes into this component.
     Effect::watch(
@@ -854,7 +855,7 @@ pub fn DatePicker(
                 // Check if the value really got updated, like memo does
                 Some(new) != old &&
                 // Check if if this is not an internal change coming from the UI.
-                new != &last_value.get()
+                new != &last_value.get_untracked()
                 {
                     // New external value
                     // Check if its value is in the required range.
@@ -887,7 +888,7 @@ pub fn DatePicker(
                     month_by_date(new);
                 }
                 // If it was not an external change (external change copier sets the last_value before input_value)
-                if last_value.get() != *new {
+                if last_value.get_untracked() != *new {
                     // Was validated by parser, copy to the outside
                     value.set(*new);
                 }
