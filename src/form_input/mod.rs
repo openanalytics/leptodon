@@ -19,7 +19,13 @@ use std::marker::PhantomData;
 
 use leptodon_proc_macros::generate_docs;
 use leptos::context::Provider;
-use leptos::prelude::{ClassAttribute, ElementChild, Get, IntoAny, MaybeProp, RwSignal, Show};
+use leptos::logging::debug_log;
+use leptos::prelude::{
+    ClassAttribute, ElementChild, Get, IntoAny, MaybeProp, NodeRef, NodeRefAttribute, OnAttribute,
+    RwSignal, Show,
+};
+use leptos::tachys::renderer::dom::Node;
+use leptos::wasm_bindgen::JsCast;
 use leptos::{IntoView, component, prelude::Children, view};
 
 #[derive(Clone, Copy)]
@@ -95,9 +101,24 @@ pub fn Label(
     children: Children,
 ) -> impl IntoView {
     if let Some(label) = label.get() {
+        let label_ref = NodeRef::new();
         view! {
-            <label class="block">
-                <div class="text-sm font-semibold text-heading text-gray-900 dark:text-gray-100">
+            <label class="block" on:click=move |e| {
+                // Not the most fond of this fix, label should just only warp when clicking the label :/
+                // TODO: Proper fix would be to not wrap everything in the label and to the input via ids. But that adds an extra-id burden.
+                if
+                    let Some(target) = e.target() &&
+                    let Ok(target_node) = target.dyn_into::<Node>() &&
+                    let Some(label_node) = label_ref.get() &&
+                    // When clicking inputs the browser does not teleport focus, and we want to respect the input click events still.
+                    target_node.node_name() != "INPUT" &&
+                    !label_node.contains(Some(&target_node))
+                {
+                    debug_log!("Non-label label-child was clicked, preventing browser click handling.");
+                    e.prevent_default();
+                }
+            }>
+                <div class="text-sm font-semibold text-heading text-gray-900 dark:text-gray-100" node_ref=label_ref>
                     <RequiredStar required/>
                     {label}
                 </div>

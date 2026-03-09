@@ -157,9 +157,9 @@ pub fn Forms() -> impl IntoView {
                 <FormInput<String> label="End date" required=true>
                     <DatePicker name="end-date" value=RwSignal::new(None) />
                 </FormInput<String>>
-                //<FormInput<String> label="Period" required=true>
-                    <DateRangePicker name="period" />
-                //</FormInput<String>>
+                <FormInput<String> label="Period" required=true>
+                    <DateRangePicker name="period" id="date_range_picker" />
+                </FormInput<String>>
                 <FormInput<String> label="Notes" required=true>
                     <TextArea value=RwSignal::new("".to_string()) name="notes" />
                 </FormInput<String>>

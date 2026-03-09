@@ -15,7 +15,7 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-import { test, expect } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
 
 // Test date-picker open/close on click
 test("Test date-picker open/close", async ({ page }) => {
@@ -51,13 +51,10 @@ test("Test date-picker focus/tab open/close", async ({ page }) => {
   await expect(page.locator("#date_range_picker-left-popup")).toBeHidden();
 });
 
+
+
 // Test date-picker open/close on selecting
-test("Test date-picker selecting open/close", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
-
-  await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptodon");
-
+async function testDatePickerOpenClosing(page: Page) {
   await expect(page.locator("#date_range_picker-left-popup")).toBeHidden();
   await expect(page.locator("#date_range_picker-right-popup")).toBeHidden();
 
@@ -76,6 +73,25 @@ test("Test date-picker selecting open/close", async ({ page }) => {
   await page.locator("#date_range_picker-right-popup").getByText("19").click();
   await expect(page.locator("#date_range_picker-left-popup")).toBeHidden();
   await expect(page.locator("#date_range_picker-right-popup")).toBeHidden();
+}
+
+test("Test date-picker selecting open/close", async ({ page }) => {
+  await page.goto("http://localhost:3000/");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Leptodon");
+
+  await testDatePickerOpenClosing(page);
+});
+
+// Added because labels can interfere with focus and we want to catch regression in this area.
+test("Test labeled date-picker selecting open/close", async ({ page }) => {
+  await page.goto("http://localhost:3000/forms");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Forms");
+
+  await testDatePickerOpenClosing(page);
 });
 
 test("Test date-picker functionality", async ({ page }) => {
