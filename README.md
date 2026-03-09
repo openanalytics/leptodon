@@ -1,4 +1,4 @@
-<h1 align="center"><img alt="Leptodon Logo" width="50%" src="https://scm.openanalytics.eu/git/leptodon/raw/branch/develop/assets/banner.svg"></h1>
+<h1 align="center"><img alt="Leptodon Logo" width="50%" src="./assets/banner.svg"></h1>
 <h3 align="center">Your <a href="https://github.com/leptos-rs">Leptos</a> UI toolkit.</h3>
 <p align="center">
     <a href="https://crates.io/crates/leptodon"><img alt="Latest Version" src="https://img.shields.io/crates/v/leptodon"></a>
