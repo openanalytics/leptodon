@@ -30,10 +30,12 @@ const LINK_CLASSES: &str = "hover:underline";
 /// See [[A](leptos_router::components::A)]
 #[component]
 pub fn Link<H>(
-    /// Used to calculate the link's `href` attribute. Will be resolved relative
+    /// Used to determine the `href` attribute. Will be resolved relative
     /// to the current route.
     href: H,
-    #[prop(optional, into)] class: MaybeReactiveClass,
+    /// Extra style class
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
     /// Where to display the linked URL, as the name for a browsing context (a tab, window, or `<iframe>`).
     #[prop(default = Oco::Borrowed(""), into)]
     target: Oco<'static, str>,
