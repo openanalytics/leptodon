@@ -365,12 +365,14 @@ where
                         let date = current_date.get()
                             .with_month(month.number_from_month())
                             .unwrap_or(NaiveDate::MIN);
+                        let current_year = current_date.get().year();
+
                         let intersects = menu_item_intersects_range(date, DatePickerMenu::Month, min_date, max_date);
                         let classes = class_list!(
                             (SELECTABLE_ELEM_CLASSES, intersects),
                             (DISABLED_ELEM_CLASSES, !intersects),
                             highlighter.get()
-                                .map(|it| it(DateMenuOption::Month(month.number_from_month())))
+                                .map(|it| it(DateMenuOption::Month(current_year, month.number_from_month())))
                                 .unwrap_or_default()
                         );
 
@@ -620,7 +622,8 @@ where
 #[derive(Clone, Copy)]
 pub enum DateMenuOption {
     Day(CalendarDate),
-    Month(u32),
+    /// Year, Month
+    Month(i32, u32),
     Year(i32),
     Decenium(i32),
 }
@@ -629,7 +632,7 @@ impl DateMenuOption {
     pub fn matches_date(&self, date: NaiveDate) -> bool {
         match self {
             DateMenuOption::Day(calendar_date) => date == **calendar_date,
-            DateMenuOption::Month(month) => date.month() == *month,
+            DateMenuOption::Month(year, month) => date.year() == *year && date.month() == *month,
             DateMenuOption::Year(year) => date.year() == *year,
             DateMenuOption::Decenium(decenium) => date.year() - date.year() % 10 == *decenium,
         }
@@ -657,7 +660,14 @@ impl DateMenuOption {
     pub fn compare_against(&self, date: NaiveDate) -> Ordering {
         match self {
             DateMenuOption::Day(calendar_date) => (**calendar_date).cmp(&date),
-            DateMenuOption::Month(month) => month.cmp(&date.month()),
+            DateMenuOption::Month(year, month) => {
+                let year_order = year.cmp(&date.year());
+                if year_order == Ordering::Equal {
+                    month.cmp(&date.month())
+                } else {
+                    year_order
+                }
+            }
             DateMenuOption::Year(year) => year.cmp(&date.year()),
             DateMenuOption::Decenium(decenium) => decenium.cmp(&(date.year() - date.year() % 10)),
         }
