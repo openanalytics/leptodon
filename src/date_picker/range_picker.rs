@@ -23,6 +23,7 @@ use crate::date_picker::DatePicker;
 use crate::date_picker::SELECTED_ELEM_CLASSES;
 use crate::util::callback::ArcOneCallback;
 use chrono::NaiveDate;
+use leptodon_proc_macros::generate_docs;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
@@ -31,6 +32,7 @@ use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
 
+#[generate_docs]
 #[component]
 pub fn DateRangePicker(
     #[prop(optional, into)] id: MaybeProp<String>,

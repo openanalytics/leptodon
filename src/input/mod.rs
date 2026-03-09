@@ -392,7 +392,7 @@ where
     let group_context = use_context::<GroupItemClassContext>();
     let group_classes = group_context.map(|item| item.class);
     let in_group = use_context::<InGroupContext>().unwrap_or(InGroupContext { in_group: false });
-    let last_set_value = RwSignal::new(value.get_untracked());
+    let last_set_value: RwSignal<Option<T>> = RwSignal::new(None);
 
     // Form context
     let form_context = use_context::<FormInputContext<E>>();
@@ -429,7 +429,7 @@ where
                         // the blur handler will want to format while input handling does not.
                         if !should_format {
                             debug_log!("Preventing internal format");
-                            last_set_value.set(parsed_success.clone());
+                            last_set_value.set(Some(parsed_success.clone()));
                         }
                         debug_log!("Updating value");
                         value.set(parsed_success);
@@ -448,7 +448,7 @@ where
                 {
                     if !should_format {
                         debug_log!("Preventing internal format");
-                        last_set_value.set(parsed_value.clone());
+                        last_set_value.set(Some(parsed_value.clone()));
                     }
                     debug_log!("Updating value");
                     value.set(parsed_value);
@@ -489,18 +489,17 @@ where
     Effect::watch(
         move || value.get(),
         move |value, _, _| {
-            if let Some(format) = format.as_ref() {
-                if &(last_set_value.get_untracked()) != value {
-                    let Some(input) = input_ref.get_untracked() else {
-                        return;
-                    };
-                    input.set_value(format(value.clone()).as_str());
-                } else {
-                    debug_log!("Prevented internal format");
-                }
-            } else {
-                debug_log!("No formatter to format {:?}", value)
+            let Some(format) = format.as_ref() else {
+                debug_log!("No formatter to format {:?}", value);
+                return;
+            };
+            if last_set_value.get_untracked().as_ref() == Some(value) {
+                debug_log!("Prevented internal format");
+                return;
             }
+            if let Some(input) = input_ref.get_untracked() {
+                input.set_value(format(value.clone()).as_str());
+            };
         },
         true,
     );

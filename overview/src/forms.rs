@@ -19,7 +19,7 @@ use derive_more::Display;
 use leptodon::button::ButtonType;
 use leptodon::checkbox::Checkbox;
 use leptodon::date_picker::DatePicker;
-use leptodon::date_picker::range_picker::DateRangePicker;
+use leptodon::date_picker::DateRangePicker;
 use leptodon::form_input::FormInput;
 use leptodon::input::{InputType, PasswordInput, TextInput};
 use leptodon::link::Link;

@@ -18,6 +18,7 @@
 pub mod calendar;
 pub mod checkbox;
 pub mod copy_button;
+pub mod date_range_picker;
 pub mod inputs;
 pub mod popover;
 pub mod radio;

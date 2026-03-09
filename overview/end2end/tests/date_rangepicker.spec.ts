@@ -51,8 +51,6 @@ test("Test date-picker focus/tab open/close", async ({ page }) => {
   await expect(page.locator("#date_range_picker-left-popup")).toBeHidden();
 });
 
-
-
 // Test date-picker open/close on selecting
 async function testDatePickerOpenClosing(page: Page) {
   await expect(page.locator("#date_range_picker-left-popup")).toBeHidden();
@@ -94,6 +92,7 @@ test("Test labeled date-picker selecting open/close", async ({ page }) => {
   await testDatePickerOpenClosing(page);
 });
 
+// Just date-picking functionality
 test("Test date-picker functionality", async ({ page }) => {
   await page.goto("http://localhost:3000/");
 
@@ -151,4 +150,36 @@ test("Test date-picker functionality", async ({ page }) => {
   await expect(page.locator("#date_range_picker-right")).toHaveValue(
     "2135-10-01",
   );
+});
+
+// Reactivity
+test("Test date-picker reactivity", async ({ page }) => {
+  await page.goto('http://127.0.0.1:3000/test_date_range_picker');
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test DateRangePicker");
+
+  const start_date_input = page.getByRole('textbox', { name: 'yyyy-mm-dd' }).first();
+  const end_date_input = page.getByRole('textbox', { name: 'yyyy-mm-dd' }).nth(1);
+
+  // Assert the intial dates are visible in the date-inputs.
+  await page.getByText('Some(2025-10-10) - Some(2025-11-15)').click();
+
+  await expect(start_date_input).toHaveValue("2025-10-10");
+  await expect(end_date_input).toHaveValue("2025-11-15");
+  await page.locator('html').click();
+
+  await page.getByRole('button', { name: 'Clear' }).click();
+  await expect(start_date_input).toHaveValue("");
+  await expect(end_date_input).toHaveValue("");
+  await page.getByText('None - None').click();
+
+  await page.getByRole('button', { name: 'Set 2010 as start_date' }).click();
+  await page.getByText('None - None').click();
+  await page.getByRole('textbox', { name: 'yyyy-mm-dd' }).first().click();
+  await page.getByRole('button', { name: 'Set 2025 as start_date' }).click();
+  await page.getByText('Some(2025-10-10) - None').click();
+  await page.getByRole('button', { name: 'Set 2026 as end_date' }).click();
+  await page.getByRole('textbox', { name: 'yyyy-mm-dd' }).nth(1).click();
+  await page.getByText('Some(2025-10-10) - Some(2026-').click();
 });

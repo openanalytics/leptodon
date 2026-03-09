@@ -88,6 +88,7 @@ test("Negative integer number input", async ({ page }) => {
   let number_disp = page.locator("#i128-input-display");
   let number_input = page.locator("#i128-input");
 
+  await number_input.clear();
   await number_input.press("0"); // 0
   await expect(number_disp).toHaveText("0");
 
@@ -122,6 +123,7 @@ test("Decimal number input", async ({ page }) => {
   let number_disp = page.locator("#f64-input-display");
   let number_input = page.locator("#f64-input");
 
+  await number_input.clear();
   await number_input.press("0"); // 0
   await expect(number_disp).toHaveText("0");
 
