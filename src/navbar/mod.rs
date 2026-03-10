@@ -33,11 +33,16 @@ use leptos_router::components::ToHref;
 
 const SIDEBAR_CLASSES: &str = "fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 lg:translate-x-0 dark:bg-gray-800 dark:border-gray-700";
 const SIDEBAR_LINK_TEXT: &str = "text-gray-800 dark:text-gray-100 aria-current-page:text-oa-blue";
+
 #[generate_docs]
 #[component]
 pub fn SideBarLink<H>(
-    #[prop(optional, into)] icon: MaybeProp<IconRef>,
+    /// Icon to place after the [children]
+    #[prop(optional, into)]
+    icon: MaybeProp<IconRef>,
+    /// Hyper reference to another page
     href: H,
+    /// Content of the entry, usually text
     children: Children,
 ) -> impl IntoView
 where
@@ -89,6 +94,49 @@ pub struct NavbarEntries {
 
 #[generate_docs]
 #[component]
+pub fn Navbar(
+    /// Slot for items in the top navbar
+    #[prop(optional, default=NavbarEndChildren { children: Box::new(|| ().into_any()) })]
+    end: NavbarEndChildren,
+    /// Slot for branding
+    #[prop(optional, default=NavbarLogo { children: Box::new(|| LeptodonLogoLink().into_any()) })]
+    logo: NavbarLogo,
+    /// Sidebar signal for hooking to hamburger button
+    #[prop(optional, into)]
+    sidebar_visible: MaybeProp<RwSignal<bool>>,
+) -> impl IntoView {
+    view! {
+        <nav class="fixed top-0 z-[500] w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+            <div class="px-3 py-3 lg:px-5 lg:pl-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-start rtl:justify-end">
+                        { move ||
+                            if let Some(sidebar_visible) = sidebar_visible.get() {
+                                view! {
+                                    <ControlButton icon=icon::HamburgerIcon() on_click=move |_| {
+                                            sidebar_visible.update(|is_visible| *is_visible = !*is_visible);
+                                        } class="lg:hidden" {..}
+                                        data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
+                                    />
+                                }.into_any()
+                            } else { ().into_any()}
+                        }
+
+                        {(logo.children)()}
+                    </div>
+                    <div class="flex items-center">
+                        <div class="flex items-center ms-3">
+                            {(end.children)()}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    }
+}
+
+#[generate_docs]
+#[component]
 pub fn SideNavbar(
     /// Page content
     children: Children,
@@ -105,25 +153,7 @@ pub fn SideNavbar(
     let visible = RwSignal::new(false);
 
     view! {
-        <nav class="fixed top-0 z-[500] w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-            <div class="px-3 py-3 lg:px-5 lg:pl-3">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center justify-start rtl:justify-end">
-                        <ControlButton icon=icon::HamburgerIcon() on_click=move |_| {
-                                visible.update(|is_visible| *is_visible = !*is_visible);
-                            } class="lg:hidden" {..}
-                            data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
-                        />
-                        {(logo.children)()}
-                    </div>
-                    <div class="flex items-center">
-                        <div class="flex items-center ms-3">
-                            {(end.children)()}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        <Navbar end logo sidebar_visible=visible />
 
         <aside
             class=class_list!(
