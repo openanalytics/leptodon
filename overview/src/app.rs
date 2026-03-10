@@ -39,7 +39,7 @@ use leptodon::checkbox::Checkbox;
 use leptodon::codeblock::Codeblock;
 use leptodon::darkmode::ThemeSelector;
 use leptodon::date_picker::DatePicker;
-use leptodon::date_picker::range_picker::DateRangePicker;
+use leptodon::date_picker::DateRangePicker;
 use leptodon::dropdown::DropdownItem;
 use leptodon::heading::*;
 use leptodon::icon;
@@ -109,6 +109,7 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_toggle") view=crate::testcases::toggle::TestToggle/>
                 <Route path=StaticSegment("/test_checkbox") view=crate::testcases::checkbox::TestCheckbox/>
                 <Route path=StaticSegment("/test_popover") view=crate::testcases::popover::TestPopover/>
+                <Route path=StaticSegment("/test_date_range_picker") view=crate::testcases::date_range_picker::TestDateRangePicker/>
                 <Route path=StaticSegment("/test_calendar") view=crate::testcases::calendar::TestCalendar/>
                 <Route path=StaticSegment("/test_copy_button") view=crate::testcases::copy_button::TestCopyButton/>
                 <Route path=StaticSegment("/test_upload") view=crate::testcases::upload::TestUpload/>
@@ -185,7 +186,6 @@ fn Home() -> impl IntoView {
             <Link href="https://www.openanalytics.eu/">"Click here"</Link>
             <DropdownButton {..} data-testid="test-dropdown">
                 <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>
-                // <li>hi</li>
                 <DropdownItem label="Entry-1" on_click=move |e| { log!("{:?}", e); } {..} data-testid="test-dropdown-item1" />
             </DropdownButton>
             <ModalButton id="modal-button1" modal_title="Example modal" modal_visible>

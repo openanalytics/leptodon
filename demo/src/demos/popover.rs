@@ -18,6 +18,7 @@
 use leptodon::button::Button;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon::popover::Popover;
 use leptodon::popover::PopoverAnchor;
 use leptodon::popover::PopoverTrigger;
@@ -58,9 +59,9 @@ pub fn PopoverDemoPage() -> impl IntoView {
 
         <FixedCenterColumn>
             <Heading4 anchor="popover">"Popover"</Heading4>
-            <p>"Notice that the L popup likely does not appear on the left, since on most screens there is not enough space for the popover content.
+            <Paragraph>"Notice that the L popup likely does not appear on the left, since on most screens there is not enough space for the popover content.
             The popover component will automatically adjust its position to a more optimal side.
-            Scrolling the popover into a wall is also supported."</p>
+            Scrolling the popover into a wall is also supported."</Paragraph>
             <PopoverExample />
 
             <leptodon::popover::PopoverDocs />

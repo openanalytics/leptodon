@@ -249,6 +249,9 @@ pub fn DropdownButton(
     /// comp_ref will be filled with a reference to the DOM element.
     #[prop(optional)]
     comp_ref: ComponentRef<ButtonRef>,
+    /// Whether to have a default amount of spacing above and below the button.
+    #[prop(default = true)]
+    default_spacing: bool,
 ) -> impl IntoView
 where
 {
@@ -267,6 +270,7 @@ where
         })),
         children: Some(button_children.children),
         comp_ref,
+        default_spacing,
     });
     provide_context::<crate::dropdown::SetVisibleCallback>(set_visible);
     provide_context::<crate::dropdown::AutoClose>(should_autoclose);
@@ -317,6 +321,9 @@ pub fn ModalButton(
     /// comp_ref will be filled with a reference to the DOM element.
     #[prop(optional)]
     comp_ref: ComponentRef<ButtonRef>,
+    /// Whether to have a default amount of spacing above and below the button.
+    #[prop(default = true)]
+    default_spacing: bool,
 
     /// Title shown in the modal heading
     #[prop(optional, into)]
@@ -344,6 +351,7 @@ where
         })),
         children: Some(button_children.children),
         comp_ref,
+        default_spacing,
     });
     let modal_id = id.get().map(|id| format!("{id}-modal"));
 
@@ -415,6 +423,9 @@ pub fn DialogButton(
     on_click_secondary: BoxCallback,
     /// Dialog content
     children: Children,
+    /// Whether to have a default amount of spacing above and below the button.
+    #[prop(default = true)]
+    default_spacing: bool,
 ) -> impl IntoView
 where
 {
@@ -431,6 +442,7 @@ where
         })),
         children: Some(button_children.children),
         comp_ref,
+        default_spacing,
     });
     let dialog_id = id.get().map(|id| format!("{id}-dialog"));
 

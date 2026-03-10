@@ -23,6 +23,7 @@ use leptodon::input::InputType;
 use leptodon::input::PasswordInput;
 use leptodon::input::TextInput;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -37,11 +38,21 @@ pub fn LoginFormInputDemo() -> impl IntoView {
         <Form action="./">
             <div class="p-4">
                 <FormInput<String> label="Email address" required=true>
-                    <TextInput name="email" placeholder="localpart@domain" input_type=InputType::Email />
+                    <TextInput
+                        name="email"
+                        placeholder="localpart@domain"
+                        input_type=InputType::Email
+                     />
                 </FormInput<String>>
                 // <String> is the feedback error type of the GenericInput inside PasswordInput.
                 <FormInput<String> label="Password" required=true>
-                    <PasswordInput name="password" placeholder="*******************" hazards=vec!["YourName".to_string()] show_eye=true />
+                    <PasswordInput
+                        name="password"
+                        placeholder="*******************"
+                        hazards=vec!["YourName".to_string()]
+                        validate_strength=false
+                        show_eye=true
+                    />
                 </FormInput<String>>
                 <Button button_type=ButtonType::Submit>"Submit"</Button>
             </div>
@@ -56,11 +67,11 @@ pub fn FormInputDemoPage() -> impl IntoView {
 
         <FixedCenterColumn>
             <Heading4 anchor="login-form-input">"Login FormInput"</Heading4>
-            <p>
+            <Paragraph>
                 "Form inputs should be used for input- and button-groups that require a label or form-feedback."
                 <br/>
                 "Some elements with postfix labels should not be labelled via <FormInput<E>>"
-            </p>
+            </Paragraph>
             <LoginFormInputExample />
 
             <leptodon::form_input::FormInputDocs />

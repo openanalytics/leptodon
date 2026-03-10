@@ -28,6 +28,7 @@ use leptodon::input::NumberInputConfigProps;
 use leptodon::input::PasswordInput;
 use leptodon::input::TextInput;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -77,9 +78,9 @@ pub fn NumberInputDemo() -> impl IntoView {
     let value = RwSignal::new(5.5);
 
     view! {
-        <p>
+        <Paragraph>
             {move || value.get()}
-        </p>
+        </Paragraph>
         <NumberInput<f64> // <- Supports u8-128,i8-128 and f32,f64
             label = "Decimal between -2.00 and 10.15"
             class="my-3"
@@ -167,7 +168,7 @@ pub fn GenericInputDemo() -> impl IntoView {
         {
             move || {
                 if let Some(sum) = value.get() {
-                    view!{ <p>Result = {sum.a + sum.b}</p> }.into_any()
+                    view!{ <Paragraph>Result = {sum.a + sum.b}</Paragraph> }.into_any()
                 } else { ().into_any() }
             }
         }
@@ -195,9 +196,9 @@ pub fn InputsDemoPage() -> impl IntoView {
             <TextInputExample />
 
             <Heading4 anchor="password-input">Password Input</Heading4>
-            <p>
+            <Paragraph>
                 Include personal information in the hazards vec to avoid easy to guess passwords.
-            </p>
+            </Paragraph>
             <PasswordInputExample />
 
             <Heading4 anchor="number-input">Number Input</Heading4>
@@ -207,12 +208,12 @@ pub fn InputsDemoPage() -> impl IntoView {
             <FileUploadExample/>
 
             <Heading4 anchor="generic-input">Generic Input</Heading4>
-            <p>
+            <Paragraph>
                 "Internally all inputs try to use GenericInput<T, E> where T is the value of the type you are interested in and E a displayable error type.
                 On the web users always enter text so you need to provider a parser and formatter to convert between String -> T and T -> String.
                 In case parsing fails you may produce an Result::Err(error_of_type_E) which the GenericInput will display underneith itself.
                 When you want to place elements NEXT to the GenericInput you will have difficulties with the Label and Feedback, for this situation see <FormInput>."
-            </p>
+            </Paragraph>
             <GenericInputExample/>
 
             <leptodon::input::TextInputDocs />

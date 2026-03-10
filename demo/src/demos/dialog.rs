@@ -21,6 +21,7 @@ use leptodon::button::DialogButtonChildren;
 use leptodon::dialog::Dialog;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon::util::callback::BoxCallback;
 use leptodon::util::lorem::Lorem;
 use leptodon_proc_macros::generate_codeblock;
@@ -40,11 +41,11 @@ pub fn DialogButtonDemo() -> impl IntoView {
     let yes_clickcount = RwSignal::new(0);
     let no_clickcount = RwSignal::new(0);
     view! {
-        <p>
+        <Paragraph>
             "Shown: " {move || format!("{:?}", dialog_visible.get())}
             <br/>
             "Yes vs No: " { move || yes_clickcount.get()} " - " { move || no_clickcount.get()}
-        </p>
+        </Paragraph>
         <DialogButton dialog_title="Example dialog?" dialog_visible
             primary_text="Yes"
             on_click_primary=BoxCallback::new(move || {
@@ -75,9 +76,9 @@ pub fn DialogButtonDemo() -> impl IntoView {
 pub fn DialogDemo() -> impl IntoView {
     let visible = RwSignal::new(false);
     view! {
-        <p>
+        <Paragraph>
             "Shown: " {move || format!("{:?}", visible.get())}
-        </p>
+        </Paragraph>
         <Dialog title="Example dialog?" visible
             on_click_primary=BoxCallback::new(move || {
                 visible.set(false);

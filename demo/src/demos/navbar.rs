@@ -19,6 +19,7 @@ use leptodon::codeblock::Codeblock;
 use leptodon::divider::HorizontalLine;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptos::html::ElementChild;
 use leptos::prelude::ClassAttribute;
 use leptos::{IntoView, component, view};
@@ -33,7 +34,7 @@ pub fn SideNavbarDemoPage() -> impl IntoView {
             <Heading4 anchor="side-navbar">"SideNavbar"</Heading4>
             <div class="flex mb-3 flex-col border-1 border rounded-lg shadow w-fit p-4 min-w-[50vw] dark:bg-[#1F2937] dark:border-gray-600">
                 <div class="p-3">
-                    <p>"No demo here since it conflicts with the existing navigation 🥹."</p>
+                    <Paragraph>"No demo here since it conflicts with the existing navigation 🥹."</Paragraph>
                 </div>
                 <HorizontalLine />
 

@@ -19,6 +19,7 @@ use leptodon::accordion::Accordion;
 use leptodon::accordion::AccordionEntry;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::util::lorem::Lorem;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -31,10 +32,10 @@ pub fn AccordionDemo() -> impl IntoView {
     view! {
         <Accordion>
             <AccordionEntry title="An outer accordion">
-                <p>Est eveniet aut necessitatibus sunt accusantium mollitia accusantium. Nihil aperiam est dolor numquam. Incidunt qui cum sapiente distinctio deleniti quisquam. Asperiores ea sint voluptas et eum reiciendis. Et quos quasi aspernatur voluptatum eos id. Rerum quaerat suscipit cupiditate.</p>
-                <Accordion>
+                <Lorem sentences=4/>
+                <Accordion class="mt-2">
                     <AccordionEntry title="Sub accordion">
-                        <p>Est eveniet aut necessitatibus sunt accusantium mollitia accusantium. Nihil aperiam est dolor numquam. Incidunt qui cum sapiente distinctio deleniti quisquam. Asperiores ea sint voluptas et eum reiciendis. Et quos quasi aspernatur voluptatum eos id. Rerum quaerat suscipit cupiditate.</p>
+                        <Lorem sentences=4/>
                     </AccordionEntry>
                 </Accordion>
             </AccordionEntry>

@@ -29,6 +29,7 @@ use leptodon::button_group::Last;
 use leptodon::heading::Heading4;
 use leptodon::icon;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon::textarea::TextArea;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
@@ -44,11 +45,11 @@ pub fn ButtonDemo() -> impl IntoView {
     let count = RwSignal::new(0);
 
     view! {
-        <p>
+        <Paragraph>
             {move ||
                 format!("Button was pressed {} times!", count.get())
             }
-        </p>
+        </Paragraph>
 
         <Button
             appearance=ButtonAppearance::Primary

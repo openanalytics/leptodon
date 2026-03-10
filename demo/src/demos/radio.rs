@@ -19,6 +19,7 @@ use derive_more::Display;
 use leptodon::button::Button;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon::radio::Radio;
 use leptodon::radio::RadioOption;
 use leptodon_proc_macros::generate_codeblock;
@@ -57,7 +58,7 @@ pub fn RadioDemo() -> impl IntoView {
     ]);
     let selected = RwSignal::new(None);
     view! {
-        <p>"Selected option: "{move || format!("{:?}", selected.get())}</p>
+        <Paragraph>"Selected option: "{move || format!("{:?}", selected.get())}</Paragraph>
         <Radio
             name="radio_station"
             label="Radio Stations"

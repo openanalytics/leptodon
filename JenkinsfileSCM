@@ -90,9 +90,44 @@ pipeline {
         }
       }
     }
-    stage('Package Leptodon') {
+    stage('Package leptodon-proc-macros') {
       steps {
-        sh "cargo package"
+        sh """
+          cd proc-macros;
+          cargo package;
+        """
+      }
+      post {
+        success {
+          sh "cp proc-macros/target/package/*.crate ${env.WORKSPACE}"
+          archiveArtifacts artifacts: '*.crate', fingerprint: true
+        }
+      }
+    }
+    stage('Publish leptodon-proc-macros') {
+      when {
+        branch 'main'
+      }
+      environment {
+        CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
+      }
+      steps {
+        sh "cargo make publish-leptodon-proc-macros-if-missing"
+      }
+    }
+    stage('Package Leptodon') {
+      when {
+        // Avoid failures on develop when bumping the proc-macros crate version
+        branch 'main'
+      }
+      steps {
+        retry(3) {
+          // Pray crates.io finds the newly published crate version after 15s.
+          sh """
+            sleep 5;
+            cargo package;
+          """
+        }
       }
       post {
         success {
@@ -109,7 +144,7 @@ pipeline {
         CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
       }
       steps {
-        sh "cargo publish"
+        sh "cargo make publish-leptodon-if-missing"
       }
     }
   }

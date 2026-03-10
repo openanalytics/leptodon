@@ -1899,10 +1899,6 @@ input:checked + .toggle-bg {
   overflow-x: hidden;
 }
 
-.whitespace-pre-wrap {
-  white-space: pre-wrap;
-}
-
 .text-wrap {
   text-wrap: wrap;
 }

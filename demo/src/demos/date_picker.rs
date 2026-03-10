@@ -20,9 +20,11 @@ use chrono::NaiveDate;
 use chrono::Weekday;
 use leptodon::date_picker::DateMenuOption;
 use leptodon::date_picker::DatePicker;
+use leptodon::date_picker::DateRangePicker;
 use leptodon::date_picker::day_highlighter;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon::util::callback::ArcOneCallback;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
@@ -37,15 +39,35 @@ use leptos_meta::Title;
 pub fn DatePickerDemo() -> impl IntoView {
     let value = RwSignal::new(None);
     view! {
-        <p>
+        <Paragraph>
             {move || format!("{:?}", value.get())}
-        </p>
+        </Paragraph>
         <DatePicker
             class="my-3"
             min_date=NaiveDate::from_ymd_opt(1900, 1, 1).expect("valid date")
             placeholder="Published at: yyyy-mm-dd"
             value
             label="When was this work published?"
+        />
+    }
+}
+
+#[generate_codeblock(DateRangePickerExample)]
+#[component]
+pub fn DateRangePickerDemo() -> impl IntoView {
+    let start_date = RwSignal::new(None);
+    let end_date = RwSignal::new(None);
+    view! {
+        <Paragraph>
+            {move ||
+                format!("Selected range: {:?} - {:?}", start_date.get(), end_date.get())
+            }
+        </Paragraph>
+        <DateRangePicker
+            min_date=NaiveDate::from_ymd_opt(2020, 10, 10).unwrap()
+            max_date=NaiveDate::from_ymd_opt(2030, 10, 10).unwrap()
+            start_date
+            end_date
         />
     }
 }
@@ -71,9 +93,9 @@ pub fn DatePickerHighlighterDemo() -> impl IntoView {
         format!("{base} {weekend_red}")
     });
     view! {
-        <p>
+        <Paragraph>
             {move || format!("{:?}", value.get())}
-        </p>
+        </Paragraph>
         <DatePicker
             class="my-3"
             min_date=NaiveDate::from_ymd_opt(1900, 1, 1).expect("valid date")
@@ -99,6 +121,10 @@ pub fn DatePickerDemoPage() -> impl IntoView {
             <Heading4 anchor="datepicker-highlighter">"DatePicker Highlighter"</Heading4>
             <DatePickerHighlighterExample />
 
+            <Heading4 anchor="daterangepicker">"DateRangePicker"</Heading4>
+            <DateRangePickerExample />
+
+            <leptodon::date_picker::DateRangePickerDocs />
             <leptodon::date_picker::DatePickerDocs />
         </FixedCenterColumn>
     }

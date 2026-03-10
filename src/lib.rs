@@ -66,6 +66,8 @@ pub mod modal;
 #[cfg(feature = "leptos")]
 pub mod navbar;
 #[cfg(feature = "leptos")]
+pub mod paragraph;
+#[cfg(feature = "leptos")]
 pub mod popover;
 #[cfg(feature = "leptos")]
 pub mod radio;

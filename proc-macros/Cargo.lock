@@ -401,7 +401,7 @@ checksum = "47f142fe24a9c9944451e8349de0a56af5f3e7226dc46f3ed4d4ecc0b85af75e"
 
 [[package]]
 name = "leptodon-proc-macros"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "comrak",
  "proc-macro2",

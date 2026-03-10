@@ -18,6 +18,7 @@
 use leptodon::button::Button;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon::toggle::Toggle;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
@@ -33,10 +34,10 @@ pub fn ToggleDemo() -> impl IntoView {
     let checked = RwSignal::new(true);
 
     view! {
-        <p>
+        <Paragraph>
             "Current toggle checked state: "
             {move || checked.get().to_string()}
-        </p>
+        </Paragraph>
         <Toggle
             class="my-3"
             checked=checked

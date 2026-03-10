@@ -24,6 +24,7 @@ use leptodon::calendar::Calendar;
 use leptodon::calendar::CalendarEvent;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -54,7 +55,7 @@ pub fn CalendarDemo() -> impl IntoView {
     };
 
     view! {
-        <p>"You can use "<code>presented_month_reader</code>" to send new web requests and on-response update the calendar-events."</p>
+        <Paragraph>"You can use "<code>presented_month_reader</code>" to send new web requests and on-response update the calendar-events."</Paragraph>
         <Calendar
             children
             presented_month_writer

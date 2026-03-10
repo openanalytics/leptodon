@@ -67,7 +67,8 @@ use leptos::{
     prelude::{MaybeProp, Signal},
     view,
 };
-pub mod range_picker;
+mod range_picker;
+pub use range_picker::*;
 
 const MILLENIUM_IN_MONTHS: Months = Months::new(12 * 100);
 const DECENIA_IN_MONTHS: Months = Months::new(12 * 10);
@@ -364,12 +365,14 @@ where
                         let date = current_date.get()
                             .with_month(month.number_from_month())
                             .unwrap_or(NaiveDate::MIN);
+                        let current_year = current_date.get().year();
+
                         let intersects = menu_item_intersects_range(date, DatePickerMenu::Month, min_date, max_date);
                         let classes = class_list!(
                             (SELECTABLE_ELEM_CLASSES, intersects),
                             (DISABLED_ELEM_CLASSES, !intersects),
                             highlighter.get()
-                                .map(|it| it(DateMenuOption::Month(month.number_from_month())))
+                                .map(|it| it(DateMenuOption::Month(current_year, month.number_from_month())))
                                 .unwrap_or_default()
                         );
 
@@ -619,7 +622,8 @@ where
 #[derive(Clone, Copy)]
 pub enum DateMenuOption {
     Day(CalendarDate),
-    Month(u32),
+    /// Year, Month
+    Month(i32, u32),
     Year(i32),
     Decenium(i32),
 }
@@ -628,7 +632,7 @@ impl DateMenuOption {
     pub fn matches_date(&self, date: NaiveDate) -> bool {
         match self {
             DateMenuOption::Day(calendar_date) => date == **calendar_date,
-            DateMenuOption::Month(month) => date.month() == *month,
+            DateMenuOption::Month(year, month) => date.year() == *year && date.month() == *month,
             DateMenuOption::Year(year) => date.year() == *year,
             DateMenuOption::Decenium(decenium) => date.year() - date.year() % 10 == *decenium,
         }
@@ -656,7 +660,14 @@ impl DateMenuOption {
     pub fn compare_against(&self, date: NaiveDate) -> Ordering {
         match self {
             DateMenuOption::Day(calendar_date) => (**calendar_date).cmp(&date),
-            DateMenuOption::Month(month) => month.cmp(&date.month()),
+            DateMenuOption::Month(year, month) => {
+                let year_order = year.cmp(&date.year());
+                if year_order == Ordering::Equal {
+                    month.cmp(&date.month())
+                } else {
+                    year_order
+                }
+            }
             DateMenuOption::Year(year) => year.cmp(&date.year()),
             DateMenuOption::Decenium(decenium) => decenium.cmp(&(date.year() - date.year() % 10)),
         }
@@ -683,27 +694,68 @@ pub fn day_highlighter(
     })
 }
 
+/// Ordering of an element T wrt Range<T>
+#[derive(PartialEq)]
+enum RangeOrdering<T> {
+    Less(T),
+    Contains,
+    Greater(T),
+}
+/// Returns Less when date < min_date
+/// Returns Greater when date > max_date.
+/// Returns Equal date ∈ (min_date..=max_date) | Interpret None variants with NaiveDate::MIN and NaiveDate::MAX respectively.
+fn date_in_range(
+    date: NaiveDate,
+    min_date: MaybeProp<NaiveDate>,
+    max_date: MaybeProp<NaiveDate>,
+) -> RangeOrdering<NaiveDate> {
+    // Min max checks
+    if let Some(min_date) = min_date.get()
+        && min_date > date
+    {
+        return RangeOrdering::Less(min_date);
+    }
+    if let Some(max_date) = max_date.get()
+        && max_date < date
+    {
+        return RangeOrdering::Greater(max_date);
+    }
+    RangeOrdering::Contains
+}
+
 #[generate_docs]
 #[component]
 pub fn DatePicker(
-    #[prop(optional, into)] id: MaybeProp<String>,
-    #[prop(optional, into)] name: MaybeProp<String>,
-    #[prop(optional, into)] class: MaybeProp<String>,
-    #[prop(default = "yyyy-mm-dd".into(), into)] placeholder: MaybeProp<String>,
+    /// Html-identifier
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
+    /// Used as a key for this field's value during form-submission.
+    #[prop(optional, into)]
+    name: MaybeProp<String>,
+    /// Extra styling classes
+    #[prop(optional, into)]
+    class: MaybeProp<String>,
+    /// Shown as a hint when the input is empty.
+    #[prop(default = "yyyy-mm-dd".into(), into)]
+    placeholder: MaybeProp<String>,
     /// Asserts that min_date <= value
     #[prop(optional, into)]
     min_date: MaybeProp<NaiveDate>,
     /// Asserts that max_date >= value
     #[prop(optional, into)]
     max_date: MaybeProp<NaiveDate>,
-
-    #[prop(into)] value: RwSignal<Option<NaiveDate>>,
+    /// Current value of the date_picker.
+    #[prop(into)]
+    value: RwSignal<Option<NaiveDate>>,
     /// A function which maps a DayMenuOption -> String (css class) to style special days on the date-picker.
     #[prop(default = day_highlighter(*value).into(), into)]
     highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
-
-    #[prop(optional)] required: bool,
-    #[prop(optional, into)] label: MaybeProp<String>,
+    /// Whether this input is required to be set in order to submit a surrounding form.
+    #[prop(optional)]
+    required: bool,
+    /// Label shown above this date_picker input.
+    #[prop(optional, into)]
+    label: MaybeProp<String>,
 ) -> impl IntoView {
     // Extra internal state for hiding and which menu is active.
     let picker_state = RwSignal::new(DatePickerState::default());
@@ -734,20 +786,18 @@ pub fn DatePicker(
 
         // Min max checks
         if let Some(date) = date {
-            if let Some(min_date) = min_date.get()
-                && min_date > date
-            {
-                return Err(format!("Enter a date >= {min_date}"));
-            }
-            if let Some(max_date) = max_date.get()
-                && max_date < date
-            {
-                return Err(format!("Enter a date <= {max_date}"));
-            }
+            match date_in_range(date, min_date, max_date) {
+                RangeOrdering::Less(min_date) => return Err(format!("Enter a date >= {min_date}")),
+                RangeOrdering::Greater(max_date) => {
+                    return Err(format!("Enter a date <= {max_date}"));
+                }
+                _ => {}
+            };
         };
 
         Ok(date)
     });
+
     // Input formatter
     let format = BoxOneCallback::new(|date: Option<NaiveDate>| {
         if let Some(date) = date {
@@ -784,9 +834,50 @@ pub fn DatePicker(
             .unwrap_or(Local::now().date_naive())
     });
 
-    // Handle changes of the passed [value], can change due to external use or due to a date being picked.
+    let initial_value = value.get_untracked();
+    if let Some(date) = initial_value
+        // Out of range
+        && date_in_range(date, min_date, max_date) != RangeOrdering::Contains
+    {
+        // Reject invalid value
+        value.set(None);
+    }
+
+    let input_value = RwSignal::new(initial_value);
+    let last_value = RwSignal::new(initial_value);
+
+    // Copy external changes into this component.
     Effect::watch(
         move || value.get(),
+        {
+            move |new, old, _| {
+                if
+                // Check if the value really got updated, like memo does
+                Some(new) != old &&
+                // Check if if this is not an internal change coming from the UI.
+                new != &last_value.get_untracked()
+                {
+                    // New external value
+                    // Check if its value is in the required range.
+                    if let Some(date) = new
+                        && date_in_range(*date, min_date, max_date) != RangeOrdering::Contains
+                    {
+                        // Reject if not.
+                        value.set(input_value.get());
+                    }
+                    // Update if all is ok.
+                    last_value.set(*new);
+                    input_value.set(*new);
+                }
+            }
+        },
+        // Internal state already gets intialised at creation time.
+        false,
+    );
+
+    // Handle changes of input_value passed [value], can change due to external use or due to a date being picked.
+    Effect::watch(
+        move || input_value.get(),
         {
             let month_by_date = month_by_date.clone();
             move |new: &Option<NaiveDate>, old, _| {
@@ -796,9 +887,15 @@ pub fn DatePicker(
                     picker_state.update(|state| state.hide());
                     month_by_date(new);
                 }
+                // If it was not an external change (external change copier sets the last_value before input_value)
+                if last_value.get_untracked() != *new {
+                    // Was validated by parser, copy to the outside
+                    value.set(*new);
+                }
             }
         },
-        false,
+        // Needs to run to update picker_state and month_view
+        true,
     );
 
     // Presents the items the user can pick depending on which menu is active.
@@ -831,7 +928,7 @@ pub fn DatePicker(
         }
     };
 
-    // Presents the navigation the user can user depending on which menu is active.
+    // Presents the navigation the user can use depending on which menu is active.
     let nav_picker = move || match picker_state.get().menu {
         DatePickerMenu::Day => view! {
             <DayPickerMenuNav
@@ -905,8 +1002,8 @@ pub fn DatePicker(
 
     type OptDate = Option<NaiveDate>;
     view! {
-        <div node_ref=target>
-            <GenericInput<OptDate, String> id=date_picker_id.get() name class placeholder label parser format value required
+        <div class=class.get() node_ref=target>
+            <GenericInput<OptDate, String> id=date_picker_id.get() name placeholder label parser format value=input_value required
                 on_focus=ArcOneCallback::new(move |_| {
                     picker_state.update(|state| state.show());
                 })

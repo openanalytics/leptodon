@@ -17,6 +17,7 @@
 // If not, see <http://www.apache.org/licenses/>
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
+use leptodon::paragraph::Paragraph;
 use leptodon::table::StyledHeadDragHandler;
 use leptodon::table::TailwindClassesPreset;
 use leptodon::table::grouping::GroupRow;
@@ -108,9 +109,9 @@ pub fn TableDemoPage() -> impl IntoView {
 
         <FixedCenterColumn>
             <Heading4 anchor="group-table">"Grouped Table"</Heading4>
-            <p>
+            <Paragraph>
                 "When using paginated tables there is currently a bug that causes a scroll-to-top. To reduce the frequency of this issue you can increase your data-load chunks."
-            </p>
+            </Paragraph>
             <GroupedTableExample />
         </FixedCenterColumn>
     }

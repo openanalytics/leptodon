@@ -1,10 +1,10 @@
 [package]
 name = "leptodon"
 publish = true
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
-description = "your Leptos UI toolkit for data science"
-license-file = "LICENSE"
+description = "Your Leptos UI toolkit"
+license = "Apache-2.0"
 homepage = "https://leptodon.dev"
 repository = "https://github.com/openanalytics/leptodon"
 resolver = "3"
@@ -16,7 +16,7 @@ leptos_meta = { version = "0.8.6", optional = true }
 leptos_router = { version = "0.8.12", optional = true }
 leptos_axum = { version = "0.8.8", optional = true }
 leptos-use = { version = "0.18", features = ["use_calendar", "on_click_outside", "math"], optional = true }
-leptodon-proc-macros = { version = "0.1.0", path="./proc-macros"}
+leptodon-proc-macros = { version = "1.0.0", path="./proc-macros"}
 
 # Bumping reactive_stores causes hydration errors.
 reactive_stores = { version = "=0.3.1", optional = true }

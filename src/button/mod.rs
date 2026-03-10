@@ -99,6 +99,7 @@ pub const OA_MINIMAL_BUTTON_CLASSES: &str = const_str::join!(
     " "
 );
 
+/// An html button with preset styling and grouping awareness. See [ButtonGroup].
 #[generate_docs]
 #[component]
 pub fn Button(
@@ -123,9 +124,18 @@ pub fn Button(
     /// Whether the button shows the loading status.
     #[prop(optional, into)]
     loading: Signal<bool>,
-    #[prop(optional, into)] on_click: Option<BoxOneCallback<ev::MouseEvent>>,
-    #[prop(optional)] children: Option<Children>,
-    #[prop(optional)] comp_ref: ComponentRef<ButtonRef>,
+    /// Click event handler
+    #[prop(optional, into)]
+    on_click: Option<BoxOneCallback<ev::MouseEvent>>,
+    /// Shown inside the button
+    #[prop(optional)]
+    children: Option<Children>,
+    /// Gets populated with a reference to this button
+    #[prop(optional)]
+    comp_ref: ComponentRef<ButtonRef>,
+    /// Whether to have a default amount of spacing above and below the button.
+    #[prop(default = true)]
+    default_spacing: bool,
 ) -> impl IntoView
 where
 {
@@ -160,6 +170,7 @@ where
             class=class_list![
                 class,
                 group_classes.unwrap_or_default(),
+                ("my-1", default_spacing),
                 if in_group.in_group { "rounded-none border-r-0 !mr-0" } else { "" },
                 match appearance.get() {
                     ButtonAppearance::Secondary => OA_SECONDARY_BUTTON_CLASSES,
@@ -184,9 +195,7 @@ where
                 if loading.get() {
                     EitherOf3::A(
                         view! {
-                            <span class="thaw-button__icon">
-                                <Spinner />
-                            </span>
+                            <Spinner />
                         },
                     )
                 } else if let Some(icon) = icon.get() {
