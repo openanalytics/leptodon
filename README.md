@@ -18,7 +18,7 @@
 1. Please enable the pre-commit hook for code styling.
 2. Use `cargo make mimic-ci` to test locally.
 
-### Dev-dependencies
+### Development dependencies
 A couple tools are required to work on this project:
 - `cargo-make` for the [Makefile.toml](./Makefile.toml).
 - `cargo-leptos` for serving and building the application.
