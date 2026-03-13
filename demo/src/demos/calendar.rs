@@ -20,6 +20,7 @@ use chrono::Local;
 use chrono::NaiveDate;
 use chrono::NaiveTime;
 use chrono::Weekday;
+use chrono::WeekdaySet;
 use leptodon::calendar::Calendar;
 use leptodon::calendar::CalendarEvent;
 use leptodon::heading::Heading4;
@@ -59,8 +60,8 @@ pub fn CalendarDemo() -> impl IntoView {
         <Calendar
             children
             presented_month_writer
-            show_days=RwSignal::new(Box::new([Weekday::Mon, Weekday::Tue, Weekday::Wed, Weekday::Thu, Weekday::Fri].as_ref()))
-            />
+            show_days=RwSignal::new(WeekdaySet::from_array([Weekday::Mon, Weekday::Tue, Weekday::Wed, Weekday::Thu, Weekday::Fri]))
+        />
     }
 }
 

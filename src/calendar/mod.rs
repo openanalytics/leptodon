@@ -20,23 +20,27 @@ use crate::{
     button::{Button, ButtonAppearance},
     button_group::{ButtonGroup, First, Last},
     class_list,
+    class_list::reactive_class::MaybeReactiveClass,
     icon::{self, NextIcon, PreviousIcon},
     popover::{Popover, PopoverAnchor, PopoverTrigger},
     util::{callback::ArcOneCallback, option_comp::OptionComp},
 };
-use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveTime, Weekday};
+use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveTime, Weekday, WeekdaySet};
 use leptodon_proc_macros::generate_docs;
 use leptos::{either::Either, logging::error, prelude::*, tachys::view::any_view::AnyView};
 use leptos_use::{CalendarDate, UseCalendarOptions, UseCalendarReturn, use_calendar_with_options};
 use std::{fmt, iter, ops::Deref};
 
-const WORK_WEEK: [Weekday; 5] = [
+mod year;
+pub use year::*;
+
+const WORK_WEEK: WeekdaySet = WeekdaySet::from_array([
     Weekday::Mon,
     Weekday::Tue,
     Weekday::Wed,
     Weekday::Thu,
     Weekday::Fri,
-];
+]);
 
 /// Will show weeks where at least 1 day is visible of the current month.
 ///
@@ -44,7 +48,7 @@ const WORK_WEEK: [Weekday; 5] = [
 /// [show_days] days visible in the calendar, non visible days are skipped
 ///
 /// Returns whether the week should be shown.
-fn should_show_week(date: &CalendarDate, show_days: &[Weekday]) -> bool {
+fn should_show_week(date: &CalendarDate, show_days: WeekdaySet) -> bool {
     if !date.is_other_month() {
         return true;
     }
@@ -55,7 +59,7 @@ fn should_show_week(date: &CalendarDate, show_days: &[Weekday]) -> bool {
     };
     let mut checking_day = monday;
     for _ in iter::repeat_n(0, 7) {
-        if checking_day.month() != wrong_month && show_days.contains(&checking_day.weekday()) {
+        if checking_day.month() != wrong_month && show_days.contains(checking_day.weekday()) {
             return true;
         }
         if let Some(next_day) = checking_day.succ_opt() {
@@ -63,6 +67,145 @@ fn should_show_week(date: &CalendarDate, show_days: &[Weekday]) -> bool {
         }
     }
     false
+}
+
+#[component]
+pub fn MonthCalendarNav(
+    current_calendar_date: Memo<NaiveDate>,
+    local_date_time: Signal<DateTime<Local>>,
+    goto_today: impl Fn() + Clone + Send + Sync + 'static,
+    previous_month: impl Fn() + Clone + Send + Sync + 'static,
+    next_month: impl Fn() + Clone + Send + Sync + 'static,
+) -> impl IntoView {
+    let is_current_month = Memo::new(move |_| {
+        let local_date_time = local_date_time.get();
+        current_calendar_date.get().month() == local_date_time.month()
+            && current_calendar_date.get().year() == local_date_time.year()
+    });
+
+    let current_month_year = Memo::new(move |_| {
+        let current = current_calendar_date.get();
+        let mut out = String::new();
+        if let Err(fmt::Error) = current.format("%B %Y").write_to(&mut out) {
+            error!("%B %Y is no longer a valid chronos format string");
+        }
+        out
+    });
+
+    view! {
+        <div class="flex items-center justify-between pb-4">
+            <span class="text-lg inline-flex">
+                <span class="w-[13ch] text-right">
+                    {move || { current_month_year.get() }}
+                </span>
+                {move || if is_current_month.get() {
+                    view! {
+                        <Badge class="ml-2" theme=BadgeTheme::Success size=BadgeSize::Large border=true>Current Month</Badge>
+                    }.into_any()
+                } else {
+                    let local_date_time = local_date_time.get();
+                    let badge_label = format!("back to {}", local_date_time.format("%B %Y"));
+                    if current_calendar_date.get() < local_date_time.date_naive() {
+                        // Viewing the past
+                        view! {
+                            <Button class="ml-2" appearance=ButtonAppearance::Minimal
+                                on_click={ let goto_today = goto_today.clone(); move |_| goto_today() }
+                            >
+                                <Badge
+                                    theme=BadgeTheme::Warning
+                                    postfix=BadgePostfix::Icon(icon::RightArrowIcon())
+                                    size=BadgeSize::Large
+                                    border=true
+                                >{badge_label}</Badge>
+                            </Button>
+                        }.into_any()
+                    } else {
+                        // Viewing into the future
+                        view! {
+                            <Button class="ml-2" appearance=ButtonAppearance::Minimal
+                                on_click={ let goto_today = goto_today.clone(); move |_| goto_today() }
+                            >
+                                <Badge
+                                    theme=BadgeTheme::Warning
+                                    prefix=BadgePrefix::Icon(icon::LeftArrowIcon())
+                                    size=BadgeSize::Large
+                                    border=true
+                                >{badge_label}</Badge>
+                            </Button>
+                        }.into_any()
+                    }
+                }}
+            </span>
+            <span>
+                <ButtonGroup>
+                    <First slot:first><Button icon=PreviousIcon() on_click={ let previous_month = previous_month.clone(); move |_| previous_month() }/></First>
+                    <Last slot:last><Button icon=NextIcon() on_click={ let next_month = next_month.clone(); move |_| next_month() }/></Last>
+                </ButtonGroup>
+            </span>
+        </div>
+    }
+}
+
+#[component]
+pub fn MonthCalendarUncontrolled(
+    /// Days to show, acts as a filter over [dates]
+    #[prop(default = RwSignal::new(WORK_WEEK), into)]
+    show_days: RwSignal<WeekdaySet>,
+    /// Day highlighter, allows you to provide classes for various days.
+    day_highlighter: Option<
+        ArcOneCallback<(NaiveDate, YearCalendarLayout), MaybeReactiveClass>,
+    >,
+    /// Provide content inside the day cell
+    children: Option<CalendarChildrenFn>,
+    /// Days in this month.
+    dates: Signal<Vec<CalendarDate>>,
+) -> impl IntoView {
+    // Explicity is needed for tailwind's css generation.
+    let grid_col_class = match show_days.get().len() {
+        1 => "grid-cols-1",
+        2 => "grid-cols-2",
+        3 => "grid-cols-3",
+        4 => "grid-cols-4",
+        5 => "grid-cols-5",
+        6 => "grid-cols-6",
+        7 => "grid-cols-7",
+        _ => "",
+    };
+    view! {
+        <div class=class_list!(grid_col_class, "grid border border-oa-gray-mid dark:border-gray-700 bg-oa-gray-mid dark:bg-gray-600 gap-px grid-rows-[1lh_minmax(0,_1fr)] rounded-lg shadow-sm overflow-auto")>
+            <For each=move || show_days.get().iter(Weekday::Mon) key=|idx| *idx let:idx>
+                <div class="text-right bg-oa-gray dark:bg-gray-700 font-bold h-fit">
+                    <span class="mr-2">
+                    {idx.to_string()}
+                    </span>
+                </div>
+            </For>
+            {move || {
+                dates
+                    .get()
+                    .into_iter()
+                    .filter(|date| {
+                        let show_days = show_days.get();
+                        // Non visible dates are removed from the iterator.
+                        if !show_days.contains(date.weekday()) {
+                            return false;
+                        }
+                        // Decide if this week should be shown at all.
+                        should_show_week(date, show_days)
+                    })
+                    .map(|date| {
+                        view! {
+                            <CalendarDay
+                                date
+                                day_highlighter=day_highlighter.clone()
+                                children=children.clone()
+                            />
+                        }
+                    })
+                    .collect_view()
+            }}
+        </div>
+    }
 }
 
 #[generate_docs]
@@ -78,10 +221,13 @@ pub fn Calendar(
     #[prop(default = Signal::derive(|| Local::now()), into)] local_date_time: Signal<
         DateTime<Local>,
     >,
-    #[prop(default = RwSignal::new(Box::new(&WORK_WEEK)), into)] show_days: RwSignal<
-        Box<&'static [Weekday]>,
-    >,
+    #[prop(default = RwSignal::new(WORK_WEEK))] show_days: RwSignal<WeekdaySet>,
     #[prop(default = local_date_time.get().date_naive(), into)] initial_date: NaiveDate,
+    /// Day highlighter, allows you to provide classes for various days.
+    #[prop(optional)]
+    day_highlighter: MaybeProp<
+        ArcOneCallback<(NaiveDate, YearCalendarLayout), MaybeReactiveClass>,
+    >,
     #[prop(optional, into)] children: Option<CalendarChildrenFn>,
 ) -> impl IntoView {
     // Calendar helper object which backs the calendar view
@@ -118,112 +264,23 @@ pub fn Calendar(
         presented_month_writer.inspect(|writer| writer.set(current_calendar_date.get()));
     });
 
-    let is_current_month = Memo::new(move |_| {
-        let local_date_time = local_date_time.get();
-        current_calendar_date.get().month() == local_date_time.month()
-            && current_calendar_date.get().year() == local_date_time.year()
-    });
-
-    let current_month_year = Memo::new(move |_| {
-        let current = current_calendar_date.get();
-        let mut out = String::new();
-        if let Err(fmt::Error) = current.format("%B %Y").write_to(&mut out) {
-            error!("%B %Y is no longer a valid chronos format string");
-        }
-        out
-    });
-
     view! {
         <div class=class_list!["flex flex-col h-[810px]", class]>
-            <div class="flex items-center justify-between pb-4">
-                <span class="text-lg inline-flex">
-                    <span class="w-[13ch] text-right">
-                        {move || { current_month_year.get() }}
-                    </span>
-                    {move || if is_current_month.get() {
-                        view! {
-                            <Badge class="ml-2" theme=BadgeTheme::Success size=BadgeSize::Large border=true>Current Month</Badge>
-                        }.into_any()
-                    } else {
-                        let local_date_time = local_date_time.get();
-                        let badge_label = format!("back to {}", local_date_time.format("%B %Y"));
-                        if current_calendar_date.get() < local_date_time.date_naive() {
-                            // Viewing the past
-                            view! {
-                                <Button class="ml-2" appearance=ButtonAppearance::Minimal
-                                    on_click={ let goto_today = goto_today.clone(); move |_| goto_today() }
-                                >
-                                    <Badge
-                                        theme=BadgeTheme::Warning
-                                        postfix=BadgePostfix::Icon(icon::RightArrowIcon())
-                                        size=BadgeSize::Large
-                                        border=true
-                                    >{badge_label}</Badge>
-                                </Button>
-                            }.into_any()
-                        } else {
-                            // Viewing into the future
-                            view! {
-                                <Button class="ml-2" appearance=ButtonAppearance::Minimal
-                                    on_click={ let goto_today = goto_today.clone(); move |_| goto_today() }
-                                >
-                                    <Badge
-                                        theme=BadgeTheme::Warning
-                                        prefix=BadgePrefix::Icon(icon::LeftArrowIcon())
-                                        size=BadgeSize::Large
-                                        border=true
-                                    >{badge_label}</Badge>
-                                </Button>
-                            }.into_any()
-                        }
-                    }}
-                </span>
-                <span>
-                    <ButtonGroup>
-                        <First slot:first><Button icon=PreviousIcon() on_click={ let previous_month = previous_month.clone(); move |_| previous_month() }/></First>
-                        <Last slot:last><Button icon=NextIcon() on_click={ let next_month = next_month.clone(); move |_| next_month() }/></Last>
-                    </ButtonGroup>
-                </span>
-            </div>
-            <div class="flex grid border border-oa-gray-mid dark:border-gray-700 bg-oa-gray-mid dark:bg-gray-600 gap-px grid-cols-5 grid-rows-[1lh_minmax(0,_1fr)] rounded-lg shadow-sm overflow-auto">
-                <For each=move || show_days.get().iter() key=|idx| *idx let:idx>
-                    <div class="text-right bg-oa-gray dark:bg-gray-700 font-bold h-fit">
-                        <span class="mr-2">
-                        {idx.to_string()}
-                        </span>
-                    </div>
-                </For>
-                {move || {
-                    dates
-                        .get()
-                        .into_iter()
-                        .filter(|date| {
-                            let show_days = show_days.get();
-                            // Non visible dates are removed from the iterator.
-                            if !show_days.contains(&date.weekday()) {
-                                return false;
-                            }
-                            // Decide if this week should be shown at all.
-                            should_show_week(date, *show_days)
-                        })
-                        .map(|date| {
-                            view! {
-                                <CalendarDay
-                                    date
-                                    children=children.clone()
-                                />
-                            }
-                        })
-                        .collect_view()
-                }}
-
-            </div>
+            <MonthCalendarNav current_calendar_date local_date_time goto_today previous_month next_month />
+            <MonthCalendarUncontrolled show_days children day_highlighter=day_highlighter.get() dates />
         </div>
     }
 }
 
 #[component]
-fn CalendarDay(date: CalendarDate, children: Option<CalendarChildrenFn>) -> impl IntoView {
+fn CalendarDay(
+    date: CalendarDate,
+    /// Day highlighter, allows you to provide classes for various days.
+    day_highlighter: Option<
+        ArcOneCallback<(NaiveDate, YearCalendarLayout), MaybeReactiveClass>,
+    >,
+    children: Option<CalendarChildrenFn>,
+) -> impl IntoView {
     // Some months start in the middle of a week, we then need to manually align calendar items at the correct column.
     let col_idx = date.weekday() as usize; // 0-indexed
     let col_class = [
@@ -235,9 +292,21 @@ fn CalendarDay(date: CalendarDate, children: Option<CalendarChildrenFn>) -> impl
         }
         .into_any()
     } else {
+        let mut cell_class_list = class_list!(
+            col_class[col_idx],
+            "flex flex-col pointer hover:bg-oa-gray bg-white hover:dark:bg-gray-800 dark:bg-gray-900 overflow-auto h-[6lh]"
+        );
+
+        cell_class_list = if let Some(day_highlighter) = day_highlighter.clone() {
+            let day_highlight = day_highlighter((*date, YearCalendarLayout::Year));
+            cell_class_list.add_class(day_highlight)
+        } else {
+            cell_class_list
+        };
+
         view! {
             <div
-                class=class_list!("flex flex-col pointer hover:bg-oa-gray bg-white hover:dark:bg-gray-800 dark:bg-gray-900 overflow-auto h-[6lh]", col_class[col_idx])
+                class=cell_class_list
                 class=("text-oa-gray", date.is_other_month())
             >
                 <div class="self-end">
