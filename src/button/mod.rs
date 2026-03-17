@@ -134,12 +134,14 @@ pub fn Button(
     #[prop(optional)]
     comp_ref: ComponentRef<ButtonRef>,
     /// Whether to have a default amount of spacing above and below the button.
-    #[prop(default = true)]
+    /// Ignored inside groups.
+    #[prop(default = appearance.get() != ButtonAppearance::Minimal)]
     default_spacing: bool,
 ) -> impl IntoView
 where
 {
-    let in_group = use_context::<InGroupContext>().unwrap_or(InGroupContext { in_group: false });
+    let in_group_ctx =
+        use_context::<InGroupContext>().unwrap_or(InGroupContext { in_group: false });
     let aria_disabled = move || {
         if loading.get() { Some("true") } else { None }
     };
@@ -170,8 +172,8 @@ where
             class=class_list![
                 class,
                 group_classes.unwrap_or_default(),
-                ("my-1", default_spacing),
-                if in_group.in_group { "rounded-none border-r-0 !mr-0" } else { "" },
+                ("my-1", default_spacing && !in_group_ctx.in_group),
+                if in_group_ctx.in_group { "rounded-none border-r-0 !mr-0" } else { "" },
                 match appearance.get() {
                     ButtonAppearance::Secondary => OA_SECONDARY_BUTTON_CLASSES,
                     ButtonAppearance::Primary => OA_PRIMARY_BUTTON_CLASSES,
@@ -264,33 +266,6 @@ impl ButtonShape {
             ButtonShape::Circular => "circular",
             ButtonShape::Square => "square",
         }
-    }
-}
-
-#[derive(Debug, Default, PartialEq, Clone, Copy)]
-pub enum ButtonSize {
-    Small,
-    #[default]
-    Medium,
-    Large,
-}
-
-impl ButtonSize {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            ButtonSize::Small => "small",
-            ButtonSize::Medium => "medium",
-            ButtonSize::Large => "large",
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub(crate) struct ButtonSizeInjection(pub ButtonSize);
-
-impl ButtonSizeInjection {
-    pub fn use_context() -> Option<Self> {
-        use_context()
     }
 }
 
