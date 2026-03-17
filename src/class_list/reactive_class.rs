@@ -26,7 +26,7 @@ use crate::class_list::{Class, ClassList, IntoClass};
 /// Thus this type exists to avoid having to create closures every time a class is used.
 ///   Quickly wrap ClassList or &'static str as a ReactiveClass via .into()
 ///   Pass the reactive_class to class_list!(reactive_class, ...) in the child component.
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub enum ReactiveClass {
     Memo(Memo<Oco<'static, str>>),
     Static(Oco<'static, str>),
@@ -74,8 +74,14 @@ impl From<String> for ReactiveClass {
 }
 
 /// MaybeProp variant of [ReactiveClass]. See [ReactiveClass]
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct MaybeReactiveClass(MaybeProp<ReactiveClass>);
+
+impl PartialEq for MaybeReactiveClass {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.get() == other.0.get()
+    }
+}
 
 impl From<&'static str> for MaybeReactiveClass {
     fn from(value: &'static str) -> Self {
