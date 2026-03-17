@@ -69,8 +69,9 @@ impl RadioOption for YearCalendarLayout {
 }
 
 const MAX_DAYS_IN_MONTH: u8 = 31;
-const TABLE_HEADER_CLASS: &str = "!bg-oa-gray text-center p-0.5 md:p-1 2xl:p-2";
-const TABLE_CELL_CLASS: &str = "bg-white dark:bg-black hover:!bg-hover-light";
+const TABLE_HEADER_CLASS: &str =
+    "bg-oa-gray dark:bg-gray-700 hover:bg-hover-light text-center p-0.5 md:p-1 2xl:p-2";
+const TABLE_CELL_CLASS: &str = "bg-white dark:bg-gray-900 hover:!bg-hover-light";
 const MONTHS_IN_YEAR: [Month; 12] = [
     Month::January,
     Month::February,
@@ -116,7 +117,7 @@ pub fn YearCalendarTwelveMonthLayout(
     // use Signals to update each calendar sequentially, first one would update with 1/12th the current delay.
     let calendars = MONTHS_IN_YEAR
         .map(|month| {
-            let dates = Signal::from(dates_from_month(current_year.get(), month));
+            let dates = Signal::derive(move || dates_from_month(current_year.get(), month));
             view! {
                 <div>
                     <div class="flex w-full justify-center">
@@ -151,19 +152,24 @@ pub fn YearCalendarYearLayout(
         ArcOneCallback<(NaiveDate, YearCalendarLayout), MaybeReactiveClass>,
     >,
 ) -> impl IntoView {
+    // Used for highlighting the Month and Day in the header.
     let hovered_elem: RwSignal<Option<(Month, u8)>> = RwSignal::new(None);
 
     // [1][2]...[31]
     let day_cells = (1..=MAX_DAYS_IN_MONTH)
         .map(|day_in_month| {
             view! {
-                <div class=class_list!(
-                    ("!bg-hover-light", move || match hovered_elem.get() {
-                        Some((_, hover_day)) => hover_day == day_in_month,
-                        _ => false
-                    }),
-                    TABLE_HEADER_CLASS, TABLE_CELL_CLASS, "content-center"
-                )>
+                <div
+                    class=class_list!(
+                        ("!bg-hover-light", move || match hovered_elem.get() {
+                            Some((_, hover_day)) => hover_day == day_in_month,
+                            _ => false
+                        }),
+                        TABLE_HEADER_CLASS, "content-center"
+                    )
+                    on:mouseenter=move |_| {
+                        hovered_elem.set(None);
+                    }>
                     {day_in_month}
                 </div>
             }
@@ -182,7 +188,7 @@ pub fn YearCalendarYearLayout(
                     Some((hover_month, _)) => hover_month == month,
                     _ => false
                 }),
-                TABLE_HEADER_CLASS, TABLE_CELL_CLASS,
+                TABLE_HEADER_CLASS,
                 "content-center text-start capitalize vertical-lr text-vertical
                 md:max-lg:horizontal-tb md:max-lg:text-upright md:max-lg:text-center
                 xl:horizontal-tb xl:text-upright"
@@ -225,7 +231,7 @@ pub fn YearCalendarYearLayout(
                 } else {
                     // day_in_month is likely out of range
                     view!{
-                        <div class=class_list!(TABLE_CELL_CLASS, "!bg-oa-gray-darker")></div>
+                        <div class=class_list!(TABLE_CELL_CLASS, "!bg-oa-gray-darker dark:!bg-black")></div>
                     }.into_any()
                 }
             }).collect_view()
@@ -242,12 +248,13 @@ pub fn YearCalendarYearLayout(
         <div class="grid gap-px
             grid-cols-[repeat(13,_minmax(0,_1fr))] grid-rows-[repeat(32,_minmax(0,_1fr))] grid-flow-col
             lg:grid-cols-[repeat(32,_minmax(0,_1fr))] lg:grid-rows-[repeat(13,_minmax(0,_1fr))] lg:grid-flow-row
-            bg-oa-gray-darker border border-oa-gray-darker rounded-lg overflow-auto text-sm lg:text-base"
+            bg-oa-gray-darker dark:bg-gray-600 border border-oa-gray-darker dark:border-gray-600
+            rounded-lg overflow-auto text-sm lg:text-base"
             on:mouseleave=move |_| {
                 hovered_elem.set(None);
             }>
             // Header
-            <div class=class_list!(TABLE_HEADER_CLASS, TABLE_CELL_CLASS)>""</div>
+            <div class=class_list!(TABLE_HEADER_CLASS)>""</div>
             {day_cells}
 
             // Content
@@ -336,7 +343,7 @@ pub fn YearCalendarNavbar(
 
 pub fn calendar_weekend_highlighter(date: NaiveDate) -> MaybeReactiveClass {
     if date.weekday().number_from_monday() > Weekday::Fri.number_from_monday() {
-        class_list!("!bg-oa-gray")
+        class_list!("!bg-oa-gray dark:!bg-gray-800/89")
     } else {
         class_list!("")
     }

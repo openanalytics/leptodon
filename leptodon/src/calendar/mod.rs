@@ -161,7 +161,7 @@ pub fn MonthCalendarUncontrolled(
     dates: Signal<Vec<CalendarDate>>,
 ) -> impl IntoView {
     // Explicity is needed for tailwind's css generation.
-    let grid_col_class = match show_days.get().len() {
+    let grid_col_class = move || match show_days.get().len() {
         1 => "grid-cols-1",
         2 => "grid-cols-2",
         3 => "grid-cols-3",
@@ -172,7 +172,7 @@ pub fn MonthCalendarUncontrolled(
         _ => "",
     };
     view! {
-        <div class=class_list!(grid_col_class, "grid border border-oa-gray-mid dark:border-gray-700 bg-oa-gray-mid dark:bg-gray-600 gap-px grid-rows-[1lh_minmax(0,_1fr)] rounded-lg shadow-sm overflow-auto")>
+        <div class=move || class_list!(grid_col_class(), "grid border border-oa-gray-mid dark:border-gray-700 bg-oa-gray-mid dark:bg-gray-600 gap-px grid-rows-[1lh_minmax(0,_1fr)] rounded-lg shadow-sm overflow-auto")>
             <For each=move || show_days.get().iter(Weekday::Mon) key=|idx| *idx let:idx>
                 <div class="text-right bg-oa-gray dark:bg-gray-700 font-bold h-fit">
                     <span class="mr-2">
