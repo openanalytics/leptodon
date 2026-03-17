@@ -60,7 +60,9 @@ pub fn CalendarDemo() -> impl IntoView {
         <Calendar
             children
             presented_month_writer
-            show_days=RwSignal::new(WeekdaySet::from_array([Weekday::Mon, Weekday::Tue, Weekday::Wed, Weekday::Thu, Weekday::Fri]))
+            show_days=RwSignal::new(WeekdaySet::from_array(
+                [Weekday::Mon, Weekday::Tue, Weekday::Thu, Weekday::Fri]
+            ))
         />
     }
 }
