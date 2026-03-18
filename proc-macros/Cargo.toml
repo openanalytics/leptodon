@@ -4,7 +4,7 @@ name = "leptodon-proc-macros"
 description = "Procedural macros crate for Leptodon (your Leptos UI toolkit)."
 license = "Apache-2.0"
 repository = "https://github.com/openanalytics/leptodon"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
