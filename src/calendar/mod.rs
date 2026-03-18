@@ -205,7 +205,7 @@ pub fn MonthCalendarUncontrolled(
                         view! {
                             <CalendarDay
                                 date
-                                start_of_week=Weekday::Mon
+                                start_of_week=start_of_week
                                 weekdays=show_days.get()
                                 day_highlighter=day_highlighter.clone()
                                 children=children.clone()
