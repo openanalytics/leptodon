@@ -14,7 +14,7 @@ excludes:
   - proxy\/.+
   - Jenkinsfile
   - .*Dockerfile
-  # ThawUI utilities, mixed copyright.
+  # ThawUI utilities / mixed copyright.
   - src\/util\/signals\/component_ref\.rs
   - src\/util\/signals\/mod\.rs
   - src\/util\/callback\.rs
@@ -23,6 +23,7 @@ excludes:
   - src\/util\/optional_prop\.rs
   - overview\/src\/gen_icons\.rs
   - demo\/src\/generated_demolist\.rs
+  - overview\/src\/ical_property\.rs
 # Definition of the licenses used on this project and to what files
 # they should apply.
 licenses:
