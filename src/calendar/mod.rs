@@ -27,7 +27,12 @@ use crate::{
 };
 use chrono::{DateTime, Datelike, Local, NaiveDate, NaiveTime, Weekday, WeekdaySet};
 use leptodon_proc_macros::generate_docs;
-use leptos::{either::Either, logging::error, prelude::*, tachys::view::any_view::AnyView};
+use leptos::{
+    either::Either,
+    logging::{error, warn},
+    prelude::*,
+    tachys::view::any_view::AnyView,
+};
 use leptos_use::{CalendarDate, UseCalendarOptions, UseCalendarReturn, use_calendar_with_options};
 use std::{fmt, iter, ops::Deref};
 
@@ -155,6 +160,9 @@ pub fn MonthCalendarUncontrolled(
     day_highlighter: Option<
         ArcOneCallback<(NaiveDate, YearCalendarLayout), MaybeReactiveClass>,
     >,
+    /// First day of the week.
+    #[prop(default = Weekday::Mon)]
+    start_of_week: Weekday,
     /// Provide content inside the day cell
     children: Option<CalendarChildrenFn>,
     /// Days in this month.
@@ -197,6 +205,8 @@ pub fn MonthCalendarUncontrolled(
                         view! {
                             <CalendarDay
                                 date
+                                start_of_week=Weekday::Mon
+                                weekdays=show_days.get()
                                 day_highlighter=day_highlighter.clone()
                                 children=children.clone()
                             />
@@ -221,6 +231,7 @@ pub fn Calendar(
     #[prop(default = Signal::derive(|| Local::now()), into)] local_date_time: Signal<
         DateTime<Local>,
     >,
+    #[prop(default = Weekday::Mon)] start_of_week: Weekday,
     #[prop(default = RwSignal::new(WORK_WEEK))] show_days: RwSignal<WeekdaySet>,
     #[prop(default = local_date_time.get().date_naive(), into)] initial_date: NaiveDate,
     /// Day highlighter, allows you to provide classes for various days.
@@ -267,14 +278,19 @@ pub fn Calendar(
     view! {
         <div class=class_list!["flex flex-col h-[810px]", class]>
             <MonthCalendarNav current_calendar_date local_date_time goto_today previous_month next_month />
-            <MonthCalendarUncontrolled show_days children day_highlighter=day_highlighter.get() dates />
+            <MonthCalendarUncontrolled start_of_week show_days children day_highlighter=day_highlighter.get() dates />
         </div>
     }
 }
 
+// requires: [date](CalendarDate#weekday()) ∈ [weekdays]
+// this is a specific component for grid based calendar, uses col and row to position days in combination with [weekdays].
 #[component]
 fn CalendarDay(
     date: CalendarDate,
+    start_of_week: Weekday,
+    /// weekdays of the week being shown
+    weekdays: WeekdaySet,
     /// Day highlighter, allows you to provide classes for various days.
     day_highlighter: Option<
         ArcOneCallback<(NaiveDate, YearCalendarLayout), MaybeReactiveClass>,
@@ -282,7 +298,14 @@ fn CalendarDay(
     children: Option<CalendarChildrenFn>,
 ) -> impl IntoView {
     // Some months start in the middle of a week, we then need to manually align calendar items at the correct column.
-    let col_idx = date.weekday() as usize; // 0-indexed
+    let col_idx = weekdays
+        .iter(start_of_week)
+        .position(|s| s == date.weekday())
+        .unwrap_or_else(|| {
+            warn!("CalendarDay constructed with a date not present in their weekdays set.");
+            0
+        });
+
     let col_class = [
         "col-[1]", "col-[2]", "col-[3]", "col-[4]", "col-[5]", "col-[6]", "col-[7]",
     ];
