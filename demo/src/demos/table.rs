@@ -17,7 +17,6 @@
 // If not, see <http://www.apache.org/licenses/>
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
-use leptodon::paragraph::Paragraph;
 use leptodon::table::StyledHeadDragHandler;
 use leptodon::table::TailwindClassesPreset;
 use leptodon::table::grouping::GroupRow;
@@ -94,7 +93,9 @@ pub fn GroupedTableDemo() -> impl IntoView {
         <table>
             <TableContent
                 rows=rows
-                scroll_container="html"
+                // Set to "" to disable leptos-struct-table's scroll-
+                // jumping, meant for virtualization.
+                scroll_container=""
                 row_renderer=GroupTableRowRenderer
                 drag_handler=HeadDragHandler::new(StyledHeadDragHandler)>
             </TableContent>
@@ -109,9 +110,6 @@ pub fn TableDemoPage() -> impl IntoView {
 
         <FixedCenterColumn>
             <Heading4 anchor="group-table">"Grouped Table"</Heading4>
-            <Paragraph>
-                "When using paginated tables there is currently a bug that causes a scroll-to-top. To reduce the frequency of this issue you can increase your data-load chunks."
-            </Paragraph>
             <GroupedTableExample />
         </FixedCenterColumn>
     }

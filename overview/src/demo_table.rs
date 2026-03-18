@@ -136,7 +136,7 @@ pub fn DemoTable() -> impl IntoView {
         <div> hello </div>
         <table data-testid="person-table">
             <TableContent rows
-                scroll_container="html"
+                scroll_container=""
                 drag_handler=HeadDragHandler::new(StyledHeadDragHandler)
                 row_renderer=DetailRowRenderer
             />

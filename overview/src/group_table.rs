@@ -105,7 +105,7 @@ pub fn GroupedTableExample() -> impl IntoView {
                     <TableContent rows
                         row_renderer=GroupTableRowRenderer
                         display_strategy=strat
-                        scroll_container="html"
+                        scroll_container=""
                         drag_handler=HeadDragHandler::new(StyledHeadDragHandler)
                     ></TableContent>
                 }
