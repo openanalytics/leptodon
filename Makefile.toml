@@ -60,11 +60,13 @@ run_task = { name = [
 
 # Tests
 [tasks.unit-tests]
+workspace = false
 cwd = "./leptodon"
 command = "cargo"
 args = ["nextest", "run"]
 
 [tasks.integration-tests]
+workspace = false
 cwd = "./overview"
 command = "cargo"
 args = ["leptos", "end-to-end", "--precompress", "--release"]
