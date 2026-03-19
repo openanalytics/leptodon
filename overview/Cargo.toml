@@ -4,71 +4,51 @@
 name = "overview"
 version = "1.0.0"
 edition = "2024"
-resolver = "2"
 
 [lib]
 name = "overview"
 crate-type = ["cdylib", "rlib"]
 
-[profile.release]
-codegen-units = 1
-lto = true
-opt-level = 'z'
-
-[profile.dev]
-# codegen-backend = "cranelift"
-opt-level = 1
-incremental = true
-
-[profile.dev.package.leptodon]
-opt-level = 1
-incremental = true
-
-[profile.dev.package."*"]
-opt-level = 3
-debug = 2
-
 [dependencies]
-http = "1"
-tower = { version = "0.5.3", optional = true }
-tower-http = { version = "0.6.8", features = ["fs"], optional = true }
-axum = { version = "0.8.8", optional = true, features = ["macros"] }
+http = { workspace = true }
+tower = { workspace = true, optional = true }
+tower-http = { workspace = true, optional = true, features = [ "fs" ] }
+axum = { workspace = true, optional = true, features = [ "macros" ] }
 
-tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
+tokio = { workspace = true, optional = true, features = [ "rt-multi-thread" ] }
 
-console_log = "1"
-console_error_panic_hook = "0.1"
+console_log = { workspace = true }
+console_error_panic_hook = { workspace = true }
 
-leptos = { version = "0.8.17", features = ["rkyv", "tracing"] }
-leptos_axum = { version = "0.8.8", optional = true }
-leptos_meta = { version = "0.8.6" }
-leptos_router = { version = "0.8.12" }
+leptos = { workspace = true, features = [ "rkyv", "tracing" ] }
+leptos_axum = { workspace = true, optional = true }
+leptos_meta = { workspace = true }
+leptos_router = { workspace = true }
 
-wasm-bindgen = { version = "=0.2.108", optional = true }
+wasm-bindgen = { workspace = true, optional = true }
 
-itertools = "0.14.0"
-leptodon = { path = "..", default-features = false, features = ["leptos"] }
-leptos-struct-table = { version = "0.18", features = ["chrono"] }
+itertools.workspace = true
+leptodon = { workspace = true }
+leptos-struct-table = { workspace = true, features = [ "chrono" ] }
 
-axum-extra = { version = "0.12.5", optional = true, features = ["cookie"] }
+axum-extra = { workspace = true, optional = true, features = [ "cookie" ] }
 
-thiserror = "2.0.18"
-tracing = { version = "0.1", optional = true }
-log = "0.4"
-cfg-if = "1.0.4"
-derive_more = { version = "2.1.1", features = ["display"] }
-chrono = { version = "0.4.44", features = ["serde"] }
-ical = { git = "https://github.com/lennart-k/ical-rs.git", features = ["serde-derive"] }
+thiserror = { workspace = true }
+tracing = { workspace = true, optional = true }
+log = { workspace = true }
+cfg-if = { workspace = true }
+derive_more = { workspace = true, features = [ "display" ] }
+chrono = { workspace = true, features = [ "serde" ] }
+ical = { workspace = true, features = [ "serde-derive" ] }
 
-regex = { version = "1.12", optional = true }
-anyhow = { version = "1.0.102", optional = true }
-dateparser = { version = "0.2.1", optional = true }
-rrule = { version = "0.14", features = ["serde"] }
+regex = { workspace = true, optional = true }
+anyhow = { workspace = true, optional = true }
+dateparser = { workspace = true, optional = true }
+rrule = { workspace = true, features = ["serde"] }
 
-
-serde = "1"
-strum_macros = "0.28.0"
-strum = "0.28.0"
+serde = { workspace = true }
+strum_macros = { workspace = true }
+strum = { workspace = true }
 
 [features]
 default = ["ssr"]
@@ -102,14 +82,6 @@ csr = [
 tower = ["dep:tower"]
 tower-http = ["dep:tower-http"]
 
-# Defines a size-optimized profile for the WASM bundle in release mode
-[profile.wasm-release]
-inherits = "release"
-opt-level = 'z'
-lto = true
-codegen-units = 1
-panic = "abort"
-
 [package.metadata.leptos]
 # # https://github.com/leptos-rs/leptos/issues/3813#issuecomment-3563904837
 # Disabling (thus enabling this option) the erasure of components causes large linker errors in this project.
@@ -136,7 +108,7 @@ site-addr = "127.0.0.1:3000"
 reload-port = 3001
 
 # [Optional] Command to use when running end2end tests. It will run in the end2end dir.
-end2end-cmd = "npx playwright test --ui"
+end2end-cmd = "sh -C ci-test-launch.sh"
 end2end-dir = "end2end"
 browserquery = "defaults"
 

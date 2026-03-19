@@ -14,7 +14,8 @@ excludes:
   - proxy\/.+
   - Jenkinsfile
   - .*Dockerfile
-  # ThawUI utilities, mixed copyright.
+  # ThawUI utilities / mixed copyright.
+  - overview\/src\/ical_property.rs
   - src\/util\/signals\/component_ref\.rs
   - src\/util\/signals\/mod\.rs
   - src\/util\/callback\.rs

@@ -1,47 +1,56 @@
 [tasks.license-check]
+workspace = false
 command = "licensure"
 args = ["--check", "--project"]
 
 # Builds
 [tasks.build-demo]
+workspace = false
 cwd = "demo"
 command = "cargo"
 args = ["leptos", "build", "--release", "--precompress", "-vv"]
 
 # Lints
-[tasks.lint-library]
-cwd = "."
+[tasks.lint-leptodon]
+workspace = false
+cwd = "./leptodon"
 command = "cargo"
 args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
 
 [tasks.lint-test-overview]
+workspace = false
 cwd = "./overview"
 command = "cargo"
 args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
 
 [tasks.lint-test-overview-codegen]
+workspace = false
 cwd = "./overview/codegen"
 command = "cargo"
 args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
 
 [tasks.lint-demo]
+workspace = false
 cwd = "./demo"
 command = "cargo"
 args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
 
 [tasks.lint-demo-codegen]
+workspace = false
 cwd = "./demo/codegen"
 command = "cargo"
 args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
 
 [tasks.lint-demo-macros]
+workspace = false
 cwd = "./proc-macros"
 command = "cargo"
 args = ["clippy", "--all-targets", "--all-features", "--", "-D", "warnings"]
 
 [tasks.lint]
+workspace = false
 run_task = { name = [
-    "lint-library",
+    "lint-leptodon",
     "lint-test-overview",
     "lint-test-overview-codegen",
     "lint-demo",
@@ -51,38 +60,17 @@ run_task = { name = [
 
 # Tests
 [tasks.unit-tests]
-cwd = "."
+cwd = "./leptodon"
 command = "cargo"
 args = ["nextest", "run"]
 
 [tasks.integration-tests]
-cwd = "overview"
-script = '''
-#!/bin/sh
-set +e
-cargo leptos build --precompress --release;
-target/release/overview &
-
-echo "Up and running";
-cd end2end;
-npm install;
-
-# This script supports nixos with devenv or ubuntu:24 due to playwright.
-if command -v devenv >/dev/null 2>&1
-then
-    CI=1 devenv shell playwright test;
-else
-    npx playwright install-deps;
-    npx playwright install;
-    CI=1 npx playwright test;
-fi
-
-# Kills whatever this script spawned
-kill $! && echo "killed server";
-
-'''
+cwd = "./overview"
+command = "cargo"
+args = ["leptos", "end-to-end", "--precompress", "--release"]
 
 [tasks.tests]
+workspace = false
 run_task = { name = [
     "unit-tests",
     "integration-tests"
@@ -90,6 +78,7 @@ run_task = { name = [
 
 # Tries to run the same checks as the CI, locally.
 [tasks.mimic-ci]
+workspace = false
 run_task = { name = [
     "license-check",
     "lint",
@@ -98,6 +87,7 @@ run_task = { name = [
 
 # Publish tasks
 [tasks.publish-if-missing]
+workspace = false
 script = '''
 #!/bin/sh
 set +e
@@ -126,9 +116,11 @@ fi
 '''
 
 [tasks.publish-leptodon-if-missing]
-env = { "PUBLISH_CRATE" = "leptodon", "PUBLISH_PATH" = "./" }
+workspace = false
+env = { "PUBLISH_CRATE" = "leptodon", "PUBLISH_PATH" = "./leptodon" }
 run_task = "publish-if-missing"
 
 [tasks.publish-leptodon-proc-macros-if-missing]
+workspace = false
 env = { "PUBLISH_CRATE" = "leptodon-proc-macros", "PUBLISH_PATH" = "./proc-macros" }
 run_task = "publish-if-missing"
