@@ -93,8 +93,7 @@ pipeline {
     stage('Package leptodon-proc-macros') {
       steps {
         sh """
-          cd proc-macros;
-          cargo package;
+          cargo package -p leptodon-proc-macros
         """
       }
       post {
@@ -125,7 +124,7 @@ pipeline {
           // Pray crates.io finds the newly published crate version after 15s.
           sh """
             sleep 5;
-            cargo package;
+            cargo package -p leptodon
           """
         }
       }

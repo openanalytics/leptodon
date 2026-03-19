@@ -23,4 +23,4 @@ repos:
     name: run Rust formatter
     always_run: true
     language: script
-    entry: /bin/sh -c 'rustfmt --edition 2024 ./src/lib.rs ./overview/src/lib.rs ./demo/src/lib.rs ./proc-macros/src/lib.rs'
+    entry: /bin/sh -c 'rustfmt --edition 2024 ./leptodon/src/lib.rs ./overview/src/lib.rs ./demo/src/lib.rs ./proc-macros/src/lib.rs'

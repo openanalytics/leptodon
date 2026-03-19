@@ -1,68 +1,95 @@
-[package]
-name = "leptodon"
-publish = true
-version = "1.0.1"
+[workspace.package]
+version = "1.1.0-dev"
 edition = "2024"
-description = "Your Leptos UI toolkit"
 license = "Apache-2.0"
 homepage = "https://leptodon.dev"
 repository = "https://github.com/openanalytics/leptodon"
+
+[workspace]
 resolver = "3"
+members = ["leptodon", "proc-macros", "demo", "overview"]
+# Since these are compiled with cargo from build.rs files, they need their own target folders to avoid deadlocking.
+# The easiest solution is to exclude them from the workspace.
+exclude = ["demo/codegen", "overview/codegen"]
 
-[dependencies]
-console_error_panic_hook = { version = "0.1", optional = true }
-leptos = { version = "0.8.17", optional = true }
-leptos_meta = { version = "0.8.6", optional = true }
-leptos_router = { version = "0.8.12", optional = true }
-leptos_axum = { version = "0.8.8", optional = true }
-leptos-use = { version = "0.18", features = ["use_calendar", "on_click_outside", "math"], optional = true }
-leptodon-proc-macros = { version = "1.0.1", path="./proc-macros"}
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 'z'
 
-# Bumping reactive_stores causes hydration errors.
-reactive_stores = { version = "=0.3.1", optional = true }
-uuid = { version = "1.21.0",  features = ["v4", "js"], optional = true }
+[profile.dev]
+# codegen-backend = "cranelift"
+opt-level = 1
+incremental = true
 
-# Pinned together, updating wasm-bindgen beyond 0.2.108 breaks the leptos-wasm loading
-wasm-bindgen = { version = "=0.2.108", optional = true }
-wasm-cookies = { version = "=0.2.1", optional = true }
-# Newer versions of web-sys require newer wasm-bindgen.
-web-sys = { version = "=0.3.85", features = ["HtmlDocument", "Window", "MediaQueryList", "HtmlElement", "HtmlInputElement", "KeyboardEvent"], optional = true }
+[profile.dev.package.leptodon]
+opt-level = 1
+incremental = true
 
-axum = { version = "0.8", optional = true }
-axum-extra = { version = "0.12.5", optional = true, features = ["cookie"] }
-cfg-if = "1.0.4"
-rstml-to-string-macro = { version = "0.1.0", optional = true }
-serde = { version = "1.0", features=["derive"], optional = true }
-num-traits = "0.2.19"
-http1 = { version = "1", package = "http", optional = true }
-const-str = "1.1.0"
-chrono = "0.4.44"
-base64 = "0.22.1"
-send_wrapper = "0.6.0"
+[profile.dev.package."*"]
+opt-level = 3
+debug = 2
+
+# Defines a size-optimized profile for the WASM bundle in release mode
+[profile.wasm-release]
+inherits = "release"
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[workspace.dependencies]
+leptodon = { path = "./leptodon", default-features = false, features = [
+    "leptos",
+], version = "=1.1.0-dev" }
+leptodon-proc-macros = { path = "./proc-macros", version = "=1.1.0-dev" }
+
+# Protocol
+http = "1"
+# Server
+axum = { version = "0.8.8", features = ["macros"] }
+axum-extra = { version = "0.12.5", features = ["cookie"] }
+# Middleware
+tower = { version = "0.5.3" }
+tower-http = { version = "0.6.8", features = ["fs"] }
+# Async
+tokio = { version = "1", features = ["rt-multi-thread"] }
+
+# Leptos core
+leptos = { version = "0.8.17", features = ["rkyv", "tracing"] }
+leptos_axum = { version = "0.8.8" }
+leptos_meta = { version = "0.8.6" }
+leptos_router = { version = "0.8.12" }
+wasm-bindgen = { version = "=0.2.108" }
+# Leptos additions
 leptos-struct-table = { version = "0.18", features = ["chrono"] }
-nucleo-matcher = "0.3.1"
-zxcvbn = "3.1.0"
 
-[build-dependencies]
-walkdir = "2.5.0"
+# Log and error
+tracing = { version = "0.1" }
+log = "0.4"
+console_log = "1"
+console_error_panic_hook = "0.1"
+anyhow = { version = "1.0.102" }
+thiserror = "2.0.18"
 
-[features]
-default = ["leptos"]
-leptos = ["dep:leptos", "dep:leptos_router","dep:leptos-use", "dep:leptos_meta", "dep:web-sys", "dep:serde", "dep:rstml-to-string-macro", "dep:reactive_stores", "dep:uuid", "dep:wasm-cookies"]
-csr = ["leptos/csr"]
-ssr = [
-    "leptos/ssr",
-    "leptos_meta/ssr",
-    "dep:leptos_axum",
-    "dep:axum",
-    "dep:axum-extra",
-    "dep:http1",
-    "leptos-use/axum",
-    "leptos-use/ssr"
-]
-hydrate = [
-    "leptos/hydrate",
-]
+# Time and date
+chrono = { version = "0.4.44", features = ["serde"] }
+dateparser = { version = "0.2.1" }
+ical = { git = "https://github.com/lennart-k/caldata-rs", rev = "474caf58acbc8ebefd90e6b848741d7ed5136d65" }
+rrule = { version = "0.14", features = ["serde"] }
 
-[lints.rust]
-dead_code = "allow"
+# String utils
+regex = { version = "1.12" }
+strum = "0.28.0"
+strum_macros = "0.28.0"
+
+# Other utils
+itertools = "0.14.0"
+
+# Macros
+cfg-if = "1.0.4"
+derive_more = { version = "2.1.1", features = ["display"] }
+serde = "1"
+syn = { version = "2.0.117" }
+quote = { version = "1.0.45" }
+proc-macro2 = { version = "1.0.106" }
