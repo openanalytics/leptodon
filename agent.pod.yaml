@@ -21,7 +21,7 @@ spec:
           ephemeral-storage: "30Gi"
       imagePullPolicy: Always
     - name: leptodon-build
-      image: registry.openanalytics.eu/openanalytics/leptodon-build:latest
+      image: registry.openanalytics.eu/proxy/nixpkgs/nix-flakes:nixos-25.11-x86_64-linux
       resources:
         limits:
           memory: "12Gi"

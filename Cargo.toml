@@ -1,3 +1,5 @@
+[workspace.metadata.crane]
+name = "Leptodon"
 [workspace.package]
 version = "1.1.0-dev"
 edition = "2024"
@@ -61,6 +63,7 @@ leptos_axum = { version = "0.8.8" }
 leptos_meta = { version = "0.8.6" }
 leptos_router = { version = "0.8.12" }
 wasm-bindgen = { version = "=0.2.108" }
+wasm-streams = { version = "=0.4.2" }
 # Leptos additions
 leptos-struct-table = { version = "0.18", features = ["chrono"] }
 

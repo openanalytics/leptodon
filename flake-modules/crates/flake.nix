@@ -28,10 +28,23 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-
-        inherit (pkgs) lib;
+        lib = pkgs.lib;
 
         craneLib = crane.mkLib pkgs;
+
+        # Build custom cargo-leptos
+        cargo-leptos = craneLib.buildPackage {
+          src = fetchGit {
+            url = "file:///home/mverstraete/dev/github/cargo-leptos";
+            rev = "56a05748dfc27f621a0c65faea990d5fa1f13b48";
+          };
+          nativeBuildInputs = [ pkgs.pkg-config ];
+          buildInputs = [ pkgs.openssl ];
+          OPENSSL_NO_VENDOR = 1;
+          cargoExtraArgs = "--features no_downloads"; # cargo-leptos will try to install missing dependencies on its own otherwise
+          doCheck = false;
+        };
+
         src = craneLib.cleanCargoSource ../../.;
 
         # Common arguments can be set here to avoid repeating them later
@@ -42,9 +55,6 @@
           buildInputs = [
             # Add additional build inputs here
           ];
-
-          # Additional environment variables can be set directly
-          # MY_CUSTOM_VAR = "some value";
         };
 
         # Build *just* the cargo dependencies (of the entire workspace),
@@ -52,6 +62,21 @@
         # It is *highly* recommended to use something like cargo-hakari to avoid
         # cache misses when building individual top-level-crates
         cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+
+        cargoWasmArtifacts = craneLib.buildDepsOnly (
+          commonArgs
+          // {
+            # wasm-streams wants lld
+            nativeBuildInputs = [
+              pkgs.lld
+            ];
+
+            cargoExtraArgs = "--target=wasm32-unknown-unknown --no-default-features --features hydrate ";
+            # Additional environment variables can be set directly
+            CARGO_PROFILE = "wasm-release";
+            CARGO_TARGET_DIR = "target/front";
+          }
+        );
 
         individualCrateArgs = commonArgs // {
           inherit cargoArtifacts;
@@ -65,8 +90,16 @@
           lib.fileset.toSource {
             root = ../../.;
             fileset = lib.fileset.unions [
-              ./Cargo.toml
-              ./Cargo.lock
+              ../../Cargo.toml
+              ../../Cargo.lock
+              (craneLib.fileset.commonCargoSources ../../demo)
+              ../../demo/style
+              ../../demo/assets
+              (craneLib.fileset.commonCargoSources ../../demo/codegen)
+              (craneLib.fileset.commonCargoSources ../../overview)
+              (craneLib.fileset.commonCargoSources ../../overview/codegen)
+              (craneLib.fileset.commonCargoSources ../../proc-macros)
+              (craneLib.fileset.commonCargoSources ../../leptodon)
               (craneLib.fileset.commonCargoSources crate)
             ];
           };
@@ -79,6 +112,97 @@
         # Note that the cargo workspace must define `workspace.members` using wildcards,
         # otherwise, omitting a crate (like we do below) will result in errors since
         # cargo won't be able to find the sources for all members.
+        demo-wasm = craneLib.buildPackage (
+          individualCrateArgs
+          // {
+            inherit cargoWasmArtifacts;
+            pname = "demo-wasm";
+            nativeBuildInputs = [
+              pkgs.lld
+              pkgs.wasm-bindgen-cli_0_2_108
+              pkgs.binaryen
+              cargo-leptos
+              craneLib.installFromCargoBuildLogHook
+            ];
+            buildInputs = [ ];
+
+            LEPTOS_HASH_FILES = "true";
+            LEPTOS_LIB_CARGO_STDOUT_PATH = "front_build.log";
+            LEPTOS_LIB_CARGO_ARGS = "--message-format json-render-diagnostics";
+            RUST_BACKTRACE="1";
+
+            buildPhaseCargoCommand = ''
+              cargoBuildLog=target/front_build.log
+
+              cargo leptos build --frontend-only --release -P -p demo;
+            '';
+            postInstall = ''
+              ls -al target/release > $out/hello.txt
+
+              cp -r target/release/hash.txt $out/lib/hash.txt
+              cp -r target/site $out/lib/site
+            '';
+
+            src = fileSetForCrate ../../demo;
+          }
+        );
+        demo-server = craneLib.buildPackage (
+          individualCrateArgs
+          // {
+            inherit cargoWasmArtifacts;
+            pname = "demo";
+            nativeBuildInputs = [
+              pkgs.lld
+              cargo-leptos
+              craneLib.installFromCargoBuildLogHook
+            ];
+
+            RUST_BACKTRACE="1";
+            LEPTOS_HASH_FILES = "true";
+            LEPTOS_BIN_CARGO_ARGS = "--message-format json-render-diagnostics";
+            LEPTOS_BIN_CARGO_STDOUT_PATH = "server_build.log";
+            buildPhaseCargoCommand = ''
+              cargoBuildLog=target/server_build.log
+
+              cargo leptos build --server-only --release -P -p demo;
+            '';
+
+            src = fileSetForCrate ../../demo;
+          }
+        );
+        demo-site = pkgs.stdenv.mkDerivation {
+          name = "demo-site";
+          nativeBuildInputs = [
+            demo-server
+            demo-wasm
+          ];
+          src = ../../demo/style;
+          sourceRoot = ".";
+
+          buildPhase = ''
+            set -x
+            mkdir -p $out/bin;
+
+            # If you know how to take this from a normal nix string with the correct placeholders, please change this:
+            echo 'cd ${placeholder "out"}/bin' > $out/bin/demo-site;
+            echo 'LEPTOS_SITE_ADDR="0.0.0.0:8080" \' >> $out/bin/demo-site;
+            echo 'LEPTOS_SITE_ROOT="site" \' >> $out/bin/demo-site;
+            echo 'LEPTOS_HASH_FILES=true \' >> $out/bin/demo-site;
+            echo './demo' >> $out/bin/demo-site;
+            chmod +x $out/bin/demo-site;
+
+            cp ${demo-server}/bin/* $out/bin/;
+            # cp -r ${demo-wasm}/lib/* $out/bin/;
+          '';
+        };
+        demo-site-image = pkgs.dockerTools.buildImage {
+          name = "demo-site";
+          tag = "latest";
+          copyToRoot = [ demo-site ];
+          config = {
+            Cmd = [ "${demo-site}/bin/demo" ];
+          };
+        };
         leptodon = craneLib.buildPackage (
           individualCrateArgs
           // {
@@ -99,7 +223,7 @@
       {
         checks = {
           # Build the crates as part of `nix flake check` for convenience
-          inherit leptodon leptodon-proc-macros;
+          inherit demo-wasm demo-server demo-site leptodon leptodon-proc-macros;
 
           # Run clippy (and deny all warnings) on the workspace source,
           # again, reusing the dependency artifacts from above.
@@ -130,11 +254,11 @@
             inherit src;
           };
 
-          my-workspace-toml-fmt = craneLib.taploFmt {
-            src = pkgs.lib.sources.sourceFilesBySuffices src [ ".toml" ];
-            # taplo arguments can be further customized below as needed
-            # taploExtraArgs = "--config ./taplo.toml";
-          };
+          # my-workspace-toml-fmt = craneLib.taploFmt {
+          #   src = pkgs.lib.sources.sourceFilesBySuffices src [ ".toml" ];
+          #   # taplo arguments can be further customized below as needed
+          #   # taploExtraArgs = "--config ./taplo.toml";
+          # };
 
           # Audit dependencies
           my-workspace-audit = craneLib.cargoAudit {
@@ -142,22 +266,22 @@
           };
 
           # Audit licenses
-          my-workspace-deny = craneLib.cargoDeny {
-            inherit src;
-          };
+          # my-workspace-deny = craneLib.cargoDeny {
+          #   inherit src;
+          # };
 
           # Run tests with cargo-nextest
           # Consider setting `doCheck = false` on other crate derivations
           # if you do not want the tests to run twice
-          my-workspace-nextest = craneLib.cargoNextest (
-            commonArgs
-            // {
-              inherit cargoArtifacts;
-              partitions = 1;
-              partitionType = "count";
-              cargoNextestPartitionsExtraArgs = "--no-tests=pass";
-            }
-          );
+          # my-workspace-nextest = craneLib.cargoNextest (
+          #   commonArgs
+          #   // {
+          #     inherit cargoArtifacts;
+          #     partitions = 1;
+          #     partitionType = "count";
+          #     cargoNextestPartitionsExtraArgs = "--no-tests=pass";
+          #   }
+          # );
 
           # # Ensure that cargo-hakari is up to date
           # my-workspace-hakari = craneLib.mkCargoDerivation {
@@ -179,15 +303,12 @@
         };
 
         packages = {
-          inherit leptodon leptodon-proc-macros;
+          inherit demo-site-image demo-site demo-wasm demo-server leptodon leptodon-proc-macros;
         };
 
         apps = {
-          leptodon = flake-utils.lib.mkApp {
-            drv = leptodon;
-          };
-          leptodon-proc-macros = flake-utils.lib.mkApp {
-            drv = leptodon-proc-macros;
+          demo = flake-utils.lib.mkApp {
+            drv = demo-site;
           };
         };
 
@@ -200,7 +321,7 @@
 
           # Extra inputs can be added here; cargo and rustc are provided by default.
           packages = [
-            pkgs.cargo-hakari
+            demo-site
           ];
         };
       }

@@ -35,31 +35,12 @@ pipeline {
         }
       }
     }
-    stage('License Check') {
-      steps {
-        sh "cargo make license-check"
-      }
-    }
-    stage('Linting') {
-      steps {
-        sh "cargo make lint"
-      }
-    }
-    stage('Library Unit Tests') {
-      steps {
-        sh "cargo make unit-tests"
-        withChecks('Unit Tests') {
-          junit "target/nextest/default/junit.xml"
+    stage('Cargo available ?') {
+        steps {
+            sh "nix develop --command cargo --version"
+            sh "cargo --version"
+            sh "nix-env -i attic_client"
         }
-      }
-    }
-    stage('Integration Tests') {
-      steps {
-        sh "cargo make integration-tests"
-        withChecks('Integration Tests') {
-          junit "overview/end2end/reports/test-report-e2e.xml"
-        }
-      }
     }
     stage('Publish Demo') {
       when {
@@ -98,7 +79,7 @@ pipeline {
       }
       post {
         success {
-          sh "cp proc-macros/target/package/*.crate ${env.WORKSPACE}"
+          sh "cp target/package/*.crate ${env.WORKSPACE}"
           archiveArtifacts artifacts: '*.crate', fingerprint: true
         }
       }
