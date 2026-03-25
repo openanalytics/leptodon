@@ -13,7 +13,7 @@ pipeline {
   environment {
     VERSION = sh(
       returnStdout: true,
-      script: 'cargo metadata --no-deps --format-version=1 | jq ".packages[0].version" --raw-output'
+      script: 'nix develop ./nix --quiet --quiet --command cargo metadata --no-deps --format-version=1 2>/dev/null | nix-shell --quiet --quiet --quiet -p jq --run \'jq ".packages[0].version" --raw-output\''
     ).trim()
     NS = 'openanalytics'
     REGISTRY = 'registry.openanalytics.eu'
