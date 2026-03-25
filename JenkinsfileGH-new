@@ -43,12 +43,12 @@ pipeline {
     stage('Cargo available ?') {
         steps {
             sh "nix develop ./nix --command cargo --version"
-            sh "nix-env -i attic_client"
             withCredentials([usernamePassword(credentialsId: 'attic-leptodon', passwordVariable: 'ATTIC_PASSWORD', usernameVariable: 'ATTIC_USERNAME')]) {
                 sh "attic login $ATTIC_USERNAME https://nix-cache.dev.openanalytics.eu $ATTIC_PASSWORD"
             }
             sh "attic use oa-leptodon"
             sh "nix build ./flake-modules/crates#demo-site-image"
+            sh "ls /nix/store"
         }
     }
     stage('Publish Demo') {

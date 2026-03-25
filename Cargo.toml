@@ -77,7 +77,7 @@ thiserror = "2.0.18"
 
 # Time and date
 chrono = { version = "0.4.44", features = ["serde"] }
-dateparser = { version = "0.2.1" }
+dateparser = { version = "0.2.1" } # TODO: Use new wasm feature to hopefully exclude regex and reduce wasm size.
 ical = { git = "https://github.com/lennart-k/caldata-rs", rev = "474caf58acbc8ebefd90e6b848741d7ed5136d65" }
 rrule = { version = "0.14", features = ["serde"] }
 
