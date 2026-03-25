@@ -24,6 +24,7 @@
             clang
             llvmPackages.bintools
             rustup
+            jq
           ];
 
           RUSTC_VERSION = overrides.toolchain.channel;

@@ -13,8 +13,9 @@ pipeline {
   environment {
     VERSION = sh(
       returnStdout: true,
-      script: 'nix develop ./nix --quiet --quiet --command cargo metadata --no-deps --format-version=1 2>/dev/null | nix-shell --quiet --quiet --quiet -p jq --run \'jq ".packages[0].version" --raw-output\''
+      script: 'nix develop ./nix --quiet --quiet --command cargo metadata --no-deps --format-version=1 2>/dev/null | jq ".packages[0].version" --raw-output'
     ).trim()
+    NIX_PATH=nixpkgs=channel:nixos-unstable
     NS = 'openanalytics'
     REGISTRY = 'registry.openanalytics.eu'
     IMAGE = 'leptodon'
@@ -37,8 +38,7 @@ pipeline {
     }
     stage('Cargo available ?') {
         steps {
-            sh "nix develop --command cargo --version"
-            sh "cargo --version"
+            sh "nix develop ./nix --command cargo --version"
             sh "nix-env -i attic_client"
             withCredentials([usernamePassword(credentialsId: 'attic-leptodon', passwordVariable: 'ATTIC_PASSWORD', usernameVariable: 'ATTIC_USERNAME')]) {
                 sh "attic login $ATTIC_USERNAME https://nix-cache.dev.openanalytics.eu $ATTIC_PASSWORD"
