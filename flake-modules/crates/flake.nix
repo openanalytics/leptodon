@@ -167,40 +167,30 @@
               cargo leptos build --server-only --release -P -p demo;
             '';
 
+            meta.mainProgram = "demo";
             src = fileSetForCrate ../../demo;
           }
         );
-        demo-site = pkgs.stdenv.mkDerivation {
-          name = "demo-site";
-          nativeBuildInputs = [
-            demo-server
-            demo-wasm
-          ];
-          src = ../../demo/style;
-          sourceRoot = ".";
-
-          buildPhase = ''
-            set -x
-            mkdir -p $out/bin;
-
-            # If you know how to take this from a normal nix string with the correct placeholders, please change this:
-            echo 'cd ${placeholder "out"}/bin' > $out/bin/demo-site;
-            echo 'LEPTOS_SITE_ADDR="0.0.0.0:8080" \' >> $out/bin/demo-site;
-            echo 'LEPTOS_SITE_ROOT="site" \' >> $out/bin/demo-site;
-            echo 'LEPTOS_HASH_FILES=true \' >> $out/bin/demo-site;
-            echo './demo' >> $out/bin/demo-site;
-            chmod +x $out/bin/demo-site;
-
-            cp ${demo-server}/bin/* $out/bin/;
-            # cp -r ${demo-wasm}/lib/* $out/bin/;
-          '';
-        };
+        demo-site = pkgs.writeShellScriptBin "demo-site" ''
+          LEPTOS_SITE_ADDR="''${LEPTOS_SITE_ADDR:-0.0.0.0:8080}"
+          LEPTOS_SITE_ROOT="''${LEPTOS_SITE_ROOT:-${demo-wasm}/lib/site}"
+          LEPTOS_STYLE_FILE="''${LEPTOS_STYLE_FILE:-${demo-wasm}/lib/style/output.css}"
+          LEPTOS_HASH_FILE_NAME="''${LEPTOS_HASH_FILE_NAME:-${demo-wasm}/lib/hash.txt}"
+          LEPTOS_HASH_FILES="''${LEPTOS_HASH_FILES:-true}"
+          export LEPTOS_SITE_ADDR
+          export LEPTOS_SITE_ROOT
+          export LEPTOS_HASH_FILES
+          export LEPTOS_STYLE_FILE
+          export LEPTOS_HASH_FILE_NAME
+          ${lib.getExe demo-server} "$@"
+        '';
         demo-site-image = pkgs.dockerTools.buildImage {
           name = "demo-site";
           tag = "latest";
-          copyToRoot = [ demo-site ];
+          includeNixDB = true;
+          copyToRoot = [ demo-site pkgs.bash pkgs.coreutils ];
           config = {
-            Cmd = [ "${demo-site}/bin/demo" ];
+            Cmd = [ "${pkgs.bash}/bin/bash" "-c" "${demo-site}/bin/demo-site" ];
           };
         };
         leptodon = craneLib.buildPackage (
