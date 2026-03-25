@@ -1,4 +1,5 @@
 #![allow(non_snake_case)]
+#![allow(rustdoc::invalid_html_tags)]
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV

@@ -133,7 +133,7 @@ pub fn Label(
 
 /// Style helper
 /// Used for inline labels behind checkbox and toggle.
-/// Provide the label via [children], caller is expected to wrap this and the input in a <label>.
+/// Provide the label via *children*, caller is expected to wrap this and the input in a <label>.
 #[component]
 pub fn PostfixLabelStyle(required: bool, children: Children) -> impl IntoView {
     view! {

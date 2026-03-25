@@ -638,7 +638,7 @@ impl DateMenuOption {
         }
     }
 
-    /// returns that [self] is %Ordering% than/to [date]
+    /// returns that self is [Ordering] than/to date
     ///
     /// # Examples
     ///
@@ -649,7 +649,7 @@ impl DateMenuOption {
     ///
     /// let date = NaiveDate::from_ymd_opt(2025, 11, 01).unwrap();
     ///
-    /// let month_option = DateMenuOption::Month(10);
+    /// let month_option = DateMenuOption::Month(2025, 10);
     /// let year_option = DateMenuOption::Year(2025);
     /// let decenium_option = DateMenuOption::Decenium(2030);
     ///
