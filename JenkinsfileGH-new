@@ -10,9 +10,6 @@ pipeline {
   options {
     buildDiscarder(logRotator(numToKeepStr: '3'))
   }
-  script {
-    git config --global safe.directory "*";
-  }
   environment {
     CONFIGURE_GIT = sh(
       returnStdout: true,
