@@ -40,6 +40,11 @@ pipeline {
             sh "nix develop --command cargo --version"
             sh "cargo --version"
             sh "nix-env -i attic_client"
+            withCredentials([usernamePassword(credentialsId: 'attic-leptodon', passwordVariable: 'ATTIC_PASSWORD', usernameVariable: 'ATTIC_USERNAME')]) {
+                sh "attic login $ATTIC_USERNAME https://nix-cache.dev.openanalytics.eu $ATTIC_PASSWORD"
+            }
+            sh "attic use oa-leptodon"
+            sh "nix build ./flake-modules/crates#demo-site-image"
         }
     }
     stage('Publish Demo') {
@@ -52,15 +57,7 @@ pipeline {
       steps {
         container('kaniko') {
           sh """
-          /kaniko/executor \
-            -v info \
-            --context ${env.WORKSPACE} \
-            --cache=true \
-            --cache-repo ${env.REGISTRY}/${env.NS}/${env.CACHE_IMAGE}-demo \
-            --destination ${env.REGISTRY}/${env.NS}/${env.IMAGE}-demo:${env.TAG} \
-            --log-format=text \
-            --log-timestamp=true \
-            --dockerfile demo.Dockerfile
+          ls -al result
           """
         }
       }
@@ -69,62 +66,6 @@ pipeline {
           sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
           archiveArtifacts artifacts: 'mem*.log', fingerprint: true
         }
-      }
-    }
-    stage('Package leptodon-proc-macros') {
-      steps {
-        sh """
-          cargo package -p leptodon-proc-macros
-        """
-      }
-      post {
-        success {
-          sh "cp target/package/*.crate ${env.WORKSPACE}"
-          archiveArtifacts artifacts: '*.crate', fingerprint: true
-        }
-      }
-    }
-    stage('Publish leptodon-proc-macros') {
-      when {
-        branch 'main'
-      }
-      environment {
-        CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
-      }
-      steps {
-        sh "cargo make publish-leptodon-proc-macros-if-missing"
-      }
-    }
-    stage('Package Leptodon') {
-      when {
-        // Avoid failures on develop when bumping the proc-macros crate version
-        branch 'main'
-      }
-      steps {
-        retry(3) {
-          // Pray crates.io finds the newly published crate version after 15s.
-          sh """
-            sleep 5;
-            cargo package -p leptodon
-          """
-        }
-      }
-      post {
-        success {
-          sh "cp target/package/*.crate ${env.WORKSPACE}"
-          archiveArtifacts artifacts: '*.crate', fingerprint: true
-        }
-      }
-    }
-    stage('Publish Leptodon Crate') {
-      when {
-        branch 'main'
-      }
-      environment {
-        CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
-      }
-      steps {
-        sh "cargo make publish-leptodon-if-missing"
       }
     }
   }
