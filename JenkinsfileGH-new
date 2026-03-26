@@ -71,9 +71,7 @@ pipeline {
           gunzip demo-image.tar.gz
         """
 
-        withCredentials([usernamePassword(credentialsId: 'oa-sa-jenkins-registry', passwordVariable: 'REGISTRY_PASS', usernameVariable: 'REGISTRY_USER')]) {
-          sh "nix develop ./nix --command skopeo login -u $REGISTRY_USER -p $REGISTRY_PASS registry.openanalytics.eu "
-        }
+        sh "nix develop --command skopeo login --authfile /root/.docker/config.json registry.openanalytics.eu "
 
         sh """
           nix develop ./nix --command skopeo copy \
