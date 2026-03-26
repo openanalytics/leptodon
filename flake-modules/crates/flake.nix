@@ -34,9 +34,11 @@
 
         # Build custom cargo-leptos
         cargo-leptos = craneLib.buildPackage {
-          src = fetchGit {
-            url = "file:///home/mverstraete/dev/github/cargo-leptos";
+          src = pkgs.fetchFromGitHub {
+            owner = "ToxicMushroom";
+            repo = "cargo-leptos";
             rev = "56a05748dfc27f621a0c65faea990d5fa1f13b48";
+            hash = "sha256-NU39W3KfNV8bsLLX0RkOHjKuV/K9iD0CTEqQIofLpi4=";
           };
           nativeBuildInputs = [ pkgs.pkg-config ];
           buildInputs = [ pkgs.openssl ];
