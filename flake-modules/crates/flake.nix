@@ -189,10 +189,27 @@
         demo-site-image = pkgs.dockerTools.buildImage {
           name = "demo-site";
           tag = "latest";
-          includeNixDB = true;
-          copyToRoot = [ demo-site pkgs.bash pkgs.coreutils ];
+          includeNixDB = false;
+          copyToRoot = [
+            (pkgs.buildEnv {
+              name = "image-root";
+              pathsToLink = ["/bin"];
+              paths = [
+                demo-server
+                demo-wasm
+              ];
+            })
+          ];
+
           config = {
-            Cmd = [ "${pkgs.bash}/bin/bash" "-c" "${demo-site}/bin/demo-site" ];
+            Env = [
+              "LEPTOS_SITE_ADDR=0.0.0.0:8080"
+              "LEPTOS_SITE_ROOT=${demo-wasm}/lib/site"
+              "LEPTOS_STYLE_FILE=${demo-wasm}/lib/style/output.css"
+              "LEPTOS_HASH_FILE_NAME=${demo-wasm}/lib/hash.txt"
+              "LEPTOS_HASH_FILES=true"
+            ];
+            Cmd = [ "${demo-server}/bin/demo-site" ];
           };
         };
         leptodon = craneLib.buildPackage (
@@ -265,15 +282,16 @@
           # Run tests with cargo-nextest
           # Consider setting `doCheck = false` on other crate derivations
           # if you do not want the tests to run twice
-          # my-workspace-nextest = craneLib.cargoNextest (
-          #   commonArgs
-          #   // {
-          #     inherit cargoArtifacts;
-          #     partitions = 1;
-          #     partitionType = "count";
-          #     cargoNextestPartitionsExtraArgs = "--no-tests=pass";
-          #   }
-          # );
+          my-workspace-nextest = craneLib.cargoNextest (
+            commonArgs
+            // {
+              RUST_BACKTRACE="full";
+              inherit cargoArtifacts;
+              partitions = 1;
+              partitionType = "count";
+              cargoNextestPartitionsExtraArgs = "--no-tests=pass";
+            }
+          );
 
           # # Ensure that cargo-hakari is up to date
           # my-workspace-hakari = craneLib.mkCargoDerivation {
