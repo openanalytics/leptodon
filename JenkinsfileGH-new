@@ -17,7 +17,7 @@ pipeline {
     ).trim()
     VERSION = sh(
       returnStdout: true,
-      script: 'nix develop ./nix --quiet --quiet --command cargo metadata --no-deps --format-version=1 | jq ".packages[0].version" --raw-output'
+      script: 'cat Cargo.toml | tomlq ".workspace.package.version" --raw-output'
     ).trim()
     NIX_PATH = 'nixpkgs=channel:nixos-unstable'
     NS = 'openanalytics'
@@ -40,14 +40,16 @@ pipeline {
         }
       }
     }
-    stage('Attic login') {
+    stage('Attic login & watch') {
       steps {
         sh 'echo "34.254.122.57 nix-cache.dev.openanalytics.eu" >> /etc/hosts'
-        sh "nix develop ./nix --command cargo --version"
         withCredentials([usernamePassword(credentialsId: 'attic-leptodon', passwordVariable: 'ATTIC_PASSWORD', usernameVariable: 'ATTIC_USERNAME')]) {
           sh "attic login $ATTIC_USERNAME https://nix-cache.dev.openanalytics.eu $ATTIC_PASSWORD"
         }
         sh "attic use oa-leptodon"
+        sh 'attic watch-store oa-leptodon &'
+
+        sh "nix develop ./nix --command cargo --version"
       }
     }
     stage('Publish Demo') {
@@ -66,19 +68,24 @@ pipeline {
           echo '{"default":[{"type":"insecureAcceptAnything"}],"transports":{"docker-daemon":{"":[{"type":"insecureAcceptAnything"}]}}}' > /etc/containers/policy.json
         """
 
+        sh "nix build ./flake-modules/crates#cargoArtifacts"
+        sh "nix build ./flake-modules/crates#cargoWasmArtifacts"
         sh """
           nix build ./flake-modules/crates#demo-site-image
           cp result demo-image.tar.gz
           gunzip demo-image.tar.gz
+          du -sh /nix/store
         """
 
         sh "nix develop --command skopeo login --authfile /root/.docker/config.json registry.openanalytics.eu "
 
         sh """
+          du -sh /nix/store
           nix develop ./nix --command skopeo copy \
             docker-archive:demo-image.tar \
             docker://registry.openanalytics.eu/openanalytics/leptodon-demo
           chown -R 1000:1000 .
+          du -sh /nix/store
         """
       }
     }

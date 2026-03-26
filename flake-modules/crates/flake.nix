@@ -293,7 +293,7 @@
         };
 
         packages = {
-          inherit demo-site-image demo-site demo-wasm demo-server leptodon leptodon-proc-macros;
+          inherit cargoArtifacts cargoWasmArtifacts  demo-site demo-wasm demo-server leptodon leptodon-proc-macros;
         };
 
         apps = {
