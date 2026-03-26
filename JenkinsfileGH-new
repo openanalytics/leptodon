@@ -70,7 +70,7 @@ pipeline {
           du -sh /nix/store
         """
 
-        sh "nix develop --command skopeo login --authfile /root/.docker/config.json registry.openanalytics.eu "
+        sh "nix develop ./nix --command skopeo login --authfile /root/.docker/config.json registry.openanalytics.eu "
 
         sh """
           du -sh /nix/store
