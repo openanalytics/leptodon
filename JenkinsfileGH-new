@@ -40,36 +40,47 @@ pipeline {
         }
       }
     }
-    stage('Cargo available ?') {
-        steps {
-            sh "nix develop ./nix --command cargo --version"
-            withCredentials([usernamePassword(credentialsId: 'attic-leptodon', passwordVariable: 'ATTIC_PASSWORD', usernameVariable: 'ATTIC_USERNAME')]) {
-                sh "attic login $ATTIC_USERNAME https://nix-cache.dev.openanalytics.eu $ATTIC_PASSWORD"
-            }
-            sh "attic use oa-leptodon"
-            sh "nix build ./flake-modules/crates#demo-site-image"
-            sh "ls /nix/store"
+    stage('Attic login') {
+      steps {
+        sh "nix develop ./nix --command cargo --version"
+        withCredentials([usernamePassword(credentialsId: 'attic-leptodon', passwordVariable: 'ATTIC_PASSWORD', usernameVariable: 'ATTIC_USERNAME')]) {
+          sh "attic login $ATTIC_USERNAME https://nix-cache.dev.openanalytics.eu $ATTIC_PASSWORD"
         }
+        sh "attic use oa-leptodon"
+      }
     }
     stage('Publish Demo') {
       when {
         anyOf {
           branch 'develop'
           branch 'main'
+          branch 'nix-ci'
         }
       }
       steps {
-        container('kaniko') {
-          sh """
-          ls -al result
-          """
+        sh """
+          chown -R root:root .
+          ls -al
+          mkdir -p /etc/containers
+          echo '{"default":[{"type":"insecureAcceptAnything"}],"transports":{"docker-daemon":{"":[{"type":"insecureAcceptAnything"}]}}}' > /etc/containers/policy.json
+        """
+
+        sh """
+          nix build ./flake-modules/crates#demo-site-image
+          cp result demo-image.tar.gz
+          gunzip demo-image.tar.gz
+        """
+
+        withCredentials([usernamePassword(credentialsId: 'oa-sa-jenkins-registry', passwordVariable: 'REGISTRY_PASS', usernameVariable: 'REGISTRY_USER')]) {
+          sh "nix develop ./nix --command skopeo login -u $REGISTRY_USER -p $REGISTRY_PASS registry.openanalytics.eu "
         }
-      }
-      post {
-        always {
-          sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
-          archiveArtifacts artifacts: 'mem*.log', fingerprint: true
-        }
+
+        sh """
+          nix develop ./nix --command skopeo copy \
+            docker-archive:demo-image.tar \
+            docker://registry.openanalytics.eu/openanalytics/leptodon-demo
+          chown -R 1000:1000 .
+        """
       }
     }
   }

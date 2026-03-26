@@ -25,6 +25,7 @@
             llvmPackages.bintools
             rustup
             jq
+            skopeo
           ];
 
           RUSTC_VERSION = overrides.toolchain.channel;
