@@ -40,9 +40,7 @@ spec:
           mountPath: /root/.docker/config.json
           subPath: data
       command:
-        - sleep
-      args:
-        - 99d
+        - cat
       env:
         - name: COMPOSE_HTTP_TIMEOUT
           value: 600
