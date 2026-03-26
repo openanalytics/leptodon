@@ -53,13 +53,6 @@ pipeline {
       }
     }
     stage('Publish Demo') {
-      when {
-        anyOf {
-          branch 'develop'
-          branch 'main'
-          branch 'nix-ci'
-        }
-      }
       steps {
         sh """
           chown -R root:root .
