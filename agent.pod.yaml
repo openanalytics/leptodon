@@ -39,10 +39,6 @@ spec:
         - name: dockerconfig
           mountPath: /root/.docker/config.json
           subPath: data
-      hostAliases:
-        - ip: "34.254.122.57"
-          hostnames:
-          - "nix-cache.dev.openanalytics.eu"
       command:
         - cat
       imagePullPolicy: Always

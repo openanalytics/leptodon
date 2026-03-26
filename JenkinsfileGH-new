@@ -17,7 +17,7 @@ pipeline {
     ).trim()
     VERSION = sh(
       returnStdout: true,
-      script: 'nix develop ./nix --quiet --quiet --command cargo metadata --no-deps --format-version=1 | nix develop ./nix --quiet --quiet --command jq ".packages[0].version" --raw-output'
+      script: 'nix develop ./nix --quiet --quiet --command cargo metadata --no-deps --format-version=1 | jq ".packages[0].version" --raw-output'
     ).trim()
     NIX_PATH = 'nixpkgs=channel:nixos-unstable'
     NS = 'openanalytics'
@@ -59,6 +59,7 @@ pipeline {
       }
       steps {
         sh """
+          echo "34.254.122.57   nix-cache.dev.openanalytics.eu" >> /etc/hosts
           chown -R root:root .
           ls -al
           mkdir -p /etc/containers
