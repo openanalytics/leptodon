@@ -89,7 +89,7 @@
         };
 
         mergeWithCommonFileset =
-          crate: extraPaths:
+          extraPaths:
           lib.fileset.toSource {
             root = ../../.;
             fileset = lib.fileset.unions (
@@ -101,7 +101,6 @@
                 (craneLib.fileset.commonCargoSources ../../overview)
                 (craneLib.fileset.commonCargoSources ../../proc-macros)
                 (craneLib.fileset.commonCargoSources ../../leptodon)
-                (craneLib.fileset.commonCargoSources crate)
               ]
               ++ extraPaths
             );
