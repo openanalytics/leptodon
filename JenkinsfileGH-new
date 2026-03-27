@@ -73,7 +73,7 @@ pipeline {
     }
     stage('Library Unit Tests') {
       steps {
-        sh "nix develop ./nix cargo make unit-tests"
+        sh "nix develop ./nix --command cargo make unit-tests"
         withChecks('Unit Tests') {
           junit "target/nextest/default/junit.xml"
         }
@@ -81,7 +81,7 @@ pipeline {
     }
     stage('Integration Tests') {
       steps {
-        sh "nix develop ./nix cargo make integration-tests"
+        sh "nix develop ./nix --command cargo make integration-tests"
         withChecks('Integration Tests') {
           junit "overview/end2end/reports/test-report-e2e.xml"
         }
@@ -121,7 +121,7 @@ pipeline {
         stage('Package leptodon-proc-macros') {
           steps {
             sh """
-              cargo package -p leptodon-proc-macros;
+              nix develop ./nix --command cargo package -p leptodon-proc-macros;
             """
           }
           post {
@@ -139,7 +139,7 @@ pipeline {
             CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
           }
           steps {
-            sh "cargo make publish-leptodon-proc-macros-if-missing"
+            sh "nix develop ./nix --command cargo make publish-leptodon-proc-macros-if-missing"
           }
         }
         stage('Package Leptodon') {
@@ -152,7 +152,7 @@ pipeline {
               // Pray crates.io finds the newly published crate version after 15s.
               sh """
                 sleep 5;
-                cargo package -p leptodon;
+                nix develop ./nix --command cargo package -p leptodon;
               """
             }
           }
@@ -171,7 +171,7 @@ pipeline {
             CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
           }
           steps {
-            sh "cargo make publish-leptodon-if-missing"
+            sh "nix develop ./nix --command cargo make publish-leptodon-if-missing"
           }
         }
       }
