@@ -38,6 +38,7 @@ pipeline {
           }
           echo "TAG is set to ${env.TAG}"
         }
+        sh "chown -R root:root ."
       }
     }
     stage('Attic login & watch') {
@@ -47,22 +48,51 @@ pipeline {
           sh "attic login $ATTIC_USERNAME https://nix-cache.dev.openanalytics.eu $ATTIC_PASSWORD"
         }
         sh "attic use oa-leptodon"
-        sh 'attic watch-store oa-leptodon &'
-
-        sh "nix develop ./nix --command cargo --version"
+        sh "attic watch-store oa-leptodon &"
       }
     }
-    stage('Publish Demo') {
+    stage('Compile deps') {
       steps {
+        sh "nix build ./flake-modules/crates#cargoArtifacts"
+        sh "cp result/target.tar.zst ./target1.tar.zst"
+
+        sh "nix build ./flake-modules/crates#cargoWasmArtifacts"
+        sh "cp result/target.tar.zst ./target2.tar.zst"
+
+        // Extract target into workdir for speeding up non-nix test-build.
+        sh "zstd -d target1.tar.zst -o target.tar"
+        sh "tar xf target.tar"
+        sh "rm target.tar"
+
+        sh "zstd -d target2.tar.zst -o target.tar"
+        sh "tar xf target.tar"
+        sh "rm target.tar CACHEDIR.TAG .rustc_info.json"
+      }
+    }
+    stage('Library Unit Tests') {
+      steps {
+        sh "nix develop ./nix cargo make unit-tests"
+      }
+      withChecks('Unit Tests') {
+        junit "target/nextest/default/junit.xml"
+      }
+    }
+    stage('Integration Tests') {
+      steps {
+        sh "nix develop ./nix cargo make integration-tests"
+        withChecks('Integration Tests') {
+          junit "overview/end2end/reports/test-report-e2e.xml"
+        }
+      }
+    }
+    stage('Build & Publish Demo') {
+      steps {
+        // Skopeo policy
         sh """
-          chown -R root:root .
-          ls -al
           mkdir -p /etc/containers
           echo '{"default":[{"type":"insecureAcceptAnything"}],"transports":{"docker-daemon":{"":[{"type":"insecureAcceptAnything"}]}}}' > /etc/containers/policy.json
         """
 
-        sh "nix build ./flake-modules/crates#cargoArtifacts"
-        sh "nix build ./flake-modules/crates#cargoWasmArtifacts"
         sh """
           nix build ./flake-modules/crates#demo-site-image
           cp result demo-image.tar.gz
@@ -77,7 +107,6 @@ pipeline {
           nix develop ./nix --command skopeo copy \
             docker-archive:demo-image.tar \
             docker://registry.openanalytics.eu/openanalytics/leptodon-demo
-          chown -R 1000:1000 .
           du -sh /nix/store
         """
       }

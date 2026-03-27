@@ -139,8 +139,6 @@
               cargo leptos build --frontend-only --release -P -p demo;
             '';
             postInstall = ''
-              ls -al target/release > $out/hello.txt
-
               cp -r target/release/hash.txt $out/lib/hash.txt
               cp -r target/site $out/lib/site
             '';
@@ -268,19 +266,20 @@
             inherit src advisory-db;
           };
 
+          # Can't get test output from within the flake check :/
           # Run tests with cargo-nextest
           # Consider setting `doCheck = false` on other crate derivations
           # if you do not want the tests to run twice
-          my-workspace-nextest = craneLib.cargoNextest (
-            commonArgs
-            // {
-              RUST_BACKTRACE="full";
-              inherit cargoArtifacts;
-              partitions = 1;
-              partitionType = "count";
-              cargoNextestPartitionsExtraArgs = "--no-tests=pass";
-            }
-          );
+          # my-workspace-nextest = craneLib.cargoNextest (
+          #   commonArgs
+          #   // {
+          #     RUST_BACKTRACE="full";
+          #     inherit cargoArtifacts;
+          #     partitions = 1;
+          #     partitionType = "count";
+          #     cargoNextestPartitionsExtraArgs = "--no-tests=pass";
+          #   }
+          # );
 
           # # Ensure that cargo-hakari is up to date
           # my-workspace-hakari = craneLib.mkCargoDerivation {
