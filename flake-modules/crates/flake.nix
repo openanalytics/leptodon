@@ -88,28 +88,28 @@
           doCheck = false;
         };
 
-        fileSetForCrate =
-          crate:
+        mergeWithCommonFileset =
+          crate: extraPaths:
           lib.fileset.toSource {
             root = ../../.;
-            fileset = lib.fileset.unions [
-              ../../Cargo.toml
-              ../../Cargo.lock
-              (craneLib.fileset.commonCargoSources ../../demo)
-              ../../demo/style
-              ../../demo/assets
-              (craneLib.fileset.commonCargoSources ../../demo/codegen)
-              (craneLib.fileset.commonCargoSources ../../overview)
-              (craneLib.fileset.commonCargoSources ../../overview/codegen)
-              (craneLib.fileset.commonCargoSources ../../proc-macros)
-              (craneLib.fileset.commonCargoSources ../../leptodon)
-              (craneLib.fileset.commonCargoSources crate)
-            ];
+            fileset = lib.fileset.unions (
+              [
+                ../../Cargo.toml
+                ../../Cargo.lock
+                # These need to be included since they're listed as workspace dependencies.
+                (craneLib.fileset.commonCargoSources ../../demo)
+                (craneLib.fileset.commonCargoSources ../../overview)
+                (craneLib.fileset.commonCargoSources ../../proc-macros)
+                (craneLib.fileset.commonCargoSources ../../leptodon)
+                (craneLib.fileset.commonCargoSources crate)
+              ]
+              ++ extraPaths
+            );
           };
 
         # Builds (release mode + compression) the wasm bin and assets using cargo-leptos.
         buildLeptosWasmPackage =
-          pname: sourcePath:
+          pname: sourceFileSet:
           craneLib.buildPackage (
             individualCrateArgs
             // {
@@ -139,13 +139,13 @@
                 cp -r target/site $out/lib/site
               '';
 
-              src = fileSetForCrate sourcePath;
+              src = sourceFileSet;
             }
           );
 
         # Builds (release mode + compression) the server binary using cargo-leptos.
         buildLeptosServerPackage =
-          pname: sourcePath:
+          pname: sourceFileSet:
           craneLib.buildPackage (
             individualCrateArgs
             // {
@@ -168,13 +168,20 @@
               '';
 
               meta.mainProgram = pname;
-              src = fileSetForCrate sourcePath;
+              src = sourceFileSet;
             }
           );
 
+        # Defines file sets relevant for specific projects.
+        overviewFileSet = mergeWithCommonFileset [
+          ../../overview/style
+          ../../overview/assets
+          (craneLib.fileset.commonCargoSources ../../overview/codegen)
+        ];
+
         # The overview is used for CI-tests, provided via the overview-site derivation.
-        overview-wasm = buildLeptosWasmPackage "overview" ../../overview;
-        overview-server = buildLeptosServerPackage "overview" ../../overview;
+        overview-wasm = buildLeptosWasmPackage "overview" overviewFileSet;
+        overview-server = buildLeptosServerPackage "overview" overviewFileSet;
         overview-site = pkgs.writeShellScriptBin "overview-site" ''
           LEPTOS_SITE_ADDR="''${LEPTOS_SITE_ADDR:-0.0.0.0:8080}"
           LEPTOS_SITE_ROOT="''${LEPTOS_SITE_ROOT:-${overview-wasm}/lib/site}"
@@ -189,9 +196,15 @@
           ${lib.getExe overview-server} "$@"
         '';
 
+        demoFileSet = mergeWithCommonFileset [
+          ../../demo/style
+          ../../demo/assets
+          (craneLib.fileset.commonCargoSources ../../demo/codegen)
+        ];
+
         # The demo is hosted on leptodon.dev, provided via the docker image below, published via skopeo.
-        demo-wasm = buildLeptosWasmPackage "demo" ../../demo;
-        demo-server = buildLeptosServerPackage "demo" ../../demo;
+        demo-wasm = buildLeptosWasmPackage "demo" demoFileSet;
+        demo-server = buildLeptosServerPackage "demo" demoFileSet;
         demo-site-image = pkgs.dockerTools.buildImage {
           name = "demo-site";
           tag = "latest";
