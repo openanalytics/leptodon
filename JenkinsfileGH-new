@@ -72,6 +72,7 @@ pipeline {
         stage('Unit Tests') {
           steps {
             sh "nix build ./flake-modules/crates#nextest -o nextest-result"
+            sh "ls -Hal nextest-result"
             withChecks('Unit Tests') {
               junit "nextest-result/junit.xml"
             }
@@ -88,6 +89,7 @@ pipeline {
 
               echo "Up and running";
               cd overview/end2end;
+              devenv shell npm install;
               CI=1 devenv shell playwright test;
 
               # Kills whatever this script spawned

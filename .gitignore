@@ -13,9 +13,9 @@
 *.log
 *.tar
 *.crate
- CACHEDIR.TAG
- .rustc_info.json
- *-result
+CACHEDIR.TAG
+.rustc_info.json
+*-result
 
 **/*-cache
 **/*-node-modules
