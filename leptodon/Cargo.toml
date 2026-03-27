@@ -9,45 +9,44 @@ homepage = "https://leptodon.dev"
 repository = "https://github.com/openanalytics/leptodon"
 
 [dependencies]
-console_error_panic_hook = { version = "0.1", optional = true }
-leptos = { version = "0.8.17", optional = true }
-leptos_meta = { version = "0.8.6", optional = true }
-leptos_router = { version = "0.8.12", optional = true }
-leptos_axum = { version = "0.8.8", optional = true }
-leptos-use = { version = "0.18", features = ["use_calendar", "on_click_outside", "math"], optional = true }
+console_error_panic_hook = { workspace = true, optional = true }
+leptos = { workspace = true }
+leptos_meta = { workspace = true }
+leptos_router = { workspace = true }
+leptos_axum = { workspace = true, optional = true }
+leptos-use = { workspace = true, features = [ "use_calendar", "on_click_outside", "math" ] }
 leptodon-proc-macros = { workspace = true }
 
 # Bumping reactive_stores causes hydration errors.
-reactive_stores = { version = "=0.3.1", optional = true }
-uuid = { version = "1.21.0",  features = ["v4", "js"], optional = true }
+reactive_stores = { workspace = true }
+uuid = { workspace = true, features = [ "v4", "js" ] }
 
 # Pinned together, updating wasm-bindgen beyond 0.2.108 breaks the leptos-wasm loading
-wasm-bindgen = { version = "=0.2.108", optional = true }
-wasm-cookies = { version = "=0.2.1", optional = true }
+wasm-bindgen = { workspace = true, optional = true }
+wasm-cookies = { workspace = true }
 # Newer versions of web-sys require newer wasm-bindgen.
-web-sys = { version = "=0.3.85", features = ["HtmlDocument", "Window", "MediaQueryList", "HtmlElement", "HtmlInputElement", "KeyboardEvent"], optional = true }
+web-sys = { workspace = true, features = [ "HtmlDocument", "Window", "MediaQueryList", "HtmlElement", "HtmlInputElement", "KeyboardEvent" ] }
 
-axum = { version = "0.8", optional = true }
-axum-extra = { version = "0.12.5", optional = true, features = ["cookie"] }
-cfg-if = "1.0.4"
-rstml-to-string-macro = { version = "0.1.0", optional = true }
-serde = { version = "1.0", features=["derive"], optional = true }
-num-traits = "0.2.19"
-http1 = { version = "1", package = "http", optional = true }
-const-str = "1.1.0"
-chrono = "0.4.44"
-base64 = "0.22.1"
-send_wrapper = "0.6.0"
-leptos-struct-table = { version = "0.18", features = ["chrono"] }
-nucleo-matcher = "0.3.1"
-zxcvbn = "3.1.0"
+axum = { workspace = true, optional = true }
+axum-extra = { workspace = true, optional = true, features = [ "cookie" ] }
+cfg-if.workspace = true
+rstml-to-string-macro = { workspace = true }
+serde = { workspace = true, features = [ "derive" ] }
+num-traits = { workspace = true }
+http = { workspace = true, optional = true }
+const-str = { workspace = true }
+chrono = { workspace = true }
+base64 = { workspace = true }
+send_wrapper = { workspace = true }
+leptos-struct-table = { workspace = true, features = [ "chrono" ] }
+nucleo-matcher = { workspace = true }
+zxcvbn = { workspace = true }
 
 [build-dependencies]
-walkdir = "2.5.0"
+walkdir = { workspace = true }
 
 [features]
-default = ["leptos"]
-leptos = ["dep:leptos", "dep:leptos_router","dep:leptos-use", "dep:leptos_meta", "dep:web-sys", "dep:serde", "dep:rstml-to-string-macro", "dep:reactive_stores", "dep:uuid", "dep:wasm-cookies"]
+default = []
 csr = ["leptos/csr"]
 ssr = [
     "leptos/ssr",
@@ -55,7 +54,7 @@ ssr = [
     "dep:leptos_axum",
     "dep:axum",
     "dep:axum-extra",
-    "dep:http1",
+    "dep:http",
     "leptos-use/axum",
     "leptos-use/ssr"
 ]

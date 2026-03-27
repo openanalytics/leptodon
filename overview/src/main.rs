@@ -120,7 +120,7 @@ cfg_if! {
             // see lib.rs for hydration function instead
 
             use leptos::mount::mount_to_body;
-            use overview_lib::app::App;
+            use overview::app::App;
 
             mount_to_body(App)
         }

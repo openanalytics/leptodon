@@ -163,14 +163,23 @@ fn menu_item_intersects_range(
     min_date: MaybeProp<NaiveDate>,
     max_date: MaybeProp<NaiveDate>,
 ) -> bool {
+    menu_item_intersects_range_opts(date, menu, min_date.get(), max_date.get())
+}
+/// Whether menu-granular-[date]-range intersects the (min_date..=max_date) range.
+fn menu_item_intersects_range_opts(
+    date: NaiveDate,
+    menu: DatePickerMenu,
+    min_date: Option<NaiveDate>,
+    max_date: Option<NaiveDate>,
+) -> bool {
     let (menu_min, menu_max) = menu_range(date, menu);
-    if let Some(min_date) = min_date.get() {
-        if let Some(max_date) = max_date.get() {
+    if let Some(min_date) = min_date {
+        if let Some(max_date) = max_date {
             menu_max >= min_date && menu_min <= max_date
         } else {
             menu_max > min_date
         }
-    } else if let Some(max_date) = max_date.get() {
+    } else if let Some(max_date) = max_date {
         menu_min < max_date
     } else {
         true
@@ -1126,7 +1135,7 @@ mod tests {
         let menu = DatePickerMenu::Month;
 
         // Date inside range
-        assert!(menu_item_intersects_range(
+        assert!(menu_item_intersects_range_opts(
             NaiveDate::from_ymd_opt(2023, 5, 15).unwrap(),
             menu,
             min_date.into(),
@@ -1134,7 +1143,7 @@ mod tests {
         ));
 
         // At start of range
-        assert!(menu_item_intersects_range(
+        assert!(menu_item_intersects_range_opts(
             min_date,
             menu,
             min_date.into(),
@@ -1142,7 +1151,7 @@ mod tests {
         ));
 
         // At end of range
-        assert!(menu_item_intersects_range(
+        assert!(menu_item_intersects_range_opts(
             max_date,
             menu,
             min_date.into(),
@@ -1150,7 +1159,7 @@ mod tests {
         ));
 
         // Before range
-        assert!(!menu_item_intersects_range(
+        assert!(!menu_item_intersects_range_opts(
             NaiveDate::from_ymd_opt(2023, 4, 30).unwrap(),
             menu,
             min_date.into(),
@@ -1158,7 +1167,7 @@ mod tests {
         ));
 
         // After range
-        assert!(!menu_item_intersects_range(
+        assert!(!menu_item_intersects_range_opts(
             NaiveDate::from_ymd_opt(2023, 6, 1).unwrap(),
             menu,
             min_date.into(),

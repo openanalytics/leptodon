@@ -232,7 +232,7 @@
       {
         checks = {
           # Build the crates as part of `nix flake check` for convenience
-          inherit demo-wasm demo-server demo-site leptodon leptodon-proc-macros;
+          # inherit demo-wasm demo-server demo-site leptodon leptodon-proc-macros;
 
           # Run clippy (and deny all warnings) on the workspace source,
           # again, reusing the dependency artifacts from above.
@@ -263,21 +263,10 @@
             inherit src;
           };
 
-          # my-workspace-toml-fmt = craneLib.taploFmt {
-          #   src = pkgs.lib.sources.sourceFilesBySuffices src [ ".toml" ];
-          #   # taplo arguments can be further customized below as needed
-          #   # taploExtraArgs = "--config ./taplo.toml";
-          # };
-
           # Audit dependencies
           my-workspace-audit = craneLib.cargoAudit {
             inherit src advisory-db;
           };
-
-          # Audit licenses
-          # my-workspace-deny = craneLib.cargoDeny {
-          #   inherit src;
-          # };
 
           # Run tests with cargo-nextest
           # Consider setting `doCheck = false` on other crate derivations

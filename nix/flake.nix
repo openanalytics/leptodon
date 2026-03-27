@@ -26,6 +26,7 @@
             rustup
             jq
             skopeo
+            cargo-hack
           ];
 
           RUSTC_VERSION = overrides.toolchain.channel;

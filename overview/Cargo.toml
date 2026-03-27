@@ -27,7 +27,7 @@ leptos_router = { workspace = true }
 
 wasm-bindgen = { workspace = true, optional = true }
 
-itertools.workspace = true
+itertools = { workspace = true }
 leptodon = { workspace = true }
 leptos-struct-table = { workspace = true, features = [ "chrono" ] }
 
@@ -56,7 +56,6 @@ ssr = [
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
-    "leptodon/leptos",
     "leptodon/ssr",
     "dep:leptos_axum",
     "dep:tokio",
@@ -71,12 +70,10 @@ ssr = [
 hydrate = [
     "leptos/hydrate",
     "dep:wasm-bindgen",
-    "leptodon/leptos",
     "leptodon/hydrate"
 ]
 csr = [
     "leptos/csr",
-    "leptodon/leptos",
     "leptodon/csr"
 ]
 tower = ["dep:tower"]

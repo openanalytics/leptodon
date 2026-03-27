@@ -41,9 +41,7 @@ codegen-units = 1
 panic = "abort"
 
 [workspace.dependencies]
-leptodon = { path = "./leptodon", default-features = false, features = [
-    "leptos",
-], version = "=1.1.0-dev" }
+leptodon = { path = "./leptodon", version = "=1.1.0-dev" }
 leptodon-proc-macros = { path = "./proc-macros", version = "=1.1.0-dev" }
 
 # Protocol
@@ -51,6 +49,7 @@ http = "1"
 # Server
 axum = { version = "0.8.8", features = ["macros"] }
 axum-extra = { version = "0.12.5", features = ["cookie"] }
+
 # Middleware
 tower = { version = "0.5.3" }
 tower-http = { version = "0.6.8", features = ["fs"] }
@@ -64,8 +63,13 @@ leptos_meta = { version = "0.8.6" }
 leptos_router = { version = "0.8.12" }
 wasm-bindgen = { version = "=0.2.108" }
 wasm-streams = { version = "=0.4.2" }
+wasm-cookies = { version = "=0.2.1" }
+web-sys = { version = "=0.3.85" }
+reactive_stores = { version = "=0.4.2" }
+send_wrapper = { version = "0.6.0" }
 # Leptos additions
 leptos-struct-table = { version = "0.18", features = ["chrono"] }
+leptos-use = { version = "0.18" }
 
 # Log and error
 tracing = { version = "0.1" }
@@ -85,14 +89,23 @@ rrule = { version = "0.14", features = ["serde"] }
 regex = { version = "1.12" }
 strum = "0.28.0"
 strum_macros = "0.28.0"
+const-str = { version = "1.1.0" }
+base64 = { version = "0.22.1" }
+rstml-to-string-macro = { version = "0.1.0" }
+nucleo-matcher = { version = "0.3.1" } # Fuzzy search
 
 # Other utils
 itertools = "0.14.0"
+zxcvbn = { version = "3.1.0" }
+uuid = { version = "1.21.0" }
 
 # Macros
 cfg-if = "1.0.4"
 derive_more = { version = "2.1.1", features = ["display"] }
 serde = "1"
+num-traits = { version = "0.2.19" }
+# Build macros
 syn = { version = "2.0.117" }
 quote = { version = "1.0.45" }
 proc-macro2 = { version = "1.0.106" }
+walkdir = { version = "2.5.0" }

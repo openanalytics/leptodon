@@ -61,7 +61,6 @@ ssr = [
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
-    "leptodon/leptos",
     "leptodon/ssr",
     "dep:leptos_axum",
     "dep:tokio",
@@ -76,12 +75,10 @@ ssr = [
 hydrate = [
     "leptos/hydrate",
     "dep:wasm-bindgen",
-    "leptodon/leptos",
     "leptodon/hydrate"
 ]
 csr = [
     "leptos/csr",
-    "leptodon/leptos",
     "leptodon/csr"
 ]
 tower = ["dep:tower"]
