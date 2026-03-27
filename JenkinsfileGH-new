@@ -53,28 +53,29 @@ pipeline {
     }
     stage('Compile deps') {
       steps {
-        sh "nix build ./flake-modules/crates#cargoArtifacts"
-        sh "cp result/target.tar.zst ./target1.tar.zst"
-
-        sh "nix build ./flake-modules/crates#cargoWasmArtifacts"
-        sh "cp result/target.tar.zst ./target2.tar.zst"
-
-        // Extract target into workdir for speeding up non-nix test-build.
-        sh "zstd -d target1.tar.zst -o target.tar"
-        sh "tar xf target.tar"
-        sh "rm target.tar"
-
-        sh "zstd -d target2.tar.zst -o target.tar"
-        sh "tar xf target.tar"
-        sh "rm target.tar CACHEDIR.TAG .rustc_info.json"
+        parallel(
+          cargoArtifacts: {
+            sh "nix build ./flake-modules/crates#cargoArtifacts -o cargoArtifacts"
+            sh "cp cargoArtifacts/target.tar.zst ./target1.tar.zst"
+            sh "zstd -d target1.tar.zst -o target1.tar"
+            sh "tar xf target1.tar"
+          },
+          cargoWasmArtifacts: {
+            sh "nix build ./flake-modules/crates#cargoWasmArtifacts -o cargoWasmArtifacts"
+            sh "cp cargoWasmArtifacts/target.tar.zst ./target2.tar.zst"
+            sh "zstd -d target2.tar.zst -o target2.tar"
+            sh "tar xf target2.tar"
+          }
+        )
+        sh "rm target1.tar target2.tar CACHEDIR.TAG .rustc_info.json"
       }
     }
     stage('Library Unit Tests') {
       steps {
         sh "nix develop ./nix cargo make unit-tests"
-      }
-      withChecks('Unit Tests') {
-        junit "target/nextest/default/junit.xml"
+        withChecks('Unit Tests') {
+          junit "target/nextest/default/junit.xml"
+        }
       }
     }
     stage('Integration Tests') {
@@ -109,6 +110,67 @@ pipeline {
             docker://registry.openanalytics.eu/openanalytics/leptodon-demo
           du -sh /nix/store
         """
+      }
+    }
+    stage('Packaging') {
+      when {
+        expression { env.VERSION && !env.VERSION.contains("dev") }
+      }
+      stage('Package leptodon-proc-macros') {
+        steps {
+          sh """
+            cargo package -p leptodon-proc-macros;
+          """
+        }
+        post {
+          success {
+            sh "cp target/package/*.crate ${env.WORKSPACE}"
+            archiveArtifacts artifacts: '*.crate', fingerprint: true
+          }
+        }
+      }
+      stage('Publish leptodon-proc-macros') {
+        when {
+          branch 'main'
+        }
+        environment {
+          CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
+        }
+        steps {
+          sh "cargo make publish-leptodon-proc-macros-if-missing"
+        }
+      }
+      stage('Package Leptodon') {
+        when {
+          // Avoid failures on develop when bumping the proc-macros crate version
+          branch 'main'
+        }
+        steps {
+          retry(3) {
+            // Pray crates.io finds the newly published crate version after 15s.
+            sh """
+              sleep 5;
+              cargo package -p leptodon;
+            """
+          }
+        }
+        post {
+          success {
+            sh "cp target/package/*.crate ${env.WORKSPACE}"
+            archiveArtifacts artifacts: '*.crate', fingerprint: true
+          }
+        }
+      }
+      stage('Publish Leptodon Crate') {
+        when {
+          branch 'main'
+        }
+        environment {
+          CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
+        }
+        steps {
+          sh "cargo make publish-leptodon-if-missing"
+        }
       }
     }
   }
