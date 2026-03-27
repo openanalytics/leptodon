@@ -83,16 +83,16 @@ pipeline {
           }
           steps {
             sh "nix build ./flake-modules/crates#demo-site -o demo-site-result"
-            script {
+            sh """
               ./demo-site-result/bin/demo-site &
 
               echo "Up and running";
               cd overview/end2end;
               CI=1 devenv shell playwright test;
 
-              // Kills whatever this script spawned
-              kill $! && echo "killed server";
-            }
+              # Kills whatever this script spawned
+              kill \$! && echo "killed server";
+            """
             withChecks('Integration Tests') {
               junit "overview/end2end/reports/test-report-e2e.xml"
             }
