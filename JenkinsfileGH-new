@@ -59,15 +59,16 @@ pipeline {
             sh "cp cargoArtifacts/target.tar.zst ./target1.tar.zst"
             sh "zstd -d target1.tar.zst -o target1.tar"
             sh "tar xf target1.tar"
+            sh "rm target1.tar CACHEDIR.TAG .rustc_info.json"
           },
           cargoWasmArtifacts: {
             sh "nix build ./flake-modules/crates#cargoWasmArtifacts -o cargoWasmArtifacts"
             sh "cp cargoWasmArtifacts/target.tar.zst ./target2.tar.zst"
             sh "zstd -d target2.tar.zst -o target2.tar"
             sh "tar xf target2.tar"
+            sh "rm target2.tar CACHEDIR.TAG .rustc_info.json"
           }
         )
-        sh "rm target1.tar target2.tar CACHEDIR.TAG .rustc_info.json"
       }
     }
     stage('Library Unit Tests') {
