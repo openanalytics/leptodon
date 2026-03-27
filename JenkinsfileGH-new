@@ -74,7 +74,8 @@ pipeline {
             sh "nix build ./flake-modules/crates#nextest -o nextest-result"
             sh "ls -Hal nextest-result"
             withChecks('Unit Tests') {
-              junit "nextest-result/junit.xml"
+              sh "cp nextest-result/junit.xml ${env.WORKSPACE}"
+              junit "junit.xml"
             }
           }
         }

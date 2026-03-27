@@ -29,6 +29,7 @@ overview/dist
 # Testing output
 **/playwright-report
 **/test-results
+*.xml
 
 # default nix output
 result
