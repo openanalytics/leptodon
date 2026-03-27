@@ -55,48 +55,48 @@ pipeline {
       steps {
         parallel(
           cargoArtifacts: {
-            sh "nix build ./flake-modules/crates#cargoArtifacts -o cargoArtifacts"
-            sh "cp cargoArtifacts/target.tar.zst ./target1.tar.zst"
-            sh "zstd -d target1.tar.zst -o target1.tar"
-            sh "tar xf target1.tar"
-            sh "rm target1.tar CACHEDIR.TAG .rustc_info.json"
+            sh "nix build ./flake-modules/crates#cargoArtifacts -o cargo-result"
+            sh "zstd -d cargo-result/target.tar.zst -o cargo-target.tar"
+            sh "tar xf cargo-target.tar"
           },
           cargoWasmArtifacts: {
-            sh "nix build ./flake-modules/crates#cargoWasmArtifacts -o cargoWasmArtifacts"
-            sh "cp cargoWasmArtifacts/target.tar.zst ./target2.tar.zst"
-            sh "zstd -d target2.tar.zst -o target2.tar"
-            sh "tar xf target2.tar"
-            sh "rm target2.tar CACHEDIR.TAG .rustc_info.json"
+            sh "nix build ./flake-modules/crates#cargoWasmArtifacts -o wasm-result"
+            sh "zstd -d wasm-result/target.tar.zst -o wasm-target.tar"
+            sh "tar xf wasm-target.tar"
           }
         )
       }
     }
-    stage('Library Unit Tests') {
-      steps {
-        sh "nix develop ./nix --command cargo make unit-tests"
-        withChecks('Unit Tests') {
-          junit "target/nextest/default/junit.xml"
+    stage('Run Tests') {
+      parallel {
+        stage('Unit Tests') {
+          steps {
+            sh "nix build ./flake-modules/crates#nextest -o nextest-result"
+            withChecks('Unit Tests') {
+              junit "nextest-result/junit.xml"
+            }
+          }
         }
-      }
-    }
-    stage('Integration Tests') {
-      environment {
-        LEPTOS_SITE_ADDR="0.0.0.0:3000"
-      }
-      steps {
-        sh "nix build ./flake-modules/crates#demo-site"
-        script {
-          ./result/bin/demo-site &
+        stage('Integration Tests') {
+          environment {
+            LEPTOS_SITE_ADDR="0.0.0.0:3000"
+          }
+          steps {
+            sh "nix build ./flake-modules/crates#demo-site -o demo-site-result"
+            script {
+              ./demo-site-result/bin/demo-site &
 
-          echo "Up and running";
-          cd overview/end2end;
-          CI=1 devenv shell playwright test;
+              echo "Up and running";
+              cd overview/end2end;
+              CI=1 devenv shell playwright test;
 
-          // Kills whatever this script spawned
-          kill $! && echo "killed server";
-        }
-        withChecks('Integration Tests') {
-          junit "overview/end2end/reports/test-report-e2e.xml"
+              // Kills whatever this script spawned
+              kill $! && echo "killed server";
+            }
+            withChecks('Integration Tests') {
+              junit "overview/end2end/reports/test-report-e2e.xml"
+            }
+          }
         }
       }
     }

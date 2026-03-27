@@ -210,20 +210,17 @@
             Cmd = [ "${demo-server}/bin/demo-site" ];
           };
         };
-        leptodon = craneLib.buildPackage (
-          individualCrateArgs
+        nextest = craneLib.cargoNextest (
+          commonArgs
           // {
-            pname = "leptodon";
-            cargoExtraArgs = "-p leptodon";
-            src = fileSetForCrate ../../leptodon;
-          }
-        );
-        leptodon-proc-macros = craneLib.buildPackage (
-          individualCrateArgs
-          // {
-            pname = "leptodon-proc-macros";
-            cargoExtraArgs = "-p leptodon-proc-macros";
-            src = fileSetForCrate ../../proc-macros;
+            RUST_BACKTRACE="full";
+            inherit cargoArtifacts;
+            partitions = 1;
+            partitionType = "count";
+            cargoNextestPartitionsExtraArgs = "--no-tests=pass";
+            postInstall = ''
+              cp target/nextest/default/junit.xml $out/junit.xml
+            '';
           }
         );
       in
@@ -270,16 +267,6 @@
           # Run tests with cargo-nextest
           # Consider setting `doCheck = false` on other crate derivations
           # if you do not want the tests to run twice
-          # my-workspace-nextest = craneLib.cargoNextest (
-          #   commonArgs
-          #   // {
-          #     RUST_BACKTRACE="full";
-          #     inherit cargoArtifacts;
-          #     partitions = 1;
-          #     partitionType = "count";
-          #     cargoNextestPartitionsExtraArgs = "--no-tests=pass";
-          #   }
-          # );
 
           # # Ensure that cargo-hakari is up to date
           # my-workspace-hakari = craneLib.mkCargoDerivation {
@@ -301,7 +288,7 @@
         };
 
         packages = {
-          inherit cargoArtifacts cargoWasmArtifacts demo-site-image demo-site demo-wasm demo-server leptodon leptodon-proc-macros;
+          inherit cargoArtifacts cargoWasmArtifacts demo-site-image demo-site demo-wasm demo-server nextest;
         };
 
         apps = {
