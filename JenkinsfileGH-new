@@ -84,9 +84,9 @@ pipeline {
             LEPTOS_SITE_ADDR="0.0.0.0:3000"
           }
           steps {
-            sh "nix build ./flake-modules/crates#demo-site -o demo-site-result"
+            sh "nix build ./flake-modules/crates#overview-site -o overview-site-result"
             sh """
-              ./demo-site-result/bin/demo-site &
+              ./overview-site-result/bin/overview-site &
 
               echo "Up and running";
               cd overview/end2end;

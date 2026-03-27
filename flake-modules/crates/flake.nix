@@ -65,6 +65,7 @@
         # cache misses when building individual top-level-crates
         cargoArtifacts = craneLib.buildDepsOnly commonArgs;
 
+        # Compiled wasm dependencies using crane.
         cargoWasmArtifacts = craneLib.buildDepsOnly (
           commonArgs
           // {
@@ -106,84 +107,91 @@
             ];
           };
 
-        # Build the top-level crates of the workspace as individual derivations.
-        # This allows consumers to only depend on (and build) only what they need.
-        # Though it is possible to build the entire workspace as a single derivation,
-        # so this is left up to you on how to organize things
-        #
-        # Note that the cargo workspace must define `workspace.members` using wildcards,
-        # otherwise, omitting a crate (like we do below) will result in errors since
-        # cargo won't be able to find the sources for all members.
-        demo-wasm = craneLib.buildPackage (
-          individualCrateArgs
-          // {
-            inherit cargoWasmArtifacts;
-            pname = "demo-wasm";
-            nativeBuildInputs = [
-              pkgs.lld
-              pkgs.wasm-bindgen-cli_0_2_108
-              pkgs.binaryen
-              cargo-leptos
-              craneLib.installFromCargoBuildLogHook
-            ];
-            buildInputs = [ ];
+        # Builds (release mode + compression) the wasm bin and assets using cargo-leptos.
+        buildLeptosWasmPackage =
+          pname: sourcePath:
+          craneLib.buildPackage (
+            individualCrateArgs
+            // {
+              inherit cargoWasmArtifacts;
+              inherit pname;
+              nativeBuildInputs = [
+                pkgs.lld
+                pkgs.wasm-bindgen-cli_0_2_108
+                pkgs.binaryen
+                cargo-leptos
+                craneLib.installFromCargoBuildLogHook
+              ];
+              buildInputs = [ ];
 
-            LEPTOS_HASH_FILES = "true";
-            LEPTOS_LIB_CARGO_STDOUT_PATH = "front_build.log";
-            LEPTOS_LIB_CARGO_ARGS = "--message-format json-render-diagnostics";
-            RUST_BACKTRACE="1";
+              LEPTOS_HASH_FILES = "true";
+              LEPTOS_LIB_CARGO_STDOUT_PATH = "front_build.log";
+              LEPTOS_LIB_CARGO_ARGS = "--message-format json-render-diagnostics";
+              RUST_BACKTRACE = "1";
 
-            buildPhaseCargoCommand = ''
-              cargoBuildLog=target/front_build.log
+              buildPhaseCargoCommand = ''
+                cargoBuildLog=target/front_build.log
 
-              cargo leptos build --frontend-only --release -P -p demo;
-            '';
-            postInstall = ''
-              cp -r target/release/hash.txt $out/lib/hash.txt
-              cp -r target/site $out/lib/site
-            '';
+                cargo leptos build --frontend-only --release -P -p ${pname};
+              '';
+              postInstall = ''
+                cp -r target/release/hash.txt $out/lib/hash.txt
+                cp -r target/site $out/lib/site
+              '';
 
-            src = fileSetForCrate ../../demo;
-          }
-        );
-        demo-server = craneLib.buildPackage (
-          individualCrateArgs
-          // {
-            inherit cargoWasmArtifacts;
-            pname = "demo";
-            nativeBuildInputs = [
-              pkgs.lld
-              cargo-leptos
-              craneLib.installFromCargoBuildLogHook
-            ];
+              src = fileSetForCrate sourcePath;
+            }
+          );
 
-            RUST_BACKTRACE="1";
-            LEPTOS_HASH_FILES = "true";
-            LEPTOS_BIN_CARGO_ARGS = "--message-format json-render-diagnostics";
-            LEPTOS_BIN_CARGO_STDOUT_PATH = "server_build.log";
-            buildPhaseCargoCommand = ''
-              cargoBuildLog=target/server_build.log
+        # Builds (release mode + compression) the server binary using cargo-leptos.
+        buildLeptosServerPackage =
+          pname: sourcePath:
+          craneLib.buildPackage (
+            individualCrateArgs
+            // {
+              inherit cargoWasmArtifacts;
+              inherit pname;
+              nativeBuildInputs = [
+                pkgs.lld
+                cargo-leptos
+                craneLib.installFromCargoBuildLogHook
+              ];
 
-              cargo leptos build --server-only --release -P -p demo;
-            '';
+              RUST_BACKTRACE = "1";
+              LEPTOS_HASH_FILES = "true";
+              LEPTOS_BIN_CARGO_ARGS = "--message-format json-render-diagnostics";
+              LEPTOS_BIN_CARGO_STDOUT_PATH = "server_build.log";
+              buildPhaseCargoCommand = ''
+                cargoBuildLog=target/server_build.log
 
-            meta.mainProgram = "demo";
-            src = fileSetForCrate ../../demo;
-          }
-        );
-        demo-site = pkgs.writeShellScriptBin "demo-site" ''
+                cargo leptos build --server-only --release -P -p ${pname};
+              '';
+
+              meta.mainProgram = pname;
+              src = fileSetForCrate sourcePath;
+            }
+          );
+
+        # The overview is used for CI-tests, provided via the overview-site derivation.
+        overview-wasm = buildLeptosWasmPackage "overview" ../../overview;
+        overview-server = buildLeptosServerPackage "overview" ../../overview;
+        overview-site = pkgs.writeShellScriptBin "overview-site" ''
           LEPTOS_SITE_ADDR="''${LEPTOS_SITE_ADDR:-0.0.0.0:8080}"
-          LEPTOS_SITE_ROOT="''${LEPTOS_SITE_ROOT:-${demo-wasm}/lib/site}"
-          LEPTOS_STYLE_FILE="''${LEPTOS_STYLE_FILE:-${demo-wasm}/lib/style/output.css}"
-          LEPTOS_HASH_FILE_NAME="''${LEPTOS_HASH_FILE_NAME:-${demo-wasm}/lib/hash.txt}"
+          LEPTOS_SITE_ROOT="''${LEPTOS_SITE_ROOT:-${overview-wasm}/lib/site}"
+          LEPTOS_STYLE_FILE="''${LEPTOS_STYLE_FILE:-${overview-wasm}/lib/style/output.css}"
+          LEPTOS_HASH_FILE_NAME="''${LEPTOS_HASH_FILE_NAME:-${overview-wasm}/lib/hash.txt}"
           LEPTOS_HASH_FILES="''${LEPTOS_HASH_FILES:-true}"
           export LEPTOS_SITE_ADDR
           export LEPTOS_SITE_ROOT
           export LEPTOS_HASH_FILES
           export LEPTOS_STYLE_FILE
           export LEPTOS_HASH_FILE_NAME
-          ${lib.getExe demo-server} "$@"
+          ${lib.getExe overview-server} "$@"
         '';
+
+        # The demo is hosted on leptodon.dev, provided via the docker image below, published via skopeo.
+        demo-wasm = buildLeptosWasmPackage "demo" ../../demo;
+        demo-server = buildLeptosServerPackage "demo" ../../demo;
         demo-site-image = pkgs.dockerTools.buildImage {
           name = "demo-site";
           tag = "latest";
@@ -191,7 +199,7 @@
           copyToRoot = [
             (pkgs.buildEnv {
               name = "image-root";
-              pathsToLink = ["/bin"];
+              pathsToLink = [ "/bin" ];
               paths = [
                 demo-server
                 demo-wasm
@@ -210,10 +218,12 @@
             Cmd = [ "${demo-server}/bin/demo-site" ];
           };
         };
+
+        # Testing derivation, produces junit.xml to be consumed by Jenkins to show test results and quantity.
         nextest = craneLib.cargoNextest (
           commonArgs
           // {
-            RUST_BACKTRACE="full";
+            RUST_BACKTRACE = "full";
             inherit cargoArtifacts;
             partitions = 1;
             partitionType = "count";
@@ -288,12 +298,20 @@
         };
 
         packages = {
-          inherit cargoArtifacts cargoWasmArtifacts demo-site-image demo-site demo-wasm demo-server nextest;
+          inherit
+            cargoArtifacts
+            cargoWasmArtifacts
+            demo-site-image
+            overview-site
+            demo-wasm
+            demo-server
+            nextest
+            ;
         };
 
         apps = {
-          demo = flake-utils.lib.mkApp {
-            drv = demo-site;
+          overview = flake-utils.lib.mkApp {
+            drv = overview-site;
           };
         };
 
@@ -306,7 +324,7 @@
 
           # Extra inputs can be added here; cargo and rustc are provided by default.
           packages = [
-            demo-site
+            overview-site
           ];
         };
       }
