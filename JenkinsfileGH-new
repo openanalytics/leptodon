@@ -80,8 +80,21 @@ pipeline {
       }
     }
     stage('Integration Tests') {
+      environment {
+        LEPTOS_SITE_ADDR="0.0.0.0:3000"
+      }
       steps {
-        sh "nix develop ./nix --command cargo make integration-tests"
+        sh "nix build ./flake-modules/crates#demo-site"
+        script {
+          ./result/bin/demo-site &
+
+          echo "Up and running";
+          cd overview/end2end;
+          CI=1 devenv shell playwright test;
+
+          // Kills whatever this script spawned
+          kill $! && echo "killed server";
+        }
         withChecks('Integration Tests') {
           junit "overview/end2end/reports/test-report-e2e.xml"
         }

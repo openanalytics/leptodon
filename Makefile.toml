@@ -63,8 +63,7 @@ run_task = { name = [
 workspace = false
 cwd = "./leptodon"
 command = "cargo"
-env = { "CARGO_PROFILE" = "release" }
-args = ["nextest", "run"]
+args = ["nextest", "run", "-r"]
 
 [tasks.integration-tests]
 workspace = false
