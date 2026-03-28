@@ -1,11 +1,11 @@
 [package]
-publish = true
 name = "leptodon-proc-macros"
-description = "Procedural macros crate for Leptodon (your Leptos UI toolkit)."
+version = "1.1.0-dev"
 license = "Apache-2.0"
+description = "Procedural macros crate for Leptodon (your Leptos UI toolkit)."
 repository = "https://github.com/openanalytics/leptodon"
-version = "1.0.1"
 edition = "2024"
+publish = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -13,11 +13,9 @@ edition = "2024"
 proc-macro = true
 
 [dependencies]
-quote = "1.0.45"
-comrak = "0.50.0"
-proc-macro2 = "1.0.106"
-syn = "2.0.117"
-syntect = "5.3.0"
+quote = { workspace = true }
+proc-macro2 = { workspace = true }
+syn = { workspace = true, features = ["full"] }
 
 [build-dependencies]
 walkdir = "2.5.0"

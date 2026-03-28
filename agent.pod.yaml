@@ -21,7 +21,8 @@ spec:
           ephemeral-storage: "30Gi"
       imagePullPolicy: Always
     - name: leptodon-build
-      image: registry.openanalytics.eu/openanalytics/leptodon-build:latest
+      # Essentially an extended nixpkgs/nix-flakes image with some preinstalled CI and rust tooling.
+      image: registry.openanalytics.eu/openanalytics/leptodon-build
       resources:
         limits:
           memory: "12Gi"
@@ -38,7 +39,6 @@ spec:
         - name: dockerconfig
           mountPath: /root/.docker/config.json
           subPath: data
-      env:
-        - name: COMPOSE_HTTP_TIMEOUT
-          value: 600
+      command:
+        - cat
       imagePullPolicy: Always

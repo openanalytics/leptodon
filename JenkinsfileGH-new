@@ -11,10 +11,15 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '3'))
   }
   environment {
+    CONFIGURE_GIT = sh(
+      returnStdout: true,
+      script: 'git config --global safe.directory "*"'
+    ).trim()
     VERSION = sh(
       returnStdout: true,
-      script: 'cargo metadata --no-deps --format-version=1 | jq ".packages[0].version" --raw-output'
+      script: 'cat Cargo.toml | tomlq ".workspace.package.version" --raw-output'
     ).trim()
+    NIX_PATH = 'nixpkgs=channel:nixos-unstable'
     NS = 'openanalytics'
     REGISTRY = 'registry.openanalytics.eu'
     IMAGE = 'leptodon'
@@ -33,118 +38,158 @@ pipeline {
           }
           echo "TAG is set to ${env.TAG}"
         }
+        sh "chown -R root:root ."
       }
     }
-    stage('License Check') {
+    stage('Attic login & watch') {
       steps {
-        sh "cargo make license-check"
+        sh 'echo "34.254.122.57 nix-cache.dev.openanalytics.eu" >> /etc/hosts'
+        withCredentials([usernamePassword(credentialsId: 'attic-leptodon', passwordVariable: 'ATTIC_PASSWORD', usernameVariable: 'ATTIC_USERNAME')]) {
+          sh "attic login $ATTIC_USERNAME https://nix-cache.dev.openanalytics.eu $ATTIC_PASSWORD"
+        }
+        sh "attic use oa-leptodon"
+        sh "attic watch-store oa-leptodon &"
       }
     }
-    stage('Linting') {
+    stage('Compile deps') {
       steps {
-        sh "cargo make lint"
+        parallel(
+          cargoArtifacts: {
+            sh "nix build ./flake-modules/crates#cargoArtifacts -o cargo-result"
+            sh "zstd -d cargo-result/target.tar.zst -o cargo-target.tar"
+            sh "tar xf cargo-target.tar"
+          },
+          cargoWasmArtifacts: {
+            sh "nix build ./flake-modules/crates#cargoWasmArtifacts -o wasm-result"
+            sh "zstd -d wasm-result/target.tar.zst -o wasm-target.tar"
+            sh "tar xf wasm-target.tar"
+          }
+        )
       }
     }
-    stage('Library Unit Tests') {
-      steps {
-        sh "cargo make unit-tests"
-        withChecks('Unit Tests') {
-          junit "target/nextest/default/junit.xml"
+    stage('Run Tests') {
+      parallel {
+        stage('Unit Tests') {
+          steps {
+            sh "nix build ./flake-modules/crates#nextest -o nextest-result"
+            sh "ls -Hal nextest-result"
+            withChecks('Unit Tests') {
+              sh "cp nextest-result/junit.xml ${env.WORKSPACE}"
+              junit "junit.xml"
+            }
+          }
+        }
+        stage('Integration Tests') {
+          environment {
+            LEPTOS_SITE_ADDR="0.0.0.0:3000"
+          }
+          steps {
+            sh "nix build ./flake-modules/crates#overview-site -o overview-site-result"
+            sh """
+              ./overview-site-result/bin/overview-site &
+
+              echo "Up and running";
+              cd overview/end2end;
+              devenv shell npm install;
+              CI=1 devenv shell playwright test;
+
+              # Kills whatever this script spawned
+              kill \$! && echo "killed server";
+            """
+            withChecks('Integration Tests') {
+              junit "overview/end2end/reports/test-report-e2e.xml"
+            }
+          }
         }
       }
     }
-    stage('Integration Tests') {
+    stage('Build & Publish Demo') {
       steps {
-        sh "cargo make integration-tests"
-        withChecks('Integration Tests') {
-          junit "overview/end2end/reports/test-report-e2e.xml"
-        }
-      }
-    }
-    stage('Publish Demo') {
-      when {
-        anyOf {
-          branch 'develop'
-          branch 'main'
-        }
-      }
-      steps {
-        container('kaniko') {
-          sh """
-          /kaniko/executor \
-            -v info \
-            --context ${env.WORKSPACE} \
-            --cache=true \
-            --cache-repo ${env.REGISTRY}/${env.NS}/${env.CACHE_IMAGE}-demo \
-            --destination ${env.REGISTRY}/${env.NS}/${env.IMAGE}-demo:${env.TAG} \
-            --log-format=text \
-            --log-timestamp=true \
-            --dockerfile demo.Dockerfile
-          """
-        }
-      }
-      post {
-        always {
-          sh "cp /kaniko/jenkins/mem*.log ${env.WORKSPACE}"
-          archiveArtifacts artifacts: 'mem*.log', fingerprint: true
-        }
-      }
-    }
-    stage('Package leptodon-proc-macros') {
-      steps {
+        // Skopeo policy
         sh """
-          cd proc-macros;
-          cargo package;
+          mkdir -p /etc/containers
+          echo '{"default":[{"type":"insecureAcceptAnything"}],"transports":{"docker-daemon":{"":[{"type":"insecureAcceptAnything"}]}}}' > /etc/containers/policy.json
+        """
+
+        sh """
+          nix build ./flake-modules/crates#demo-site-image
+          cp result demo-image.tar.gz
+          gunzip demo-image.tar.gz
+          du -sh /nix/store
+        """
+
+        sh "nix develop ./nix --command skopeo login --authfile /root/.docker/config.json registry.openanalytics.eu "
+
+        sh """
+          du -sh /nix/store
+          nix develop ./nix --command skopeo copy \
+            docker-archive:demo-image.tar \
+            docker://registry.openanalytics.eu/openanalytics/leptodon-demo
+          du -sh /nix/store
         """
       }
-      post {
-        success {
-          sh "cp proc-macros/target/package/*.crate ${env.WORKSPACE}"
-          archiveArtifacts artifacts: '*.crate', fingerprint: true
-        }
-      }
     }
-    stage('Publish leptodon-proc-macros') {
+    stage('Packaging') {
       when {
-        branch 'main'
+        expression { env.VERSION && !env.VERSION.contains("dev") }
       }
-      environment {
-        CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
-      }
-      steps {
-        sh "cargo make publish-leptodon-proc-macros-if-missing"
-      }
-    }
-    stage('Package Leptodon') {
-      when {
-        // Avoid failures on develop when bumping the proc-macros crate version
-        branch 'main'
-      }
-      steps {
-        retry(3) {
-          // Pray crates.io finds the newly published crate version after 15s.
-          sh """
-            sleep 5;
-            cargo package;
-          """
+      stages {
+        stage('Package leptodon-proc-macros') {
+          steps {
+            sh """
+              nix develop ./nix --command cargo package -p leptodon-proc-macros;
+            """
+          }
+          post {
+            success {
+              sh "cp target/package/*.crate ${env.WORKSPACE}"
+              archiveArtifacts artifacts: '*.crate', fingerprint: true
+            }
+          }
         }
-      }
-      post {
-        success {
-          sh "cp target/package/*.crate ${env.WORKSPACE}"
-          archiveArtifacts artifacts: '*.crate', fingerprint: true
+        stage('Publish leptodon-proc-macros') {
+          when {
+            branch 'main'
+          }
+          environment {
+            CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
+          }
+          steps {
+            sh "nix develop ./nix --command cargo make publish-leptodon-proc-macros-if-missing"
+          }
         }
-      }
-    }
-    stage('Publish Leptodon Crate') {
-      when {
-        branch 'main'
-      }
-      environment {
-        CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
-      }
-      steps {
-        sh "cargo make publish-leptodon-if-missing"
+        stage('Package Leptodon') {
+          when {
+            // Avoid failures on develop when bumping the proc-macros crate version
+            branch 'main'
+          }
+          steps {
+            retry(3) {
+              // Pray crates.io finds the newly published crate version after 15s.
+              sh """
+                sleep 5;
+                nix develop ./nix --command cargo package -p leptodon;
+              """
+            }
+          }
+          post {
+            success {
+              sh "cp target/package/*.crate ${env.WORKSPACE}"
+              archiveArtifacts artifacts: '*.crate', fingerprint: true
+            }
+          }
+        }
+        stage('Publish Leptodon Crate') {
+          when {
+            branch 'main'
+          }
+          environment {
+            CARGO_REGISTRY_TOKEN = credentials('cratesio-oajenkins')
+          }
+          steps {
+            sh "nix develop ./nix --command cargo make publish-leptodon-if-missing"
+          }
+        }
       }
     }
   }

@@ -1,6 +1,5 @@
 /target
 .ignore
-.direnv
 **/target
 **/node_modules
 **/reports
@@ -10,9 +9,13 @@
 .zed
 .idea
 
-# Kaniko logfiles may not dirty the git view for cargo package.
+# CI files may not dirty the git view for cargo package.
 *.log
+*.tar
 *.crate
+CACHEDIR.TAG
+.rustc_info.json
+*-result
 
 **/*-cache
 **/*-node-modules
@@ -26,6 +29,10 @@ overview/dist
 # Testing output
 **/playwright-report
 **/test-results
+*.xml
+
+# default nix output
+result
 
 # Devenv
 .devenv*

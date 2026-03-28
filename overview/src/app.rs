@@ -63,6 +63,7 @@ use leptodon::{
 };
 use leptos::logging::log;
 use leptos::prelude::*;
+use leptos_meta::HashedStylesheet;
 use leptos_meta::MetaTags;
 use leptos_meta::Stylesheet;
 use leptos_meta::Title;
@@ -80,6 +81,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <link rel="shortcut icon" type_="image/svg+xml" href="/logo.svg"/>
+                <HashedStylesheet options=options.clone() id="leptos"/>
 
                 // Metadata injection is not allowed here, only use them in components down the chain
                 <AutoReload options=options.clone() />
@@ -98,7 +100,6 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        <Stylesheet href="/pkg/overview.css"/>
         <Router>
             <Routes fallback=|| "Page not found.">
                 <Route path=StaticSegment("") view=Home/>

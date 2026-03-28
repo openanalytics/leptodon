@@ -1,0 +1,66 @@
+[package]
+name = "leptodon"
+version = "1.1.0-dev"
+publish = true
+edition = "2024"
+description = "Your Leptos UI toolkit"
+license = "Apache-2.0"
+homepage = "https://leptodon.dev"
+repository = "https://github.com/openanalytics/leptodon"
+
+[dependencies]
+console_error_panic_hook = { workspace = true, optional = true }
+leptos = { workspace = true }
+leptos_meta = { workspace = true }
+leptos_router = { workspace = true }
+leptos_axum = { workspace = true, optional = true }
+leptos-use = { workspace = true, features = [ "use_calendar", "on_click_outside", "math" ] }
+leptodon-proc-macros = { workspace = true }
+
+# Bumping reactive_stores causes hydration errors.
+reactive_stores = { workspace = true }
+uuid = { workspace = true, features = [ "v4", "js" ] }
+
+# Pinned together, updating wasm-bindgen beyond 0.2.108 breaks the leptos-wasm loading
+wasm-bindgen = { workspace = true, optional = true }
+wasm-cookies = { workspace = true }
+# Newer versions of web-sys require newer wasm-bindgen.
+web-sys = { workspace = true, features = [ "HtmlDocument", "Window", "MediaQueryList", "HtmlElement", "HtmlInputElement", "KeyboardEvent" ] }
+
+axum = { workspace = true, optional = true }
+axum-extra = { workspace = true, optional = true, features = [ "cookie" ] }
+cfg-if.workspace = true
+rstml-to-string-macro = { workspace = true }
+serde = { workspace = true, features = [ "derive" ] }
+num-traits = { workspace = true }
+http = { workspace = true, optional = true }
+const-str = { workspace = true }
+chrono = { workspace = true }
+base64 = { workspace = true }
+send_wrapper = { workspace = true }
+leptos-struct-table = { workspace = true, features = [ "chrono" ] }
+nucleo-matcher = { workspace = true }
+zxcvbn = { workspace = true }
+
+[build-dependencies]
+walkdir = { workspace = true }
+
+[features]
+default = []
+csr = ["leptos/csr"]
+ssr = [
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "dep:leptos_axum",
+    "dep:axum",
+    "dep:axum-extra",
+    "dep:http",
+    "leptos-use/axum",
+    "leptos-use/ssr"
+]
+hydrate = [
+    "leptos/hydrate",
+]
+
+[lints.rust]
+dead_code = "allow"
