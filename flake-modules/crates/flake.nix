@@ -184,14 +184,12 @@
         overview-site = pkgs.writeShellScriptBin "overview-site" ''
           LEPTOS_SITE_ADDR="''${LEPTOS_SITE_ADDR:-0.0.0.0:8080}"
           LEPTOS_SITE_ROOT="''${LEPTOS_SITE_ROOT:-${overview-wasm}/lib/site}"
-          LEPTOS_STYLE_FILE="''${LEPTOS_STYLE_FILE:-${overview-wasm}/lib/style/output.css}"
           LEPTOS_HASH_FILE_NAME="''${LEPTOS_HASH_FILE_NAME:-${overview-wasm}/lib/hash.txt}"
           LEPTOS_HASH_FILES="''${LEPTOS_HASH_FILES:-true}"
           export LEPTOS_SITE_ADDR
           export LEPTOS_SITE_ROOT
-          export LEPTOS_HASH_FILES
-          export LEPTOS_STYLE_FILE
           export LEPTOS_HASH_FILE_NAME
+          export LEPTOS_HASH_FILES
           ${lib.getExe overview-server} "$@"
         '';
 
@@ -223,11 +221,10 @@
             Env = [
               "LEPTOS_SITE_ADDR=0.0.0.0:8080"
               "LEPTOS_SITE_ROOT=${demo-wasm}/lib/site"
-              "LEPTOS_STYLE_FILE=${demo-wasm}/lib/style/output.css"
               "LEPTOS_HASH_FILE_NAME=${demo-wasm}/lib/hash.txt"
               "LEPTOS_HASH_FILES=true"
             ];
-            Cmd = [ "${demo-server}/bin/demo-site" ];
+            Cmd = [ (lib.getExe demo-server) ];
           };
         };
 

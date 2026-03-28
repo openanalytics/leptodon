@@ -12,7 +12,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 http = { workspace = true }
 tower = { workspace = true, optional = true }
-tower-http = { workspace = true, optional = true, features = [ "fs" ] }
+tower-http = { workspace = true, optional = true, features = [ "fs", "compression-br", "compression-gzip" ] }
 axum = { workspace = true, optional = true, features = [ "macros" ] }
 
 tokio = { workspace = true, optional = true, features = [ "rt-multi-thread" ] }
@@ -87,7 +87,7 @@ tower-http = ["dep:tower-http"]
 output-name = "overview"
 
 # The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
-site-root = "target/site"
+# site-root = "target/site"
 
 # The site-root relative folder where all compiled output (JS, WASM and CSS) is written
 # Defaults to pkg
@@ -110,7 +110,6 @@ end2end-dir = "end2end"
 browserquery = "defaults"
 
 # The environment Leptos will run in, usually either "DEV" or "PROD"
-env = "dev"
 bin-features = ["ssr"]
 bin-default-features = false
 lib-features = ["hydrate"]
