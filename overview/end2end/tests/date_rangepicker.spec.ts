@@ -19,7 +19,7 @@ import { test, expect, Page } from "@playwright/test";
 
 // Test date-picker open/close on click
 test("Test date-picker open/close", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("/");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");
@@ -33,7 +33,7 @@ test("Test date-picker open/close", async ({ page }) => {
 
 // Test date-picker open/close on focus/tab
 test("Test date-picker focus/tab open/close", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("/");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");
@@ -74,7 +74,7 @@ async function testDatePickerOpenClosing(page: Page) {
 }
 
 test("Test date-picker selecting open/close", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("/");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");
@@ -84,7 +84,7 @@ test("Test date-picker selecting open/close", async ({ page }) => {
 
 // Added because labels can interfere with focus and we want to catch regression in this area.
 test("Test labeled date-picker selecting open/close", async ({ page }) => {
-  await page.goto("http://localhost:3000/forms");
+  await page.goto("/forms");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Forms");
@@ -94,7 +94,7 @@ test("Test labeled date-picker selecting open/close", async ({ page }) => {
 
 // Just date-picking functionality
 test("Test date-picker functionality", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("/");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");

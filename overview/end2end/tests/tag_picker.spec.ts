@@ -19,7 +19,7 @@ import { test, expect, Page, Locator } from "@playwright/test";
 
 // Check that the radio reactively updates its signal.
 test("Tag Picker functionality", async ({ page, browserName }) => {
-  await page.goto("http://localhost:3000/test_tag_picker");
+  await page.goto("/test_tag_picker");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Tag Picker");
@@ -136,7 +136,7 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
 
 // LLM QWEN3:30b generated test, only took a minimal look at it.
 test("Tag Picker dropdown opens without scrolling the page", async ({ page }) => {
-  await page.goto("http://localhost:3000/test_tag_picker");
+  await page.goto("/test_tag_picker");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Tag Picker");

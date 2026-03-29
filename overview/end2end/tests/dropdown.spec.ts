@@ -19,7 +19,7 @@ import { test, expect } from "@playwright/test";
 
 // Sanity check
 test("Dropdown opens and closes.", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("/");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");

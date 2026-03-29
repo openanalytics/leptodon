@@ -19,7 +19,7 @@ import { test, expect } from "@playwright/test";
 
 // Main table features work.
 test("Table shows data", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("/");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");
@@ -81,7 +81,7 @@ test("Table shows data", async ({ page }) => {
 // Column dnd
 
 test("Table column drag and drop", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("/");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");

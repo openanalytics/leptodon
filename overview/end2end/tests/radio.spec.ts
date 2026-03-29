@@ -19,7 +19,7 @@ import { test, expect, Page, Locator } from "@playwright/test";
 
 // Check that the radio buttons can be clicked on their label, surrounding div etc.
 test("Radio button functionality", async ({ page }) => {
-  await page.goto("http://localhost:3000/forms");
+  await page.goto("/forms");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Forms");
@@ -43,7 +43,7 @@ test("Radio button functionality", async ({ page }) => {
 
 // Check that the radio reactively updates its signal.
 test("Radio functionality", async ({ page, browserName }) => {
-  await page.goto("http://localhost:3000/test_radio");
+  await page.goto("/test_radio");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Radio");

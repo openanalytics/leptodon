@@ -19,7 +19,7 @@ import { test, expect, Page, Locator } from "@playwright/test";
 
 // Check that the value signal is properly updated and displayed when inputting.
 test("Input signal behaviours", async ({ page }) => {
-  await page.goto("http://localhost:3000/test_inputs");
+  await page.goto("/test_inputs");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Inputs");
@@ -51,7 +51,7 @@ test("Input signal behaviours", async ({ page }) => {
 
 // Check that only integers in the (0,10) range are accepted
 test("Integer number input", async ({ page }) => {
-  await page.goto("http://localhost:3000/test_inputs");
+  await page.goto("/test_inputs");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Inputs");
@@ -80,7 +80,7 @@ test("Integer number input", async ({ page }) => {
 
 // Check that only integers in the (-100,10) range are accepted
 test("Negative integer number input", async ({ page }) => {
-  await page.goto("http://localhost:3000/test_inputs");
+  await page.goto("/test_inputs");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Inputs");
@@ -115,7 +115,7 @@ test("Negative integer number input", async ({ page }) => {
 
 // Check that only decimals in the (-2.00,10.15) range are accepted
 test("Decimal number input", async ({ page }) => {
-  await page.goto("http://localhost:3000/test_inputs");
+  await page.goto("/test_inputs");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Inputs");

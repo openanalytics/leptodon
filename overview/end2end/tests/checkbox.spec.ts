@@ -19,7 +19,7 @@ import { test, expect } from "@playwright/test";
 
 // Checkboxs are interactive
 test("Checkbox interactivity", async ({ page }) => {
-  await page.goto("http://localhost:3000/test_checkbox");
+  await page.goto("/test_checkbox");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Checkbox");

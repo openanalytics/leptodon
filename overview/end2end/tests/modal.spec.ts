@@ -19,7 +19,7 @@ import { test, expect } from "@playwright/test";
 
 // Check modal opening and closing with keyboard.
 test("Modal opens and closes.", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("/");
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");
 
@@ -65,7 +65,7 @@ test("Modal opens and closes.", async ({ page }) => {
 
 // Check modal, focus looping => modality.
 test("Modal focus looping.", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("/");
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");
 

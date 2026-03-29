@@ -23,7 +23,7 @@ test("Select functionality", async ({ page, browserName }) => {
   //   browserName === "firefox",
   //   "https://projects.openanalytics.eu/issues/36185",
   // );
-  await page.goto("http://localhost:3000/test_select");
+  await page.goto("/test_select");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Select");

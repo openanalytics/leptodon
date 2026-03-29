@@ -19,7 +19,7 @@ import { test, expect } from "@playwright/test";
 
 // Buttons are interactive
 test("Button on_click", async ({ page }) => {
-  await page.goto("http://localhost:3000/");
+  await page.goto("/");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");
@@ -54,7 +54,7 @@ test("Button on_click", async ({ page }) => {
 
 // CopyButtons are reactive and should function
 test("CopyButton functionality", async ({ page, context }) => {
-  await page.goto("http://localhost:3000/test_copy_button");
+  await page.goto("/test_copy_button");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test CopyButton");
