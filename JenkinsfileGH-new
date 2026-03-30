@@ -101,21 +101,24 @@ pipeline {
             }
           }
         }
+        stage('Build Demo') {
+          steps {
+            sh """
+              nix build ./flake-modules/crates#demo-site-image
+              cp result demo-image.tar.gz
+              gunzip demo-image.tar.gz
+              du -sh /nix/store
+            """
+          }
+        }
       }
     }
-    stage('Build & Publish Demo') {
+    stage('Publish Demo') {
       steps {
         // Skopeo policy
         sh """
           mkdir -p /etc/containers
           echo '{"default":[{"type":"insecureAcceptAnything"}],"transports":{"docker-daemon":{"":[{"type":"insecureAcceptAnything"}]}}}' > /etc/containers/policy.json
-        """
-
-        sh """
-          nix build ./flake-modules/crates#demo-site-image
-          cp result demo-image.tar.gz
-          gunzip demo-image.tar.gz
-          du -sh /nix/store
         """
 
         sh "nix develop ./nix --command skopeo login --authfile /root/.docker/config.json registry.openanalytics.eu "
