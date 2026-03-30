@@ -107,7 +107,6 @@ pipeline {
               nix build ./flake-modules/crates#demo-site-image
               cp result demo-image.tar.gz
               gunzip demo-image.tar.gz
-              du -sh /nix/store
             """
           }
         }
