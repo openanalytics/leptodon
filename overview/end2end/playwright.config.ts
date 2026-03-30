@@ -51,7 +51,10 @@ const config: PlaywrightTestConfig = {
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
-        permissions: ["clipboard-read", "clipboard-write"]
+        permissions: ["clipboard-read", "clipboard-write"],
+        launchOptions: {
+          executablePath: process.env.PLAYWRIGHT_LAUNCH_OPTIONS_EXECUTABLE_PATH,
+        },
       },
     },
 

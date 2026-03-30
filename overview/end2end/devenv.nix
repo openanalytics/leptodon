@@ -11,7 +11,7 @@ in
     PLAYWRIGHT_BROWSERS_PATH = "${pkgs-playwright.playwright.browsers}";
     PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = true;
     PLAYWRIGHT_NODEJS_PATH = "${pkgs.nodejs}/bin/node";
-    PLAYWRIGHT_LAUNCH_OPTIONS_EXECUTABLE_PATH = "${pkgs-playwright.playwright.browsers}/chromium-${chromium-rev}/chrome-linux/chrome";
+    PLAYWRIGHT_LAUNCH_OPTIONS_EXECUTABLE_PATH = "${pkgs-playwright.playwright.browsers}/chromium-${chromium-rev}/chrome-linux64/chrome";
   };
 
   # https://devenv.sh/packages/
