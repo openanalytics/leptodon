@@ -8,6 +8,9 @@ spec:
     - name: dockerconfig
       secret:
         secretName: oa-sa-jenkins-registry-config
+    - name: dshm
+      emptyDir:
+        medium: Memory
   containers:
     - name: kaniko
       image: gcr.io/kaniko-project/executor:v1.23.1-debug
@@ -39,6 +42,8 @@ spec:
         - name: dockerconfig
           mountPath: /root/.docker/config.json
           subPath: data
+        - name: dshm
+          mountPath: /dev/shm
       command:
         - cat
       imagePullPolicy: Always
