@@ -12,17 +12,6 @@ spec:
       emptyDir:
         medium: Memory
   containers:
-    - name: kaniko
-      image: gcr.io/kaniko-project/executor:v1.23.1-debug
-      resources:
-        limits:
-          memory: "16Gi"
-          ephemeral-storage: "30Gi"
-        requests:
-          memory: "14Gi"
-          cpu: 1
-          ephemeral-storage: "30Gi"
-      imagePullPolicy: Always
     - name: leptodon-build
       # Essentially an extended nixpkgs/nix-flakes image with some preinstalled CI and rust tooling.
       image: registry.openanalytics.eu/openanalytics/leptodon-build
