@@ -19,7 +19,7 @@ import { test, expect, Page, Locator } from "@playwright/test";
 
 // Checks that all selected files are listed,
 test("Upload input", async ({ page }) => {
-  await page.goto("http://localhost:3000/test_upload");
+  await page.goto("/test_upload");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Upload");

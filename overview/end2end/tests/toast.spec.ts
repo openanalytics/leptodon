@@ -19,7 +19,7 @@ import { test, expect } from "@playwright/test";
 
 /// Tests basic display and functionality of the toast.
 test("test toast", async ({ page }) => {
-  await page.goto("http://localhost:3000/test_toast");
+  await page.goto("/test_toast");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Toast");

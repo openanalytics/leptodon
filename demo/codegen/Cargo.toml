@@ -1,8 +1,9 @@
+[workspace]
 [package]
 name = "codegen"
 version = "1.0.0"
 edition = "2024"
 
 [dependencies]
-leptodon = { path = "../..", default-features = false, features = [] }
+leptodon = { path = "../../leptodon", default-features = false, features = [] }
 leptodon-proc-macros = { path = "../../proc-macros", default-features = false, features = [] }

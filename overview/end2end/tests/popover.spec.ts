@@ -18,7 +18,7 @@
 import { test, expect, Page, Locator } from "@playwright/test";
 
 test("Popover functionality", async ({ page }) => {
-  await page.goto("http://localhost:3000/test_popover");
+  await page.goto("/test_popover");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Popover");

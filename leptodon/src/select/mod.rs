@@ -130,7 +130,7 @@ pub fn MaybeSelect<T>(
     /// Whether a value needs to be selected before a form surrounding this select can be submitted.
     #[prop(optional, into)]
     required: bool,
-    /// Selected element, should be an element of [options]
+    /// Selected element, should be an element of *options*
     #[prop(into)]
     selected: RwSignal<Option<T>>,
     /// Whether the select is disabled.

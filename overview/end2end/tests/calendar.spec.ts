@@ -19,7 +19,7 @@ import { test, expect } from "@playwright/test";
 
 /// Tests basic display and functionality of the calendar.
 test("test calendar", async ({ page }) => {
-  await page.goto("http://localhost:3000/test_calendar");
+  await page.goto("/test_calendar");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Calendar");
@@ -55,8 +55,8 @@ test("test calendar", async ({ page }) => {
   await page.locator(".bg-gray-100").nth(2).click();
 
   // Check edge cases.
-  await page.locator("div").filter({ hasText: /^1$/ }).click();
-  await page.locator("div").filter({ hasText: /^2$/ }).click();
+  await page.locator("div").filter({ hasText: /^1$/ }).first().click();
+  await page.locator("div").filter({ hasText: /^2$/ }).first().click();
   await page.locator("div").filter({ hasText: /^5$/ }).first().click();
   await page.locator("div").filter({ hasText: "30" }).nth(2).click();
   await page.locator("div").filter({ hasText: "9" }).nth(2).click();

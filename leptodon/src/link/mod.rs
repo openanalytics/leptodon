@@ -43,7 +43,7 @@ pub fn Link<H>(
     /// if false, link is marked aria-active if the current route starts with it.
     #[prop(optional)]
     exact: bool,
-    /// Whether this link should not change the text-color of its [children]
+    /// Whether this link should not change the text-color of its *children*
     #[prop(optional)]
     colorless: bool,
     /// If `true`, and when `href` has a trailing slash, `aria-current` will only be set if `current_url` also has

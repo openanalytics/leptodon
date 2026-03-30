@@ -1,5 +1,6 @@
 // Leptodon
 //
+// Copyright (c) 2024 Julian Büttner
 // Copyright (C) 2025-2026 Open Analytics NV
 //
 // ===========================================================================

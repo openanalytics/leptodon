@@ -223,7 +223,7 @@ pub fn initial_theme_from_cookie() -> Theme {
     use leptos::prelude::use_context;
     use std::borrow::Cow;
 
-    let Some(headers) = use_context::<http1::request::Parts>().map(|parts| parts.headers) else {
+    let Some(headers) = use_context::<http::request::Parts>().map(|parts| parts.headers) else {
         return Theme::default();
     };
 

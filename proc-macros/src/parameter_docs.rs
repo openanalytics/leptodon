@@ -50,10 +50,8 @@ fn extract_doc_attr(attrs: &[Attribute]) -> Option<String> {
 
 pub(crate) fn _generate_docs(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let input: ItemFn = parse_macro_input!(item as ItemFn);
-    // input.attrs = Vec::new(); // Remove macro attribute
 
     let mut param_docs = Vec::new();
-    // param_docs.push(("sanity".to_string(), "check".to_string()));
     for arg in &input.sig.inputs {
         if let FnArg::Typed(pat) = arg {
             let name = match &*pat.pat {
@@ -67,7 +65,7 @@ pub(crate) fn _generate_docs(_attr: TokenStream, item: TokenStream) -> TokenStre
                 param_docs.push((name, "/".to_string()))
             }
         } else {
-            param_docs.push(("mauw".to_string(), format!("{arg:?}")))
+            // failure
         }
     }
 

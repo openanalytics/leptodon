@@ -355,7 +355,7 @@ pub fn GenericInput<T, E>(
     /// Binds to the value of the input.
     #[prop(optional, into)]
     value: RwSignal<T>,
-    /// Maps the user input to [T], not ran on empty inputs unless [required] is true
+    /// Maps the user input to <T>, not ran on empty inputs unless *required* is true
     #[prop(optional, into)]
     parser: Option<ArcOneCallback<String, Result<T, E>>>,
     /// Formats the value to be shown to the user, only happens when the user indicates they are done inputting.

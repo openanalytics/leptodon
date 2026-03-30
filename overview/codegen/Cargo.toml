@@ -1,8 +1,8 @@
+[workspace]
 [package]
-name = "codegen"
-version = "1.0.0"
+name = "overview-codegen"
 edition = "2024"
 
 [dependencies]
-leptodon = { path = "../..", default-features = false, features = [] }
-syn = { version = "2.0.117", features = ["full"] }
+leptodon = { path = "../../leptodon", default-features = false, features = [] }
+syn = { version = "2.0.117", features = ["parsing"] }

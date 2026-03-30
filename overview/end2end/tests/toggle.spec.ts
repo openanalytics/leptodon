@@ -19,7 +19,7 @@ import { test, expect } from "@playwright/test";
 
 // Toggles are interactive
 test("Toggle interactivity", async ({ page }) => {
-  await page.goto("http://localhost:3000/test_toggle");
+  await page.goto("/test_toggle");
 
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Test Toggle");

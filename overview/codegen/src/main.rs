@@ -24,7 +24,7 @@ use syn::Visibility;
 fn gen_icons() -> Result<(), Error> {
     let icons = Path::new("../src").join("gen_icons.rs");
     let leptodon_icons = syn::parse_file(
-        std::fs::read_to_string("../../src/icon/mod.rs")
+        std::fs::read_to_string("../../leptodon/src/icon/mod.rs")
             .expect("Icon source must be present.")
             .as_str(),
     )

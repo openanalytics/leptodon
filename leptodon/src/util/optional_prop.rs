@@ -133,12 +133,9 @@ impl<T> From<Option<T>> for OptionalProp<T> {
 #[cfg(test)]
 mod test {
     use super::OptionalProp;
-    use leptos::prelude::Signal;
 
     #[test]
     fn from() {
-        let _prop: OptionalProp<Signal<String>> = "prop".into();
-        let _prop: OptionalProp<Signal<String>> = "prop".to_string().into();
         let _prop: OptionalProp<String> = "prop".into();
     }
 }

@@ -68,7 +68,7 @@ fn should_show_week(date: &CalendarDate, show_days: &[Weekday]) -> bool {
 #[generate_docs]
 /// Calendar component.
 ///   Displays a full-month view, shown days can be configured.
-///   Custom content is possible via [children]
+///   Custom content is possible via *children*
 #[component]
 pub fn Calendar(
     #[prop(optional, into)] class: MaybeProp<String>,

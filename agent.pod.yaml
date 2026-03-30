@@ -8,6 +8,9 @@ spec:
     - name: dockerconfig
       secret:
         secretName: oa-sa-jenkins-registry-config
+    - name: dshm
+      emptyDir:
+        medium: Memory
   containers:
     - name: kaniko
       image: gcr.io/kaniko-project/executor:v1.23.1-debug
@@ -21,7 +24,8 @@ spec:
           ephemeral-storage: "30Gi"
       imagePullPolicy: Always
     - name: leptodon-build
-      image: registry.openanalytics.eu/openanalytics/leptodon-build:latest
+      # Essentially an extended nixpkgs/nix-flakes image with some preinstalled CI and rust tooling.
+      image: registry.openanalytics.eu/openanalytics/leptodon-build
       resources:
         limits:
           memory: "12Gi"
@@ -38,7 +42,8 @@ spec:
         - name: dockerconfig
           mountPath: /root/.docker/config.json
           subPath: data
-      env:
-        - name: COMPOSE_HTTP_TIMEOUT
-          value: 600
+        - name: dshm
+          mountPath: /dev/shm
+      command:
+        - cat
       imagePullPolicy: Always
