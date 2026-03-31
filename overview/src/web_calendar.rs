@@ -75,6 +75,7 @@ fn ics_events(month: u32, year: i32) -> Option<Vec<crate::ical_property::Event>>
 
             let reader = ical::IcalParser::new(buf);
 
+            // Insert all mapped elements into events_buf
             events_buf.splice(0..0, reader
                 .filter_map(|s| s.ok())
                 .flat_map(|cal|

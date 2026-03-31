@@ -111,6 +111,7 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_popover") view=crate::testcases::popover::TestPopover/>
                 <Route path=StaticSegment("/test_date_range_picker") view=crate::testcases::date_range_picker::TestDateRangePicker/>
                 <Route path=StaticSegment("/test_calendar") view=crate::testcases::calendar::TestCalendar/>
+                <Route path=StaticSegment("/test_year_calendar") view=crate::testcases::year_calendar::TestYearCalendar/>
                 <Route path=StaticSegment("/test_copy_button") view=crate::testcases::copy_button::TestCopyButton/>
                 <Route path=StaticSegment("/test_upload") view=crate::testcases::upload::TestUpload/>
                 <Route path=StaticSegment("/test_toast") view=crate::testcases::toast::TestToast/>
