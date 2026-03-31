@@ -54,14 +54,10 @@ pipeline {
       steps {
         parallel(
           cargoArtifacts: {
-            sh "nix build ./flake-modules/crates#cargoArtifacts -o cargo-result"
-            sh "zstd -d cargo-result/target.tar.zst -o cargo-target.tar"
-            sh "tar xf cargo-target.tar"
+            sh "nix build ./flake-modules/crates#cargoArtifacts"
           },
           cargoWasmArtifacts: {
-            sh "nix build ./flake-modules/crates#cargoWasmArtifacts -o wasm-result"
-            sh "zstd -d wasm-result/target.tar.zst -o wasm-target.tar"
-            sh "tar xf wasm-target.tar"
+            sh "nix build ./flake-modules/crates#cargoWasmArtifacts"
           }
         )
       }
