@@ -1,7 +1,7 @@
 [workspace.metadata.crane]
 name = "Leptodon"
 [workspace.package]
-version = "1.1.0-dev"
+version = "1.1.0" # version-sync-⤴️ (marker for cargo-make)
 edition = "2024"
 license = "Apache-2.0"
 homepage = "https://leptodon.dev"
@@ -41,8 +41,8 @@ codegen-units = 1
 panic = "abort"
 
 [workspace.dependencies]
-leptodon = { path = "./leptodon", version = "=1.1.0-dev" }
-leptodon-proc-macros = { path = "./proc-macros", version = "=1.1.0-dev" }
+leptodon = { path = "./leptodon", version = "=1.1.0" } # version-sync-⤴️
+leptodon-proc-macros = { path = "./proc-macros", version = "=1.1.0" } # version-sync-⤴️
 
 # Protocol
 http = "1"
@@ -60,7 +60,7 @@ tokio = { version = "1", features = ["rt-multi-thread"] }
 leptos = { version = "0.8.17", features = ["rkyv", "tracing"] }
 leptos_axum = { version = "0.8.8" }
 leptos_meta = { version = "0.8.6" }
-leptos_router = { version = "0.8.12" }
+leptos_router = { version = "0.8.13" }
 wasm-bindgen = { version = "=0.2.108" }
 wasm-streams = { version = "=0.4.2" }
 wasm-cookies = { version = "=0.2.1" }
