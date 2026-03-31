@@ -23,9 +23,12 @@ use chrono::Weekday;
 use chrono::WeekdaySet;
 use leptodon::calendar::Calendar;
 use leptodon::calendar::CalendarEvent;
+use leptodon::calendar::YearCalendar;
+use leptodon::calendar::YearCalendarLayout;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
 use leptodon::paragraph::Paragraph;
+use leptodon::select::Select;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -67,6 +70,21 @@ pub fn CalendarDemo() -> impl IntoView {
     }
 }
 
+#[generate_codeblock(YearCalendarExample)]
+#[component]
+pub fn YearCalendarDemo() -> impl IntoView {
+    let local_date_time = Local::now();
+    let current_year = RwSignal::new(2025);
+    let layout = RwSignal::new(YearCalendarLayout::default());
+    let layout_options = RwSignal::new(vec![
+        YearCalendarLayout::Year,
+        YearCalendarLayout::TwelveMonths,
+    ]);
+    view! {
+        <YearCalendar local_date_time current_year layout />
+        <Select required=true selected=layout options=layout_options />
+    }
+}
 #[component]
 pub fn CalendarDemoPage() -> impl IntoView {
     view! {
@@ -75,7 +93,9 @@ pub fn CalendarDemoPage() -> impl IntoView {
         <FixedCenterColumn>
             <Heading4 anchor="calendar">"Calendar"</Heading4>
             <CalendarExample />
+            <YearCalendarExample />
 
+            <leptodon::calendar::YearCalendarDocs />
             <leptodon::calendar::CalendarDocs />
             <leptodon::calendar::CalendarEventDocs />
         </FixedCenterColumn>

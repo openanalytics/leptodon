@@ -27,3 +27,4 @@ pub mod tag_picker;
 pub mod toast;
 pub mod toggle;
 pub mod upload;
+pub mod year_calendar;

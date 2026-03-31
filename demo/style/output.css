@@ -2667,6 +2667,10 @@ input:checked + .toggle-bg {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
+.vertical-lr {
+  writing-mode: vertical-lr;
+}
+
 [type="text"]:focus, [type="email"]:focus, [type="url"]:focus, [type="password"]:focus, [type="number"]:focus, [type="date"]:focus, [type="datetime-local"]:focus, [type="month"]:focus, [type="search"]:focus, [type="tel"]:focus, [type="time"]:focus, [type="week"]:focus, [multiple]:focus, textarea:focus, select:focus {
   outline-offset: 2px;
   --tw-ring-inset: var(--tw-empty, /*!*/ /*!*/);
@@ -3132,6 +3136,14 @@ html.dark {
     .md\:max-lg\:text-center {
       text-align: center;
     }
+
+    .md\:max-lg\:horizontal-tb {
+      writing-mode: horizontal-tb;
+    }
+
+    .md\:max-lg\:text-upright {
+      text-orientation: upright;
+    }
   }
 }
 
@@ -3196,6 +3208,14 @@ html.dark {
   .xl\:rotate-0 {
     --tw-rotate: 0deg;
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  }
+
+  .xl\:horizontal-tb {
+    writing-mode: horizontal-tb;
+  }
+
+  .xl\:text-upright {
+    text-orientation: upright;
   }
 }
 

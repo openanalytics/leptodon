@@ -37,6 +37,7 @@ use chrono::Month;
 use chrono::NaiveDate;
 use chrono::Weekday;
 use chrono::WeekdaySet;
+use leptodon_proc_macros::generate_docs;
 use leptos::prelude::*;
 use leptos_use::CalendarDate;
 use leptos_use::UseCalendarOptions;
@@ -350,6 +351,7 @@ pub fn calendar_weekend_highlighter(date: NaiveDate) -> MaybeReactiveClass {
     .into()
 }
 
+#[generate_docs]
 /// Year-Calendar component.
 ///   Displays a full-year view, supports a single-grid full year layout or 12 month-calendars.
 ///   Custom content is possible via [children]

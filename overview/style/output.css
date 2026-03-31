@@ -2704,6 +2704,26 @@ input:checked + .toggle-bg {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
+.vertical-lr {
+  writing-mode: vertical-lr;
+}
+
+.writing-vertical {
+  writing-mode: vertical-lr;
+}
+
+.text-mixed {
+  text-orientation: mixed;
+}
+
+.writing-horizontal {
+  writing-mode: sideways-lr;
+}
+
+.text-upright {
+  text-orientation: upright;
+}
+
 [type="text"]:focus, [type="email"]:focus, [type="url"]:focus, [type="password"]:focus, [type="number"]:focus, [type="date"]:focus, [type="datetime-local"]:focus, [type="month"]:focus, [type="search"]:focus, [type="tel"]:focus, [type="time"]:focus, [type="week"]:focus, [multiple]:focus, textarea:focus, select:focus {
   outline-offset: 2px;
   --tw-ring-inset: var(--tw-empty, /*!*/ /*!*/);
@@ -3163,6 +3183,14 @@ html.dark {
     .md\:max-lg\:text-center {
       text-align: center;
     }
+
+    .md\:max-lg\:horizontal-tb {
+      writing-mode: horizontal-tb;
+    }
+
+    .md\:max-lg\:text-upright {
+      text-orientation: upright;
+    }
   }
 }
 
@@ -3240,6 +3268,14 @@ html.dark {
   .xl\:text-3xl {
     font-size: 1.875rem;
     line-height: 2.25rem;
+  }
+
+  .xl\:horizontal-tb {
+    writing-mode: horizontal-tb;
+  }
+
+  .xl\:text-upright {
+    text-orientation: upright;
   }
 }
 

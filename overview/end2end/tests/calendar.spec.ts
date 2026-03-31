@@ -66,3 +66,54 @@ test("test calendar", async ({ page }) => {
   await page.getByRole("button", { name: "back to February" }).click();
   await page.getByText("February").click();
 });
+
+/// Tests basic dicannotsplay and functionality of the calendar.
+test("test year calendar", async ({ page }) => {
+  await page.goto("/test_year_calendar");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Year Calendar");
+
+  // Mock date (This does not work for wasm :/)
+  // await page.clock.install({ time: new Date("2026-02-02T00:00:00Z")  });
+
+  // Assert current mocked date
+  await page.getByText("2026").click();
+  await page.locator("div").filter({ hasText: "1" }).first().click();
+  await page.locator("div").filter({ hasText: "31" }).first().click();
+  await page.getByText("Jan", { exact: true }).click();
+  await page.getByText("Feb", { exact: true }).click();
+  await page.getByText("Oct", { exact: true }).click();
+  await page.getByText("Dec", { exact: true }).click();
+
+  await page.getByText("Current Year").click();
+  // Navigate to prev year
+  await page.getByRole("button").first().click();
+
+  await page.getByText("2025").click();
+  await page.getByText("Jan", { exact: true }).click();
+  await page.getByText("Feb", { exact: true }).click();
+  await page.getByText("Oct", { exact: true }).click();
+  await page.getByText("Dec", { exact: true }).click();
+
+  // Go back to current month.
+  await page.getByRole("button", { name: "back to 2026" }).click();
+  await page.getByText("2026").click();
+
+  // Swap to twelve-month view.
+  const set_layout_year = page.getByTestId("set_layout_year");
+  const set_layout_twelve_months = page.getByTestId("set_layout_twelve_months");
+
+  await set_layout_twelve_months.click();
+  await page.getByText("January").click();
+  await expect(page.getByText("Mon", { exact: true })).toHaveCount(12);
+  await expect(page.getByText("Tue", { exact: true })).toHaveCount(12);
+  await expect(page.getByText("Wed", { exact: true })).toHaveCount(12);
+  await expect(page.getByText("Thu", { exact: true })).toHaveCount(12);
+  await expect(page.getByText("Fri", { exact: true })).toHaveCount(12);
+  await expect(page.getByText("Sat", { exact: true })).toHaveCount(12);
+  await expect(page.getByText("Sun", { exact: true })).toHaveCount(12);
+  await page.getByText("July").click();
+  await page.getByText("August").click();
+  await page.getByText("November").click();
+});
