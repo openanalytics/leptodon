@@ -1,3 +1,20 @@
+[tasks.release]
+workspace = false
+script = '''
+#!/bin/sh
+set +e
+NEW_VERSION=${1:-${NEW_VERSION?Expecting <version> argument or NEW_VERSION env variable. E.g. 1.0.0}}
+OLD_VERSION=$(tomlq --raw-output ".workspace.package.version" Cargo.toml)
+
+# Files to keep synced
+files="Cargo.toml leptodon/Cargo.toml proc-macros/Cargo.toml"
+
+for file in $files; do
+    # Update the marked lines
+    sed -i "/version-sync-⤴️/s/$OLD_VERSION/$NEW_VERSION/g" "$file"
+done
+'''
+
 [tasks.license-check]
 workspace = false
 command = "licensure"

@@ -17,7 +17,7 @@ pipeline {
     ).trim()
     VERSION = sh(
       returnStdout: true,
-      script: 'cat Cargo.toml | tomlq ".workspace.package.version" --raw-output'
+      script: 'tomlq --raw-output ".workspace.package.version" Cargo.toml'
     ).trim()
     NIX_PATH = 'nixpkgs=channel:nixos-unstable'
     NS = 'openanalytics'
