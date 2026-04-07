@@ -17,7 +17,6 @@
 // If not, see <http://www.apache.org/licenses/>
 use leptodon_proc_macros::generate_docs;
 use leptos::ev::EventCallback;
-use leptos::leptos_dom::logging::console_log;
 use leptos::logging::debug_log;
 use leptos::logging::warn;
 use leptos::prelude::AddAnyAttr;
@@ -221,9 +220,11 @@ where
         );
     };
 
+    let open_popover = Trigger::new();
     let close_popover = Trigger::new();
     let popover_controller = PopoverController {
-        close: close_popover,
+        open: Some(open_popover),
+        close: Some(close_popover),
         on_open: Some(on_popover_open.into()),
         on_close: None,
     };
@@ -233,7 +234,14 @@ where
             <PopoverTrigger slot>
                 <div
                     id=id.get().map(|id| format!("{id}-trigger"))
+                    tabindex="0" // Make this element tab-reachable
                     class=class_list!(SELECT_CLASSES, "cursor-default flex justify-between items-center")
+                    on:keydown=move |key: KeyboardEvent| {
+                        debug_log!("keypress on popover-div: {}", key.code().as_str());
+                        if key.code() == "Enter" || key.code() == "Space" {
+                            open_popover.notify();
+                        }
+                    }
                 >
                     <div class="flex gap-2 overflow-scroll">
                         // Selected tags
@@ -274,9 +282,13 @@ where
 
             // Popover Contents VV
             <ul id=id.get().map(|id| format!("{id}-dropdown"))>
-                <TextInput class="mb-2" placeholder="Search..." value=search_filter input_ref=search_ref
+                <TextInput
+                    class="mb-2"
+                    placeholder="Search..."
+                    value=search_filter
+                    input_ref=search_ref
                     on:keydown=move |key: KeyboardEvent| {
-                        console_log(key.code().as_str());
+                        debug_log!("keypress in popover-search: {}", key.code().as_str());
                         if key.code() == "Escape" || key.code() == "Tab" {
                             close_popover.notify();
                         }
