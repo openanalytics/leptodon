@@ -18,6 +18,7 @@
 use leptodon_proc_macros::generate_docs;
 use leptos::ev::EventCallback;
 use leptos::logging::debug_log;
+use leptos::logging::error;
 use leptos::logging::warn;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::ClassAttribute;
@@ -30,6 +31,7 @@ use leptos::prelude::GlobalAttributes;
 use leptos::prelude::IntoAny;
 use leptos::prelude::Memo;
 use leptos::prelude::NodeRef;
+use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::Notify;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
@@ -50,6 +52,7 @@ use std::hash::Hash;
 use std::sync::LazyLock;
 use std::sync::Mutex;
 use std::time::Duration;
+use web_sys::HtmlDivElement;
 use web_sys::HtmlInputElement;
 use web_sys::KeyboardEvent;
 
@@ -95,6 +98,8 @@ where
     T: AsRef<str> + FormValue + Eq + Hash + Clone + Send + Sync + 'static,
 {
     let search_filter = RwSignal::new(String::new());
+    // Refs used for focus transfer
+    let tag_picker_ref: NodeRef<leptos::html::Div> = NodeRef::new();
     let search_ref: NodeRef<leptos::html::Input> = NodeRef::new();
     let checkboxes = RwSignal::new(HashMap::<T, RwSignal<bool>>::new());
     let inside_selected = RwSignal::new(selected.get_untracked());
@@ -235,6 +240,7 @@ where
                 <div
                     id=id.get().map(|id| format!("{id}-trigger"))
                     tabindex="0" // Make this element tab-reachable
+                    node_ref=tag_picker_ref
                     class=class_list!(SELECT_CLASSES, "cursor-default flex justify-between items-center")
                     on:keydown=move |key: KeyboardEvent| {
                         debug_log!("keypress on popover-div: {}", key.code().as_str());
@@ -291,8 +297,12 @@ where
                         debug_log!("keypress in popover-search: {}", key.code().as_str());
                         if key.code() == "Escape" || key.code() == "Tab" {
                             close_popover.notify();
-                        }
-                        if key.code() == "Enter" {
+                            let Some(tag_picker_ref): Option<HtmlDivElement> = tag_picker_ref.get() else {
+                                error!("tag_picker_ref is None");
+                                return;
+                            };
+                            tag_picker_ref.focus().expect("Tag_picker should be focus-able.");
+                        } else if key.code() == "Enter" {
                             if search_filter.get().is_empty() {
                                 return;
                             }

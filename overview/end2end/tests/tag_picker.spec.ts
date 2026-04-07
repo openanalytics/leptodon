@@ -134,6 +134,34 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
   ).not.toBeChecked();
 });
 
+// Check that the radio reactively updates its signal.
+test("Tag Picker keyboard-navigation", async ({ page, browserName }) => {
+  await page.goto("/test_tag_picker");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Tag Picker");
+
+  let tag_picker = page.locator("#tag_picker");
+  let sel_disp = page.locator("#selected-display");
+  let tag_trigger = page.locator("#tag_picker-trigger");
+  let tag_dropdown = page.locator("#tag_picker-dropdown");
+
+  page.keyboard.press("Tab"); // selects tag_picker
+
+  await expect(tag_trigger).toBeFocused();
+
+  page.keyboard.press("Enter"); // open it
+
+  await expect(tag_dropdown).toBeVisible();
+  await expect(tag_dropdown.locator("input").first()).toBeFocused(); // should the search-input
+
+  page.keyboard.press("Escape"); // close it
+
+  // Focus should transfer back to tag_picker when closing via keyboard.
+  await expect(tag_trigger).toBeFocused();
+});
+
+
 // LLM QWEN3:30b generated test, only took a minimal look at it.
 test("Tag Picker dropdown opens without scrolling the page", async ({ page }) => {
   await page.goto("/test_tag_picker");
