@@ -20,7 +20,7 @@ use leptodon::button::Button;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
 use leptodon::paragraph::Paragraph;
-use leptodon::radio::RadioOption;
+use leptodon::radio::FormValue;
 use leptodon::select::MaybeSelect;
 use leptodon::select::Select;
 use leptodon_proc_macros::generate_codeblock;
@@ -42,7 +42,7 @@ pub fn MaybeSelectDemo() -> impl IntoView {
         Select2,
         Klara,
     }
-    impl RadioOption for SelectStation {
+    impl FormValue for SelectStation {
         fn value(&self) -> Oco<'static, str> {
             match self {
                 SelectStation::Select1 => "select_1",
@@ -81,7 +81,7 @@ enum SelectStation {
     Select2,
     Klara,
 }
-impl RadioOption for SelectStation {
+impl FormValue for SelectStation {
     fn value(&self) -> Oco<'static, str> {
         match self {
             SelectStation::Select1 => "select_1",

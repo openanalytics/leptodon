@@ -20,8 +20,10 @@ use leptodon::button::Button;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
 use leptodon::paragraph::Paragraph;
+use leptodon::radio::FormValue;
 use leptodon::tag_picker::TagPicker;
 use leptodon_proc_macros::generate_codeblock;
+use leptos::oco::Oco;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::CollectView;
 use leptos::prelude::ElementChild;
@@ -45,10 +47,15 @@ pub fn TagPickerDemo() -> impl IntoView {
     impl AsRef<str> for Element {
         fn as_ref(&self) -> &'static str {
             match self {
-                Element::Hydrogen => "hydrogen",
-                Element::Helium => "helium",
-                Element::Lithium => "lithium",
+                Element::Hydrogen => "Hydrogen",
+                Element::Helium => "Helium",
+                Element::Lithium => "Lithium",
             }
+        }
+    }
+    impl FormValue for Element {
+        fn value(&self) -> Oco<'static, str> {
+            Oco::Owned(self.as_ref().to_lowercase())
         }
     }
 

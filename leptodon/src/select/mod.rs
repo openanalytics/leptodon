@@ -36,11 +36,12 @@ use leptos::{
     prelude::{MaybeProp, Signal},
     view,
 };
+use std::fmt::Display;
 use std::hash::Hash;
 
 use crate::class_list;
 use crate::form_input::Label;
-use crate::radio::RadioOption;
+use crate::radio::FormValue;
 pub const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 
 #[generate_docs]
@@ -63,7 +64,7 @@ pub fn Select<T>(
     #[prop(into)] options: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
-    T: RadioOption + Clone + Eq + Hash + Send + Sync + 'static,
+    T: FormValue + Display + Clone + Eq + Hash + Send + Sync + 'static,
 {
     let some_selected = RwSignal::new(Some(selected.get_untracked()));
 
@@ -141,7 +142,7 @@ pub fn MaybeSelect<T>(
     options: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
-    T: RadioOption + Clone + Eq + Hash + Send + Sync + 'static,
+    T: FormValue + Display + Clone + Eq + Hash + Send + Sync + 'static,
 {
     // Unset the selected elem when it is not part of the new [options]
     Effect::watch(

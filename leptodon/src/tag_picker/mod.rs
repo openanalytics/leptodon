@@ -47,7 +47,6 @@ use nucleo_matcher::pattern::Normalization;
 use nucleo_matcher::pattern::Pattern;
 use std::collections::HashMap;
 use std::fmt::Debug;
-use std::fmt::Display;
 use std::hash::Hash;
 use std::sync::LazyLock;
 use std::sync::Mutex;
@@ -66,6 +65,7 @@ use crate::popover::PopoverAnchor;
 use crate::popover::PopoverController;
 use crate::popover::PopoverTrigger;
 use crate::popover::PopoverTriggerType;
+use crate::radio::FormValue;
 
 const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 const TAG_LIST_ITEM_CLASSES: &str =
@@ -78,6 +78,7 @@ static NUCLEO_MATCHER: LazyLock<Mutex<Matcher>> =
 
 #[generate_docs]
 #[component]
+/// T's AsRef<str> will be shown to the user and will be fuzzy searched on.
 pub fn TagPicker<T>(
     #[prop(optional, into)] id: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeReactiveClass,
@@ -92,7 +93,7 @@ pub fn TagPicker<T>(
     tags: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
-    T: AsRef<str> + Display + Eq + Hash + Clone + Send + Sync + 'static,
+    T: AsRef<str> + FormValue + Eq + Hash + Clone + Send + Sync + 'static,
 {
     let search_filter = RwSignal::new(String::new());
     let search_ref: NodeRef<leptos::html::Input> = NodeRef::new();
@@ -118,7 +119,7 @@ where
                 } else {
                     // new tag
                     checkboxes.insert(tag.clone(), RwSignal::new(leftover_selected.contains(tag)));
-                    debug_log!("Added {tag}'s checkbox");
+                    debug_log!("Added {}'s checkbox", tag.as_ref());
                 }
             }
             if let Some(old) = old {
@@ -128,7 +129,7 @@ where
                     } else {
                         // removed tag
                         checkboxes.remove(tag);
-                        debug_log!("Removed {tag}'s checkbox");
+                        debug_log!("Removed {}'s checkbox", tag.as_ref());
                     }
                 }
             }
@@ -242,7 +243,7 @@ where
                             let:tag
                             >
                             <div class="p-1.5 bg-oa-gray dark:bg-gray-800 rounded-lg flex items-center gap-1.5">
-                                <span>{tag.to_string()}</span>
+                                <span>{tag.as_ref().to_string()}</span>
                                 <div class="p-1 hover:bg-oa-gray-mid hover:dark:bg-gray-600 hover:cursor-pointer rounded" on:click=move |ev| {
                                     ev.stop_propagation();
                                     let tag = tag.clone();
@@ -331,7 +332,7 @@ where
                                 {let tag=tag.clone(); {
                                     view! {
                                         <Checkbox disable_tab=true checked=*checked prevent_label=true>
-                                            {tag.to_string()}
+                                            {tag.as_ref().to_string()}
                                         </Checkbox>
                                     }
                                 }}
@@ -352,12 +353,12 @@ fn toggle_tag<T, Event>(
     checked: RwSignal<bool>,
 ) -> impl FnMut(Event) + 'static
 where
-    T: Display + Eq + Clone + Send + Sync + 'static,
+    T: AsRef<str> + Eq + Clone + Send + Sync + 'static,
 {
     move |_| {
         // Toggle selection
         inside_selected.update(|old_sel| {
-            debug_log!("Toggling {}", tag);
+            debug_log!("Toggling {}", tag.as_ref());
             if old_sel.contains(&tag) {
                 if let Some(pos) = old_sel.iter().position(|sel_tag| sel_tag == &tag) {
                     old_sel.remove(pos);

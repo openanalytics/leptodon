@@ -32,7 +32,7 @@ use leptos_use::use_preferred_dark;
 use std::fmt::Display;
 use std::str::FromStr;
 
-use crate::radio::RadioOption;
+use crate::radio::FormValue;
 use crate::select::Select;
 
 #[derive(Debug, Hash, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
@@ -43,7 +43,7 @@ pub enum Theme {
     FollowSystem,
 }
 
-impl RadioOption for Theme {
+impl FormValue for Theme {
     fn value(&self) -> prelude::Oco<'static, str> {
         match self {
             Theme::Light => Oco::Borrowed("light"),

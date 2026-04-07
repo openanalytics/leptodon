@@ -51,8 +51,9 @@ const RADIO_OPTION_LABEL_CLASSES: &str =
 const RADIO_LIST_GROUP_CLASSES: &str =
     "border border-default dark:border-gray-700 rounded-lg shadow-sm";
 
-/// Methods for radio option
-pub trait RadioOption: Display {
+/// Required for form components that allow a user to select generic elements.
+/// Such elements must have a value (provided by this trait) to be submitted with the form.
+pub trait FormValue {
     /// Value sent with the surrounding Form.
     fn value(&self) -> Oco<'static, str>;
 }
@@ -84,7 +85,7 @@ pub fn Radio<T>(
     options: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
-    T: RadioOption + Clone + Eq + Hash + Send + Sync + 'static,
+    T: FormValue + Display + Clone + Eq + Hash + Send + Sync + 'static,
 {
     let checked_input = NodeRef::<Input>::new();
     let fields: RwSignal<HashMap<T, NodeRef<Input>>> = RwSignal::new(HashMap::new());
@@ -198,64 +199,70 @@ where
     }
 }
 
-impl RadioOption for u8 {
+impl FormValue for u8 {
     fn value(&self) -> Oco<'static, str> {
         Oco::Owned(self.to_string())
     }
 }
-impl RadioOption for u16 {
+impl FormValue for u16 {
     fn value(&self) -> Oco<'static, str> {
         Oco::Owned(self.to_string())
     }
 }
-impl RadioOption for u32 {
+impl FormValue for u32 {
     fn value(&self) -> Oco<'static, str> {
         Oco::Owned(self.to_string())
     }
 }
-impl RadioOption for u64 {
+impl FormValue for u64 {
     fn value(&self) -> Oco<'static, str> {
         Oco::Owned(self.to_string())
     }
 }
-impl RadioOption for u128 {
-    fn value(&self) -> Oco<'static, str> {
-        Oco::Owned(self.to_string())
-    }
-}
-
-impl RadioOption for i8 {
-    fn value(&self) -> Oco<'static, str> {
-        Oco::Owned(self.to_string())
-    }
-}
-impl RadioOption for i16 {
-    fn value(&self) -> Oco<'static, str> {
-        Oco::Owned(self.to_string())
-    }
-}
-impl RadioOption for i32 {
-    fn value(&self) -> Oco<'static, str> {
-        Oco::Owned(self.to_string())
-    }
-}
-impl RadioOption for i64 {
-    fn value(&self) -> Oco<'static, str> {
-        Oco::Owned(self.to_string())
-    }
-}
-impl RadioOption for i128 {
+impl FormValue for u128 {
     fn value(&self) -> Oco<'static, str> {
         Oco::Owned(self.to_string())
     }
 }
 
-impl RadioOption for f32 {
+impl FormValue for i8 {
     fn value(&self) -> Oco<'static, str> {
         Oco::Owned(self.to_string())
     }
 }
-impl RadioOption for f64 {
+impl FormValue for i16 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl FormValue for i32 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl FormValue for i64 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl FormValue for i128 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+
+impl FormValue for f32 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+impl FormValue for f64 {
+    fn value(&self) -> Oco<'static, str> {
+        Oco::Owned(self.to_string())
+    }
+}
+
+impl FormValue for String {
     fn value(&self) -> Oco<'static, str> {
         Oco::Owned(self.to_string())
     }

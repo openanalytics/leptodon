@@ -20,8 +20,8 @@ use leptodon::button::Button;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
 use leptodon::paragraph::Paragraph;
+use leptodon::radio::FormValue;
 use leptodon::radio::Radio;
-use leptodon::radio::RadioOption;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::oco::Oco;
 use leptos::prelude::ClassAttribute;
@@ -41,7 +41,7 @@ pub fn RadioDemo() -> impl IntoView {
         Radio2,
         Klara,
     }
-    impl RadioOption for RadioStation {
+    impl FormValue for RadioStation {
         fn value(&self) -> Oco<'static, str> {
             match self {
                 RadioStation::Radio1 => "radio_1",
