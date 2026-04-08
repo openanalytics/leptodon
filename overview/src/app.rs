@@ -227,7 +227,7 @@ fn Home() -> impl IntoView {
             }
             <br/>
             <Toggle checked=RwSignal::new(false)>"Lightswitch"</Toggle>
-            <Avatar src="/favicon.ico" />
+            <Avatar src="/logo.svg" />
             <Avatar />
             <AnyAccordion />
 
