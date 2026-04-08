@@ -28,7 +28,7 @@ use leptodon::textarea::TextArea;
 use leptodon::toggle::Toggle;
 use leptodon::{
     button::Button,
-    radio::{Radio, RadioOption},
+    radio::{FormValue, Radio},
 };
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::{ClassAttribute, ElementChild};
@@ -44,7 +44,7 @@ enum RadioStation {
     Radio2,
     Klara,
 }
-impl RadioOption for RadioStation {
+impl FormValue for RadioStation {
     fn value(&self) -> Oco<'static, str> {
         match self {
             RadioStation::Radio1 => "radio_1",
@@ -72,7 +72,7 @@ pub enum Element {
     Aluminium,
 }
 
-impl RadioOption for Element {
+impl FormValue for Element {
     fn value(&self) -> Oco<'static, str> {
         AsRef::<str>::as_ref(&self).to_string().into()
     }

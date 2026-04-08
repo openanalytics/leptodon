@@ -20,7 +20,7 @@ use std::fmt::Display;
 use crate::calendar::CalendarChildrenFn;
 use crate::calendar::MonthCalendarUncontrolled;
 use crate::heading::Heading3;
-use crate::radio::RadioOption;
+use crate::radio::FormValue;
 use crate::{
     badge::{Badge, BadgePostfix, BadgePrefix, BadgeSize, BadgeTheme},
     button::{Button, ButtonAppearance},
@@ -60,7 +60,7 @@ impl Display for YearCalendarLayout {
     }
 }
 
-impl RadioOption for YearCalendarLayout {
+impl FormValue for YearCalendarLayout {
     fn value(&self) -> Oco<'static, str> {
         match self {
             YearCalendarLayout::Year => "year".into(),
@@ -344,7 +344,7 @@ pub fn YearCalendarNavbar(
 
 pub fn calendar_weekend_highlighter(date: NaiveDate) -> MaybeReactiveClass {
     if date.weekday().number_from_monday() > Weekday::Fri.number_from_monday() {
-        class_list!("!bg-oa-gray dark:!bg-gray-800/89")
+        class_list!("!bg-oa-gray dark:!bg-gray-800/90")
     } else {
         class_list!("")
     }

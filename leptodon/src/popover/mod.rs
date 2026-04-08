@@ -39,8 +39,10 @@ use web_sys::{DomRect, HtmlDivElement, MouseEvent};
 
 #[derive(Default)]
 pub struct PopoverController {
+    /// Opens the popover.
+    pub open: Option<Trigger>,
     /// Closes the popover.
-    pub close: Trigger,
+    pub close: Option<Trigger>,
     /// Called when the popover becomes visible
     pub on_open: Option<BoxCallback>,
     /// Called when the popover becomes invisible
@@ -115,6 +117,13 @@ where
             move |_, _, _| {
                 show_by_hover.set(false);
                 popover_clicked_open.set(false);
+            },
+            false,
+        );
+        Effect::watch(
+            move || popover_controller.open.track(),
+            move |_, _, _| {
+                popover_clicked_open.set(true);
             },
             false,
         );

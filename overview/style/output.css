@@ -3340,6 +3340,10 @@ html.dark {
   background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1)) !important;
 }
 
+.dark\:\!bg-gray-800\/90:where(.dark, .dark *) {
+  background-color: rgb(31 41 55 / 0.9) !important;
+}
+
 .dark\:bg-\[\#030712\]:where(.dark, .dark *) {
   --tw-bg-opacity: 1;
   background-color: rgb(3 7 18 / var(--tw-bg-opacity, 1));

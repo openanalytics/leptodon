@@ -17,8 +17,8 @@
 // If not, see <http://www.apache.org/licenses/>
 use leptodon_proc_macros::generate_docs;
 use leptos::ev::EventCallback;
-use leptos::leptos_dom::logging::console_log;
 use leptos::logging::debug_log;
+use leptos::logging::error;
 use leptos::logging::warn;
 use leptos::prelude::AddAnyAttr;
 use leptos::prelude::ClassAttribute;
@@ -31,6 +31,7 @@ use leptos::prelude::GlobalAttributes;
 use leptos::prelude::IntoAny;
 use leptos::prelude::Memo;
 use leptos::prelude::NodeRef;
+use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::Notify;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
@@ -47,11 +48,11 @@ use nucleo_matcher::pattern::Normalization;
 use nucleo_matcher::pattern::Pattern;
 use std::collections::HashMap;
 use std::fmt::Debug;
-use std::fmt::Display;
 use std::hash::Hash;
 use std::sync::LazyLock;
 use std::sync::Mutex;
 use std::time::Duration;
+use web_sys::HtmlDivElement;
 use web_sys::HtmlInputElement;
 use web_sys::KeyboardEvent;
 
@@ -66,6 +67,7 @@ use crate::popover::PopoverAnchor;
 use crate::popover::PopoverController;
 use crate::popover::PopoverTrigger;
 use crate::popover::PopoverTriggerType;
+use crate::radio::FormValue;
 
 const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 const TAG_LIST_ITEM_CLASSES: &str =
@@ -78,6 +80,7 @@ static NUCLEO_MATCHER: LazyLock<Mutex<Matcher>> =
 
 #[generate_docs]
 #[component]
+/// T's AsRef<str> will be shown to the user and will be fuzzy searched on.
 pub fn TagPicker<T>(
     #[prop(optional, into)] id: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeReactiveClass,
@@ -92,12 +95,16 @@ pub fn TagPicker<T>(
     tags: RwSignal<Vec<T>>,
 ) -> impl IntoView
 where
-    T: AsRef<str> + Display + Eq + Hash + Clone + Send + Sync + 'static,
+    T: AsRef<str> + FormValue + Eq + Hash + Clone + Send + Sync + 'static,
 {
     let search_filter = RwSignal::new(String::new());
+    // Refs used for focus transfer
+    let tag_picker_ref: NodeRef<leptos::html::Div> = NodeRef::new();
     let search_ref: NodeRef<leptos::html::Input> = NodeRef::new();
     let checkboxes = RwSignal::new(HashMap::<T, RwSignal<bool>>::new());
     let inside_selected = RwSignal::new(selected.get_untracked());
+    // Index of which element the select box is focusing, defaults to 0/first element, can be moved via arrowUp, arrowDown.
+    let focus_ith = RwSignal::new(0);
 
     // When the outside tags change, update selected tags as some may have become non-options.
     Effect::watch(
@@ -118,7 +125,7 @@ where
                 } else {
                     // new tag
                     checkboxes.insert(tag.clone(), RwSignal::new(leftover_selected.contains(tag)));
-                    debug_log!("Added {tag}'s checkbox");
+                    debug_log!("Added {}'s checkbox", tag.as_ref());
                 }
             }
             if let Some(old) = old {
@@ -128,7 +135,7 @@ where
                     } else {
                         // removed tag
                         checkboxes.remove(tag);
-                        debug_log!("Removed {tag}'s checkbox");
+                        debug_log!("Removed {}'s checkbox", tag.as_ref());
                     }
                 }
             }
@@ -175,13 +182,23 @@ where
 
         let pattern = Pattern::parse(search.as_str(), CaseMatching::Smart, Normalization::Smart);
         let mut matcher = NUCLEO_MATCHER.lock().expect("Unpoised");
-        let sorted_tags = pattern.match_list(tags, &mut matcher);
+        let filtersorted_tags = pattern.match_list(tags, &mut matcher);
 
-        sorted_tags.into_iter().map(|(tag, _score)| tag).collect()
+        /* Pigibacking code snippet, unrelated to fuzzy search, keeps focus_ith in-bounds based on # visible entries */
+        let focus_ith_value = focus_ith.get();
+        if focus_ith_value >= filtersorted_tags.len() {
+            focus_ith.set(filtersorted_tags.len().saturating_sub(1));
+        }
+        /* end */
+
+        filtersorted_tags
+            .into_iter()
+            .map(|(tag, _score)| tag)
+            .collect()
     });
 
-    // Partitioned into selected and unselected.
-    // (Idx -> (T, is_selected))
+    // Sorted into selected and unselected.
+    // [selected_T|unselected_T]
     let tags_grouped = Memo::new(move |_old| {
         if checkboxes.get().is_empty() {
             return vec![];
@@ -201,7 +218,7 @@ where
         }
 
         all.append(&mut unselected_group);
-        all.into_iter().enumerate().collect::<Vec<(usize, T)>>()
+        all.into_iter().collect::<Vec<T>>()
     });
 
     let on_popover_open = move || {
@@ -220,9 +237,11 @@ where
         );
     };
 
+    let open_popover = Trigger::new();
     let close_popover = Trigger::new();
     let popover_controller = PopoverController {
-        close: close_popover,
+        open: Some(open_popover),
+        close: Some(close_popover),
         on_open: Some(on_popover_open.into()),
         on_close: None,
     };
@@ -232,7 +251,15 @@ where
             <PopoverTrigger slot>
                 <div
                     id=id.get().map(|id| format!("{id}-trigger"))
+                    tabindex="0" // Make this element tab-reachable
+                    node_ref=tag_picker_ref
                     class=class_list!(SELECT_CLASSES, "cursor-default flex justify-between items-center")
+                    on:keydown=move |key: KeyboardEvent| {
+                        debug_log!("keypress on popover-div: {}", key.code().as_str());
+                        if key.code() == "Enter" || key.code() == "Space" {
+                            open_popover.notify();
+                        }
+                    }
                 >
                     <div class="flex gap-2 overflow-scroll">
                         // Selected tags
@@ -242,7 +269,7 @@ where
                             let:tag
                             >
                             <div class="p-1.5 bg-oa-gray dark:bg-gray-800 rounded-lg flex items-center gap-1.5">
-                                <span>{tag.to_string()}</span>
+                                <span>{tag.as_ref().to_string()}</span>
                                 <div class="p-1 hover:bg-oa-gray-mid hover:dark:bg-gray-600 hover:cursor-pointer rounded" on:click=move |ev| {
                                     ev.stop_propagation();
                                     let tag = tag.clone();
@@ -273,17 +300,23 @@ where
 
             // Popover Contents VV
             <ul id=id.get().map(|id| format!("{id}-dropdown"))>
-                <TextInput class="mb-2" placeholder="Search..." value=search_filter input_ref=search_ref
+                // Search Inputbox
+                <TextInput
+                    class="mb-2"
+                    placeholder="Search..."
+                    value=search_filter
+                    input_ref=search_ref
                     on:keydown=move |key: KeyboardEvent| {
-                        console_log(key.code().as_str());
+                        debug_log!("keypress in popover-search: {}", key.code().as_str());
                         if key.code() == "Escape" || key.code() == "Tab" {
                             close_popover.notify();
-                        }
-                        if key.code() == "Enter" {
-                            if search_filter.get().is_empty() {
+                            let Some(tag_picker_ref): Option<HtmlDivElement> = tag_picker_ref.get() else {
+                                error!("tag_picker_ref is None");
                                 return;
-                            }
-                            let Some((_, tag)) = tags_grouped.get().first().cloned() else {
+                            };
+                            tag_picker_ref.focus().expect("Tag_picker should be focus-able.");
+                        } else if key.code() == "Enter" {
+                            let Some(tag) = tags_grouped.get().get(focus_ith.get()).cloned() else {
                                 return;
                             };
                             let checkboxes = checkboxes.get();
@@ -292,6 +325,10 @@ where
                             };
 
                             toggle_tag(inside_selected, tag, *checked).invoke(());
+                        } else if key.code() == "ArrowUp" {
+                            focus_ith.update(|old_value| *old_value = old_value.saturating_sub(1));
+                        } else if key.code() == "ArrowDown" {
+                            focus_ith.update(|old_value| *old_value = old_value.saturating_add(1));
                         }
                     }
                     {..}
@@ -299,14 +336,14 @@ where
                 />
                 // Tags
                 <For
-                    each=move || tags_grouped.get()
-                    key=move |tag| {
+                    each=move || tags_grouped.get().into_iter().enumerate()
+                    key=move |tag_indexed| {
                         let checkboxes = checkboxes.get();
-                        if let Some(checkbox) = checkboxes.get(&tag.1) {
-                            (tag.clone(), checkbox.get())
+                        if let Some(checkbox) = checkboxes.get(&tag_indexed.1) {
+                            (tag_indexed.clone(), checkbox.get())
                         } else {
                             warn!("Checkbox signal not found in tag_picker ");
-                            (tag.clone(), false)
+                            (tag_indexed.clone(), false)
                         }
                     }
                     children=move |(i, tag)| {
@@ -321,7 +358,7 @@ where
                             <li
                                 class=class_list!(
                                     TAG_LIST_ITEM_CLASSES,
-                                    ("outline outline-black dark:outline-white outline-2", move || i == 0 && !search_filter.get().is_empty())
+                                    ("outline outline-black dark:outline-white outline-2", move || i == focus_ith.get())
                                 )
                                 on:click={
                                     let tag = tag.clone();
@@ -331,7 +368,7 @@ where
                                 {let tag=tag.clone(); {
                                     view! {
                                         <Checkbox disable_tab=true checked=*checked prevent_label=true>
-                                            {tag.to_string()}
+                                            {tag.as_ref().to_string()}
                                         </Checkbox>
                                     }
                                 }}
@@ -352,12 +389,12 @@ fn toggle_tag<T, Event>(
     checked: RwSignal<bool>,
 ) -> impl FnMut(Event) + 'static
 where
-    T: Display + Eq + Clone + Send + Sync + 'static,
+    T: AsRef<str> + Eq + Clone + Send + Sync + 'static,
 {
     move |_| {
         // Toggle selection
         inside_selected.update(|old_sel| {
-            debug_log!("Toggling {}", tag);
+            debug_log!("Toggling {}", tag.as_ref());
             if old_sel.contains(&tag) {
                 if let Some(pos) = old_sel.iter().position(|sel_tag| sel_tag == &tag) {
                     old_sel.remove(pos);
