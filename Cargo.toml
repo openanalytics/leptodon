@@ -61,15 +61,15 @@ leptos = { version = "0.8.17", features = ["rkyv", "tracing"] }
 leptos_axum = { version = "0.8.8" }
 leptos_meta = { version = "0.8.6" }
 leptos_router = { version = "0.8.13" }
-wasm-bindgen = { version = "=0.2.108" }
-wasm-streams = { version = "=0.4.2" }
+wasm-bindgen = { version = "=0.2.117" }
+wasm-streams = { version = "=0.5.0" }
 wasm-cookies = { version = "=0.2.1" }
-web-sys = { version = "=0.3.85" }
+web-sys = { version = "=0.3.94" }
 reactive_stores = { version = "=0.4.2" }
 send_wrapper = { version = "0.6.0" }
 # Leptos additions
 leptos-struct-table = { version = "0.18", features = ["chrono"] }
-leptos-use = { version = "0.18" }
+leptos-use = { version = "0.18.3" }
 
 # Log and error
 tracing = { version = "0.1" }
