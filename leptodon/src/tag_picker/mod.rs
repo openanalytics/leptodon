@@ -103,6 +103,8 @@ where
     let search_ref: NodeRef<leptos::html::Input> = NodeRef::new();
     let checkboxes = RwSignal::new(HashMap::<T, RwSignal<bool>>::new());
     let inside_selected = RwSignal::new(selected.get_untracked());
+    // Index of which element the select box is focusing, defaults to 0/first element, can be moved via arrowUp, arrowDown.
+    let focus_ith = RwSignal::new(0);
 
     // When the outside tags change, update selected tags as some may have become non-options.
     Effect::watch(
@@ -180,13 +182,23 @@ where
 
         let pattern = Pattern::parse(search.as_str(), CaseMatching::Smart, Normalization::Smart);
         let mut matcher = NUCLEO_MATCHER.lock().expect("Unpoised");
-        let sorted_tags = pattern.match_list(tags, &mut matcher);
+        let filtersorted_tags = pattern.match_list(tags, &mut matcher);
 
-        sorted_tags.into_iter().map(|(tag, _score)| tag).collect()
+        /* Pigibacking code snippet, unrelated to fuzzy search, keeps focus_ith in-bounds based on # visible entries */
+        let focus_ith_value = focus_ith.get();
+        if focus_ith_value >= filtersorted_tags.len() {
+            focus_ith.set(filtersorted_tags.len().saturating_sub(1));
+        }
+        /* end */
+
+        filtersorted_tags
+            .into_iter()
+            .map(|(tag, _score)| tag)
+            .collect()
     });
 
-    // Partitioned into selected and unselected.
-    // (Idx -> (T, is_selected))
+    // Sorted into selected and unselected.
+    // [selected_T|unselected_T]
     let tags_grouped = Memo::new(move |_old| {
         if checkboxes.get().is_empty() {
             return vec![];
@@ -206,7 +218,7 @@ where
         }
 
         all.append(&mut unselected_group);
-        all.into_iter().enumerate().collect::<Vec<(usize, T)>>()
+        all.into_iter().collect::<Vec<T>>()
     });
 
     let on_popover_open = move || {
@@ -288,6 +300,7 @@ where
 
             // Popover Contents VV
             <ul id=id.get().map(|id| format!("{id}-dropdown"))>
+                // Search Inputbox
                 <TextInput
                     class="mb-2"
                     placeholder="Search..."
@@ -303,10 +316,7 @@ where
                             };
                             tag_picker_ref.focus().expect("Tag_picker should be focus-able.");
                         } else if key.code() == "Enter" {
-                            if search_filter.get().is_empty() {
-                                return;
-                            }
-                            let Some((_, tag)) = tags_grouped.get().first().cloned() else {
+                            let Some(tag) = tags_grouped.get().get(focus_ith.get()).cloned() else {
                                 return;
                             };
                             let checkboxes = checkboxes.get();
@@ -315,6 +325,10 @@ where
                             };
 
                             toggle_tag(inside_selected, tag, *checked).invoke(());
+                        } else if key.code() == "ArrowUp" {
+                            focus_ith.update(|old_value| *old_value = old_value.saturating_sub(1));
+                        } else if key.code() == "ArrowDown" {
+                            focus_ith.update(|old_value| *old_value = old_value.saturating_add(1));
                         }
                     }
                     {..}
@@ -322,14 +336,14 @@ where
                 />
                 // Tags
                 <For
-                    each=move || tags_grouped.get()
-                    key=move |tag| {
+                    each=move || tags_grouped.get().into_iter().enumerate()
+                    key=move |tag_indexed| {
                         let checkboxes = checkboxes.get();
-                        if let Some(checkbox) = checkboxes.get(&tag.1) {
-                            (tag.clone(), checkbox.get())
+                        if let Some(checkbox) = checkboxes.get(&tag_indexed.1) {
+                            (tag_indexed.clone(), checkbox.get())
                         } else {
                             warn!("Checkbox signal not found in tag_picker ");
-                            (tag.clone(), false)
+                            (tag_indexed.clone(), false)
                         }
                     }
                     children=move |(i, tag)| {
@@ -344,7 +358,7 @@ where
                             <li
                                 class=class_list!(
                                     TAG_LIST_ITEM_CLASSES,
-                                    ("outline outline-black dark:outline-white outline-2", move || i == 0 && !search_filter.get().is_empty())
+                                    ("outline outline-black dark:outline-white outline-2", move || i == focus_ith.get())
                                 )
                                 on:click={
                                     let tag = tag.clone();
