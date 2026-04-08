@@ -31,15 +31,18 @@ use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::prelude::Show;
+use leptos::prelude::use_context;
 use leptos::{
     IntoView, component,
     prelude::{MaybeProp, Signal},
     view,
 };
 use std::fmt::Display;
+use leptos_use::math::use_or;
 use std::hash::Hash;
 
 use crate::class_list;
+use crate::form_input::FormInputContext;
 use crate::form_input::Label;
 use crate::radio::FormValue;
 pub const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
@@ -144,6 +147,16 @@ pub fn MaybeSelect<T>(
 where
     T: FormValue + Display + Clone + Eq + Hash + Send + Sync + 'static,
 {
+    // Form context
+    let form_context = use_context::<FormInputContext<String>>();
+    let form_required = Signal::from(
+        form_context
+            .clone()
+            .map(|ctx| ctx.required)
+            .unwrap_or_default(),
+    );
+    let required = use_or(required, form_required);
+
     // Unset the selected elem when it is not part of the new [options]
     Effect::watch(
         move || options.get(),
@@ -177,79 +190,94 @@ where
         false,
     );
 
-    view! {
-        <span class=class_list![
-            class
-        ]>
-            <Label required label>
-                <select
-                    id=id.get()
-                    class=SELECT_CLASSES
-                    name=name.get()
-                    node_ref=node_ref
-                    on:input=move |_| {
-                        if let Some(input) = node_ref.get() && !input.value().is_empty() {
-                            let selected_value = input.value();
-                            if let Some(matched_option) = options.get().iter().find(|opt| opt.value() == selected_value) {
-                                debug_log!("selecting opt {matched_option}");
-                                selected.set(Some(matched_option.clone()));
-                            } else {
-                                debug_log!("Could not match {} to any option", selected_value);
-                            }
-                        } else if !required {
-                            selected.set(None);
-                            debug_log!("Nothing was selected for {:?}", node_ref.get());
-                        }
+    let select = view! {
+        <select
+            id=id.get()
+            class=SELECT_CLASSES
+            name=name.get()
+            node_ref=node_ref
+            on:input=move |_| {
+                if let Some(input) = node_ref.get() && !input.value().is_empty() {
+                    let selected_value = input.value();
+                    if let Some(matched_option) = options.get().iter().find(|opt| opt.value() == selected_value) {
+                        debug_log!("selecting opt {matched_option}");
+                        selected.set(Some(matched_option.clone()));
+                    } else {
+                        debug_log!("Could not match {} to any option", selected_value);
                     }
-                    required=required
-                    disabled=disabled
-                >
-                    <Show
-                        when=move || { !options.get().is_empty() }
-                        fallback=|| view! { <option disabled=true selected=true>No options</option> }
-                    >
-                       {
-                           let placeholder = placeholder.clone();
-                           view! {
-                               <Show
-                                    when=move || { required }
-                                    fallback=|| ().into_any()
-                                >
-                                    // Placeholder option
-                                    <option
-                                        value=""
-                                        disabled=true
-                                        selected=move || { selected.get().is_none() && required }
-                                    >{ placeholder.clone() }</option>
-                                </Show>
-                           }
-                       }
-                    </Show>
-                    <Show
-                        when=move || { !required }
-                        fallback=|| ().into_any()
-                    >
-                        // None option, shown when the select is not required.
+                } else if !required.get() {
+                    selected.set(None);
+                    debug_log!("Nothing was selected for {:?}", node_ref.get());
+                }
+            }
+            required=required.get()
+            disabled=disabled
+        >
+            <Show
+                when=move || { !options.get().is_empty() }
+                fallback=|| view! { <option disabled=true selected=true>No options</option> }
+            >
+               {
+                   let placeholder = placeholder.clone();
+                   view! {
+                       <Show
+                            when=move || { required.get() }
+                            fallback=|| ().into_any()
+                        >
+                            // Placeholder option
+                            <option
+                                value=""
+                                disabled=true
+                                selected=move || { selected.get().is_none() && required.get() }
+                            >{ placeholder.clone() }</option>
+                        </Show>
+                   }
+               }
+            </Show>
+            <Show
+                when=move || { !required.get() }
+                fallback=|| ().into_any()
+            >
+                // None option, shown when the select is not required.
+                <option
+                    value=""
+                    selected=move || { selected.get().is_none() && !required.get() }
+                >{ none_option.clone() }</option>
+            </Show>
+            <For
+                each=move || options.get()
+                key=|option| { option.clone() }
+                children=move |option| {
+                    view! {
                         <option
-                            value=""
-                            selected=move || { selected.get().is_none() && !required }
-                        >{ none_option.clone() }</option>
-                    </Show>
-                    <For
-                        each=move || options.get()
-                        key=|option| { option.clone() }
-                        children=move |option| {
-                            view! {
-                                <option
-                                    value=option.value()
-                                    selected=move || { selected.get() == Some(option.clone()) }
-                                >{ option.to_string() }</option>
-                            }
-                        }
-                    >
-                    </For>
-                </select>
-            </Label>
+                            value=option.value()
+                            selected=move || { selected.get() == Some(option.clone()) }
+                        >{ option.to_string() }</option>
+                    }
+                }
+            >
+            </For>
+        </select>
+    };
+
+    let maybe_label_wrapped_select = if let Some(label) = label.get()
+        && form_context.is_none()
+    {
+        view! {
+            <span class=class_list!(class)>
+                <Label required=required.get() label>
+                    {select}
+                </Label>
+            </span>
+        }
+        .into_any()
+    } else {
+        select.into_any()
+    };
+
+    view! {
+        <span class=class_list!(class)>
+            {maybe_label_wrapped_select}
         </span>
     }
 }
