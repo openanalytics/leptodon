@@ -37,8 +37,8 @@ use leptos::{
     prelude::{MaybeProp, Signal},
     view,
 };
-use std::fmt::Display;
 use leptos_use::math::use_or;
+use std::fmt::Display;
 use std::hash::Hash;
 
 use crate::class_list;

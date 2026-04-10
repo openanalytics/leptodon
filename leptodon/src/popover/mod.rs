@@ -60,6 +60,12 @@ pub fn Popover<Trigger, Content>(
     trigger_type: PopoverTriggerType,
     /// The element or component that triggers popover.
     popover_trigger: PopoverTrigger<Trigger>,
+    /// Delay before opening on hover.
+    #[prop(optional, into)]
+    hover_open_delay: MaybeProp<Duration>,
+    /// Delay before closing after hover.
+    #[prop(default = Some(Duration::from_millis(100)))]
+    hover_close_delay: Option<Duration>,
     /// Configures the position of the Popover.
     #[prop(optional)]
     preferred_pos: PopoverAnchor,
@@ -78,7 +84,11 @@ where
     let trigger_ref: NodeRef<Element> = NodeRef::new();
     let popover_ref: NodeRef<Div> = NodeRef::new();
     let arrow_ref: NodeRef<Div> = NodeRef::new();
+
+    // Delays the opening of popover
     let show_popover_handle = StoredValue::new(None::<TimeoutHandle>);
+    // Delays the closing of popover
+    let hide_popover_handle = StoredValue::new(None::<TimeoutHandle>);
 
     let show_by_hover = RwSignal::new(false);
     let popover_clicked_open = RwSignal::new(false);
@@ -169,12 +179,28 @@ where
         if trigger_type != PopoverTriggerType::Hover {
             return;
         }
-        show_popover_handle.update_value(|handle| {
+        hide_popover_handle.update_value(|handle| {
             if let Some(handle) = handle.take() {
                 handle.clear();
             }
         });
-        show_by_hover.set(true);
+        show_popover_handle.update_value(|handle| {
+            if let Some(handle) = handle.take() {
+                // Make sure previous popover mouse-enter timeouts are reset
+                handle.clear();
+            }
+            if let Some(hover_open_delay) = hover_open_delay.get() {
+                *handle = set_timeout_with_handle(
+                    move || {
+                        show_by_hover.set(true);
+                    },
+                    hover_open_delay,
+                )
+                .ok();
+            } else {
+                show_by_hover.set(true);
+            }
+        });
     };
 
     let on_mouse_leave = move |e| {
@@ -191,13 +217,22 @@ where
             if let Some(handle) = handle.take() {
                 handle.clear();
             }
-            *handle = set_timeout_with_handle(
-                move || {
-                    show_by_hover.set(false);
-                },
-                Duration::from_millis(100),
-            )
-            .ok();
+        });
+        hide_popover_handle.update_value(|handle| {
+            if let Some(handle) = handle.take() {
+                handle.clear();
+            }
+            if let Some(hover_close_delay) = hover_close_delay {
+                *handle = set_timeout_with_handle(
+                    move || {
+                        show_by_hover.set(false);
+                    },
+                    hover_close_delay,
+                )
+                .ok();
+            } else {
+                show_by_hover.set(false);
+            }
         });
     };
 
