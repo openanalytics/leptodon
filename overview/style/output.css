@@ -1508,10 +1508,6 @@ input:checked + .toggle-bg {
   max-height: 100%;
 }
 
-.max-h-\[50vh\] {
-  max-height: 50vh;
-}
-
 .min-h-full {
   min-height: 100%;
 }
@@ -1631,10 +1627,6 @@ input:checked + .toggle-bg {
 
 .max-w-sm {
   max-width: 24rem;
-}
-
-.max-w-\[40vw\] {
-  max-width: 40vw;
 }
 
 .flex-1 {
@@ -1760,11 +1752,6 @@ input:checked + .toggle-bg {
 
 .resize {
   resize: both;
-}
-
-.scroll-py-1 {
-  scroll-padding-top: 0.25rem;
-  scroll-padding-bottom: 0.25rem;
 }
 
 .scroll-py-2 {

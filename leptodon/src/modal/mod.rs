@@ -41,8 +41,7 @@ use crate::class_list;
 use crate::icon::CloseIcon;
 use crate::util::signals::ComponentRef;
 
-const MODAL_CLASSES: &str =
-    "relative bg-white rounded-lg shadow dark:bg-gray-700 px-4 m-4 w-full max-w-2xl max-h-full";
+const MODAL_CLASSES: &str = "relative flex flex-col bg-white rounded-lg shadow dark:bg-gray-700 px-4 m-4 w-full max-w-2xl max-h-[95vh]";
 const MODAL_BACKDROP_CLASSES: &str = "overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[1000] justify-center items-center w-full md:inset-0 h-full max-h-full flex bg-black/50";
 
 #[slot]
@@ -106,7 +105,7 @@ pub fn Modal(
             )
             on:click=move |_| visible.set(false)
             on:keydown=move |key: KeyboardEvent| {
-                if key.code() == "Escape"{
+                if key.code() == "Escape" {
                     visible.set(false);
                 }
             }
@@ -136,7 +135,7 @@ pub fn Modal(
                 </div>
 
                 // Modal body
-                <div class="p-4 md:p-5 space-y-4">
+                <div class="p-4 md:p-5 space-y-4 overflow-auto">
                     {children()}
                 </div>
 

@@ -27,14 +27,15 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
   let tag_picker = page.locator("#tag_picker");
   let sel_disp = page.locator("#selected-display");
   let tag_trigger = page.locator("#tag_picker-trigger");
-  let tag_dropdown = page.locator("#tag_picker-dropdown");
+  let tag_content = page.locator("#tag_picker-content");
+  let tag_search = page.locator("#tag_picker-search");
   let btn_set_5 = page.locator("#set-5");
   let btn_set_none = page.locator("#set-none");
   let btn_elems_3_10 = page.locator("#elems-3-10");
 
   await expect(sel_disp).toHaveText("");
   await tag_picker.click();
-  await expect(tag_dropdown.locator("input").first()).toBeFocused();
+  await expect(tag_search).toBeFocused();
 
   // Test keyboard selection
   await page.keyboard.press("H");
@@ -43,14 +44,14 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
   await expect(sel_disp).toHaveText("Hydrogen");
   // Should be checked now in the dropdown.
   await expect(
-    tag_dropdown.locator("li").filter({ hasText: "Hydrogen" }).locator("input"),
+    tag_content.locator("div").filter({ hasText: "Hydrogen" }).locator("input"),
   ).toBeChecked();
   await page.keyboard.press("Backspace");
   await page.keyboard.press("e");
   await page.keyboard.press("Enter");
   // Should be checked now in the dropdown.
   await expect(
-    tag_dropdown.locator("li").filter({ hasText: "Helium" }).locator("input"),
+    tag_content.locator("div").filter({ hasText: "Helium" }).locator("input"),
   ).toBeChecked();
   await expect(sel_disp).toHaveText("HydrogenHelium");
   await page.keyboard.press("Backspace");
@@ -71,30 +72,30 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
   // Re-open
   await tag_picker.click();
   // Test mouse selection
-  await tag_dropdown.locator("li").filter({ hasText: "Boron" }).click();
+  await tag_content.locator("div").filter({ hasText: "Boron" }).click();
   await expect(
-    tag_dropdown.locator("li").filter({ hasText: "Boron" }).locator("input"),
+    tag_content.locator("div").filter({ hasText: "Boron" }).locator("input"),
   ).toBeChecked();
   await expect(sel_disp).toHaveText("Boron");
 
-  await tag_dropdown
-    .locator("li")
+  await tag_content
+    .locator("div")
     .filter({ hasText: "Carbon" })
     .locator("input")
     .click();
   await expect(
-    tag_dropdown.locator("li").filter({ hasText: "Carbon" }).locator("input"),
+    tag_content.locator("div").filter({ hasText: "Carbon" }).locator("input"),
   ).toBeChecked();
   await expect(sel_disp).toHaveText("BoronCarbon");
 
   // Deselecting
-  await tag_dropdown
-    .locator("li")
+  await tag_content
+    .locator("div")
     .filter({ hasText: "Carbon" })
     .locator("input")
     .click();
   await expect(
-    tag_dropdown.locator("li").filter({ hasText: "Carbon" }).locator("input"),
+    tag_content.locator("div").filter({ hasText: "Carbon" }).locator("input"),
   ).not.toBeChecked();
   await expect(sel_disp).toHaveText("Boron");
 
@@ -107,8 +108,8 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
 
   // Open tag-picker dropdown
   tag_trigger.click();
-  await expect(tag_dropdown).toBeInViewport();
-  await expect(tag_dropdown).toBeVisible();
+  await expect(tag_content).toBeInViewport();
+  await expect(tag_content).toBeVisible();
   // Remove lithium using the tag-picker trigger.
   await tag_trigger
     .locator("div")
@@ -117,7 +118,7 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
     .locator("div")
     .click();
 
-  await expect(tag_dropdown).toBeVisible();
+  await expect(tag_content).toBeVisible();
 
   // Validate it has been removed from the output
   await expect(sel_disp).toHaveText("BoronCarbon");
@@ -127,8 +128,8 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
   ).toHaveCount(0);
   // Should be unchecked now in the dropdown.
   await expect(
-    tag_dropdown
-      .locator("li")
+    tag_content
+      .locator("div")
       .filter({ hasText: "Beryllium" })
       .locator("input"),
   ).not.toBeChecked();
@@ -144,7 +145,8 @@ test("Tag Picker keyboard-navigation", async ({ page, browserName }) => {
   let tag_picker = page.locator("#tag_picker");
   let sel_disp = page.locator("#selected-display");
   let tag_trigger = page.locator("#tag_picker-trigger");
-  let tag_dropdown = page.locator("#tag_picker-dropdown");
+  let tag_content = page.locator("#tag_picker-content");
+  let tag_search = page.locator("#tag_picker-search");
 
   page.keyboard.press("Tab"); // selects tag_picker
 
@@ -152,8 +154,8 @@ test("Tag Picker keyboard-navigation", async ({ page, browserName }) => {
 
   page.keyboard.press("Enter"); // open it
 
-  await expect(tag_dropdown).toBeVisible();
-  await expect(tag_dropdown.locator("input").first()).toBeFocused(); // should the search-input
+  await expect(tag_content).toBeVisible();
+  await expect(tag_search).toBeFocused(); // should the search-input
 
   page.keyboard.press("Escape"); // close it
 
@@ -161,9 +163,10 @@ test("Tag Picker keyboard-navigation", async ({ page, browserName }) => {
   await expect(tag_trigger).toBeFocused();
 });
 
-
 // LLM QWEN3:30b generated test, only took a minimal look at it.
-test("Tag Picker dropdown opens without scrolling the page", async ({ page }) => {
+test("Tag Picker dropdown opens without scrolling the page", async ({
+  page,
+}) => {
   await page.goto("/test_tag_picker");
 
   await page.waitForLoadState("networkidle");
@@ -182,7 +185,7 @@ test("Tag Picker dropdown opens without scrolling the page", async ({ page }) =>
   await page.locator("#tag_picker").click();
 
   // Wait for dropdown to be visible
-  await page.waitForSelector("#tag_picker-dropdown", { state: "visible" });
+  await page.waitForSelector("#tag_picker-content", { state: "visible" });
 
   // Verify page didn't move during dropdown opening
   const { scrollX: finalX, scrollY: finalY } = await page.evaluate(() => ({

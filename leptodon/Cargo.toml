@@ -25,7 +25,17 @@ uuid = { workspace = true, features = [ "v4", "js" ] }
 wasm-bindgen = { workspace = true, optional = true }
 wasm-cookies = { workspace = true }
 # Newer versions of web-sys require newer wasm-bindgen.
-web-sys = { workspace = true, features = [ "HtmlDocument", "Window", "MediaQueryList", "HtmlElement", "HtmlInputElement", "KeyboardEvent" ] }
+web-sys = { workspace = true, features = [
+    "HtmlDocument",
+    "Window",
+    "MediaQueryList",
+    "HtmlElement",
+    "HtmlInputElement",
+    "KeyboardEvent",
+    "ScrollIntoViewOptions",
+    "ScrollIntoViewContainer",
+    "ScrollLogicalPosition"
+] }
 
 axum = { workspace = true, optional = true }
 axum-extra = { workspace = true, optional = true, features = [ "cookie" ] }
