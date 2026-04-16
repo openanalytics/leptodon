@@ -44,7 +44,7 @@ pipeline {
     stage('Attic login & watch') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'attic-leptodon', passwordVariable: 'ATTIC_PASSWORD', usernameVariable: 'ATTIC_USERNAME')]) {
-          sh "attic login $ATTIC_USERNAME https://attic.attic.svc.cluster.local $ATTIC_PASSWORD"
+          sh "attic login $ATTIC_USERNAME https://nix-cache.openanalytics.eu $ATTIC_PASSWORD"
         }
         sh "attic use oa-leptodon"
         sh "attic watch-store oa-leptodon &"
