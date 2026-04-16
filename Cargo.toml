@@ -47,8 +47,8 @@ leptodon-proc-macros = { path = "./proc-macros", version = "=1.1.0" } # version-
 # Protocol
 http = "1"
 # Server
-axum = { version = "0.8.8", features = ["macros"] }
-axum-extra = { version = "0.12.5", features = ["cookie"] }
+axum = { version = "0.8.9", features = ["macros"] }
+axum-extra = { version = "0.12.6", features = ["cookie"] }
 
 # Middleware
 tower = { version = "0.5.3" }
@@ -97,7 +97,7 @@ nucleo-matcher = { version = "0.3.1" } # Fuzzy search
 # Other utils
 itertools = "0.14.0"
 zxcvbn = { version = "3.1.0" }
-uuid = { version = "1.21.0" }
+uuid = { version = "1.23.1" }
 
 # Macros
 cfg-if = "1.0.4"
