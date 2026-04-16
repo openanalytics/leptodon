@@ -21,19 +21,33 @@ use leptodon::layout::FixedCenterColumn;
 use leptodon::paragraph::Paragraph;
 use leptodon::popover::Popover;
 use leptodon::popover::PopoverAnchor;
+use leptodon::popover::PopoverController;
 use leptodon::popover::PopoverTrigger;
+use leptodon::util::callback::BoxCallback;
 use leptodon::util::lorem::Lorem;
 use leptodon_proc_macros::generate_codeblock;
+use leptos::logging::log;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};
 use leptos_meta::Title;
+use std::time::Duration;
 
 #[generate_codeblock(PopoverExample)]
 #[component]
 pub fn PopoverDemo() -> impl IntoView {
+    let popover_controller = PopoverController {
+        open: None,
+        close: None,
+        on_open: Some(BoxCallback::new(|| {
+            log!("Opening popover.");
+        })),
+        on_close: None,
+    };
     view! {
-        <Popover preferred_pos=PopoverAnchor::Left>
+        <Popover
+            trigger_type=leptodon::popover::PopoverTriggerType::Click
+            preferred_pos=PopoverAnchor::Left>
             <PopoverTrigger slot>
                 <Button>"L"</Button>
             </PopoverTrigger>
@@ -41,7 +55,12 @@ pub fn PopoverDemo() -> impl IntoView {
                 <Lorem sentences=2/>
             </p>
         </Popover>
-        <Popover preferred_pos=PopoverAnchor::Top>
+        <Popover
+            hover_open_delay=Duration::from_millis(200)
+            hover_close_delay=Some(Duration::from_millis(200))
+            show_arrow=false
+            popover_controller=popover_controller
+            preferred_pos=PopoverAnchor::Top>
             <PopoverTrigger slot>
                 <Button>"T"</Button>
             </PopoverTrigger>
