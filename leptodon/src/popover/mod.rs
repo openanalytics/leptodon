@@ -72,7 +72,7 @@ pub fn Popover<Trigger, Content>(
     /// Configures the position of the Popover.
     #[prop(optional)]
     preferred_pos: PopoverAnchor,
-    /// Reference to the div that scrolls the [children] when otherwise overflowing the popover.
+    /// Reference to the div that scrolls the *children* when otherwise overflowing the popover.
     /// Useful of custom scroll behaviour / controlling the scroll.
     #[prop(optional, into)]
     content_scroll_container_ref: MaybeProp<NodeRef<Div>>,
