@@ -425,13 +425,13 @@ pub fn scroll_into_view_smart(container: &Element, elem: &Element) {
         Some(ElementOccludedBy::Top) => {
             let options = ScrollIntoViewOptions::new();
             options.set_container(ScrollIntoViewContainer::Nearest);
-            options.set_inline(ScrollLogicalPosition::Start);
+            options.set_block(ScrollLogicalPosition::Start);
             elem.scroll_into_view_with_scroll_into_view_options(&options);
         }
         Some(ElementOccludedBy::Bottom) => {
             let options = ScrollIntoViewOptions::new();
             options.set_container(ScrollIntoViewContainer::Nearest);
-            options.set_inline(ScrollLogicalPosition::End);
+            options.set_block(ScrollLogicalPosition::End);
             elem.scroll_into_view_with_scroll_into_view_options(&options);
         }
         // Nothing to do
