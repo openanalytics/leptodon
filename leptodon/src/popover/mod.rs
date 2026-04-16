@@ -60,6 +60,9 @@ pub fn Popover<Trigger, Content>(
     trigger_type: PopoverTriggerType,
     /// The element or component that triggers popover.
     popover_trigger: PopoverTrigger<Trigger>,
+    /// The element or component that triggers popover.
+    #[prop(optional)]
+    popover_header: Option<PopoverHeader>,
     /// Delay before opening on hover.
     #[prop(optional, into)]
     hover_open_delay: MaybeProp<Duration>,
@@ -69,6 +72,10 @@ pub fn Popover<Trigger, Content>(
     /// Configures the position of the Popover.
     #[prop(optional)]
     preferred_pos: PopoverAnchor,
+    /// Reference to the div that scrolls the [children] when otherwise overflowing the popover.
+    /// Useful of custom scroll behaviour / controlling the scroll.
+    #[prop(optional, into)]
+    content_scroll_container_ref: MaybeProp<NodeRef<Div>>,
     /// Wether or not to render and position the popup for a connector arrow between the popover and trigger element.
     #[prop(default = true, optional)]
     show_arrow: bool,
@@ -256,6 +263,28 @@ where
         .add_any_attr(on(mouseenter, on_mouse_enter))
         .add_any_attr(on(mouseleave, on_mouse_leave));
 
+    let popover_header = if let Some(popover_header) = popover_header {
+        (popover_header.children)()
+    } else {
+        ().into_any()
+    };
+
+    let popover_content = view! {
+        <div
+            class="overflow-auto h-fit scroll-py-2 py-2 py-1 max-w-[80vw] md:max-w-[60vw] lg:max-w-[40vw] max-h-[70vh] lg:max-h-[50vh] w-full p-2"
+        >
+            {content_children}
+        </div>
+    }.into_any();
+    let popover_content =
+        if let Some(content_scroll_container_ref) = content_scroll_container_ref.get() {
+            popover_content
+                .add_any_attr(node_ref(content_scroll_container_ref))
+                .into_any()
+        } else {
+            popover_content
+        };
+
     view! {
         <div id=id.get() class=class_list!(class)>
             {trigger_children}
@@ -271,9 +300,8 @@ where
                 on:mouseenter=on_mouse_enter
                 on:mouseleave=on_mouse_leave
             >
-                <div class="overflow-auto max-w-[40vw] max-h-[50vh] h-full w-full p-2">
-                    {content_children}
-                </div>
+                {popover_header}
+                {popover_content}
             </div>
 
             <Show when=move || show_arrow fallback=|| view!{ <> }>
@@ -723,4 +751,9 @@ const POPOVER_POSITIONS: &[PopoverAnchor] = &[
 #[slot]
 pub struct PopoverTrigger<T> {
     children: TypedChildren<T>,
+}
+
+#[slot]
+pub struct PopoverHeader {
+    children: Children,
 }

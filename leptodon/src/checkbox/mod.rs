@@ -56,9 +56,9 @@ pub fn Checkbox(
     /// Whether or not this element is unreachable by tabbing.
     #[prop(optional, into)]
     disable_tab: bool,
-    /// Stops label click handling
+    /// Stops label click handling and FormInputContext control.
     #[prop(optional)]
-    prevent_label: bool,
+    controlled: bool,
     /// Label goes here.
     children: Children,
 ) -> impl IntoView {
@@ -70,7 +70,13 @@ pub fn Checkbox(
             .map(|ctx| ctx.required)
             .unwrap_or_default(),
     );
-    let required = use_or(required, form_required);
+
+    let required = if controlled {
+        Signal::derive(move || required)
+    } else {
+        use_or(required, form_required)
+    };
+
     Effect::watch(
         move || checked.get(),
         |new, _, _| {
@@ -83,7 +89,7 @@ pub fn Checkbox(
         <label class=class_list!["relative inline-flex items-center cursor-pointer", class]
             on:click={
                 move |ev| {
-                    if prevent_label {
+                    if controlled {
                         ev.prevent_default();
                     }
                 }

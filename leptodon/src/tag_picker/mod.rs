@@ -17,6 +17,7 @@
 // If not, see <http://www.apache.org/licenses/>
 use leptodon_proc_macros::generate_docs;
 use leptos::ev::EventCallback;
+use leptos::html::Div;
 use leptos::logging::debug_log;
 use leptos::logging::error;
 use leptos::logging::warn;
@@ -52,9 +53,13 @@ use std::hash::Hash;
 use std::sync::LazyLock;
 use std::sync::Mutex;
 use std::time::Duration;
+use web_sys::Element;
 use web_sys::HtmlDivElement;
 use web_sys::HtmlInputElement;
 use web_sys::KeyboardEvent;
+use web_sys::ScrollIntoViewContainer;
+use web_sys::ScrollIntoViewOptions;
+use web_sys::ScrollLogicalPosition;
 
 use crate::checkbox::Checkbox;
 use crate::class_list;
@@ -65,6 +70,7 @@ use crate::input::TextInput;
 use crate::popover::Popover;
 use crate::popover::PopoverAnchor;
 use crate::popover::PopoverController;
+use crate::popover::PopoverHeader;
 use crate::popover::PopoverTrigger;
 use crate::popover::PopoverTriggerType;
 use crate::radio::FormValue;
@@ -100,6 +106,7 @@ where
     let search_filter = RwSignal::new(String::new());
     // Refs used for focus transfer
     let tag_picker_ref: NodeRef<leptos::html::Div> = NodeRef::new();
+    let content_scroll_container = NodeRef::new();
     let search_ref: NodeRef<leptos::html::Input> = NodeRef::new();
     let checkboxes = RwSignal::new(HashMap::<T, RwSignal<bool>>::new());
     let inside_selected = RwSignal::new(selected.get_untracked());
@@ -247,7 +254,13 @@ where
     };
 
     view! {
-        <Popover id class show_arrow=false preferred_pos=PopoverAnchor::BottomStart trigger_type=PopoverTriggerType::Click popover_controller>
+        <Popover id class
+            show_arrow=false
+            preferred_pos=PopoverAnchor::BottomStart
+            trigger_type=PopoverTriggerType::Click
+            popover_controller
+            content_scroll_container_ref=content_scroll_container
+        >
             <PopoverTrigger slot>
                 <div
                     id=id.get().map(|id| format!("{id}-trigger"))
@@ -297,11 +310,10 @@ where
                     <Icon class="text-oa-gray-darker w-4 h-4 ml-2" icon=crate::icon::DownIcon() />
                 </div>
             </PopoverTrigger>
-
-            // Popover Contents VV
-            <ul id=id.get().map(|id| format!("{id}-dropdown"))>
+            <PopoverHeader slot>
                 // Search Inputbox
                 <TextInput
+                    id=id.get().map(|id| format!("{id}-search"))
                     class="mb-2"
                     placeholder="Search..."
                     value=search_filter
@@ -334,6 +346,10 @@ where
                     {..}
                     role="combobox" // Makes vimium like plugins pass special keys through
                 />
+            </PopoverHeader>
+
+            // Popover Contents VV
+            <div id=id.get().map(|id| format!("{id}-content")) class="max-h-full">
                 // Tags
                 <For
                     each=move || tags_grouped.get().into_iter().enumerate()
@@ -352,14 +368,28 @@ where
                             return ().into_any()
                         };
 
-                        debug_log!("Recreating tag item");
+                        debug_log!("Creating tag item");
+                        let div_ref: NodeRef<Div> = NodeRef::new();
+
+                        // Handle scroll for the focus-ring so it stays in-view.
+                        Effect::new(move || {
+                            if i != focus_ith.get() {
+                                return;
+                            }
+
+                            if let Some(content_scroll_container) = content_scroll_container.get() &&
+                                let Some(div) = div_ref.get() {
+                                scroll_into_view_smart(&content_scroll_container, &div);
+                            }
+                        });
 
                         view! {
-                            <li
+                            <div
                                 class=class_list!(
                                     TAG_LIST_ITEM_CLASSES,
                                     ("outline outline-black dark:outline-white outline-2", move || i == focus_ith.get())
                                 )
+                                node_ref=div_ref
                                 on:click={
                                     let tag = tag.clone();
                                     toggle_tag(inside_selected, tag, *checked)
@@ -367,20 +397,66 @@ where
                             >
                                 {let tag=tag.clone(); {
                                     view! {
-                                        <Checkbox disable_tab=true checked=*checked prevent_label=true>
+                                        <Checkbox disable_tab=true checked=*checked controlled=true>
                                             {tag.as_ref().to_string()}
                                         </Checkbox>
                                     }
                                 }}
 
-                            </li>
+                            </div>
                         }.into_any()
                     }
                     >
                 </For>
-            </ul>
+            </div>
         </Popover>
     }
+}
+
+pub enum ElementOccludedBy {
+    Top,
+    Bottom,
+}
+
+/// Only scrolls when *elem* is occluded by *container*.
+/// Will scroll minimally to no longer occlude *elem*.
+pub fn scroll_into_view_smart(container: &Element, elem: &Element) {
+    match get_element_occlusion(container, elem) {
+        Some(ElementOccludedBy::Top) => {
+            let options = ScrollIntoViewOptions::new();
+            options.set_container(ScrollIntoViewContainer::Nearest);
+            options.set_inline(ScrollLogicalPosition::Start);
+            elem.scroll_into_view_with_scroll_into_view_options(&options);
+        }
+        Some(ElementOccludedBy::Bottom) => {
+            let options = ScrollIntoViewOptions::new();
+            options.set_container(ScrollIntoViewContainer::Nearest);
+            options.set_inline(ScrollLogicalPosition::End);
+            elem.scroll_into_view_with_scroll_into_view_options(&options);
+        }
+        // Nothing to do
+        None => {}
+    };
+}
+
+/// Returns by which part of *container* that *elem* is occluded by.
+/// Or `None` when *elem* is not occluded;
+pub fn get_element_occlusion(container: &Element, elem: &Element) -> Option<ElementOccludedBy> {
+    let container_rect = container.get_bounding_client_rect();
+    let elem_rect = elem.get_bounding_client_rect();
+
+    let element_top = elem_rect.top() - container_rect.top();
+    if element_top < 0.0 {
+        return Some(ElementOccludedBy::Top);
+    }
+
+    let element_bottom = element_top + elem_rect.height();
+    let container_height = container_rect.height();
+    if element_bottom > container_height {
+        return Some(ElementOccludedBy::Bottom);
+    }
+
+    None
 }
 
 fn toggle_tag<T, Event>(
