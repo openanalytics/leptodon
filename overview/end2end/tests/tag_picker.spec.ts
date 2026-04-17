@@ -15,10 +15,15 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-import { test, expect, Page, Locator } from "@playwright/test";
+import { test, expect } from "@playwright/test";
+
+// Helper function to get input locator for a tag by text
+function getTagInputLocator(tag_content: any, tagText: string) {
+  return tag_content.locator("div").filter({ hasText: tagText }).locator("input").locator("visible=true");
+}
 
 // Check that the radio reactively updates its signal.
-test("Tag Picker functionality", async ({ page, browserName }) => {
+test("Tag Picker functionality", async ({ page }) => {
   await page.goto("/test_tag_picker");
 
   await page.waitForLoadState("networkidle");
@@ -43,16 +48,12 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
   await page.keyboard.press("Enter");
   await expect(sel_disp).toHaveText("Hydrogen");
   // Should be checked now in the dropdown.
-  await expect(
-    tag_content.locator("div").filter({ hasText: "Hydrogen" }).locator("input"),
-  ).toBeChecked();
+  await expect(getTagInputLocator(tag_content, "Hydrogen")).toBeChecked();
   await page.keyboard.press("Backspace");
   await page.keyboard.press("e");
   await page.keyboard.press("Enter");
   // Should be checked now in the dropdown.
-  await expect(
-    tag_content.locator("div").filter({ hasText: "Helium" }).locator("input"),
-  ).toBeChecked();
+  await expect(getTagInputLocator(tag_content, "Helium")).toBeChecked();
   await expect(sel_disp).toHaveText("HydrogenHelium");
   await page.keyboard.press("Backspace");
   await page.keyboard.press("Backspace");
@@ -73,30 +74,16 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
   await tag_picker.click();
   // Test mouse selection
   await tag_content.locator("div").filter({ hasText: "Boron" }).click();
-  await expect(
-    tag_content.locator("div").filter({ hasText: "Boron" }).locator("input"),
-  ).toBeChecked();
+  await expect(getTagInputLocator(tag_content, "Boron")).toBeChecked();
   await expect(sel_disp).toHaveText("Boron");
 
-  await tag_content
-    .locator("div")
-    .filter({ hasText: "Carbon" })
-    .locator("input")
-    .click();
-  await expect(
-    tag_content.locator("div").filter({ hasText: "Carbon" }).locator("input"),
-  ).toBeChecked();
+  await getTagInputLocator(tag_content, "Carbon").click();
+  await expect(getTagInputLocator(tag_content, "Carbon")).toBeChecked();
   await expect(sel_disp).toHaveText("BoronCarbon");
 
   // Deselecting
-  await tag_content
-    .locator("div")
-    .filter({ hasText: "Carbon" })
-    .locator("input")
-    .click();
-  await expect(
-    tag_content.locator("div").filter({ hasText: "Carbon" }).locator("input"),
-  ).not.toBeChecked();
+  await getTagInputLocator(tag_content, "Carbon").click();
+  await expect(getTagInputLocator(tag_content, "Carbon")).not.toBeChecked();
   await expect(sel_disp).toHaveText("Boron");
 
   // Test selection changes from outside the tagpicker.
@@ -127,16 +114,11 @@ test("Tag Picker functionality", async ({ page, browserName }) => {
     tag_trigger.locator("div").locator("div").filter({ hasText: "Beryllium" }),
   ).toHaveCount(0);
   // Should be unchecked now in the dropdown.
-  await expect(
-    tag_content
-      .locator("div")
-      .filter({ hasText: "Beryllium" })
-      .locator("input"),
-  ).not.toBeChecked();
+  await expect(getTagInputLocator(tag_content, "Beryllium")).not.toBeChecked();
 });
 
 // Check that the radio reactively updates its signal.
-test("Tag Picker keyboard-navigation", async ({ page, browserName }) => {
+test("Tag Picker keyboard-navigation", async ({ page }) => {
   await page.goto("/test_tag_picker");
 
   await page.waitForLoadState("networkidle");

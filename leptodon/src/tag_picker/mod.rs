@@ -22,6 +22,7 @@ use leptos::logging::debug_log;
 use leptos::logging::error;
 use leptos::logging::warn;
 use leptos::prelude::AddAnyAttr;
+use leptos::prelude::AriaAttributes;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
@@ -90,6 +91,9 @@ static NUCLEO_MATCHER: LazyLock<Mutex<Matcher>> =
 pub fn TagPicker<T>(
     #[prop(optional, into)] id: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeReactiveClass,
+    /// Name used as key for form-submission.
+    #[prop(optional, into)]
+    name: MaybeProp<String>,
     /// Shown when no tags are selected.
     #[prop(optional, into)]
     placeholder: MaybeProp<String>,
@@ -367,6 +371,7 @@ where
                         let Some(checked) = checkboxes.get(&tag) else {
                             return ().into_any()
                         };
+                        let is_checked = checked.get_untracked();
 
                         debug_log!("Creating tag item");
                         let div_ref: NodeRef<Div> = NodeRef::new();
@@ -395,11 +400,19 @@ where
                                     toggle_tag(inside_selected, tag, *checked)
                                 }
                             >
-                                {let tag=tag.clone(); {
+                                {let tag=tag.clone(); let tag2=tag.clone(); {
                                     view! {
                                         <Checkbox disable_tab=true checked=*checked controlled=true>
                                             {tag.as_ref().to_string()}
                                         </Checkbox>
+                                        <input
+                                            type="text"
+                                            hidden=true
+                                            disabled=!is_checked
+                                            name=name
+                                            value={tag2.as_ref().to_string()}
+                                            aria-hidden=true
+                                        />
                                     }
                                 }}
 
