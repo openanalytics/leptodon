@@ -153,7 +153,7 @@ pub fn MonthCalendarNav(
 
 #[component]
 pub fn MonthCalendarUncontrolled(
-    /// Days to show, acts as a filter over [dates]
+    /// Days to show, acts as a filter over *dates*
     #[prop(default = RwSignal::new(WORK_WEEK), into)]
     show_days: RwSignal<WeekdaySet>,
     /// Day highlighter, allows you to provide classes for various days.

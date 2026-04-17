@@ -121,7 +121,10 @@ pipeline {
           du -sh /nix/store
           nix develop ./nix --command skopeo copy \
             docker-archive:demo-image.tar \
-            docker://registry.openanalytics.eu/openanalytics/leptodon-demo
+            docker://registry.openanalytics.eu/openanalytics/leptodon-demo:latest
+          nix develop ./nix --command skopeo copy \
+            docker://registry.openanalytics.eu/openanalytics/leptodon-demo:latest \
+            docker://registry.openanalytics.eu/openanalytics/leptodon-demo:$VERSION
           du -sh /nix/store
         """
       }
