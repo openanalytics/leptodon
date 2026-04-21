@@ -15,33 +15,23 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-pub mod accordion;
-pub mod avatar;
-pub mod badge;
-pub mod button;
-pub mod calendar;
-pub mod checkbox;
-pub mod codeblock;
-pub mod date_picker;
-pub mod dialog;
-pub mod divider;
-pub mod dropdown;
-pub mod form_input;
-pub mod heading;
-pub mod input;
-pub mod link;
-pub mod modal;
-pub mod navbar;
-pub mod popover;
-pub mod radio;
-pub mod select;
-pub mod spinner;
-pub mod table;
-pub mod tabs;
-pub mod tag_picker;
-pub mod textarea;
-pub mod themeselector;
-pub mod toast;
-pub mod toggle;
+import { test, expect } from "@playwright/test";
 
-// text-left
+// Tabs should swap their tab content.
+test("Tabs functionality", async ({ page }) => {
+  await page.goto("/test_tabs");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Tabs");
+
+  const profile_tab = page.getByText("Profile", { exact: true });
+  const settings_tab = page.getByText("Settings", { exact: true });
+
+  await profile_tab.click();
+  await expect(page.locator("#profile-content")).toBeVisible();
+  await expect(page.locator("#settings-content")).toHaveCount(0);
+
+  await settings_tab.click();
+  await expect(page.locator("#profile-content")).toHaveCount(0);
+  await expect(page.locator("#settings-content")).toBeVisible();
+});

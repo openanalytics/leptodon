@@ -100,6 +100,10 @@ pub fn page_infos() -> Vec<PageInfo> {
             name: "Table"
         },
         PageInfo {
+            location: "/demo/tabs",
+            name: "Tabs"
+        },
+        PageInfo {
             location: "/demo/tag_picker",
             name: "Tag Picker"
         },
@@ -148,6 +152,7 @@ pub fn DemoRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
             <Route path=path!("/navbar") view=crate::demos::navbar::SideNavbarDemoPage/>
             <Route path=path!("/spinner") view=crate::demos::spinner::SpinnerDemoPage/>
             <Route path=path!("/table") view=crate::demos::table::TableDemoPage/>
+            <Route path=path!("/tabs") view=crate::demos::tabs::TabsDemoPage/>
             <Route path=path!("/tag_picker") view=crate::demos::tag_picker::TagPickerDemoPage/>
             <Route path=path!("/textarea") view=crate::demos::textarea::TextAreaDemoPage/>
             <Route path=path!("/themeselector") view=crate::demos::themeselector::ThemeSelectorDemoPage/>

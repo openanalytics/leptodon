@@ -51,6 +51,8 @@ use leptodon::navbar::NavbarEntries;
 use leptodon::navbar::SideBarLink;
 use leptodon::navbar::SideNavbar;
 use leptodon::spinner::Spinner;
+use leptodon::tabs::Tab;
+use leptodon::tabs::Tabs;
 use leptodon::textarea::TextArea;
 use leptodon::toast::Toast;
 use leptodon::toast::ToastAppearance;
@@ -106,6 +108,7 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_radio") view=crate::testcases::radio::TestRadio/>
                 <Route path=StaticSegment("/test_tag_picker") view=crate::testcases::tag_picker::TestTagPicker/>
                 <Route path=StaticSegment("/test_inputs") view=crate::testcases::inputs::TestInputs/>
+                <Route path=StaticSegment("/test_tabs") view=crate::testcases::tabs::TestTabs/>
                 <Route path=StaticSegment("/test_toggle") view=crate::testcases::toggle::TestToggle/>
                 <Route path=StaticSegment("/test_checkbox") view=crate::testcases::checkbox::TestCheckbox/>
                 <Route path=StaticSegment("/test_popover") view=crate::testcases::popover::TestPopover/>
@@ -142,6 +145,16 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
+            <Tabs>
+                <Tab title="Profile" default=true>
+                    "name, email, ..."
+                </Tab>
+                <Tab title="Settings">
+                    "lots of cogs"
+                </Tab>
+            </Tabs>
+            <br/>
+
             <Button on_click=move |_| {
                 if let Some(toast_ctx) = use_context::<ToasterContext>() {
                     let (show_toast, dismiss_toast) = toast_ctx.use_toast();

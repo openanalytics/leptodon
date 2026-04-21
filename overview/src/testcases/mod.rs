@@ -23,6 +23,7 @@ pub mod inputs;
 pub mod popover;
 pub mod radio;
 pub mod select;
+pub mod tabs;
 pub mod tag_picker;
 pub mod toast;
 pub mod toggle;
