@@ -49,28 +49,32 @@ pub async fn read_calendar(
 
 #[cfg(feature = "ssr")]
 fn ics_events(month: u32, year: i32) -> Option<Vec<crate::ical_property::Event>> {
+    use leptos::logging::debug_log;
     use std::fs;
     use std::fs::File;
     use std::io::BufReader;
 
-    let entries = fs::read_dir("assets");
+    let entries = fs::read_dir("overview/assets");
 
     let Ok(entries) = entries else {
-        eprintln!("Failed to read assets");
+        error!("Failed to read assets");
         return None;
     };
 
     let mut events_buf: Vec<crate::ical_property::Event> = vec![];
+    debug_log!("Looking through assets/");
     for entry in entries {
         let entry = match entry {
             Ok(e) => e,
             Err(e) => {
-                eprintln!("Failed to read entry: {}", e);
+                error!("Failed to read entry: {}", e);
                 continue;
             }
         };
+
         let path = entry.path();
         if path.extension().and_then(|s| s.to_str()) == Some("ics") {
+            debug_log!("Reading {:?}", &path);
             let buf = BufReader::new(File::open(path).unwrap());
 
             let reader = ical::IcalParser::new(buf);
