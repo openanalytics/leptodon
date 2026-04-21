@@ -15,33 +15,28 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-pub mod accordion;
-pub mod avatar;
-pub mod badge;
-pub mod button;
-pub mod calendar;
-pub mod checkbox;
-pub mod codeblock;
-pub mod date_picker;
-pub mod dialog;
-pub mod divider;
-pub mod dropdown;
-pub mod form_input;
-pub mod heading;
-pub mod input;
-pub mod link;
-pub mod modal;
-pub mod navbar;
-pub mod popover;
-pub mod radio;
-pub mod select;
-pub mod spinner;
-pub mod table;
-pub mod tabs;
-pub mod tag_picker;
-pub mod textarea;
-pub mod themeselector;
-pub mod toast;
-pub mod toggle;
+use leptodon::tabs::Tab;
+use leptodon::tabs::Tabs;
+use leptos::prelude::ElementChild;
+use leptos::prelude::GlobalAttributes;
+use leptos::{IntoView, component, view};
+use leptos_meta::Title;
 
-// text-left
+#[component]
+pub fn TestTabs() -> impl IntoView {
+    view! {
+        <Title text="Test Tabs"/>
+        <Tabs>
+            <Tab title="Profile" default=true>
+                <div id="profile-content">
+                    "profile content"
+                </div>
+            </Tab>
+            <Tab title="Settings">
+                <div id="settings-content">
+                    "settings content"
+                </div>
+            </Tab>
+        </Tabs>
+    }
+}

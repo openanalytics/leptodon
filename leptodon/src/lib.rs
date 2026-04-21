@@ -49,6 +49,7 @@ pub mod radio;
 pub mod select;
 pub mod spinner;
 pub mod table;
+pub mod tabs;
 pub mod tag_picker;
 pub mod textarea;
 pub mod toast;
