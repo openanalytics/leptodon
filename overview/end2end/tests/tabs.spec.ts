@@ -27,6 +27,9 @@ test("Tabs functionality", async ({ page }) => {
   const profile_tab = page.getByText("Profile", { exact: true });
   const settings_tab = page.getByText("Settings", { exact: true });
 
+  await expect(page.locator("#profile-content")).toBeVisible();
+  await expect(page.locator("#settings-content")).toHaveCount(0);
+
   await profile_tab.click();
   await expect(page.locator("#profile-content")).toBeVisible();
   await expect(page.locator("#settings-content")).toHaveCount(0);
@@ -34,4 +37,30 @@ test("Tabs functionality", async ({ page }) => {
   await settings_tab.click();
   await expect(page.locator("#profile-content")).toHaveCount(0);
   await expect(page.locator("#settings-content")).toBeVisible();
+});
+
+// Tabs should show their default tab or first one.
+test("Tabs default functionality", async ({ page }) => {
+  await page.goto("/test_tabs");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Tabs");
+
+  const test_tab = page.getByText("Test", { exact: true });
+  const default_tab = page.getByText("Default", { exact: true });
+
+  await expect(page.locator("#default-content")).toBeVisible();
+  await expect(page.locator("#test-content")).toHaveCount(0);
+
+  await test_tab.click();
+  await expect(page.locator("#default-content")).toHaveCount(0);
+  await expect(page.locator("#test-content")).toBeVisible();
+
+  await test_tab.click();
+  await expect(page.locator("#default-content")).toHaveCount(0);
+  await expect(page.locator("#test-content")).toBeVisible();
+
+  await default_tab.click();
+  await expect(page.locator("#default-content")).toBeVisible();
+  await expect(page.locator("#test-content")).toHaveCount(0);
 });
