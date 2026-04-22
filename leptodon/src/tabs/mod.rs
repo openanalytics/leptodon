@@ -23,9 +23,11 @@ use leptos::prelude::ChildrenFn;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
+use leptos::prelude::GetUntracked;
 use leptos::prelude::IntoAny;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
+use leptos::prelude::Set;
 use leptos::prelude::TypedChildren;
 use leptos::prelude::Update;
 use leptos::prelude::provide_context;
@@ -36,19 +38,33 @@ use crate::class_list;
 use crate::util::shared_id::shared_id;
 
 #[derive(Clone)]
-struct TabContext(RwSignal<(String, ChildrenFn)>);
+struct TabContext {
+    active: RwSignal<(String, ChildrenFn)>,
+    first_tab: RwSignal<bool>,
+}
 
 #[generate_docs]
 #[component]
-pub fn Tabs<T>(children: TypedChildren<T>) -> impl IntoView
+pub fn Tabs<T>(
+    children: TypedChildren<T>,
+    #[prop(default = true)] default_spacing: bool,
+) -> impl IntoView
 where
     T: IntoView + Send + 'static,
 {
     let selected_tab: RwSignal<(String, ChildrenFn)> =
-        RwSignal::new(("".to_string(), Arc::new(|| ().into_any())));
-    provide_context(TabContext(selected_tab));
+        RwSignal::new(("1".to_string(), Arc::new(|| ().into_any())));
+
+    provide_context(TabContext {
+        active: selected_tab,
+        first_tab: RwSignal::new(true),
+    });
+
     view! {
-        <div class="text-sm font-medium text-center text-body border-b border-default">
+        <div class=class_list!(
+            "text-sm font-medium text-center text-body border-b border-default",
+            ("mb-4", move || default_spacing)
+        )>
             <ul class="flex flex-wrap -mb-px">
                 {children.into_inner()()}
             </ul>
@@ -69,10 +85,6 @@ pub fn Tab(
     children: ChildrenFn,
 ) -> impl IntoView {
     let tab_ctx = use_context::<TabContext>();
-    let id = shared_id();
-    let id2 = id.clone();
-    let id3 = id.clone();
-
     match tab_ctx {
         None => {
             warn!(
@@ -82,30 +94,42 @@ pub fn Tab(
             view! {"Tab Error, see console"}.into_any()
         }
         Some(tab_ctx) => {
-            if default {
+            let first = tab_ctx.first_tab.get_untracked();
+            if first {
+                tab_ctx.first_tab.set(false);
+            }
+
+            let id = shared_id();
+            let id2 = id.clone();
+            let id3 = id.clone();
+
+            if default || first {
                 let children = children.clone();
                 let id = id2.clone();
-                tab_ctx.0.update(move |(value, children_fn)| {
+
+                tab_ctx.active.update(move |(value, children_fn)| {
                     *value = id.to_string();
                     *children_fn = children.clone();
                 });
-            }
+            };
+
             view! {
                 <li class="me-2">
                     <a
                         href="#"
-                        on:click=move |_| {
+                        on:click=move |e| {
                             let children = children.clone();
                             let id = id2.clone();
-                            tab_ctx.0.update(move |(value, children_fn)| {
+                            tab_ctx.active.update(move |(value, children_fn)| {
                                 *value = id.to_string();
                                 *children_fn = children.clone();
                             });
+                            e.prevent_default();
                         }
                         class=class_list!(
                             TAB_CLASS,
-                            (ACTIVE_TAB_CLASS, move || id.to_string() == tab_ctx.0.get().0),
-                            (INACTIVE_TAB_CLASS, move || id3 != tab_ctx.0.get().0)
+                            (ACTIVE_TAB_CLASS, move || id.to_string() == tab_ctx.active.get().0),
+                            (INACTIVE_TAB_CLASS, move || id3 != tab_ctx.active.get().0)
                         )
                     >{title}</a>
                 </li>

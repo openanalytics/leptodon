@@ -27,7 +27,7 @@ pub fn TestTabs() -> impl IntoView {
     view! {
         <Title text="Test Tabs"/>
         <Tabs>
-            <Tab title="Profile" default=true>
+            <Tab title="Profile">
                 <div id="profile-content">
                     "profile content"
                 </div>
@@ -35,6 +35,19 @@ pub fn TestTabs() -> impl IntoView {
             <Tab title="Settings">
                 <div id="settings-content">
                     "settings content"
+                </div>
+            </Tab>
+        </Tabs>
+
+        <Tabs>
+            <Tab title="Test">
+                <div id="test-content">
+                    "test content"
+                </div>
+            </Tab>
+            <Tab title="Default" default=true>
+                <div id="default-content">
+                    "default content"
                 </div>
             </Tab>
         </Tabs>

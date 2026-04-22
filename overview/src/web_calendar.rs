@@ -97,7 +97,7 @@ fn ics_events(month: u32, year: i32) -> Option<Vec<crate::ical_property::Event>>
                 } else {
                     false
                 })
-                .collect::<Vec<crate::ical_property::Event>>().into_iter());
+                .collect::<Vec<crate::ical_property::Event>>());
         }
     }
     Some(events_buf)
