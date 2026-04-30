@@ -72,7 +72,7 @@ impl FormValue for YearCalendarLayout {
 const MAX_DAYS_IN_MONTH: u8 = 31;
 const TABLE_HEADER_CLASS: &str =
     "bg-oa-gray dark:bg-gray-700 hover:bg-hover-light text-center p-0.5 md:p-1 2xl:p-2";
-const TABLE_CELL_CLASS: &str = "bg-white dark:bg-gray-900 hover:!bg-hover-light";
+const TABLE_CELL_CLASS: &str = "bg-white dark:bg-gray-900";
 const MONTHS_IN_YEAR: [Month; 12] = [
     Month::January,
     Month::February,

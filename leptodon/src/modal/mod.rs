@@ -41,7 +41,7 @@ use crate::class_list;
 use crate::icon::CloseIcon;
 use crate::util::signals::ComponentRef;
 
-const MODAL_CLASSES: &str = "relative flex flex-col bg-white rounded-lg shadow dark:bg-gray-700 px-4 m-4 w-full max-w-2xl max-h-[95vh]";
+const MODAL_CLASSES: &str = "relative flex flex-col bg-white rounded-lg shadow dark:bg-gray-800 px-4 m-4 w-full max-w-2xl max-h-[95vh]";
 const MODAL_BACKDROP_CLASSES: &str = "overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[1000] justify-center items-center w-full md:inset-0 h-full max-h-full flex bg-black/50";
 
 #[slot]
