@@ -16,6 +16,10 @@ pub fn page_infos() -> Vec<PageInfo> {
             name: "Accordion"
         },
         PageInfo {
+            location: "/demo/alert",
+            name: "Alert"
+        },
+        PageInfo {
             location: "/demo/avatar",
             name: "Avatar"
         },
@@ -131,6 +135,7 @@ pub fn DemoRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
     view! {
         <ParentRoute path=path!("demo") view=Outlet>
             <Route path=path!("/accordion") view=crate::demos::accordion::AccordionDemoPage/>
+            <Route path=path!("/alert") view=crate::demos::alert::AlertDemoPage/>
             <Route path=path!("/avatar") view=crate::demos::avatar::AvatarDemoPage/>
             <Route path=path!("/badge") view=crate::demos::badge::BadgeDemoPage/>
             <Route path=path!("/button") view=crate::demos::button::ButtonDemoPage/>

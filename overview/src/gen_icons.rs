@@ -1,3 +1,4 @@
+#![allow(deprecated)]
 use leptodon::icon::Icon;
 use leptos::prelude::ElementChild;
 use leptos::{IntoView, component, view};
@@ -176,6 +177,11 @@ pub fn IconList() -> impl IntoView {
             </span>
 
             <span>
+                <Icon icon=leptodon::icon::WarnIcon() class="border-2 border-solid w-24 h-24"/>
+                WarnIcon
+            </span>
+
+            <span>
                 <Icon icon=leptodon::icon::InfoIcon() class="border-2 border-solid w-24 h-24"/>
                 InfoIcon
             </span>
@@ -282,4 +288,4 @@ pub fn IconList() -> impl IntoView {
     }
 }
 
-// 77
+// 78

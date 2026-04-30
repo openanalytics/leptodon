@@ -16,6 +16,7 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 pub mod accordion;
+pub mod alert;
 pub mod avatar;
 pub mod badge;
 pub mod button;

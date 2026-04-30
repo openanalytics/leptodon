@@ -21,6 +21,10 @@ use crate::web_calendar::PopulatedCalendar;
 use chrono::NaiveDate;
 use leptodon::accordion::Accordion;
 use leptodon::accordion::AccordionEntry;
+use leptodon::alert::ErrorAlert;
+use leptodon::alert::InfoAlert;
+use leptodon::alert::SuccessAlert;
+use leptodon::alert::WarnAlert;
 use leptodon::avatar::Avatar;
 use leptodon::button::AddButton;
 use leptodon::button::DeleteButton;
@@ -104,6 +108,7 @@ pub fn App() -> impl IntoView {
         <Router>
             <Routes fallback=|| "Page not found.">
                 <Route path=StaticSegment("") view=Home/>
+                <Route path=StaticSegment("/test_alert") view=crate::testcases::alert::TestAlerts/>
                 <Route path=StaticSegment("/test_select") view=crate::testcases::select::TestSelect/>
                 <Route path=StaticSegment("/test_radio") view=crate::testcases::radio::TestRadio/>
                 <Route path=StaticSegment("/test_tag_picker") view=crate::testcases::tag_picker::TestTagPicker/>
@@ -145,6 +150,21 @@ fn Home() -> impl IntoView {
             <Settings>
                 <ThemeSelector />
             </Settings>
+
+            <InfoAlert>
+                "Kerachole"
+            </InfoAlert>
+            <WarnAlert>
+                "Rescue"
+            </WarnAlert>
+            <ErrorAlert>
+                "Fire IV"
+            </ErrorAlert>
+            <SuccessAlert>
+                "Kardia"
+            </SuccessAlert>
+
+
             <Tabs>
                 <Tab title="Profile" default=true>
                     "name, email, ..."
