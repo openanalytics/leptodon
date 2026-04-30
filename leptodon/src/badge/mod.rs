@@ -21,6 +21,7 @@ use crate::icon::Icon;
 use crate::icon::icon_data::IconRef;
 use crate::spinner::Spinner;
 use crate::util::callback::ArcOneCallback;
+use crate::util::styling::GenericTheme;
 use leptodon_proc_macros::generate_docs;
 use leptos::either::Either;
 use leptos::prelude::AriaAttributes;
@@ -130,34 +131,25 @@ pub enum BadgeTheme {
 }
 
 impl BadgeTheme {
+    fn generic_theme(&self) -> GenericTheme {
+        match self {
+            BadgeTheme::Brand => GenericTheme::Brand,
+            BadgeTheme::Secondary => GenericTheme::Secondary,
+            BadgeTheme::Transparent => GenericTheme::Transparent,
+            BadgeTheme::Danger => GenericTheme::Danger,
+            BadgeTheme::Success => GenericTheme::Success,
+            BadgeTheme::Warning => GenericTheme::Warning,
+        }
+    }
+
     // Color theme
     pub fn base_class(&self) -> &'static str {
-        match self {
-            BadgeTheme::Brand => "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-            BadgeTheme::Secondary => {
-                "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-            }
-            BadgeTheme::Transparent => "dark:text-white",
-            BadgeTheme::Danger => "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-            BadgeTheme::Success => {
-                "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-            }
-            BadgeTheme::Warning => {
-                "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-            }
-        }
+        self.generic_theme().base_class()
     }
 
     // Border and their colors
     pub fn border_class(&self) -> &'static str {
-        match self {
-            BadgeTheme::Brand => "border border-blue-400",
-            BadgeTheme::Secondary => "border border-gray-400",
-            BadgeTheme::Transparent => "border border-gray-400",
-            BadgeTheme::Danger => "border border-red-400",
-            BadgeTheme::Success => "border border-green-400",
-            BadgeTheme::Warning => "border border-yellow-400",
-        }
+        self.generic_theme().border_class()
     }
 }
 

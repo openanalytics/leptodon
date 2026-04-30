@@ -85,8 +85,8 @@ pipeline {
 
               echo "Up and running";
               cd overview/end2end;
-              devenv shell npm install;
-              CI=1 devenv shell playwright test;
+              nix develop -c npm install;
+              CI=1 nix develop -c npx playwright test;
 
               # Kills whatever this script spawned
               kill \$! && echo "killed server";

@@ -1151,6 +1151,10 @@ input:checked + .toggle-bg {
   right: 0.5rem;
 }
 
+.right-4 {
+  right: 1rem;
+}
+
 .right-auto {
   right: auto;
 }
@@ -1161,6 +1165,10 @@ input:checked + .toggle-bg {
 
 .top-2 {
   top: 0.5rem;
+}
+
+.top-4 {
+  top: 1rem;
 }
 
 .-z-\[1000\] {
@@ -1680,6 +1688,11 @@ input:checked + .toggle-bg {
 
 .translate-y-1 {
   --tw-translate-y: 0.25rem;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.translate-y-\[-0\.05rem\] {
+  --tw-translate-y: -0.05rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -2514,6 +2527,31 @@ input:checked + .toggle-bg {
 
 .tracking-wide {
   letter-spacing: 0.025em;
+}
+
+.\!text-blue-800 {
+  --tw-text-opacity: 1 !important;
+  color: rgb(30 66 159 / var(--tw-text-opacity, 1)) !important;
+}
+
+.\!text-gray-800 {
+  --tw-text-opacity: 1 !important;
+  color: rgb(31 41 55 / var(--tw-text-opacity, 1)) !important;
+}
+
+.\!text-green-800 {
+  --tw-text-opacity: 1 !important;
+  color: rgb(3 84 63 / var(--tw-text-opacity, 1)) !important;
+}
+
+.\!text-red-800 {
+  --tw-text-opacity: 1 !important;
+  color: rgb(155 28 28 / var(--tw-text-opacity, 1)) !important;
+}
+
+.\!text-yellow-800 {
+  --tw-text-opacity: 1 !important;
+  color: rgb(114 59 19 / var(--tw-text-opacity, 1)) !important;
 }
 
 .text-black {
@@ -3471,6 +3509,31 @@ html.dark {
 
 .dark\:stroke-gray-700:where(.dark, .dark *) {
   stroke: #374151;
+}
+
+.dark\:\!text-blue-300:where(.dark, .dark *) {
+  --tw-text-opacity: 1 !important;
+  color: rgb(164 202 254 / var(--tw-text-opacity, 1)) !important;
+}
+
+.dark\:\!text-gray-300:where(.dark, .dark *) {
+  --tw-text-opacity: 1 !important;
+  color: rgb(209 213 219 / var(--tw-text-opacity, 1)) !important;
+}
+
+.dark\:\!text-green-300:where(.dark, .dark *) {
+  --tw-text-opacity: 1 !important;
+  color: rgb(132 225 188 / var(--tw-text-opacity, 1)) !important;
+}
+
+.dark\:\!text-red-300:where(.dark, .dark *) {
+  --tw-text-opacity: 1 !important;
+  color: rgb(248 180 180 / var(--tw-text-opacity, 1)) !important;
+}
+
+.dark\:\!text-yellow-300:where(.dark, .dark *) {
+  --tw-text-opacity: 1 !important;
+  color: rgb(250 202 21 / var(--tw-text-opacity, 1)) !important;
 }
 
 .dark\:text-blue-300:where(.dark, .dark *) {
