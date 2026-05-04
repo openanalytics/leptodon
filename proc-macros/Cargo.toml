@@ -1,6 +1,6 @@
 [package]
 name = "leptodon-proc-macros"
-version = "1.4.0-dev" # version-sync-⤴️
+version = "1.3.0" # version-sync-⤴️
 license = "Apache-2.0"
 description = "Procedural macros crate for Leptodon (your Leptos UI toolkit)."
 repository = "https://github.com/openanalytics/leptodon"

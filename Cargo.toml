@@ -1,7 +1,7 @@
 [workspace.metadata.crane]
 name = "Leptodon"
 [workspace.package]
-version = "1.4.0-dev" # version-sync-⤴️ (marker for cargo-make)
+version = "1.3.0" # version-sync-⤴️ (marker for cargo-make)
 edition = "2024"
 license = "Apache-2.0"
 homepage = "https://leptodon.dev"
@@ -41,8 +41,8 @@ codegen-units = 1
 panic = "abort"
 
 [workspace.dependencies]
-leptodon = { path = "./leptodon", version = "=1.4.0-dev" } # version-sync-⤴️
-leptodon-proc-macros = { path = "./proc-macros", version = "=1.4.0-dev" } # version-sync-⤴️
+leptodon = { path = "./leptodon", version = "=1.3.0" } # version-sync-⤴️
+leptodon-proc-macros = { path = "./proc-macros", version = "=1.3.0" } # version-sync-⤴️
 
 # Protocol
 http = "1"

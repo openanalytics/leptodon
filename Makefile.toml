@@ -13,6 +13,9 @@ for file in $files; do
     # Update the marked lines
     sed -i "/version-sync-⤴️/s/$OLD_VERSION/$NEW_VERSION/g" "$file"
 done
+
+tomlq -it "(.package[] | select(.name == \"leptodon\")).version = \"$NEW_VERSION\"" Cargo.lock
+tomlq -it "(.package[] | select(.name == \"leptodon-proc-macros\")).version = \"$NEW_VERSION\"" Cargo.lock
 '''
 
 [tasks.license-check]
