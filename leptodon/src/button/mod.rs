@@ -81,11 +81,12 @@ const OA_SECONDARY_BUTTON_CLASSES: &str = const_str::join!(
 
 pub const OA_TRANSPARENT_BUTTON_CLASSES: &str = const_str::join!(
     &[
-        "hover:bg-oa-gray active:bg-oa-gray hover:dark:bg-gray-600 active:dark:bg-gray-600",
+        "hover:bg-oa-gray active:bg-oa-gray hover:dark:bg-gray-600 active:dark:bg-gray-600 shadow-transparent border-solid border border-transparent",
         SHARED_BUTTON_CLASSES,
         BUTTON_DEFAULT_TEXT,
         BUTTON_GRAY_FOCUS_CLASSES,
-        BUTTON_SPACING_CLASSES
+        BUTTON_SHADOW_CLASSES,
+        BUTTON_SPACING_CLASSES,
     ],
     " "
 );
