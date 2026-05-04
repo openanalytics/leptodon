@@ -247,8 +247,8 @@ pub fn YearCalendarYearLayout(
     // [Dec][ ]...[  ]
     view! {
         <div class="grid gap-px
-            grid-cols-[repeat(13,_minmax(0,_1fr))] grid-rows-[repeat(32,_minmax(0,_1fr))] grid-flow-col
-            lg:grid-cols-[repeat(32,_minmax(0,_1fr))] lg:grid-rows-[repeat(13,_minmax(0,_1fr))] lg:grid-flow-row
+            grid-cols-[repeat(13,_minmax(0,_1fr))] grid-rows-[4ch_repeat(31,_minmax(0,_1fr))] grid-flow-col
+            lg:grid-cols-[4ch_repeat(31,_minmax(0,_1fr))] lg:grid-rows-[repeat(13,_minmax(0,_1fr))] lg:grid-flow-row
             bg-oa-gray-darker dark:bg-gray-600 border border-oa-gray-darker dark:border-gray-600
             rounded-lg overflow-auto text-sm lg:text-base"
             on:mouseleave=move |_| {
@@ -372,24 +372,29 @@ pub fn YearCalendar(
     /// Events to show on each day
     #[prop(optional, into)]
     children: Option<CalendarChildrenFn>,
+    /// Whether to have a default amount of spacing above and below the calendar.
+    #[prop(default = true)]
+    default_spacing: bool,
 ) -> impl IntoView {
     view! {
-        <YearCalendarNavbar current_year local_date_time />
+        <div class=class_list!(("my-4", move || default_spacing))>
+            <YearCalendarNavbar current_year local_date_time />
 
-        // Main calendar content
-        {move || match layout.get() {
-            YearCalendarLayout::TwelveMonths => view! {
-                <YearCalendarTwelveMonthLayout current_year
-                    day_highlighter=Some(day_highlighter.clone())
-                    children=children.clone()
-                />
-            }.into_any(),
-            YearCalendarLayout::Year => view! {
-                <YearCalendarYearLayout current_year
-                    day_highlighter=Some(day_highlighter.clone())
-                    children=children.clone()
-                />
-            }.into_any()
-        }}
+            // Main calendar content
+            {move || match layout.get() {
+                YearCalendarLayout::TwelveMonths => view! {
+                    <YearCalendarTwelveMonthLayout current_year
+                        day_highlighter=Some(day_highlighter.clone())
+                        children=children.clone()
+                    />
+                }.into_any(),
+                YearCalendarLayout::Year => view! {
+                    <YearCalendarYearLayout current_year
+                        day_highlighter=Some(day_highlighter.clone())
+                        children=children.clone()
+                    />
+                }.into_any()
+            }}
+        </div>
     }
 }

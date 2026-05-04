@@ -16,6 +16,8 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use chrono::Datelike;
+use chrono::Duration;
+use chrono::Local;
 use chrono::NaiveDate;
 use chrono::Weekday;
 use leptodon::date_picker::DateMenuOption;
@@ -26,6 +28,8 @@ use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
 use leptodon::paragraph::Paragraph;
 use leptodon::util::callback::ArcOneCallback;
+use leptodon::util::time::date_saturating_add;
+use leptodon::util::time::date_saturating_sub;
 use leptodon_proc_macros::generate_codeblock;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
@@ -57,6 +61,10 @@ pub fn DatePickerDemo() -> impl IntoView {
 pub fn DateRangePickerDemo() -> impl IntoView {
     let start_date = RwSignal::new(None);
     let end_date = RwSignal::new(None);
+    let now = Local::now().date_naive();
+    let ten_years = Duration::days(365 * 10);
+    let min_date = date_saturating_sub(now, ten_years);
+    let max_date = date_saturating_add(now, ten_years);
     view! {
         <Paragraph>
             {move ||
@@ -64,8 +72,8 @@ pub fn DateRangePickerDemo() -> impl IntoView {
             }
         </Paragraph>
         <DateRangePicker
-            min_date=NaiveDate::from_ymd_opt(2020, 10, 10).unwrap()
-            max_date=NaiveDate::from_ymd_opt(2030, 10, 10).unwrap()
+            min_date
+            max_date
             start_date
             end_date
         />
@@ -76,6 +84,7 @@ pub fn DateRangePickerDemo() -> impl IntoView {
 #[component]
 pub fn DatePickerHighlighterDemo() -> impl IntoView {
     let value = RwSignal::new(None);
+    let now = Local::now().date_naive();
     let weekend_red = ArcOneCallback::new(move |day: DateMenuOption| {
         let base = day_highlighter(value)(day);
         let weekend_red = if let DateMenuOption::Day(calendar_date) = day
@@ -98,8 +107,8 @@ pub fn DatePickerHighlighterDemo() -> impl IntoView {
         </Paragraph>
         <DatePicker
             class="my-3"
-            min_date=NaiveDate::from_ymd_opt(1900, 1, 1).expect("valid date")
-            max_date=NaiveDate::from_ymd_opt(2026, 2, 13).expect("valid date")
+            min_date=date_saturating_sub(now, Duration::days(365 * 100))
+            max_date=now
             placeholder="Published at: yyyy-mm-dd"
             required=true
             highlighter=weekend_red

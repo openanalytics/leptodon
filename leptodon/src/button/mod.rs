@@ -39,7 +39,7 @@ pub use crate::button::variations::*;
 
 const BUTTON_SHADOW_CLASSES: &str = "shadow-sm";
 const BUTTON_SPACING_CLASSES: &str = " px-5 py-2.5 mr-2";
-const SHARED_BUTTON_CLASSES: &str = "hover:z-20 focus:z-10 dark:focus:ring-gray-800 outline-offset-[-1px] outline-[5px] focus:outline font-medium inline-flex items-center text-center text-sm";
+const SHARED_BUTTON_CLASSES: &str = "hover:z-20 focus:z-10 dark:focus:ring-gray-800 outline-offset-[-1px] outline-[5px] focus:outline font-medium inline-flex items-center align-top text-center text-sm";
 
 const BUTTON_GRAY_FOCUS_CLASSES: &str =
     "!active:outline-oa-gray-darker focus:outline-oa-gray-darker hover:focus:outline-oa-gray ";
@@ -81,11 +81,12 @@ const OA_SECONDARY_BUTTON_CLASSES: &str = const_str::join!(
 
 pub const OA_TRANSPARENT_BUTTON_CLASSES: &str = const_str::join!(
     &[
-        "hover:bg-oa-gray active:bg-oa-gray hover:dark:bg-gray-600 active:dark:bg-gray-600",
+        "hover:bg-oa-gray active:bg-oa-gray hover:dark:bg-gray-600 active:dark:bg-gray-600 shadow-transparent border-solid border border-transparent",
         SHARED_BUTTON_CLASSES,
         BUTTON_DEFAULT_TEXT,
         BUTTON_GRAY_FOCUS_CLASSES,
-        BUTTON_SPACING_CLASSES
+        BUTTON_SHADOW_CLASSES,
+        BUTTON_SPACING_CLASSES,
     ],
     " "
 );
