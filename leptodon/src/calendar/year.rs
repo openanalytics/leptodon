@@ -372,24 +372,29 @@ pub fn YearCalendar(
     /// Events to show on each day
     #[prop(optional, into)]
     children: Option<CalendarChildrenFn>,
+    /// Whether to have a default amount of spacing above and below the calendar.
+    #[prop(default = true)]
+    default_spacing: bool,
 ) -> impl IntoView {
     view! {
-        <YearCalendarNavbar current_year local_date_time />
+        <div class=class_list!(("my-4", move || default_spacing))>
+            <YearCalendarNavbar current_year local_date_time />
 
-        // Main calendar content
-        {move || match layout.get() {
-            YearCalendarLayout::TwelveMonths => view! {
-                <YearCalendarTwelveMonthLayout current_year
-                    day_highlighter=Some(day_highlighter.clone())
-                    children=children.clone()
-                />
-            }.into_any(),
-            YearCalendarLayout::Year => view! {
-                <YearCalendarYearLayout current_year
-                    day_highlighter=Some(day_highlighter.clone())
-                    children=children.clone()
-                />
-            }.into_any()
-        }}
+            // Main calendar content
+            {move || match layout.get() {
+                YearCalendarLayout::TwelveMonths => view! {
+                    <YearCalendarTwelveMonthLayout current_year
+                        day_highlighter=Some(day_highlighter.clone())
+                        children=children.clone()
+                    />
+                }.into_any(),
+                YearCalendarLayout::Year => view! {
+                    <YearCalendarYearLayout current_year
+                        day_highlighter=Some(day_highlighter.clone())
+                        children=children.clone()
+                    />
+                }.into_any()
+            }}
+        </div>
     }
 }
