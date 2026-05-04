@@ -22,8 +22,6 @@ use syn::Expr;
 use syn::Lit;
 use syn::{Attribute, FnArg, ItemFn, Meta, MetaNameValue, Pat, parse_macro_input};
 
-use crate::util::trim_surrounding_quotes;
-
 /// Extracts doc attribute from parameter attributes
 fn extract_doc_attr(attrs: &[Attribute]) -> Option<String> {
     for attr in attrs {
@@ -39,8 +37,8 @@ fn extract_doc_attr(attrs: &[Attribute]) -> Option<String> {
             literal.to_tokens(&mut tokens);
 
             let mut doc_literal_str = tokens.to_string();
-            if let Lit::Str(_) = literal.lit {
-                doc_literal_str = trim_surrounding_quotes(doc_literal_str);
+            if let Lit::Str(doc) = &literal.lit {
+                doc_literal_str = doc.value().clone();
             }
             return Some(doc_literal_str);
         }

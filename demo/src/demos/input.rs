@@ -211,7 +211,7 @@ pub fn InputsDemoPage() -> impl IntoView {
             <Paragraph>
                 "Internally all inputs try to use GenericInput<T, E> where T is the value of the type you are interested in and E a displayable error type.
                 On the web users always enter text so you need to provider a parser and formatter to convert between String -> T and T -> String.
-                In case parsing fails you may produce an Result::Err(error_of_type_E) which the GenericInput will display underneith itself.
+                In case parsing fails you may produce an Result::Err(error_of_type_E) which the GenericInput will display underneath itself.
                 When you want to place elements NEXT to the GenericInput you will have difficulties with the Label and Feedback, for this situation see <FormInput>."
             </Paragraph>
             <GenericInputExample/>
