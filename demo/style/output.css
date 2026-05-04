@@ -1792,8 +1792,8 @@ input:checked + .toggle-bg {
   grid-template-rows: 1lh minmax(0, 1fr);
 }
 
-.grid-rows-\[repeat\(32\2c _minmax\(0\2c _1fr\)\)\] {
-  grid-template-rows: repeat(32, minmax(0, 1fr));
+.grid-rows-\[4ch_repeat\(31\2c _minmax\(0\2c _1fr\)\)\] {
+  grid-template-rows: 4ch repeat(31, minmax(0, 1fr));
 }
 
 .flex-row {
@@ -1933,12 +1933,6 @@ input:checked + .toggle-bg {
 
 .overflow-x-hidden {
   overflow-x: hidden;
-}
-
-.truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .text-wrap {
@@ -2406,6 +2400,10 @@ input:checked + .toggle-bg {
 
 .text-start {
   text-align: start;
+}
+
+.align-top {
+  vertical-align: top;
 }
 
 .align-middle {
@@ -3272,8 +3270,8 @@ html.dark {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .lg\:grid-cols-\[repeat\(32\2c _minmax\(0\2c _1fr\)\)\] {
-    grid-template-columns: repeat(32, minmax(0, 1fr));
+  .lg\:grid-cols-\[4ch_repeat\(31\2c _minmax\(0\2c _1fr\)\)\] {
+    grid-template-columns: 4ch repeat(31, minmax(0, 1fr));
   }
 
   .lg\:grid-rows-\[repeat\(13\2c _minmax\(0\2c _1fr\)\)\] {

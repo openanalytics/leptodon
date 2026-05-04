@@ -86,11 +86,13 @@ pub fn ButtonGroupDemo() -> impl IntoView {
 pub fn PremadeButtonDemo() -> impl IntoView {
     let to_copy = RwSignal::new("📋".to_string());
     view! {
-        <AddButton/>
-        <EditButton/>
-        <DeleteButton/>
-        <DownloadButton/>
-        <CopyButton class="m-2" to_copy=to_copy />
+        <div class="flex flex-row">
+            <AddButton/>
+            <EditButton/>
+            <DeleteButton/>
+            <DownloadButton/>
+            <CopyButton class="m-2" to_copy=to_copy />
+        </div>
         <br/>
         <TextArea
             placeholder="Paste testing area.."
