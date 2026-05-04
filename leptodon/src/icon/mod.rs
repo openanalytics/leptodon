@@ -593,7 +593,11 @@ pub fn EmptyIcon() -> IconRef {
     };
 }
 
+#[deprecated]
 pub fn OpenIcon() -> IconRef {
+    WarnIcon()
+}
+pub fn WarnIcon() -> IconRef {
     lazy_path!(
         HTML,
         html! {

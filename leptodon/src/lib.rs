@@ -21,6 +21,7 @@
 pub mod include_generated;
 
 pub mod accordion;
+pub mod alert;
 pub mod avatar;
 pub mod badge;
 pub mod button;

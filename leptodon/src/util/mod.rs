@@ -22,4 +22,5 @@ pub mod option_comp;
 pub mod optional_prop;
 pub mod shared_id;
 pub mod signals;
+pub mod styling;
 pub mod time;

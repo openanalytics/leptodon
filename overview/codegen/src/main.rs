@@ -59,7 +59,8 @@ fn gen_icons() -> Result<(), Error> {
     fs::write(
         icons,
         format!(
-            r#"use leptodon::icon::Icon;
+            r#"#![allow(deprecated)]
+use leptodon::icon::Icon;
 use leptos::prelude::ElementChild;
 use leptos::{{IntoView, component, view}};
 

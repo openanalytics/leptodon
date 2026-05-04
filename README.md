@@ -23,7 +23,7 @@ A couple tools are required to work on this project:
 - `cargo-make` for the [Makefile.toml](./Makefile.toml).
 - `cargo-leptos` for serving and building the application.
 - `cargo-nextest` for running the unit tests.
-- `npm` and `playwright` for running the end-to-end tests (there is a nix devenv in [overview/end2end](./overview/end2end)).
+- `npm` and `playwright` for running the end-to-end tests (there is a nix devshell in [overview/end2end](./overview/end2end)).
 - `licensure` for license header checks.
 
 ### Project layout

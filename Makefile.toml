@@ -95,6 +95,16 @@ run_task = { name = [
     "integration-tests"
 ] }
 
+# Styles
+[tasks.styles]
+workspace = false
+script = '''
+#!/bin/sh
+set +e
+cd overview/codegen; cargo run; cd ..; npx tailwindcss -i input.css -o style/output.css; cd ..;
+cd demo/codegen; cargo run; cd ..; npx tailwindcss -i input.css -o style/output.css; cd ..;
+'''
+
 # Tries to run the same checks as the CI, locally.
 [tasks.mimic-ci]
 workspace = false
