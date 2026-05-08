@@ -1,0 +1,1 @@
+Macro crate for [Leptodon](https://leptodon.dev).
