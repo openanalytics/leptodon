@@ -4,6 +4,7 @@ metadata:
   labels:
     ci: leptodon-build
 spec:
+  hostUsers: false
   volumes:
     - name: dockerconfig
       secret:
@@ -25,8 +26,6 @@ spec:
           ephemeral-storage: "30Gi"
           cpu: 1
       tty: true
-      securityContext:
-        privileged: true
       volumeMounts:
         - name: dockerconfig
           mountPath: /root/.docker/config.json
