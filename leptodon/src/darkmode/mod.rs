@@ -16,6 +16,8 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use leptodon_proc_macros::generate_docs;
+use leptos::context::use_context;
+use leptos::control_flow::Show;
 use leptos::logging::debug_log;
 use leptos::oco::Oco;
 use leptos::prelude::AddAnyAttr;
@@ -24,6 +26,7 @@ use leptos::prelude::Get;
 use leptos::prelude::Memo;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Signal;
+use leptos::reactive::traits::Set;
 use leptos::server::ServerAction;
 use leptos::{prelude::ServerFnError, *};
 use leptos_meta::Html;
@@ -34,6 +37,12 @@ use std::str::FromStr;
 
 use crate::radio::FormValue;
 use crate::select::Select;
+
+/// HTML meta-colorscheme context holder, used for nesting theme-selectors as <Meta> creates a new head entry on each location it's used.
+#[derive(Clone)]
+pub struct ColorScheme {
+    pub signal: RwSignal<String>,
+}
 
 #[derive(Debug, Hash, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum Theme {
@@ -131,18 +140,32 @@ pub fn ThemeSelector() -> impl IntoView {
     let update_theme_action: ServerAction<UpdateTheme> = ServerAction::new();
     let cookie_theme = initial_theme_from_cookie();
     let browser_prefers_dark = browser_prefers_darkmode();
+
     // Bound to the html select.
     let selected_theme = RwSignal::new(cookie_theme);
+    let theme_to_scheme = move |theme: Theme| match theme {
+        Theme::Light => "light",
+        Theme::FollowSystem if browser_prefers_dark.get() => "dark light",
+        Theme::FollowSystem => "light dark",
+        Theme::Dark => "dark",
+    };
+
     let resulting_light_dark = Memo::new(move |_| {
         let theme = selected_theme.get();
+        theme_to_scheme(theme)
         // console_log(format!("Resulting DL theme: {resulting_theme:?}").as_str());
-        match theme {
-            Theme::Light => "light",
-            Theme::FollowSystem if browser_prefers_dark.get() => "dark light",
-            Theme::FollowSystem => "light dark",
-            Theme::Dark => "dark",
-        }
     });
+
+    let color_scheme_ctx = use_context::<ColorScheme>();
+    if let Some(scheme) = color_scheme_ctx.clone() {
+        Effect::watch(
+            move || resulting_light_dark.get(),
+            move |new, _, _| {
+                scheme.signal.set(new.to_string());
+            },
+            true,
+        );
+    }
 
     let resulting_dark = Memo::new(move |_| {
         let theme = selected_theme.get();
@@ -155,6 +178,7 @@ pub fn ThemeSelector() -> impl IntoView {
             Theme::Dark => "dark",
         };
         debug_log!("Resulting theme: {resulting_theme:?}");
+
         // console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
         resulting_theme
     });
@@ -183,10 +207,12 @@ pub fn ThemeSelector() -> impl IntoView {
                 resulting_dark.get().to_string()
             }
         } />
-        <Meta
-            name="color-scheme"
-            content=move || resulting_light_dark.get()
-        />
+        <Show when=move || color_scheme_ctx.clone().is_none()>
+            <Meta
+                name="color-scheme"
+                content=move || resulting_light_dark.get()
+            />
+        </Show>
         <Select<Theme>
             required=true
             name="theme"
