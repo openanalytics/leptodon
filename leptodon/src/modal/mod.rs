@@ -41,7 +41,7 @@ use crate::class_list;
 use crate::icon::CloseIcon;
 use crate::util::signals::ComponentRef;
 
-const MODAL_CLASSES: &str = "relative flex flex-col bg-white rounded-lg shadow dark:bg-gray-800 px-4 m-4 w-full max-w-2xl max-h-[95vh]";
+const MODAL_CLASSES: &str = "relative flex flex-col bg-white rounded-lg shadow dark:bg-gray-800 px-2 md:px-4 m-4 w-full max-w-2xl max-h-[95vh]";
 const MODAL_BACKDROP_CLASSES: &str = "overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[1000] justify-center items-center w-full md:inset-0 h-full max-h-full flex bg-black/50";
 
 #[slot]
@@ -123,7 +123,7 @@ pub fn Modal(
                 <span tabindex="0" aria-hidden="true" on:focus=move |_| warp_focus()></span>
 
                 // Modal header
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <div class="flex items-center justify-between p-2 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-lg font-medium text-heading">
                         { title.get() }
                     </h3>
@@ -135,13 +135,13 @@ pub fn Modal(
                 </div>
 
                 // Modal body
-                <div class="p-4 md:p-5 space-y-4 overflow-auto">
+                <div class="p-2 md:p-5 space-y-4 overflow-auto">
                     {children()}
                 </div>
 
                 // Modal footer
                 <div
-                    class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                    class="flex items-center p-2 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                     {(footer.children)().into_any()}
                 </div>
 
