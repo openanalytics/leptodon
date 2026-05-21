@@ -16,7 +16,7 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use leptodon::button::{Button, ButtonAppearance};
-use leptodon::darkmode::ThemeSelector;
+use leptodon::darkmode::{MetaColorScheme, ThemeSelector, use_color_scheme};
 use leptodon::icon;
 use leptodon::navbar::NavbarEndChildren;
 use leptodon::navbar::NavbarEntries;
@@ -90,9 +90,11 @@ pub fn RouteShell() -> impl IntoView {
 
 #[component]
 pub fn App() -> impl IntoView {
+    let color_scheme = use_color_scheme();
     provide_meta_context();
 
     view! {
+        <MetaColorScheme color_scheme />
         <Router>
             <Routes fallback=|| "Page not found.">
                 <ParentRoute path=StaticSegment("/") view=RouteShell>

@@ -41,8 +41,9 @@ use leptodon::button_group::First;
 use leptodon::button_group::Last;
 use leptodon::checkbox::Checkbox;
 use leptodon::codeblock::Codeblock;
-use leptodon::darkmode::ColorScheme;
+use leptodon::darkmode::MetaColorScheme;
 use leptodon::darkmode::ThemeSelector;
+use leptodon::darkmode::use_color_scheme;
 use leptodon::date_picker::DatePicker;
 use leptodon::date_picker::DateRangePicker;
 use leptodon::dropdown::DropdownItem;
@@ -71,7 +72,6 @@ use leptodon::{
 use leptos::logging::log;
 use leptos::prelude::*;
 use leptos_meta::HashedStylesheet;
-use leptos_meta::Meta;
 use leptos_meta::MetaTags;
 use leptos_meta::Title;
 use leptos_meta::provide_meta_context;
@@ -104,17 +104,11 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 
 #[component]
 pub fn App() -> impl IntoView {
-    let color_scheme_signal = RwSignal::new(String::default());
-    provide_context(ColorScheme {
-        signal: color_scheme_signal,
-    });
+    let color_scheme = use_color_scheme();
     provide_meta_context();
 
     view! {
-        <Meta
-            name="color-scheme"
-            content=move || color_scheme_signal.get()
-        />
+        <MetaColorScheme color_scheme />
         <Router>
             <Routes fallback=|| "Page not found.">
                 <Route path=StaticSegment("") view=Home/>

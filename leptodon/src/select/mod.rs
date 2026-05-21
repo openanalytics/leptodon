@@ -76,6 +76,7 @@ where
         move || selected.get(),
         move |new, old, _| {
             if Some(new) != old {
+                debug_log!("Should not be spammed");
                 some_selected.set(Some(new.clone()));
             }
         },

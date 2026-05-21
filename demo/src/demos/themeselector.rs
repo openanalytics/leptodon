@@ -1,3 +1,4 @@
+use leptodon::codeblock::Codeblock;
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV
@@ -29,7 +30,19 @@ use leptos_meta::Title;
 #[component]
 pub fn ThemeSelectorDemo() -> impl IntoView {
     view! {
-        <Paragraph>"Using multiple theme-selectors on the same page (as done here) does not work correctly.\nIf you need this behaviour, please open an issue."</Paragraph>
+        <Paragraph>"If you need mutliple theme-selectors on a single page do the following at the top of your App:"</Paragraph>
+        <Codeblock code=r#"
+    let color_scheme = use_color_scheme();
+
+    view! {
+        <MetaColorScheme color_scheme />
+        // ...
+    }
+"#/>
+        <Paragraph>
+            "Make sure to NOT put this in an SSR route-shell, the color_scheme context needs to be present both on hydrated client and server rendered side."
+        </Paragraph>
+
         <ThemeSelector/>
     }
 }
