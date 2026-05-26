@@ -26,7 +26,8 @@ test("Upload input", async ({ page }) => {
 
   let file_upload = page.locator("#file-upload");
 
-  await file_upload.click();
+  // We are no longer allowed to click the upload since v1.58
+  // await file_upload.click();
   await file_upload.setInputFiles([
     './tests/test_files/s2.png',
     './tests/test_files/s3.png',

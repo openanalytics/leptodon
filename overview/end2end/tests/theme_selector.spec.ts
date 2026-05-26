@@ -101,7 +101,9 @@ test("test theme_selector", async ({ page }) => {
   await checkTheme("light");
 
   // Reload
-  page.reload();
+  page.reload({ waitUntil: "networkidle" });
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Leptodon");
 
   // Check light
   await expect(theme_sel_1).toHaveValue("light");
@@ -109,6 +111,8 @@ test("test theme_selector", async ({ page }) => {
   await checkTheme("light");
 
   // Swap to system
+  // sel_2 doesn't affect sel_1 here, but it does affect sel_1 in manual browser usage.
+  await theme_sel_1.selectOption("follow_system");
   await theme_sel_2.selectOption("follow_system");
 
   // Check system
@@ -128,6 +132,8 @@ test("test theme_selector", async ({ page }) => {
   await checkTheme("light", true);
 
   page.reload();
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Leptodon");
 
   // Check light
   await checkTheme("light", true);
