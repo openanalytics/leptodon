@@ -18,6 +18,7 @@
 use leptodon_proc_macros::generate_docs;
 use leptos::context::provide_context;
 use leptos::context::use_context;
+use leptos::control_flow::Show;
 use leptos::logging::debug_log;
 use leptos::oco::Oco;
 use leptos::prelude::AddAnyAttr;
@@ -199,6 +200,7 @@ pub fn ThemeSelector(
     let browser_prefers_dark = use_preferred_dark();
 
     let color_scheme_ctx = use_context::<ColorScheme>();
+    let no_context = color_scheme_ctx.is_none();
     let color_scheme = if let Some(scheme) = color_scheme_ctx.clone() {
         scheme
     } else {
@@ -231,6 +233,14 @@ pub fn ThemeSelector(
                 resulting_dark.get().to_string()
             }
         } />
+        {
+            let color_scheme = color_scheme.clone();
+            view! {
+                <Show when=move || no_context>
+                    <MetaColorScheme color_scheme=color_scheme.clone() />
+                </Show>
+            }
+        }
         <Select<Theme>
             id=id.get()
             required=true

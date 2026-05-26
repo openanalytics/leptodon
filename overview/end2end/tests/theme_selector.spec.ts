@@ -101,7 +101,7 @@ test("test theme_selector", async ({ page }) => {
   await checkTheme("light");
 
   // Reload
-  page.reload({ waitUntil: "networkidle" });
+  await page.goto("/");
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");
 
@@ -131,7 +131,7 @@ test("test theme_selector", async ({ page }) => {
   // Check light
   await checkTheme("light", true);
 
-  page.reload();
+  await page.goto("/");
   await page.waitForLoadState("networkidle");
   await expect(page).toHaveTitle("Leptodon");
 
