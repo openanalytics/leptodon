@@ -26,10 +26,12 @@ use leptos::prelude::Get;
 use leptos::prelude::Memo;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Signal;
+use leptos::reactive::wrappers::read::MaybeProp;
 use leptos::server::ServerAction;
 use leptos::{prelude::ServerFnError, *};
 use leptos_meta::Html;
 use leptos_meta::Meta;
+use leptos_use::use_preferred_dark;
 use std::fmt::Display;
 use std::str::FromStr;
 
@@ -74,12 +76,14 @@ impl ColorScheme {
 
 #[component]
 pub fn MetaColorScheme(color_scheme: ColorScheme) -> impl IntoView {
+    let browser_prefers_dark = use_preferred_dark();
+
     view! {
         <Meta
             name="color-scheme"
             content=move || match color_scheme.signal.get() {
                 Theme::Light => "light",
-                Theme::FollowSystem if browser_prefers_darkmode().get() => "dark light",
+                Theme::FollowSystem if browser_prefers_dark.get() => "dark light",
                 Theme::FollowSystem => "light dark",
                 Theme::Dark => "dark",
             }
@@ -167,16 +171,16 @@ pub async fn update_theme(new_theme: Theme) -> Result<Theme, ServerFnError> {
     Ok(new_theme)
 }
 
-pub fn fetch_ssr_tailwind_class() -> String {
+pub fn fetch_ssr_tailwind_class(browser_prefers_dark: Signal<bool>) -> String {
     let theme = initial_theme_from_cookie();
-    if theme == Theme::FollowSystem && !browser_prefers_darkmode().get() {
+    if theme == Theme::FollowSystem && !browser_prefers_dark.get() {
         return "".to_string();
     }
     debug_log!("Final theme: {theme:?}");
     // console_log(format!("Final theme: {theme:?}").as_str());
     let resulting_theme = match theme {
         Theme::Light => "light",
-        Theme::FollowSystem if browser_prefers_darkmode().get() => "dark",
+        Theme::FollowSystem if browser_prefers_dark.get() => "dark",
         Theme::FollowSystem => "light",
         Theme::Dark => "dark",
     };
@@ -187,8 +191,13 @@ pub fn fetch_ssr_tailwind_class() -> String {
 
 #[generate_docs]
 #[component]
-pub fn ThemeSelector() -> impl IntoView {
-    // let browser_prefers_dark = browser_prefers_darkmode();
+pub fn ThemeSelector(
+    /// Id for the <select>
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
+) -> impl IntoView {
+    let browser_prefers_dark = use_preferred_dark();
+
     let color_scheme_ctx = use_context::<ColorScheme>();
     let color_scheme = if let Some(scheme) = color_scheme_ctx.clone() {
         scheme
@@ -197,14 +206,13 @@ pub fn ThemeSelector() -> impl IntoView {
         ColorScheme::init(cookie_theme)
     };
 
-    let scheme2 = color_scheme.clone();
     let resulting_dark = Memo::new(move |_| {
         let theme = color_scheme.signal.get();
         debug_log!("Final theme: {theme:?}");
         // console_log(format!("Final theme: {theme:?}").as_str());
         let resulting_theme = match theme {
             Theme::Light => "light",
-            Theme::FollowSystem if browser_prefers_darkmode().get() => "dark",
+            Theme::FollowSystem if browser_prefers_dark.get() => "dark",
             Theme::FollowSystem => "light",
             Theme::Dark => "dark",
         };
@@ -218,28 +226,19 @@ pub fn ThemeSelector() -> impl IntoView {
         <Html {..} class=move || {
             debug_log!("{:?}", resulting_dark.get());
             if resulting_dark.get() == "" {
-                fetch_ssr_tailwind_class().to_string()
+                fetch_ssr_tailwind_class(browser_prefers_dark).to_string()
             } else {
                 resulting_dark.get().to_string()
             }
         } />
-        // <Show when=move || color_scheme_ctx.is_none()>
-        //     <MetaColorScheme color_scheme=scheme2.clone()></MetaColorScheme>
-        // </Show>
         <Select<Theme>
+            id=id.get()
             required=true
             name="theme"
             selected=color_scheme.signal
             options=RwSignal::new(vec![Theme::Light, Theme::Dark, Theme::FollowSystem])
         />
     }
-}
-
-/// Checks whether the user's system prefers dark mode based on media queries.
-/// returns None iff the browser is unavailable.
-pub fn browser_prefers_darkmode() -> Signal<bool> {
-    // use_preferred_dark()
-    Signal::derive(|| false)
 }
 
 #[cfg(not(feature = "ssr"))]

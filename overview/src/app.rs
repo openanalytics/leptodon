@@ -152,9 +152,8 @@ fn Home() -> impl IntoView {
             </NavbarEntries>
         <main class="px-3">
             <Settings>
-                <ThemeSelector />
-                <ThemeSelector />
-
+                <ThemeSelector id="theme-selector-1" />
+                <ThemeSelector id="theme-selector-2" />
             </Settings>
 
             <InfoAlert>

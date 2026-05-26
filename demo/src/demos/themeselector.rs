@@ -1,3 +1,5 @@
+use leptodon::alert::Alert;
+use leptodon::alert::AlertTheme;
 use leptodon::codeblock::Codeblock;
 // Leptodon
 //
@@ -39,9 +41,9 @@ pub fn ThemeSelectorDemo() -> impl IntoView {
         // ...
     }
 "#/>
-        <Paragraph>
+        <Alert theme=AlertTheme::Danger>
             "Make sure to NOT put this in an SSR route-shell, the color_scheme context needs to be present both on hydrated client and server rendered side."
-        </Paragraph>
+        </Alert>
 
         <ThemeSelector/>
     }
