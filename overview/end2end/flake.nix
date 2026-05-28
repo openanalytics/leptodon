@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # Versions <1.58 has a firefox regression for file uploads, holding of upgrading until nixpkgs-unstable updates to 1.59.
     # - https://github.com/microsoft/playwright/issues/39274
-    nixpkgs-playwright.url = "github:NixOS/nixpkgs/145b67bd0bd4e075f981c1c2b81155d9e2982de2";
+    nixpkgs-playwright.url = "github:NixOS/nixpkgs/7cc8a6b08a51d3fd23b9c4fd2493e7e888e88507";
     flake-utils.url = "github:numtide/flake-utils";
   };
 

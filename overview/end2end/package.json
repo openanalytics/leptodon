@@ -9,7 +9,7 @@
   "license": "ISC",
   "devDependencies": {
     "@axe-core/playwright": "4.11",
-    "@playwright/test": "1.57",
-    "playwright-core": "1.57"
+    "@playwright/test": "1.59",
+    "playwright-core": "1.59"
   }
 }

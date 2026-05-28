@@ -50,6 +50,9 @@ pub const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-90
 #[generate_docs]
 #[component]
 pub fn Select<T>(
+    /// Id for the <select>
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeProp<String>,
     /// A string specifying a name for the input control.
     /// This name is submitted along with the control's value when the form data is submitted.
@@ -76,6 +79,7 @@ where
         move || selected.get(),
         move |new, old, _| {
             if Some(new) != old {
+                debug_log!("Should not be spammed");
                 some_selected.set(Some(new.clone()));
             }
         },
@@ -102,6 +106,7 @@ where
 
     view! {
         <MaybeSelect
+            id
             class
             name
             label
@@ -116,7 +121,9 @@ where
 #[generate_docs]
 #[component]
 pub fn MaybeSelect<T>(
-    #[prop(optional, into)] id: MaybeProp<String>,
+    /// Id for the <select>
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
     #[prop(optional, into)] class: MaybeProp<String>,
     /// A string specifying a name for the input control.
     /// This name is submitted along with the control's value when the form data is submitted.

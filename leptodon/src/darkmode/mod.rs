@@ -16,6 +16,9 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use leptodon_proc_macros::generate_docs;
+use leptos::context::provide_context;
+use leptos::context::use_context;
+use leptos::control_flow::Show;
 use leptos::logging::debug_log;
 use leptos::oco::Oco;
 use leptos::prelude::AddAnyAttr;
@@ -24,6 +27,7 @@ use leptos::prelude::Get;
 use leptos::prelude::Memo;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Signal;
+use leptos::reactive::wrappers::read::MaybeProp;
 use leptos::server::ServerAction;
 use leptos::{prelude::ServerFnError, *};
 use leptos_meta::Html;
@@ -34,6 +38,67 @@ use std::str::FromStr;
 
 use crate::radio::FormValue;
 use crate::select::Select;
+
+/// HTML meta-colorscheme context holder, used for nesting theme-selectors as <Meta> creates a new head entry on each location it's used.
+#[derive(Clone)]
+pub struct ColorScheme {
+    pub signal: RwSignal<Theme>,
+}
+
+impl ColorScheme {
+    fn register_updater(&self) {
+        let update_theme_action: ServerAction<UpdateTheme> = ServerAction::new();
+        let signal = self.signal;
+        Effect::watch(
+            move || signal.get(),
+            move |theme, prev_theme, _| {
+                if Some(theme) == prev_theme {
+                    return;
+                }
+                debug_log!("Updating theme from {prev_theme:?} to {theme}");
+                let selected_theme = theme.clone();
+                update_theme_action.dispatch(UpdateTheme {
+                    new_theme: selected_theme,
+                });
+            },
+            false,
+        );
+    }
+
+    /// Creates and registers self
+    pub fn init(theme: Theme) -> Self {
+        let scheme = ColorScheme {
+            signal: RwSignal::new(theme),
+        };
+        scheme.register_updater();
+        scheme
+    }
+}
+
+#[component]
+pub fn MetaColorScheme(color_scheme: ColorScheme) -> impl IntoView {
+    let browser_prefers_dark = use_preferred_dark();
+
+    view! {
+        <Meta
+            name="color-scheme"
+            content=move || match color_scheme.signal.get() {
+                Theme::Light => "light",
+                Theme::FollowSystem if browser_prefers_dark.get() => "dark light",
+                Theme::FollowSystem => "light dark",
+                Theme::Dark => "dark",
+            }
+        />
+    }
+}
+
+pub fn use_color_scheme() -> ColorScheme {
+    let cookie_theme = initial_theme_from_cookie();
+    let color_scheme = ColorScheme::init(cookie_theme);
+    provide_context(color_scheme.clone());
+
+    color_scheme
+}
 
 #[derive(Debug, Hash, Clone, Default, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum Theme {
@@ -107,16 +172,16 @@ pub async fn update_theme(new_theme: Theme) -> Result<Theme, ServerFnError> {
     Ok(new_theme)
 }
 
-pub fn fetch_ssr_tailwind_class() -> String {
+pub fn fetch_ssr_tailwind_class(browser_prefers_dark: Signal<bool>) -> String {
     let theme = initial_theme_from_cookie();
-    if theme == Theme::FollowSystem && !browser_prefers_darkmode().get() {
+    if theme == Theme::FollowSystem && !browser_prefers_dark.get() {
         return "".to_string();
     }
     debug_log!("Final theme: {theme:?}");
     // console_log(format!("Final theme: {theme:?}").as_str());
     let resulting_theme = match theme {
         Theme::Light => "light",
-        Theme::FollowSystem if browser_prefers_darkmode().get() => "dark",
+        Theme::FollowSystem if browser_prefers_dark.get() => "dark",
         Theme::FollowSystem => "light",
         Theme::Dark => "dark",
     };
@@ -127,25 +192,24 @@ pub fn fetch_ssr_tailwind_class() -> String {
 
 #[generate_docs]
 #[component]
-pub fn ThemeSelector() -> impl IntoView {
-    let update_theme_action: ServerAction<UpdateTheme> = ServerAction::new();
-    let cookie_theme = initial_theme_from_cookie();
-    let browser_prefers_dark = browser_prefers_darkmode();
-    // Bound to the html select.
-    let selected_theme = RwSignal::new(cookie_theme);
-    let resulting_light_dark = Memo::new(move |_| {
-        let theme = selected_theme.get();
-        // console_log(format!("Resulting DL theme: {resulting_theme:?}").as_str());
-        match theme {
-            Theme::Light => "light",
-            Theme::FollowSystem if browser_prefers_dark.get() => "dark light",
-            Theme::FollowSystem => "light dark",
-            Theme::Dark => "dark",
-        }
-    });
+pub fn ThemeSelector(
+    /// Id for the <select>
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
+) -> impl IntoView {
+    let browser_prefers_dark = use_preferred_dark();
+
+    let color_scheme_ctx = use_context::<ColorScheme>();
+    let no_context = color_scheme_ctx.is_none();
+    let color_scheme = if let Some(scheme) = color_scheme_ctx.clone() {
+        scheme
+    } else {
+        let cookie_theme = initial_theme_from_cookie();
+        ColorScheme::init(cookie_theme)
+    };
 
     let resulting_dark = Memo::new(move |_| {
-        let theme = selected_theme.get();
+        let theme = color_scheme.signal.get();
         debug_log!("Final theme: {theme:?}");
         // console_log(format!("Final theme: {theme:?}").as_str());
         let resulting_theme = match theme {
@@ -155,51 +219,36 @@ pub fn ThemeSelector() -> impl IntoView {
             Theme::Dark => "dark",
         };
         debug_log!("Resulting theme: {resulting_theme:?}");
+
         // console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
         resulting_theme
     });
-
-    Effect::watch(
-        move || selected_theme.get(),
-        move |theme, prev_theme, _| {
-            if Some(theme) == prev_theme {
-                return;
-            }
-            debug_log!("Updating theme from {prev_theme:?} to {theme}");
-            let selected_theme = theme.clone();
-            update_theme_action.dispatch(UpdateTheme {
-                new_theme: selected_theme,
-            });
-        },
-        false,
-    );
 
     view! {
         <Html {..} class=move || {
             debug_log!("{:?}", resulting_dark.get());
             if resulting_dark.get() == "" {
-                fetch_ssr_tailwind_class().to_string()
+                fetch_ssr_tailwind_class(browser_prefers_dark).to_string()
             } else {
                 resulting_dark.get().to_string()
             }
         } />
-        <Meta
-            name="color-scheme"
-            content=move || resulting_light_dark.get()
-        />
+        {
+            let color_scheme = color_scheme.clone();
+            view! {
+                <Show when=move || no_context>
+                    <MetaColorScheme color_scheme=color_scheme.clone() />
+                </Show>
+            }
+        }
         <Select<Theme>
+            id=id.get()
             required=true
             name="theme"
-            selected=selected_theme
+            selected=color_scheme.signal
             options=RwSignal::new(vec![Theme::Light, Theme::Dark, Theme::FollowSystem])
         />
     }
-}
-
-/// Checks whether the user's system prefers dark mode based on media queries.
-/// returns None iff the browser is unavailable.
-pub fn browser_prefers_darkmode() -> Signal<bool> {
-    use_preferred_dark()
 }
 
 #[cfg(not(feature = "ssr"))]

@@ -41,7 +41,9 @@ use leptodon::button_group::First;
 use leptodon::button_group::Last;
 use leptodon::checkbox::Checkbox;
 use leptodon::codeblock::Codeblock;
+use leptodon::darkmode::MetaColorScheme;
 use leptodon::darkmode::ThemeSelector;
+use leptodon::darkmode::use_color_scheme;
 use leptodon::date_picker::DatePicker;
 use leptodon::date_picker::DateRangePicker;
 use leptodon::dropdown::DropdownItem;
@@ -102,9 +104,11 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 
 #[component]
 pub fn App() -> impl IntoView {
+    let color_scheme = use_color_scheme();
     provide_meta_context();
 
     view! {
+        <MetaColorScheme color_scheme />
         <Router>
             <Routes fallback=|| "Page not found.">
                 <Route path=StaticSegment("") view=Home/>
@@ -148,7 +152,8 @@ fn Home() -> impl IntoView {
             </NavbarEntries>
         <main class="px-3">
             <Settings>
-                <ThemeSelector />
+                <ThemeSelector id="theme-selector-1" />
+                <ThemeSelector id="theme-selector-2" />
             </Settings>
 
             <InfoAlert>
