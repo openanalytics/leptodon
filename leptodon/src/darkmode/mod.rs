@@ -48,7 +48,7 @@ pub struct ColorScheme {
 impl ColorScheme {
     fn register_updater(&self) {
         let update_theme_action: ServerAction<UpdateTheme> = ServerAction::new();
-        let signal = self.signal.clone();
+        let signal = self.signal;
         Effect::watch(
             move || signal.get(),
             move |theme, prev_theme, _| {

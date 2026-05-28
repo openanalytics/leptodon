@@ -1,3 +1,20 @@
+// Leptodon
+//
+// Copyright (C) 2025-2026 Open Analytics NV
+//
+// ===========================================================================
+//
+// This program is free software: you can redistribute it and/or modify it
+// under the terms of the Apache License as published by The Apache Software
+// Foundation, either version 2 of the License, or (at your option) any later
+// version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the Apache License for more details.
+//
+// You should have received a copy of the Apache License along with this program.
+// If not, see <http://www.apache.org/licenses/>
 use chrono::{Duration, NaiveDate};
 
 /// Saturates NaiveDate when subtraacting the *duration* would underflow the *date*
@@ -32,13 +49,13 @@ mod test {
 
     #[test]
     fn test_date_saturating_sub() {
-        let mut date = NaiveDate::from_ymd_opt(2026, 05, 04).unwrap();
+        let mut date = NaiveDate::from_ymd_opt(2026, 5, 4).unwrap();
 
         date = date_saturating_sub(date, Duration::hours(5));
-        assert_eq!(date, NaiveDate::from_ymd_opt(2026, 05, 04).unwrap());
+        assert_eq!(date, NaiveDate::from_ymd_opt(2026, 5, 4).unwrap());
 
         date = date_saturating_sub(date, Duration::days(5));
-        assert_eq!(date, NaiveDate::from_ymd_opt(2026, 04, 29).unwrap());
+        assert_eq!(date, NaiveDate::from_ymd_opt(2026, 4, 29).unwrap());
 
         date = date_saturating_sub(date, Duration::MAX);
         assert_eq!(date, NaiveDate::MIN);
@@ -46,15 +63,15 @@ mod test {
 
     #[test]
     fn test_date_saturating_add() {
-        let mut date = NaiveDate::from_ymd_opt(2026, 05, 04).unwrap();
+        let mut date = NaiveDate::from_ymd_opt(2026, 5, 4).unwrap();
 
         // Adding less than a day shoult not change the result
         date = date_saturating_add(date, Duration::hours(23));
-        assert_eq!(date, NaiveDate::from_ymd_opt(2026, 05, 04).unwrap());
+        assert_eq!(date, NaiveDate::from_ymd_opt(2026, 5, 4).unwrap());
 
         // Add 1 month.
         date = date_saturating_add(date, Duration::days(31));
-        assert_eq!(date, NaiveDate::from_ymd_opt(2026, 06, 04).unwrap());
+        assert_eq!(date, NaiveDate::from_ymd_opt(2026, 6, 4).unwrap());
 
         // Overflow
         date = date_saturating_add(date, Duration::MAX);

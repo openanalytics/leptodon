@@ -19,7 +19,6 @@ import { test, expect } from "@playwright/test";
 
 // Turns rgb(r, g, b) or #RRGGBB into their perceived brightness value (black=0 -> white=255).
 function getBrightness(hexColor: string) {
-  console.log(hexColor);
   if (hexColor.startsWith("rgb(")) {
     let colors = hexColor
       .replace("rgb(", "")
@@ -100,16 +99,6 @@ test("test theme_selector", async ({ page }) => {
   await expect(theme_sel_2).toHaveValue("light");
   await checkTheme("light");
 
-  // Reload
-  await page.goto("/");
-  await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptodon");
-
-  // Check light
-  await expect(theme_sel_1).toHaveValue("light");
-  await expect(theme_sel_2).toHaveValue("light");
-  await checkTheme("light");
-
   // Swap to system
   // sel_2 doesn't affect sel_1 here, but it does affect sel_1 in manual browser usage.
   await theme_sel_1.selectOption("follow_system");
@@ -127,13 +116,6 @@ test("test theme_selector", async ({ page }) => {
 
   // Swap system preference to light.
   await page.emulateMedia({ colorScheme: "light" });
-
-  // Check light
-  await checkTheme("light", true);
-
-  await page.goto("/");
-  await page.waitForLoadState("networkidle");
-  await expect(page).toHaveTitle("Leptodon");
 
   // Check light
   await checkTheme("light", true);

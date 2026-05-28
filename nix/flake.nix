@@ -28,6 +28,7 @@
             skopeo
             cargo-hack
             zstd
+            licensure
           ];
 
           RUSTC_VERSION = overrides.toolchain.channel;
