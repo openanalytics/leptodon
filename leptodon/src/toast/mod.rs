@@ -176,7 +176,7 @@ pub fn Toaster(#[prop(optional)] _location: ToastLocation, children: Children) -
         <Provider<ToasterContext, _> value=toast_ctx>
             {children()}
         </Provider<ToasterContext, _>>
-        <div class="fixed z-[400] right-0 bottom-0">
+        <div class="fixed z-[1100] right-0 bottom-0">
             <div class="flex flex-col p-4 gap-4">
                 {move || {
                     let toasts = toast_queue.get();
