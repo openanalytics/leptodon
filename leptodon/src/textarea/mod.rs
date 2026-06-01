@@ -39,13 +39,33 @@ const LABEL_CLASSES: &str = "block mb-2 text-sm font-medium text-gray-900 dark:t
 #[generate_docs]
 #[component]
 pub fn TextArea(
-    #[prop(optional, into)] id: MaybeProp<String>,
-    #[prop(optional, into)] class: MaybeProp<String>,
-    #[prop(optional, into)] label: MaybeProp<String>,
+    /// Id for the <textarea>
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
+    /// Extra classes added to the <textarea> the default style.
+    #[prop(optional, into)]
+    class: MaybeProp<String>,
+    /// Text above the input that informs the user what to type.
+    #[prop(optional, into)]
+    label: MaybeProp<String>,
+    /// Binds to the value of the textarea.
     value: RwSignal<String>,
-    #[prop(optional, into)] name: MaybeProp<String>,
-    #[prop(optional, into)] placeholder: MaybeProp<String>,
-    #[prop(optional)] required: bool,
+    /// A string specifying a name for the textarea.
+    /// This name is submitted along with the textarea's value when the form data is submitted.
+    #[prop(optional, into)]
+    name: MaybeProp<String>,
+    /// Placeholder text shown inside the textarea when empty.
+    #[prop(optional, into)]
+    placeholder: MaybeProp<String>,
+    /// Whether the textarea is required to have a non-empty value.
+    #[prop(optional)]
+    required: bool,
+    /// Whether the textarea is readonly.
+    #[prop(optional, into)]
+    readonly: Signal<bool>,
+    /// Whether the textarea is disabled.
+    #[prop(optional, into)]
+    disabled: Signal<bool>,
 ) -> impl IntoView {
     // Form context
     let form_context = use_context::<FormInputContext<String>>();
@@ -65,6 +85,8 @@ pub fn TextArea(
                 rows="4"
                 placeholder=move || placeholder.get()
                 required=required
+                readonly=readonly
+                disabled=disabled
                 bind:value=value
             ></textarea>
         </Label>
