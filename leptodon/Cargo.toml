@@ -1,6 +1,6 @@
 [package]
 name = "leptodon"
-version = "1.4.0" # version-sync-⤴️
+version = "1.5.0-dev" # version-sync-⤴️
 publish = true
 edition = "2024"
 description = "Your Leptos UI toolkit"
