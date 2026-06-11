@@ -46,7 +46,7 @@ pipeline {
         withCredentials([string(credentialsId: 'nix-cache-secret', variable: 'CLIENT_SECRET')]) {
           sh """
             . ./fetch-token.sh;
-            attic login oa-leptodon https://nix-cache.dev.openanalytics.eu $ACCESS_TOKEN
+            attic login oa-leptodon https://nix-cache.dev.openanalytics.eu \$ACCESS_TOKEN
           """
         }
         sh "attic use oa-leptodon"
