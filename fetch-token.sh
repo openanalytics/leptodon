@@ -21,11 +21,8 @@ ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token // empty')
 
 # --- Validation ---
 if [ -n "$ACCESS_TOKEN" ]; then
-    echo "✅ Successfully retrieved access token!"
-    export ACCESS_TOKEN="$ACCESS_TOKEN"
-    echo "$ACCESS_TOKEN"
+    echo "Successfully retrieved access token!"
 else
-    echo "❌ Failed to retrieve access token. Keycloak response:"
-    echo "$RESPONSE" | jq .
+    echo "Failed to retrieve access token. Keycloak response:"
     exit 1
 fi
