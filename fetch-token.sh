@@ -9,7 +9,7 @@ echo "Requesting token from: $TOKEN_ENDPOINT..."
 
 # --- Fetch the Token ---
 # We use -s for silent mode, then post the required x-www-form-urlencoded payload
-RESPONSE=$(curl -s -X POST "$TOKEN_ENDPOINT" \
+RESPONSE=$(nix run nixpkgs#curl -- -s -X POST "$TOKEN_ENDPOINT" \
     -H "Content-Type: application/x-www-form-urlencoded" \
     -d "grant_type=client_credentials" \
     -d "client_id=${CLIENT_ID}" \
