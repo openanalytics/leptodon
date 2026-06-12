@@ -1,4 +1,4 @@
-KEYCLOAK_URL="https://websso.dev.openanalytics.eu/auth"
+KEYCLOAK_URL="https://sso.openanalytics.eu/auth"
 REALM="openanalytics"
 CLIENT_ID="nix-cache"
 
