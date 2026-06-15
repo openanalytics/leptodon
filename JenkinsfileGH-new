@@ -50,7 +50,7 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'nix-cache-secret', variable: 'CLIENT_SECRET')]) {
           sh """
-            nix run nixpkgs#curl -- -s -X POST "${env.TOKEN_ENDPOINT}" \
+            curl -s -X POST "${env.TOKEN_ENDPOINT}" \
               -H "Content-Type: application/x-www-form-urlencoded" \
               -d "grant_type=client_credentials" \
               -d "client_id=${env.CLIENT_ID}" \
