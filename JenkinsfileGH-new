@@ -48,7 +48,8 @@ pipeline {
     }
     stage('Attic login & watch') {
       environment {
-        ACCESS_TOKEN = credentials('nix-cache-secret')
+        // ACCESS_TOKEN = credentials('nix-cache-secret')
+        ACCESS_TOKEN = 'debug'
       }
       steps {
         withCredentials([string(credentialsId: 'nix-cache-secret', variable: 'CLIENT_SECRET')]) {
@@ -66,8 +67,8 @@ pipeline {
             returnStdout: true,
             script: 'jq -r ".access_token // empty" .tmp_response'
           )
+          sh "attic login oa-leptodon https://nix-cache.openanalytics.eu ${env.ACCESS_TOKEN}"
         }
-        sh "attic login oa-leptodon https://nix-cache.openanalytics.eu ${env.ACCESS_TOKEN}"
         sh "rm .tmp_response"
         sh "attic use oa-leptodon"
         sh "attic watch-store oa-leptodon &"
