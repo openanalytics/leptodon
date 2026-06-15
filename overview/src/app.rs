@@ -56,6 +56,10 @@ use leptodon::modal::ModalFooterChildren;
 use leptodon::navbar::NavbarEntries;
 use leptodon::navbar::SideBarLink;
 use leptodon::navbar::SideNavbar;
+use leptodon::popover::Popover;
+use leptodon::popover::PopoverAnchor;
+use leptodon::popover::PopoverTrigger;
+use leptodon::popover::PopoverTriggerType;
 use leptodon::spinner::Spinner;
 use leptodon::tabs::Tab;
 use leptodon::tabs::Tabs;
@@ -204,6 +208,12 @@ fn Home() -> impl IntoView {
                     }).into());
                 }
             }>"Show Toast"</Button>
+            <Popover trigger_type=PopoverTriggerType::Click preferred_pos=PopoverAnchor::Right>
+                <PopoverTrigger slot>
+                    <Button>"Show click-popover"</Button>
+                </PopoverTrigger>
+                "Popover text"
+            </Popover>
             <FileUpload multiple=true accept="image/png" />
             <Spinner />
             <Heading1 anchor="the-largest-heading">The Largest Heading</Heading1>
