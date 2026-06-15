@@ -18,6 +18,9 @@
 use std::time::Duration;
 
 use crate::class_list;
+use crate::util::on_pointer_down::{
+    OnPointerDownOutsideOptions, on_pointer_down_outside_with_options,
+};
 use crate::{
     class_list::reactive_class::MaybeReactiveClass,
     util::{callback::BoxCallback, element::Element},
@@ -32,9 +35,7 @@ use leptos::{
     logging::{debug_log, debug_warn, error},
     tachys::{html::node_ref::node_ref, renderer::dom::CssStyleDeclaration},
 };
-use leptos_use::{
-    OnClickOutsideOptions, math::use_or, on_click_outside_with_options, use_window_scroll,
-};
+use leptos_use::{math::use_or, use_window_scroll};
 use web_sys::{DomRect, HtmlDivElement, MouseEvent};
 
 #[derive(Default)]
@@ -99,12 +100,12 @@ where
 
     let show_by_hover = RwSignal::new(false);
     let popover_clicked_open = RwSignal::new(false);
-    let _ = on_click_outside_with_options(
+    let _ = on_pointer_down_outside_with_options(
         trigger_ref,
         move |_| {
             popover_clicked_open.set(false);
         },
-        OnClickOutsideOptions::default().ignore([popover_ref]),
+        OnPointerDownOutsideOptions::default().ignore([popover_ref]),
     );
 
     let popover_visible = use_or(show_by_hover, popover_clicked_open);

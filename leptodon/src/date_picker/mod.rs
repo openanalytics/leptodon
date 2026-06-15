@@ -1,3 +1,4 @@
+use crate::util::on_pointer_down::OnPointerDownOutsideOptions;
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV
@@ -15,6 +16,7 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
+use crate::util::on_pointer_down::on_pointer_down_outside_with_options;
 use chrono::Datelike;
 use chrono::Days;
 use chrono::Local;
@@ -37,9 +39,8 @@ use leptos::prelude::NodeRef;
 use leptos::prelude::NodeRefAttribute;
 use leptos::prelude::Update;
 use leptos_use::CalendarDate;
-use leptos_use::OnClickOutsideOptions;
+
 use leptos_use::UseCalendarReturn;
-use leptos_use::on_click_outside_with_options;
 use leptos_use::use_calendar;
 use num_traits::FromPrimitive;
 use std::cmp::Ordering;
@@ -979,13 +980,13 @@ pub fn DatePicker(
             }
             if *new {
                 // Just became visible
-                let cancel = on_click_outside_with_options(
+                let cancel = on_pointer_down_outside_with_options(
                     target,
                     move |_event| {
                         debug_log!("clicked outside date_picker, closing.");
                         picker_state.update(|state| state.hide());
                     },
-                    OnClickOutsideOptions::default(),
+                    OnPointerDownOutsideOptions::default(),
                 );
                 last_click_to_close_listener.set(Some(cancel));
             } else {

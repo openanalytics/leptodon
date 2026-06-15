@@ -21,6 +21,7 @@ excludes:
   - src\/util\/element\.rs
   - src\/util\/option_comp\.rs
   - src\/util\/optional_prop\.rs
+  - src\/util\/on_pointer_down\.rs
   - overview\/src\/gen_icons\.rs
   - demo\/src\/generated_demolist\.rs
   - overview\/src\/ical_property\.rs
