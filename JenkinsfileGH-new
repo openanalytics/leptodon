@@ -26,6 +26,11 @@ pipeline {
     CACHE_IMAGE = 'leptodon-cache'
     DOCKER_BUILDKIT = '1'
     NO_COLOR = 'true'
+
+    KEYCLOAK_URL = 'https://sso.openanalytics.eu/auth'
+    REALM = 'openanalytics'
+    CLIENT_ID = 'nix-cache'
+    TOKEN_ENDPOINT = "${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/token"
   }
   stages {
     stage('Prepare Environment') {
@@ -43,9 +48,22 @@ pipeline {
     }
     stage('Attic login & watch') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'attic-leptodon', passwordVariable: 'ATTIC_PASSWORD', usernameVariable: 'ATTIC_USERNAME')]) {
-          sh "attic login $ATTIC_USERNAME https://nix-cache.openanalytics.eu $ATTIC_PASSWORD"
+        withCredentials([string(credentialsId: 'nix-cache-secret', variable: 'CLIENT_SECRET')]) {
+          sh """
+            curl -s -X POST "${env.TOKEN_ENDPOINT}" \
+              -H "Content-Type: application/x-www-form-urlencoded" \
+              -d "grant_type=client_credentials" \
+              -d "client_id=${env.CLIENT_ID}" \
+              -d "client_secret=\$CLIENT_SECRET" \
+              -o .tmp_response
+          """
         }
+        sh """
+          set +x
+          attic login oa-leptodon https://nix-cache.openanalytics.eu `jq -r ".access_token // empty" .tmp_response`
+          set -x
+        """
+        sh "rm .tmp_response"
         sh "attic use oa-leptodon"
         sh "attic watch-store oa-leptodon &"
       }
