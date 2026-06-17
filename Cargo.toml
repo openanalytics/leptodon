@@ -52,7 +52,7 @@ axum-extra = { version = "0.12.6", features = ["cookie"] }
 
 # Middleware
 tower = { version = "0.5.3" }
-tower-http = { version = "0.6.8", features = ["fs"] }
+tower-http = { version = "0.7.0", features = ["fs"] }
 # Async
 tokio = { version = "1", features = ["rt-multi-thread"] }
 
@@ -80,7 +80,7 @@ anyhow = { version = "1.0.102" }
 thiserror = "2.0.18"
 
 # Time and date
-chrono = { version = "0.4.44", features = ["serde"] }
+chrono = { version = "0.4.45", features = ["serde"] }
 dateparser = { version = "0.2.1" } # TODO: Use new wasm feature to hopefully exclude regex and reduce wasm size.
 ical = { git = "https://github.com/lennart-k/caldata-rs", rev = "474caf58acbc8ebefd90e6b848741d7ed5136d65" }
 rrule = { version = "0.14", features = ["serde"] }
@@ -95,9 +95,9 @@ rstml-to-string-macro = { version = "0.1.0" }
 nucleo-matcher = { version = "0.3.1" } # Fuzzy search
 
 # Other utils
-itertools = "0.14.0"
+itertools = "0.15.0"
 zxcvbn = { version = "3.1.1" }
-uuid = { version = "1.23.1" }
+uuid = { version = "1.23.3" }
 
 # Macros
 cfg-if = "1.0.4"
@@ -105,7 +105,7 @@ derive_more = { version = "2.1.1", features = ["display"] }
 serde = "1"
 num-traits = { version = "0.2.19" }
 # Build macros
-syn = { version = "2.0.117" }
+syn = { version = "2.0.118" }
 quote = { version = "1.0.45" }
 proc-macro2 = { version = "1.0.106" }
 walkdir = { version = "2.5.0" }
