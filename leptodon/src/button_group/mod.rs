@@ -1,3 +1,5 @@
+use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV
@@ -48,18 +50,19 @@ pub struct Last {
 /// Blocked on passing context to first and last child.
 #[component]
 pub fn ButtonGroup(
+    #[prop(optional, into)] class: MaybeReactiveClass,
     first: First,
     #[prop(default=Box::new(move || { ().into_any() }))] children: Children,
     last: Last,
 ) -> impl IntoView {
     view! {
-        <div class="inline-flex rounded-lg shadow-sm -space-x-px" role="group">
+        <div class=class_list!("inline-flex rounded-lg shadow-sm -space-x-px", class) role="group">
             <Provider<InGroupContext, _> value=InGroupContext { in_group: true }>
                 <Provider<GroupItemClassContext, _> value=GroupItemClassContext{ class: "rounded-l-lg".to_string() }>
                     {(first.children)().into_any()}
                 </Provider<GroupItemClassContext, _>>
                 {children()}
-                <Provider<GroupItemClassContext, _> value=GroupItemClassContext{ class: "!border-r rounded-r-lg".to_string() }>
+                <Provider<GroupItemClassContext, _> value=GroupItemClassContext{ class: "rounded-r-lg".to_string() }>
                     {(last.children)().into_any()}
                 </Provider<GroupItemClassContext, _>>
             </Provider<InGroupContext, _>>

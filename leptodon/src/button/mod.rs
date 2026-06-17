@@ -38,7 +38,7 @@ mod variations;
 pub use crate::button::variations::*;
 
 const BUTTON_SHADOW_CLASSES: &str = "shadow-sm";
-const BUTTON_SPACING_CLASSES: &str = " px-5 py-2.5 mr-2";
+const BUTTON_PADDING_CLASSES: &str = " px-5 py-2.5";
 const SHARED_BUTTON_CLASSES: &str = "hover:z-20 focus:z-10 dark:focus:ring-gray-800 outline-offset-[-1px] outline-[5px] focus:outline font-medium inline-flex items-center align-top text-center text-sm";
 
 const BUTTON_GRAY_FOCUS_CLASSES: &str =
@@ -51,7 +51,7 @@ const OA_PRIMARY_BUTTON_CLASSES: &str = const_str::join!(
         "focus:outline-oa-blue hover:bg-oa-blue-darker bg-oa-blue text-white",
         SHARED_BUTTON_CLASSES,
         BUTTON_SHADOW_CLASSES,
-        BUTTON_SPACING_CLASSES
+        BUTTON_PADDING_CLASSES
     ],
     " "
 );
@@ -61,7 +61,7 @@ const OA_DANGER_BUTTON_CLASSES: &str = const_str::join!(
         "focus:outline-oa-red hover:bg-oa-red-darker bg-oa-red text-white",
         SHARED_BUTTON_CLASSES,
         BUTTON_SHADOW_CLASSES,
-        BUTTON_SPACING_CLASSES
+        BUTTON_PADDING_CLASSES
     ],
     " "
 );
@@ -74,7 +74,7 @@ const OA_SECONDARY_BUTTON_CLASSES: &str = const_str::join!(
         BUTTON_DEFAULT_TEXT,
         SHARED_BUTTON_CLASSES,
         BUTTON_SHADOW_CLASSES,
-        BUTTON_SPACING_CLASSES
+        BUTTON_PADDING_CLASSES
     ],
     " "
 );
@@ -86,7 +86,7 @@ pub const OA_TRANSPARENT_BUTTON_CLASSES: &str = const_str::join!(
         BUTTON_DEFAULT_TEXT,
         BUTTON_GRAY_FOCUS_CLASSES,
         BUTTON_SHADOW_CLASSES,
-        BUTTON_SPACING_CLASSES,
+        BUTTON_PADDING_CLASSES,
     ],
     " "
 );
@@ -173,8 +173,8 @@ where
             class=class_list![
                 class,
                 group_classes.unwrap_or_default(),
-                ("my-1", default_spacing && !in_group_ctx.in_group),
-                if in_group_ctx.in_group { "rounded-none border-r-0 !mr-0" } else { "" },
+                ("my-1 mr-2", default_spacing && !in_group_ctx.in_group),
+                if in_group_ctx.in_group { "rounded-none" } else { "" },
                 match appearance.get() {
                     ButtonAppearance::Secondary => OA_SECONDARY_BUTTON_CLASSES,
                     ButtonAppearance::Primary => OA_PRIMARY_BUTTON_CLASSES,

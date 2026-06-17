@@ -302,7 +302,7 @@ fn Home() -> impl IntoView {
                 {move || count.get()*2}
             </Button>
             <br/>
-            <ButtonGroup>
+            <ButtonGroup class="mb-1">
                 <First slot:first>
                     <Button class="mr-0" on_click=move |_| {} appearance=ButtonAppearance::Secondary>Profile</Button>
                 </First>
@@ -312,7 +312,7 @@ fn Home() -> impl IntoView {
                 </Last>
             </ButtonGroup>
             <br/>
-            <ButtonGroup>
+            <ButtonGroup class="mb-1">
                 <First slot:first>
                     <Button class="mr-0" on_click=move |_| {} appearance=ButtonAppearance::Secondary>Profile</Button>
                 </First>
