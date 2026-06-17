@@ -160,13 +160,17 @@ where
         }
     };
     view! {
-        <div id=id.get() class=class_list!(class, "relative flex items-center mb-2")>
+        <div id=id.get() class=class_list!(class, "relative flex items-center mb-2 -space-x-px")>
             <GroupItemContextProvider class="rounded-none rounded-l-lg">
                 <TextInput name placeholder input_type=InputType::Text input_mode=InputMode::Numeric value=value_binder />
             </GroupItemContextProvider>
-            <GroupItemContextProvider class="rounded-none border-x-0 !mr-0">
-                <Button icon=icon::DecrementIcon() on_click=dec_handler
-                    attr:data-testid="decrement" />
+            <GroupItemContextProvider class="rounded-none">
+                <Button
+                    icon=icon::DecrementIcon()
+                    on_click=dec_handler
+                    default_spacing=false
+                    attr:data-testid="decrement"
+                />
             </GroupItemContextProvider>
             <GroupItemContextProvider class="rounded-none rounded-r-lg">
                 <Button icon=icon::IncrementIcon() on_click=inc_handler

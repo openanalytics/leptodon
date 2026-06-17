@@ -177,26 +177,9 @@ where
             }
         };
 
-        // let remove_click_listener = {
-        //     use leptos::ev::click;
-
-        //     let mut listener = listener.clone();
-
-        //     use_event_listener_with_options::<_, web_sys::Window, _, _>(
-        //         window(),
-        //         click,
-        //         move |event| listener(event.into()),
-        //         UseEventListenerOptions::default()
-        //             .passive(true)
-        //             .capture(capture),
-        //     )
-        // };
-
         let remove_pointer_listener = {
             use leptos::ev::pointerdown;
             let mut listener = listener.clone();
-
-            let should_listen = Rc::clone(&should_listen);
 
             use_event_listener_with_options::<_, web_sys::Window, _, _>(
                 window(),
