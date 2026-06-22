@@ -63,6 +63,7 @@ pub fn Icon(
             click(ev);
         }
     };
+
     view! {
         <svg
             class=class_list!(icon.class.unwrap_or_default(), class)
@@ -77,6 +78,7 @@ pub fn Icon(
             stroke=icon.stroke
             fill=icon.fill.unwrap_or("none")
             inner_html=icon.data
+            role="img"
             on:click=on_click
         ></svg>
     }

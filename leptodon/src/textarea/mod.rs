@@ -18,6 +18,7 @@
 use leptodon_proc_macros::generate_docs;
 use leptos::prelude::BindAttribute;
 use leptos::prelude::ClassAttribute;
+use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::Signal;
@@ -66,6 +67,9 @@ pub fn TextArea(
     /// Whether the textarea is disabled.
     #[prop(optional, into)]
     disabled: Signal<bool>,
+    /// Whether to have a default amount of spacing above and below the textarea.
+    #[prop(default = true)]
+    default_spacing: bool,
 ) -> impl IntoView {
     // Form context
     let form_context = use_context::<FormInputContext<String>>();
@@ -77,18 +81,20 @@ pub fn TextArea(
     );
     let required = use_or(required, form_required);
     view! {
-        <Label label required=required.get()>
-            <textarea
-                id=id.get()
-                name=name.get()
-                class=class_list![TA_CLASSES, class]
-                rows="4"
-                placeholder=move || placeholder.get()
-                required=required
-                readonly=readonly
-                disabled=disabled
-                bind:value=value
-            ></textarea>
-        </Label>
+        <div class=class_list![("my-1", move || default_spacing)]>
+            <Label label required=required.get()>
+                <textarea
+                    id=id.get()
+                    name=name.get()
+                    class=class_list![TA_CLASSES, class]
+                    rows="4"
+                    placeholder=move || placeholder.get()
+                    required=required
+                    readonly=readonly
+                    disabled=disabled
+                    bind:value=value
+                ></textarea>
+            </Label>
+        </div>
     }
 }

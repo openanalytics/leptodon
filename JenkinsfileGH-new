@@ -22,9 +22,7 @@ pipeline {
     NIX_PATH = 'nixpkgs=channel:nixos-unstable'
     NS = 'openanalytics'
     REGISTRY = 'registry.openanalytics.eu'
-    IMAGE = 'leptodon'
-    CACHE_IMAGE = 'leptodon-cache'
-    DOCKER_BUILDKIT = '1'
+    IMAGE = 'leptodon-demo'
     NO_COLOR = 'true'
 
     KEYCLOAK_URL = 'https://sso.openanalytics.eu/auth'
@@ -117,9 +115,7 @@ pipeline {
         stage('Build Demo') {
           steps {
             sh """
-              nix build ./flake-modules/crates#demo-site-image
-              cp result demo-image.tar.gz
-              gunzip demo-image.tar.gz
+              nix build ./flake-modules/crates#demo-site-image -o demo-image
             """
           }
         }
@@ -133,16 +129,16 @@ pipeline {
           echo '{"default":[{"type":"insecureAcceptAnything"}],"transports":{"docker-daemon":{"":[{"type":"insecureAcceptAnything"}]}}}' > /etc/containers/policy.json
         """
 
-        sh "nix develop ./nix --command skopeo login --authfile /root/.docker/config.json registry.openanalytics.eu "
+        sh "nix develop ./nix --command skopeo login --authfile /root/.docker/config.json ${REGISTRY}"
 
         sh """
           du -sh /nix/store
-          nix develop ./nix --command skopeo copy \
-            docker-archive:demo-image.tar \
-            docker://registry.openanalytics.eu/openanalytics/leptodon-demo:latest
-          nix develop ./nix --command skopeo copy \
-            docker://registry.openanalytics.eu/openanalytics/leptodon-demo:latest \
-            docker://registry.openanalytics.eu/openanalytics/leptodon-demo:$VERSION
+          nix develop ./nix --command skopeo --tmpdir /tmp copy \
+            docker-archive:demo-image \
+            docker://${REGISTRY}/${NS}/${IMAGE}:latest
+          nix develop ./nix --command skopeo --tmpdir /tmp copy \
+            docker://${REGISTRY}/${NS}/${IMAGE}:latest \
+            docker://${REGISTRY}/${NS}/${IMAGE}:$VERSION
           du -sh /nix/store
         """
       }

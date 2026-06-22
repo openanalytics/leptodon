@@ -39,6 +39,8 @@ pub struct InGroupContext {
 #[slot]
 pub struct First {
     children: ChildrenFn,
+    #[prop(optional, into)]
+    class: MaybeReactiveClass,
 }
 
 #[slot]
