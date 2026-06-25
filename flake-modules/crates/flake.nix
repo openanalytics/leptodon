@@ -1,4 +1,5 @@
 # Copyright (c) 2022 Ivan Petkov
+# Copyright (c) 2026 Open Analytics
 {
   description = "Build a cargo workspace";
 
