@@ -18,6 +18,8 @@
 #[derive(Debug, PartialEq, Eq, Clone, Hash)]
 pub struct IconData {
     pub class: Option<&'static str>,
+    // Like alt text on <img>
+    pub title: Option<&'static str>,
     pub x: Option<&'static str>,
     pub y: Option<&'static str>,
     pub width: Option<&'static str>,
@@ -35,6 +37,10 @@ pub struct IconData {
 impl IconData {
     pub fn set_class(mut self, class: Option<&'static str>) -> Self {
         self.class = class;
+        self
+    }
+    pub fn set_title(mut self, title: Option<&'static str>) -> Self {
+        self.title = title;
         self
     }
     pub fn set_x(mut self, x: Option<&'static str>) -> Self {
@@ -98,6 +104,7 @@ macro_rules! icon_data {
     ($html:expr, $width:expr, $height:expr) => {
         IconData {
             class: None,
+            title: None,
             x: Some("0"),
             y: Some("0"),
             width: Some(stringify!($width)),

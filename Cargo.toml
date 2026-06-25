@@ -68,8 +68,8 @@ web-sys = { version = "=0.3.94" }
 reactive_stores = { version = "=0.4.3" }
 send_wrapper = { version = "0.6.0" }
 # Leptos additions
-leptos-struct-table = { version = "0.18", features = ["chrono"] }
-leptos-use = { version = "0.18.3" }
+leptos-struct-table = { version = "0.19.0", features = ["chrono"] }
+leptos-use = { version = "0.19.0" }
 
 # Log and error
 tracing = { version = "0.1" }
@@ -97,7 +97,7 @@ nucleo-matcher = { version = "0.3.1" } # Fuzzy search
 # Other utils
 itertools = "0.15.0"
 zxcvbn = { version = "3.1.1" }
-uuid = { version = "1.23.3" }
+uuid = { version = "1.23.4" }
 
 # Macros
 cfg-if = "1.0.4"
@@ -106,6 +106,6 @@ serde = "1"
 num-traits = { version = "0.2.19" }
 # Build macros
 syn = { version = "2.0.118" }
-quote = { version = "1.0.45" }
+quote = { version = "1.0.46" }
 proc-macro2 = { version = "1.0.106" }
 walkdir = { version = "2.5.0" }

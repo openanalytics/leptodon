@@ -8,8 +8,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@axe-core/playwright": "4.11",
-    "@playwright/test": "1.59",
-    "playwright-core": "1.59"
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.60",
+    "playwright-core": "1.60"
   }
 }

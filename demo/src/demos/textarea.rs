@@ -34,7 +34,6 @@ pub fn TextAreaDemo() -> impl IntoView {
         <Heading6>Synced textareas!</Heading6>
         <TextArea
             label="Magically linked"
-            class="mb-2"
             required=true
             placeholder="Enter your magic words."
             value

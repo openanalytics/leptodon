@@ -1,5 +1,3 @@
-use crate::class_list;
-use crate::class_list::reactive_class::MaybeReactiveClass;
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV
@@ -17,6 +15,8 @@ use crate::class_list::reactive_class::MaybeReactiveClass;
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
+use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::input_group::GroupItemClassContext;
 use leptodon_proc_macros::generate_docs;
 use leptos::context::Provider;

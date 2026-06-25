@@ -22,6 +22,7 @@ use crate::button_group::First;
 use crate::button_group::InGroupContext;
 use crate::button_group::Last;
 use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::form_input::FormInputContext;
 use crate::form_input::Label;
 use crate::form_input::MaybeLabelledFormInput;
@@ -179,7 +180,7 @@ pub fn PasswordInput(
     id: MaybeProp<String>,
     /// Extra classes added to augment the default style.
     #[prop(optional, into)]
-    class: MaybeProp<String>,
+    class: MaybeReactiveClass,
     /// Will be initialised with a DOM reference to the backing <input> element.
     #[prop(optional)]
     input_ref: NodeRef<html::Input>,
@@ -261,11 +262,11 @@ pub fn PasswordInput(
         };
         view! {
             <MaybeLabelledFormInput<String> label required=required.get()>
-                <ButtonGroup>
+                <ButtonGroup class="w-full">
                     <First slot:first>
                         <GenericInput<String, String>
                             id
-                            class
+                            class=class_list!(class, "grow")
                             input_ref
                             label
                             name
@@ -296,7 +297,7 @@ pub fn PasswordInput(
         view! {
             <GenericInput<String, String>
                 id
-                class
+                class=class_list!(class)
                 input_ref
                 label
                 name
@@ -335,7 +336,7 @@ pub fn GenericInput<T, E>(
     id: MaybeProp<String>,
     /// Extra classes added to augment the default style.
     #[prop(optional, into)]
-    class: MaybeProp<String>,
+    class: MaybeReactiveClass,
     /// Will be initialised with a DOM reference to the backing <input> element.
     #[prop(optional)]
     input_ref: NodeRef<html::Input>,
@@ -556,7 +557,7 @@ where
         && !in_form
     {
         Either::Left(view! {
-            <div class=class.get()>
+            <div class=class_list!(class)>
                 <Label required=required.get() label>
                     {standalone_input}
                 </Label>
@@ -564,7 +565,7 @@ where
         })
     } else {
         Either::Right(view! {
-            <div class=class.get()>
+            <div class=class_list!(class)>
                 {standalone_input}
             </div>
         })

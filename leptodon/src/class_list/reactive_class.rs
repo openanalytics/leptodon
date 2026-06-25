@@ -74,7 +74,7 @@ impl From<String> for ReactiveClass {
 }
 
 /// MaybeProp variant of [ReactiveClass]. See [ReactiveClass]
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Copy)]
 pub struct MaybeReactiveClass(MaybeProp<ReactiveClass>);
 
 impl PartialEq for MaybeReactiveClass {
