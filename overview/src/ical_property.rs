@@ -123,9 +123,9 @@ impl FromStr for EventTransparency {
 
 #[cfg(feature = "ssr")]
 fn parse_duration(s: &str) -> Result<Duration, Error> {
-    let re = regex::Regex::new(
-                r"^P(?:(?P<days>\d+)D)?(?:T(?:(?P<hours>\d+)H)?(?:(?P<minutes>\d+)M)?(?:(?P<seconds>\d+)S)?)?$",
-            ).unwrap();
+    let re = regex::regex!(
+        r"^P(?:(?P<days>\d+)D)?(?:T(?:(?P<hours>\d+)H)?(?:(?P<minutes>\d+)M)?(?:(?P<seconds>\d+)S)?)?$"
+    );
 
     if let Some(captures) = re.captures(s) {
         let days = captures
