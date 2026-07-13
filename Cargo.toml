@@ -61,10 +61,10 @@ leptos = { version = "0.8.19", features = ["rkyv", "tracing"] }
 leptos_axum = { version = "0.8.9" }
 leptos_meta = { version = "0.8.6" }
 leptos_router = { version = "0.8.13" }
-wasm-bindgen = { version = "=0.2.117" }
-wasm-streams = { version = "=0.5.0" }
+wasm-bindgen = { version = "=0.2.126" }
+wasm-streams = { version = "=0.6.0" }
 wasm-cookies = { version = "=0.2.1" }
-web-sys = { version = "=0.3.94" }
+web-sys = { version = "=0.3.103" }
 reactive_stores = { version = "=0.4.3" }
 send_wrapper = { version = "0.6.0" }
 # Leptos additions
@@ -76,7 +76,7 @@ tracing = { version = "0.1" }
 log = "0.4"
 console_log = "1"
 console_error_panic_hook = "0.1"
-anyhow = { version = "1.0.102" }
+anyhow = { version = "1.0.103" }
 thiserror = "2.0.18"
 
 # Time and date
@@ -86,7 +86,7 @@ ical = { git = "https://github.com/lennart-k/caldata-rs", rev = "474caf58acbc8eb
 rrule = { version = "0.14", features = ["serde"] }
 
 # String utils
-regex = { version = "1.12" }
+regex = { version = "1.13" }
 strum = "0.28.0"
 strum_macros = "0.28.0"
 const-str = { version = "1.1.0" }

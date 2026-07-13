@@ -117,7 +117,7 @@
               inherit pname;
               nativeBuildInputs = [
                 pkgs.lld
-                pkgs.wasm-bindgen-cli_0_2_117
+                pkgs.wasm-bindgen-cli_0_2_126
                 pkgs.binaryen
                 cargo-leptos
                 craneLib.installFromCargoBuildLogHook

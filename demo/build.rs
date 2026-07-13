@@ -103,7 +103,7 @@ fn generate_demo_pages() -> Result<(), Error> {
             Err(err) => println!("cargo::error={}", err),
         }
     }
-    println!("cargo::warning={:?} demos.", &page_infos.len());
+    println!("cargo::warning={:?} demos.", page_infos.len());
 
     page_infos.sort_by_key(|info| info.display_name.clone());
 
