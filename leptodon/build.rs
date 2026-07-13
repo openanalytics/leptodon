@@ -44,7 +44,7 @@ fn main() -> Result<(), Error> {
             Err(err) => println!("cargo::error={}", err),
         }
     }
-    println!("cargo::warning={:?}", &all_src.len());
+    println!("cargo::warning={:?}", all_src.len());
     println!("cargo::rerun-if-changed=src/");
     println!("cargo::rerun-if-changed=build.rs");
     // Replace every " by \" so it can be embedded in a string
