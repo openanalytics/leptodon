@@ -199,17 +199,17 @@ pub struct DropdownButtonChildren {
 #[generate_docs]
 /// A button triggers an action or event when activated.
 ///
-/// Example
-/// ```
+/// Example:
+/// ```no_run
 /// # use leptodon::dropdown::DropdownItem;
 /// # use leptodon::button::DropdownButtonChildren;
 /// # use leptodon::button::DropdownButton;
 /// # use leptos::logging::debug_log;
 /// leptos::view! {
-/// <DropdownButton>
-///     <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>
-///     <DropdownItem label="Entry-1" on_click=move |e| { debug_log!("{e:?}"); } />
-/// </DropdownButton>
+///     <DropdownButton>
+///         <DropdownButtonChildren slot:button_children>"DropDownButton"</DropdownButtonChildren>
+///         <DropdownItem label="Entry-1" on_click=move |e| { debug_log!("{e:?}"); } />
+///     </DropdownButton>
 /// };
 /// ```
 #[component]

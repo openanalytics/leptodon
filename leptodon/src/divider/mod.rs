@@ -15,16 +15,32 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
+use crate::class_list::reactive_class::MaybeReactiveClass;
 use leptodon_proc_macros::generate_docs;
 use leptos::IntoView;
 use leptos::component;
 use leptos::prelude::ClassAttribute;
 use leptos::view;
 
+use crate::class_list;
+
+const HORIZONTAL_LINE_PADDING_CLASS: &str = "my-4";
+
 #[generate_docs]
 #[component]
-pub fn HorizontalLine() -> impl IntoView {
+pub fn HorizontalLine(
+    /// Whether to have a default amount of spacing above and below the line.
+    #[prop(default = true)]
+    default_spacing: bool,
+    /// Extra line styling, e.g. custom padding
+    #[prop(into, optional)]
+    class: MaybeReactiveClass,
+) -> impl IntoView {
     view! {
-        <hr class="my-4 dark:border-gray-600" />
+        <hr class=class_list![
+            class,
+            "dark:border-gray-600",
+            (HORIZONTAL_LINE_PADDING_CLASS, move || default_spacing)
+        ] />
     }
 }
