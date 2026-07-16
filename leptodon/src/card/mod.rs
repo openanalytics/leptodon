@@ -1,3 +1,4 @@
+use leptodon_proc_macros::generate_docs;
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV
@@ -24,10 +25,11 @@ use leptos::{IntoView, children::Children, component, view};
 use crate::class_list;
 use crate::class_list::reactive_class::MaybeReactiveClass;
 
+#[generate_docs]
 #[component]
 pub fn Card(children: Children) -> impl IntoView {
     view! {
-        <div class="max-w-md mx-auto py-2">
+        <div class="max-w-md lg:max-w-lg mx-auto py-2">
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm overflow-hidden transition-colors">
                 {children()}
             </div>
@@ -35,6 +37,7 @@ pub fn Card(children: Children) -> impl IntoView {
     }
 }
 
+#[generate_docs]
 #[component]
 pub fn CardSection(
     #[prop(into, optional)] class: MaybeReactiveClass,
@@ -47,6 +50,7 @@ pub fn CardSection(
     }
 }
 
+#[generate_docs]
 #[component]
 pub fn CardField(#[prop(into)] name: Signal<String>, children: Children) -> impl IntoView {
     view! {

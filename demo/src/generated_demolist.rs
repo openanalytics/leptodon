@@ -36,6 +36,10 @@ pub fn page_infos() -> Vec<PageInfo> {
             name: "Calendar"
         },
         PageInfo {
+            location: "/demo/card",
+            name: "Card"
+        },
+        PageInfo {
             location: "/demo/checkbox",
             name: "Checkbox"
         },
@@ -140,6 +144,7 @@ pub fn DemoRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
             <Route path=path!("/badge") view=crate::demos::badge::BadgeDemoPage/>
             <Route path=path!("/button") view=crate::demos::button::ButtonDemoPage/>
             <Route path=path!("/calendar") view=crate::demos::calendar::CalendarDemoPage/>
+            <Route path=path!("/card") view=crate::demos::card::CardDemoPage/>
             <Route path=path!("/checkbox") view=crate::demos::checkbox::CheckboxDemoPage/>
             <Route path=path!("/codeblock") view=crate::demos::codeblock::CodeblockDemoPage/>
             <Route path=path!("/date_picker") view=crate::demos::date_picker::DatePickerDemoPage/>
