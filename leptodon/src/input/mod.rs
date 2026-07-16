@@ -215,6 +215,10 @@ pub fn PasswordInput(
     /// Whether the input is required.
     #[prop(optional, into)]
     required: Signal<bool>,
+    /// Whether to have a default amount of spacing below the input.
+    ///     Spacing is never shown this component is inside a form-input since form-input already adds default-spacing.
+    #[prop(default = true)]
+    default_spacing: bool,
     /// Placeholder text for the input.
     #[prop(optional, into)]
     placeholder: MaybeProp<String>,
@@ -242,6 +246,8 @@ pub fn PasswordInput(
     if show_eye {
         // Form context
         let form_context = use_context::<FormInputContext<String>>();
+        // Don't show default-spacing when in a form or when default_spacing=false is passed.
+        let default_spacing = form_context.is_none() && default_spacing;
         let form_required = Signal::from(
             form_context
                 .clone()
@@ -261,7 +267,7 @@ pub fn PasswordInput(
             label
         };
         view! {
-            <MaybeLabelledFormInput<String> label required=required.get()>
+            <MaybeLabelledFormInput<String> label default_spacing required=required.get()>
                 <ButtonGroup class="w-full">
                     <First slot:first>
                         <GenericInput<String, String>

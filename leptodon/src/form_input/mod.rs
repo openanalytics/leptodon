@@ -28,6 +28,8 @@ use leptos::tachys::renderer::dom::Node;
 use leptos::wasm_bindgen::JsCast;
 use leptos::{IntoView, component, prelude::Children, view};
 
+use crate::class_list;
+
 #[derive(Clone, Copy)]
 pub struct FormInputContext<E: Clone + Send + Sync + std::fmt::Display + 'static> {
     pub required: bool,
@@ -40,6 +42,9 @@ pub struct FormInputContext<E: Clone + Send + Sync + std::fmt::Display + 'static
 #[component]
 pub fn FormInput<E>(
     #[prop(into)] label: String,
+    /// Whether to have a default amount of spacing below the form-input.
+    #[prop(default = true)]
+    default_spacing: bool,
     required: bool,
     children: Children,
     #[prop(default = PhantomData)] _phantom: PhantomData<E>,
@@ -48,7 +53,7 @@ where
     E: Clone + Send + Sync + std::fmt::Display + 'static,
 {
     view! {
-        <MaybeLabelledFormInput<E> label required children />
+        <MaybeLabelledFormInput<E> label default_spacing required children />
     }
 }
 
@@ -57,6 +62,9 @@ where
 #[component]
 pub(crate) fn MaybeLabelledFormInput<E>(
     #[prop(optional, into)] label: MaybeProp<String>,
+    /// Whether to have a default amount of spacing below the form-input.
+    #[prop(default = true)]
+    default_spacing: bool,
     required: bool,
     children: Children,
     #[prop(default = PhantomData)] _phantom: PhantomData<E>,
@@ -71,7 +79,7 @@ where
         feedback,
     };
     view! {
-        <div class="mb-2 flex flex-col">
+        <div class=class_list![("mb-2", default_spacing), "flex flex-col"]>
             <Label label required>
                 <Provider<_, _> value=form_ctx>
                     {children()}
