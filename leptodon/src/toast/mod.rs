@@ -222,7 +222,7 @@ pub fn Toast(
         <div
             id=id.get()
             class=class_list!(
-                "flex flex-col items-start w-full max-w-sm p-4 text-body bg-gray-100 dark:bg-gray-700 rounded-lg shadow border border-gray-300 dark:border-gray-600",
+                "flex flex-col items-start w-full max-w-sm max-h-[75vh] p-4 text-body bg-gray-100 dark:bg-gray-700 rounded-lg shadow border border-gray-300 dark:border-gray-600",
                 class
             )
             role="alert"
@@ -244,7 +244,7 @@ pub fn Toast(
                             view! { <b>{title}</b> }.into_any()
                         } else {
                             view! {
-                                <div class="text-sm">
+                                <div class="text-sm overflow-scroll">
                                     {message}
                                 </div>
                             }.into_any()
@@ -261,7 +261,7 @@ pub fn Toast(
             {move || {
                 if title.get().is_some() && let Some(message) = message.get() {
                     view! {
-                        <div class="text-sm mt-1">
+                        <div class="text-sm mt-1 overflow-scroll">
                             {message}
                         </div>
                     }.into_any()
@@ -270,7 +270,7 @@ pub fn Toast(
                 }
             }}
             <OptionComp value=children let:children>
-                <div class="mt-1">
+                <div class="mt-1 overflow-scroll max-w-full max-h-full">
                     {children()}
                 </div>
             </OptionComp>
