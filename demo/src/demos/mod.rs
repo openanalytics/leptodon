@@ -21,6 +21,7 @@ pub mod avatar;
 pub mod badge;
 pub mod button;
 pub mod calendar;
+pub mod card;
 pub mod checkbox;
 pub mod codeblock;
 pub mod date_picker;

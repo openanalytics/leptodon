@@ -57,6 +57,9 @@ pub fn ControlButton(
     icon: IconRef,
     #[prop(into)] on_click: BoxOneCallback<ev::MouseEvent>,
     #[prop(optional)] comp_ref: ComponentRef<ButtonRef>,
+    /// Whether to have a default amount of spacing around the button.
+    #[prop(default = true)]
+    default_spacing: bool,
 ) -> impl IntoView {
     view! {
         <Button
@@ -64,6 +67,7 @@ pub fn ControlButton(
             icon
             on_click
             comp_ref
+            default_spacing
             appearance=ButtonAppearance::Transparent
             class=class_list!["!px-3", class]
         >
@@ -76,13 +80,16 @@ pub fn AddButton(
     /// Click handler
     #[prop(default = BoxOneCallback::new(|_| ()), into)]
     on_click: BoxOneCallback<ev::MouseEvent>,
+    /// Whether to have a default amount of spacing around the button.
+    #[prop(default = true)]
+    default_spacing: bool,
 ) -> impl IntoView {
     view! {
         <Button
             icon=icon::AddIcon()
             on_click=on_click
             appearance=ButtonAppearance::Primary
-            class="m-2"
+            default_spacing
             {..}>
             Add
         </Button>
@@ -94,13 +101,16 @@ pub fn EditButton(
     /// Click handler
     #[prop(default = BoxOneCallback::new(|_| ()), into)]
     on_click: BoxOneCallback<ev::MouseEvent>,
+    /// Whether to have a default amount of spacing around the button.
+    #[prop(default = true)]
+    default_spacing: bool,
 ) -> impl IntoView {
     view! {
         <Button
             icon=icon::EditIcon()
             on_click=on_click
             appearance=ButtonAppearance::Secondary
-            class="m-2"
+            default_spacing
             {..}>
             Edit
         </Button>
@@ -112,13 +122,16 @@ pub fn DeleteButton(
     /// Click handler
     #[prop(default = BoxOneCallback::new(|_| ()), into)]
     on_click: BoxOneCallback<ev::MouseEvent>,
+    /// Whether to have a default amount of spacing around the button.
+    #[prop(default = true)]
+    default_spacing: bool,
 ) -> impl IntoView {
     view! {
         <Button
             icon=icon::DeleteIcon()
             on_click=on_click
             appearance=ButtonAppearance::Danger
-            class="m-2"
+            default_spacing
             {..}>
             Delete
         </Button>
@@ -130,13 +143,16 @@ pub fn DownloadButton(
     /// Click handler
     #[prop(default = BoxOneCallback::new(|_| ()), into)]
     on_click: BoxOneCallback<ev::MouseEvent>,
+    /// Whether to have a default amount of spacing around the button.
+    #[prop(default = true)]
+    default_spacing: bool,
 ) -> impl IntoView {
     view! {
         <Button
             icon=icon::DownloadIcon()
             on_click=on_click
             appearance=ButtonAppearance::Secondary
-            class="m-2"
+            default_spacing
             {..}>
             Download
         </Button>
@@ -153,6 +169,9 @@ pub fn CopyButton(
     /// Extra button classes.
     #[prop(optional, into)]
     class: MaybeReactiveClass,
+    /// Whether to have a default amount of spacing around the button.
+    #[prop(default = true)]
+    default_spacing: bool,
     /// The string to copy to the clipboard.
     #[prop(into)]
     to_copy: Signal<String>,
@@ -177,6 +196,7 @@ pub fn CopyButton(
         <Button
             id
             appearance=ButtonAppearance::Transparent
+            default_spacing
             class=class_list!("bg-white dark:bg-black", class)
             on_click=on_copy
         >
@@ -199,17 +219,17 @@ pub struct DropdownButtonChildren {
 #[generate_docs]
 /// A button triggers an action or event when activated.
 ///
-/// Example
-/// ```
+/// Example:
+/// ```no_run
 /// # use leptodon::dropdown::DropdownItem;
 /// # use leptodon::button::DropdownButtonChildren;
 /// # use leptodon::button::DropdownButton;
 /// # use leptos::logging::debug_log;
 /// leptos::view! {
-/// <DropdownButton>
-///     <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>
-///     <DropdownItem label="Entry-1" on_click=move |e| { debug_log!("{e:?}"); } />
-/// </DropdownButton>
+///     <DropdownButton>
+///         <DropdownButtonChildren slot:button_children>"DropDownButton"</DropdownButtonChildren>
+///         <DropdownItem label="Entry-1" on_click=move |e| { debug_log!("{e:?}"); } />
+///     </DropdownButton>
 /// };
 /// ```
 #[component]
@@ -249,7 +269,7 @@ pub fn DropdownButton(
     /// comp_ref will be filled with a reference to the DOM element.
     #[prop(optional)]
     comp_ref: ComponentRef<ButtonRef>,
-    /// Whether to have a default amount of spacing above and below the button.
+    /// Whether to have a default amount of spacing around the button.
     #[prop(default = true)]
     default_spacing: bool,
 ) -> impl IntoView
@@ -321,7 +341,7 @@ pub fn ModalButton(
     /// comp_ref will be filled with a reference to the DOM element.
     #[prop(optional)]
     comp_ref: ComponentRef<ButtonRef>,
-    /// Whether to have a default amount of spacing above and below the button.
+    /// Whether to have a default amount of spacing around the button.
     #[prop(default = true)]
     default_spacing: bool,
 
@@ -423,7 +443,7 @@ pub fn DialogButton(
     on_click_secondary: BoxCallback,
     /// Dialog content
     children: Children,
-    /// Whether to have a default amount of spacing above and below the button.
+    /// Whether to have a default amount of spacing around the button.
     #[prop(default = true)]
     default_spacing: bool,
 ) -> impl IntoView
