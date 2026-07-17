@@ -7,7 +7,7 @@ NEW_VERSION=${1:-${NEW_VERSION?Expecting <version> argument or NEW_VERSION env v
 OLD_VERSION=$(tomlq --raw-output ".workspace.package.version" Cargo.toml)
 
 # Files to keep synced
-files="Cargo.toml leptodon/Cargo.toml proc-macros/Cargo.toml"
+files="Cargo.toml"
 
 for file in $files; do
     # Update the marked lines

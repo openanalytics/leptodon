@@ -27,6 +27,7 @@
             jq
             skopeo
             cargo-hack
+            cargo-nextest
             zstd
             licensure
           ];
