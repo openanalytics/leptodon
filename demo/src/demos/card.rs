@@ -1,7 +1,3 @@
-use leptodon::card::Card;
-use leptodon::card::CardField;
-use leptodon::card::CardSection;
-use leptodon::divider::HorizontalLine;
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV
@@ -19,6 +15,10 @@ use leptodon::divider::HorizontalLine;
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
+use leptodon::card::Card;
+use leptodon::card::CardField;
+use leptodon::card::CardSection;
+use leptodon::divider::HorizontalLine;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
 use leptodon_proc_macros::generate_codeblock;
