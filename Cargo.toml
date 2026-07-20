@@ -1,7 +1,7 @@
 [workspace.metadata.crane]
 name = "Leptodon"
 [workspace.package]
-version = "1.5.0" # version-sync-⤴️ (marker for cargo-make)
+version = "1.6.0-dev" # version-sync-⤴️ (marker for cargo-make)
 edition = "2024"
 license = "Apache-2.0"
 homepage = "https://leptodon.dev"
@@ -41,8 +41,8 @@ codegen-units = 1
 panic = "abort"
 
 [workspace.dependencies]
-leptodon = { path = "./leptodon", version = "=1.5.0" } # version-sync-⤴️
-leptodon-proc-macros = { path = "./proc-macros", version = "=1.5.0" } # version-sync-⤴️
+leptodon = { path = "./leptodon", version = "=1.6.0-dev" } # version-sync-⤴️
+leptodon-proc-macros = { path = "./proc-macros", version = "=1.6.0-dev" } # version-sync-⤴️
 
 # Protocol
 http = "1"
@@ -76,8 +76,8 @@ tracing = { version = "0.1" }
 log = "0.4"
 console_log = "1"
 console_error_panic_hook = "0.1"
-anyhow = { version = "1.0.103" }
-thiserror = "2.0.18"
+anyhow = { version = "1.0.104" }
+thiserror = "2.0.19"
 
 # Time and date
 chrono = { version = "0.4.45", features = ["serde"] }
@@ -97,7 +97,7 @@ nucleo-matcher = { version = "0.3.1" } # Fuzzy search
 # Other utils
 itertools = "0.15.0"
 zxcvbn = { version = "3.1.1" }
-uuid = { version = "1.23.4" }
+uuid = { version = "1.24.0" }
 
 # Macros
 cfg-if = "1.0.4"
@@ -105,7 +105,7 @@ derive_more = { version = "2.1.1", features = ["display"] }
 serde = "1"
 num-traits = { version = "0.2.19" }
 # Build macros
-syn = { version = "2.0.118" }
-quote = { version = "1.0.46" }
-proc-macro2 = { version = "1.0.106" }
+syn = { version = "3.0.2" }
+quote = { version = "1.0.47" }
+proc-macro2 = { version = "1.0.107" }
 walkdir = { version = "2.5.0" }
