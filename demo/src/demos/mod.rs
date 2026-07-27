@@ -30,6 +30,7 @@ pub mod divider;
 pub mod dropdown;
 pub mod form_input;
 pub mod heading;
+pub mod infolabel;
 pub mod input;
 pub mod link;
 pub mod modal;

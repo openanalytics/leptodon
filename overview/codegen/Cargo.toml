@@ -5,4 +5,4 @@ edition = "2024"
 
 [dependencies]
 leptodon = { path = "../../leptodon", default-features = false, features = [] }
-syn = { version = "2.0.117", features = ["parsing"] }
+syn = { version = "2.0.119", features = ["parsing"] }

@@ -90,8 +90,8 @@ regex = { version = "1.13" }
 strum = "0.28.0"
 strum_macros = "0.28.0"
 const-str = { version = "1.1.0" }
-base64 = { version = "0.22.1" }
-rstml-to-string-macro = { version = "0.1.0" }
+base64 = { version = "0.23.0" }
+rstml-to-string-macro = { version = "=0.1.0" } # 0.2.0 panics on stable, compiles on nightly (debug-proc-macro is nightly-only flag :p -> the errors are hiding!)
 nucleo-matcher = { version = "0.3.1" } # Fuzzy search
 
 # Other utils
@@ -105,7 +105,7 @@ derive_more = { version = "2.1.1", features = ["display"] }
 serde = "1"
 num-traits = { version = "0.2.19" }
 # Build macros
-syn = { version = "3.0.2" }
+syn = { version = "2.0.119" }
 quote = { version = "1.0.47" }
 proc-macro2 = { version = "1.0.107" }
 walkdir = { version = "2.5.0" }

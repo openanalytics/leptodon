@@ -39,6 +39,7 @@ pub mod dropdown;
 pub mod form_input;
 pub mod heading;
 pub mod icon;
+pub mod infolabel;
 pub mod input;
 pub mod input_group;
 pub mod layout;

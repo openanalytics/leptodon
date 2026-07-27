@@ -49,6 +49,7 @@ use leptodon::date_picker::DateRangePicker;
 use leptodon::dropdown::DropdownItem;
 use leptodon::heading::*;
 use leptodon::icon;
+use leptodon::infolabel::InfoLabel;
 use leptodon::input::FileUpload;
 use leptodon::input::InputType;
 use leptodon::link::Link;
@@ -159,6 +160,10 @@ fn Home() -> impl IntoView {
                 <ThemeSelector id="theme-selector-1" />
                 <ThemeSelector id="theme-selector-2" />
             </Settings>
+
+            <p>
+                "Lorem? "<InfoLabel>"Ipsum!"</InfoLabel>
+            </p>
 
             <InfoAlert>
                 "Kerachole"
