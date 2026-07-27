@@ -1,4 +1,3 @@
-use leptodon_proc_macros::generate_docs;
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV
@@ -16,6 +15,7 @@ use leptodon_proc_macros::generate_docs;
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
+use leptodon_proc_macros::generate_docs;
 use leptos::prelude::ClassAttribute;
 use leptos::prelude::ElementChild;
 use leptos::reactive::traits::Get;
@@ -27,10 +27,16 @@ use crate::class_list::reactive_class::MaybeReactiveClass;
 
 #[generate_docs]
 #[component]
-pub fn Card(children: Children) -> impl IntoView {
+pub fn Card(
+    #[prop(optional, into)] class: MaybeReactiveClass,
+    children: Children,
+) -> impl IntoView {
     view! {
         <div class="max-w-md lg:max-w-lg mx-auto py-2">
-            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm overflow-hidden transition-colors">
+            <div class=class_list![
+                class,
+                "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm overflow-hidden transition-colors"
+            ]>
                 {children()}
             </div>
         </div>
