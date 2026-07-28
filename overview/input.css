@@ -67,3 +67,24 @@ html.dark {
     --danger: #C70036;
     --danger-soft: #C7003610;
 }
+
+.info-label-anchor:hover {
+    anchor-name: --info-label;
+}
+
+.info-label {
+    display: none;
+    background: black;
+    color: whitesmoke;
+    z-index: 5;
+
+    position: fixed;
+    position-anchor: --info-label;
+    position-area: right;
+    position-try-fallbacks: flip-block, flip-inline;
+    position-try-fallbacks: top, bottom;
+}
+
+.info-label-anchor:hover > .info-label {
+    display: block;
+}

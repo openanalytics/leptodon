@@ -72,6 +72,10 @@ pub fn page_infos() -> Vec<PageInfo> {
             name: "Heading"
         },
         PageInfo {
+            location: "/demo/infolabel",
+            name: "Info Label"
+        },
+        PageInfo {
             location: "/demo/input",
             name: "Inputs"
         },
@@ -153,6 +157,7 @@ pub fn DemoRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
             <Route path=path!("/dropdown") view=crate::demos::dropdown::DropdownDemoPage/>
             <Route path=path!("/form_input") view=crate::demos::form_input::FormInputDemoPage/>
             <Route path=path!("/heading") view=crate::demos::heading::HeadingDemoPage/>
+            <Route path=path!("/infolabel") view=crate::demos::infolabel::InfoLabelDemoPage/>
             <Route path=path!("/input") view=crate::demos::input::InputsDemoPage/>
             <Route path=path!("/link") view=crate::demos::link::LinkDemoPage/>
             <Route path=path!("/modal") view=crate::demos::modal::ModalDemoPage/>

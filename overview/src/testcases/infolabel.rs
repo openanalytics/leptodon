@@ -15,36 +15,23 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-pub mod accordion;
-pub mod alert;
-pub mod avatar;
-pub mod badge;
-pub mod button;
-pub mod calendar;
-pub mod card;
-pub mod checkbox;
-pub mod codeblock;
-pub mod date_picker;
-pub mod dialog;
-pub mod divider;
-pub mod dropdown;
-pub mod form_input;
-pub mod heading;
-pub mod infolabel;
-pub mod input;
-pub mod link;
-pub mod modal;
-pub mod navbar;
-pub mod popover;
-pub mod radio;
-pub mod select;
-pub mod spinner;
-pub mod table;
-pub mod tabs;
-pub mod tag_picker;
-pub mod textarea;
-pub mod themeselector;
-pub mod toast;
-pub mod toggle;
+use leptodon::infolabel::InfoLabel;
+use leptos::prelude::CustomAttribute;
+use leptos::prelude::ElementChild;
+use leptos::{IntoView, component, view};
+use leptos_meta::Title;
 
-// text-left
+#[component]
+pub fn TestInfoLabel() -> impl IntoView {
+    view! {
+        <Title text="Test Info Label"/>
+
+        <p data-testid="text-1-with-info-label">
+            "Lorem? "<InfoLabel>"Ipsum!"</InfoLabel>
+        </p>
+
+        <p data-testid="text-2-with-info-label">
+            "🐓 "<InfoLabel>"🐓"</InfoLabel>
+        </p>
+    }
+}

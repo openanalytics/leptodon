@@ -49,6 +49,7 @@ use leptodon::date_picker::DateRangePicker;
 use leptodon::dropdown::DropdownItem;
 use leptodon::heading::*;
 use leptodon::icon;
+use leptodon::infolabel::InfoLabel;
 use leptodon::input::FileUpload;
 use leptodon::input::InputType;
 use leptodon::link::Link;
@@ -121,6 +122,7 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_radio") view=crate::testcases::radio::TestRadio/>
                 <Route path=StaticSegment("/test_tag_picker") view=crate::testcases::tag_picker::TestTagPicker/>
                 <Route path=StaticSegment("/test_inputs") view=crate::testcases::inputs::TestInputs/>
+                <Route path=StaticSegment("/test_info_label") view=crate::testcases::infolabel::TestInfoLabel/>
                 <Route path=StaticSegment("/test_tabs") view=crate::testcases::tabs::TestTabs/>
                 <Route path=StaticSegment("/test_toggle") view=crate::testcases::toggle::TestToggle/>
                 <Route path=StaticSegment("/test_checkbox") view=crate::testcases::checkbox::TestCheckbox/>
@@ -159,6 +161,14 @@ fn Home() -> impl IntoView {
                 <ThemeSelector id="theme-selector-1" />
                 <ThemeSelector id="theme-selector-2" />
             </Settings>
+
+            <p>
+                "Lorem? "<InfoLabel>"Ipsum!"</InfoLabel>
+            </p>
+
+            <p>
+                "🐓 "<InfoLabel>"🐓"</InfoLabel>
+            </p>
 
             <InfoAlert>
                 "Kerachole"

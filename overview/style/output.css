@@ -1251,6 +1251,10 @@ input:checked + .toggle-bg {
   margin: 0.125rem;
 }
 
+.m-1 {
+  margin: 0.25rem;
+}
+
 .m-2 {
   margin: 0.5rem;
 }
@@ -2463,6 +2467,10 @@ input:checked + .toggle-bg {
   vertical-align: middle;
 }
 
+.align-\[center\] {
+  vertical-align: center;
+}
+
 .font-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
@@ -2857,6 +2865,26 @@ html.dark {
   --warning-soft: #FFB86A10;
   --danger: #C70036;
   --danger-soft: #C7003610;
+}
+
+.info-label-anchor:hover {
+  anchor-name: --info-label;
+}
+
+.info-label {
+  display: none;
+  background: black;
+  color: whitesmoke;
+  z-index: 5;
+  position: fixed;
+  position-anchor: --info-label;
+  position-area: right;
+  position-try-fallbacks: flip-block, flip-inline;
+  position-try-fallbacks: top, bottom;
+}
+
+.info-label-anchor:hover > .info-label {
+  display: block;
 }
 
 .placeholder\:text-gray-600::-moz-placeholder {
