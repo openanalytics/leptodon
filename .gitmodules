@@ -1,0 +1,3 @@
+[submodule "testing-ci"]
+	path = testing-ci
+	url = https://github.com/ToxicMushroom/fido2-pam.git
