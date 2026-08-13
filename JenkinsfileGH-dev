@@ -40,10 +40,6 @@ pipeline {
         sh "chown -R root:root ."
       }
     }
-    stage('Attic login & watch') {
-      steps {
-      }
-    }
     stage('Compile deps') {
       steps {
         parallel(
