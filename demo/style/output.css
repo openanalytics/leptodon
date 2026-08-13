@@ -2822,7 +2822,7 @@ html.dark {
   display: none;
   background: black;
   color: whitesmoke;
-  z-index: 5;
+  z-index: 999;
   position: fixed;
   position-anchor: --info-label;
   position-area: right;

@@ -201,6 +201,163 @@ where
     }
 }
 
+#[generate_docs]
+#[component]
+pub fn OptNumberInput<OptNumberType, NumberType>(
+    /// Id for the input.
+    #[prop(optional, into)]
+    id: MaybeProp<String>,
+    /// Extra classes added to augment the default style.
+    #[prop(optional, into)]
+    class: MaybeProp<String>,
+    /// Will be initialised with a DOM reference to the backing <input> element.
+    #[prop(optional)]
+    input_ref: NodeRef<html::Input>,
+    /// Text above the input that informs the user what to type.
+    #[prop(optional, into)]
+    label: MaybeProp<String>,
+    /// This name is submitted along with the control's value when the form data is submitted.
+    #[prop(optional, into)]
+    name: MaybeProp<String>,
+    /// An input can have different text-based types based on the type of value the user will enter.
+    #[prop(default = InputType::Number.into(), into)]
+    input_type: Signal<InputType>,
+    /// An input can have different modes, useful for mobile devices to bring up the correct virtual keyboard. More fine-grained than type.
+    #[prop(default = InputMode::Numeric.into(), into)]
+    input_mode: Signal<InputMode>,
+    #[prop(default = NumberInputConfigProps::<NumberType>::builder().build())]
+    number_config: NumberInputConfigProps<NumberType>,
+    /// Binds to the value of the input, has to be a string.
+    #[prop(optional)]
+    value: RwSignal<OptNumberType>,
+    /// Whether the input is readonly.
+    #[prop(optional, into)]
+    readonly: Signal<bool>,
+    /// Whether the input is required.
+    #[prop(optional, into)]
+    required: Signal<bool>,
+    /// Placeholder text for the input.
+    #[prop(optional, into)]
+    placeholder: MaybeProp<String>,
+) -> impl IntoView
+where
+    OptNumberType: IsOption<Inner = NumberType>
+        + ConstructSelfFromInner<NumberType>
+        + Display
+        + Eq
+        + Clone
+        + Default
+        + Debug
+        + Send
+        + Sync
+        + 'static,
+    NumberType: Num
+        + NumCast
+        + NumOps
+        + Display
+        + Intness
+        + Signedness
+        + PartialOrd
+        + Clone
+        + Default
+        + Send
+        + Sync
+        + Rem<NumberType>
+        + 'static,
+{
+    let max = if let Some(max) = number_config.max.get() {
+        max.to_string()
+    } else {
+        String::default() // empty string to omit the property
+    };
+    let min = if let Some(min) = number_config.min.get() {
+        min.to_string()
+    } else {
+        String::default() // empty string to omit the property
+    };
+    let parser = move |input: String| {
+        // Trim first if configured, so we do not count whitespace characters.
+        let input = if number_config.trim {
+            input.trim()
+        } else {
+            input.as_str()
+        };
+
+        let parsed_value = match NumberType::from_str_radix(input, 10) {
+            Ok(parsed_value) => parsed_value,
+            Err(_) => {
+                if NumberType::is_int() {
+                    if NumberType::is_signed() {
+                        return Err("Please input an integer.".to_string());
+                    } else {
+                        return Err("Please input a positive integer.".to_string());
+                    }
+                } else if !NumberType::is_int() {
+                    return Err("Please input a decimal.".to_string());
+                }
+                return Err("Please input a number".to_string());
+            }
+        };
+
+        if let Some(step) = number_config.step.get()
+            && NumberType::is_int()
+        {
+            let remainder = parsed_value.clone() % step.clone();
+            if remainder != NumberType::zero() {
+                return Err(format!(
+                    "Value must be divisible by {step}, current remainder: {remainder}"
+                ));
+            }
+        }
+
+        if let Some(max) = number_config.max.get()
+            && let Some(min) = number_config.min.get()
+        {
+            if parsed_value > max || parsed_value < min {
+                return Err(format!("Value must be ≥{min} and ≤{max}"));
+            }
+        } else if let Some(max) = number_config.max.get() {
+            if parsed_value > max {
+                return Err(format!("Value must be ≤{max}"));
+            }
+        } else if let Some(min) = number_config.min.get()
+            && parsed_value < min
+        {
+            return Err(format!("Value must be ≥{min}"));
+        }
+
+        Ok(OptNumberType::construct_self(parsed_value))
+    };
+
+    let format = move |input: OptNumberType| input.to_string();
+    let step = if let Some(step) = number_config.step.get() {
+        step.to_string()
+    } else {
+        "any".to_string()
+    };
+
+    view! {
+        <GenericInput<OptNumberType, String>
+            id
+            class
+            input_ref
+            label
+            name
+            input_type
+            input_mode
+            value
+            readonly
+            required
+            placeholder
+            parser
+            format
+            step=step
+            min=min
+            max=max
+        />
+    }
+}
+
 macro_rules! impl_signedness {
     ($T:ty, $signed:expr) => {
         impl Signedness for $T {
@@ -259,6 +416,28 @@ impl_intness!(i128, true);
 impl_intness!(f32, false);
 impl_intness!(f64, false);
 
+pub trait IsOption {
+    type Inner;
+    fn into_option(self) -> Option<Self::Inner>;
+}
+
+pub trait ConstructSelfFromInner<Inner> {
+    fn construct_self(inner: Inner) -> Self;
+}
+
+impl<T> ConstructSelfFromInner<T> for Option<T> {
+    fn construct_self(inner: T) -> Self {
+        Some(inner)
+    }
+}
+
+impl<T> IsOption for Option<T> {
+    type Inner = T;
+    fn into_option(self) -> Option<T> {
+        self
+    }
+}
+
 // #[cfg(feature = "decimal")]
 // struct Decimal {
 //     decimal: rust_decimal::Decimal
@@ -268,3 +447,51 @@ impl_intness!(f64, false);
 // impl Num for Decimal {
 
 // }
+
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct OptionalU32(Option<u32>);
+impl IsOption for OptionalU32 {
+    type Inner = u32;
+
+    fn into_option(self) -> Option<Self::Inner> {
+        self.0
+    }
+}
+impl ConstructSelfFromInner<u32> for OptionalU32 {
+    fn construct_self(inner: u32) -> Self {
+        OptionalU32(Some(inner))
+    }
+}
+
+impl Display for OptionalU32 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.0 {
+            Some(number) => write!(f, "{number}"),
+            None => write!(f, "none"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct OptionalU8(Option<u8>);
+impl IsOption for OptionalU8 {
+    type Inner = u8;
+
+    fn into_option(self) -> Option<Self::Inner> {
+        self.0
+    }
+}
+impl ConstructSelfFromInner<u8> for OptionalU8 {
+    fn construct_self(inner: u8) -> Self {
+        OptionalU8(Some(inner))
+    }
+}
+
+impl Display for OptionalU8 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.0 {
+            Some(number) => write!(f, "{number}"),
+            None => write!(f, "none"),
+        }
+    }
+}

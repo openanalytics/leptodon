@@ -1,4 +1,3 @@
-@Library('attic')_
 pipeline {
   agent {
     kubernetes {
@@ -43,7 +42,6 @@ pipeline {
     }
     stage('Attic login & watch') {
       steps {
-        loginAndWatch('oa-leptodon')
       }
     }
     stage('Compile deps') {
