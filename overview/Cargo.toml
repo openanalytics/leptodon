@@ -105,7 +105,7 @@ site-addr = "127.0.0.1:3000"
 reload-port = 3001
 
 # [Optional] Command to use when running end2end tests. It will run in the end2end dir.
-end2end-cmd = "sh -C ci-test-launch.sh"
+end2end-cmd = "sh -C ci-launch-tests.sh"
 end2end-dir = "end2end"
 browserquery = "defaults"
 

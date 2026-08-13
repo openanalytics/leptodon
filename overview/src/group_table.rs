@@ -21,7 +21,7 @@ use leptodon::table::StyledHeadDragHandler;
 use leptodon::table::grouping::{GroupRow, GroupTableRowRenderer, GroupingInfo};
 use leptodon::tag_picker::TagPicker;
 use leptos::component;
-use leptos::either::Either;
+use leptos::control_flow::ShowLet;
 use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
@@ -90,7 +90,7 @@ pub fn GroupedTableExample() -> impl IntoView {
     let group_on_memo = Memo::new(move |_| group_on.get());
 
     view! {
-        <div>Group on: </div>
+        <div>"Group on: "</div>
         <TagPicker
             placeholder="Selects columns to group on"
             tags=RwSignal::new(column_tags)
@@ -107,21 +107,16 @@ pub fn GroupedTableExample() -> impl IntoView {
                         display_strategy=strat
                         scroll_container=""
                         drag_handler=HeadDragHandler::new(StyledHeadDragHandler)
-                    ></TableContent>
+                    />
                 }
             }}
         </table>
-        { move || {
-            let opt_pg_count = pagination_controller.page_count().get();
-            if let Some(page_count) = opt_pg_count {
-                debug_log!("Table pagination enabled: {page_count} pages");
-                Either::Left(view! {
-                    <Pagination page_count=Signal::derive(move || page_count) current_page=visible_current_page jumper=false />
-                })
-            } else {
-                Either::Right(())
-            }
-        }}
+        <ShowLet
+            some=move || pagination_controller.page_count().get()
+            let:page_count
+        >
+            <Pagination page_count=Signal::derive(move || page_count) current_page=visible_current_page jumper=false />
+        </ShowLet>
     }
 }
 

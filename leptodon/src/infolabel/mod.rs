@@ -35,7 +35,7 @@ pub fn InfoLabel(
     children: Children,
 ) -> impl IntoView {
     view! {
-        <button class=class_list!(class, "info-label-anchor align-[center]")>
+        <button type="button" class=class_list!(class, "info-label-anchor align-[center]")>
             <Icon class="h-4 w-4" icon=icon::InfoIcon() />
             <div class="info-label m-1 p-2 rounded-lg">
                 {children()}

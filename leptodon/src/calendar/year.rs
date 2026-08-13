@@ -142,6 +142,32 @@ pub fn YearCalendarTwelveMonthLayout(
     .into_any()
 }
 
+pub enum CellType {
+    DayHeader(u8),
+    MonthHeader(Month),
+    Day(NaiveDate),
+    Filler,
+}
+
+impl Display for CellType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CellType::DayHeader(day) => write!(f, "dayheader-{day}"),
+            CellType::MonthHeader(month) => write!(f, "monthheader-{}", month.number_from_month()),
+            CellType::Day(naive_date) => write!(f, "day-{}", naive_date.format("%F").to_string()),
+            CellType::Filler => write!(f, "filler"),
+        }
+    }
+}
+
+impl IntoAttributeValue for CellType {
+    type Output = String;
+
+    fn into_attribute_value(self) -> Self::Output {
+        self.to_string()
+    }
+}
+
 /// A single grid containing a full year of days.
 #[component]
 pub fn YearCalendarYearLayout(
@@ -168,6 +194,7 @@ pub fn YearCalendarYearLayout(
                         }),
                         TABLE_HEADER_CLASS, "content-center"
                     )
+                    data-cell-type=CellType::DayHeader(day_in_month)
                     on:mouseenter=move |_| {
                         hovered_elem.set(None);
                     }>
@@ -194,6 +221,7 @@ pub fn YearCalendarYearLayout(
                 md:max-lg:horizontal-tb md:max-lg:text-upright md:max-lg:text-center
                 xl:horizontal-tb xl:text-upright"
             )
+            data-cell-type=CellType::MonthHeader(month)
             on:mouseenter=move |_| {
                 hovered_elem.set(None);
             }
@@ -223,6 +251,7 @@ pub fn YearCalendarYearLayout(
                     view!{
                         <div
                             class=cell_class_list
+                            data-cell-type=CellType::Day(date)
                             on:mouseenter=move |_| {
                                 hovered_elem.set(Some((month, day_in_month)));
                             }>
@@ -232,7 +261,7 @@ pub fn YearCalendarYearLayout(
                 } else {
                     // day_in_month is likely out of range
                     view!{
-                        <div class=class_list!(TABLE_CELL_CLASS, "!bg-oa-gray-darker dark:!bg-black")></div>
+                        <div data-cell-type=CellType::Filler class=class_list!(TABLE_CELL_CLASS, "!bg-oa-gray-darker dark:!bg-black")></div>
                     }.into_any()
                 }
             }).collect_view()

@@ -66,6 +66,9 @@ pub fn Select<T>(
     /// Whether the select is disabled.
     #[prop(optional, into)]
     disabled: Signal<bool>,
+    /// Makes the select look like normal text, useful when there is a clear mechanism to enable editing.
+    #[prop(optional, into)]
+    read_only: Signal<bool>,
     // TODO: Implement size
     #[prop(into)] options: RwSignal<Vec<T>>,
 ) -> impl IntoView
@@ -113,6 +116,7 @@ where
             required
             selected=some_selected
             disabled
+            read_only
             options
         />
     }
@@ -136,8 +140,8 @@ pub fn MaybeSelect<T>(
     #[prop(default = " -- select an option -- ".to_string(), into)]
     placeholder: String,
     /// Shown as extra option when the select is not required.
-    #[prop(default = " -- none -- ".to_string(), into)]
-    none_option: String,
+    #[prop(default = " -- none -- ".to_string().into(), into)]
+    none_option: Signal<String>,
     /// Whether a value needs to be selected before a form surrounding this select can be submitted.
     #[prop(optional, into)]
     required: bool,
@@ -147,6 +151,9 @@ pub fn MaybeSelect<T>(
     /// Whether the select is disabled.
     #[prop(optional, into)]
     disabled: Signal<bool>,
+    /// Makes the select look like normal text, useful when there is a clear mechanism to enable editing.
+    #[prop(optional, into)]
+    read_only: Signal<bool>,
     /// Possible options of this select.
     #[prop(into)]
     options: RwSignal<Vec<T>>,
@@ -198,9 +205,23 @@ where
     );
 
     let select = view! {
+        // Read-only variant.
+        <Show
+            when=move || read_only.get()
+            fallback=|| ().into_any()
+        >
+            {move || selected.get()
+                .map(|t| t.to_string())
+                .unwrap_or_else(|| none_option.get())
+            }
+        </Show>
         <select
             id=id.get()
-            class=SELECT_CLASSES
+            class=class_list!(
+                SELECT_CLASSES,
+                // Only visually hidden when read-only, will still be submitted with any forms.
+                ("hidden", move || read_only.get())
+            )
             name=name.get()
             node_ref=node_ref
             on:input=move |_| {
@@ -249,7 +270,7 @@ where
                 <option
                     value=""
                     selected=move || { selected.get().is_none() && !required.get() }
-                >{ none_option.clone() }</option>
+                >{ none_option.get() }</option>
             </Show>
             <For
                 each=move || options.get()
