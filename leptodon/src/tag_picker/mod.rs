@@ -38,6 +38,7 @@ use leptos::prelude::Notify;
 use leptos::prelude::OnAttribute;
 use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
+use leptos::prelude::Signal;
 use leptos::prelude::Trigger;
 use leptos::prelude::Update;
 use leptos::prelude::Write;
@@ -100,6 +101,9 @@ pub fn TagPicker<T>(
     /// Subset of tags, containing the selected tags
     #[prop(optional)]
     selected: RwSignal<Vec<T>>,
+    /// Maximum number of selected items
+    #[prop(into, default = usize::MAX.into())]
+    max_number: Signal<usize>,
     /// All tags
     #[prop(optional)]
     tags: RwSignal<Vec<T>>,
@@ -171,6 +175,7 @@ where
                     .clone()
                     .into_iter()
                     .filter(|selected_value| tags.contains(selected_value))
+                    .take(max_number.get())
                     .collect::<Vec<_>>();
 
                 // Update signals, could do less updates but that requires a lot more code, seemed like premature optimisation.
@@ -294,7 +299,7 @@ where
                                     let Some(checked) = checkboxes.get(&tag) else {
                                         return ;
                                     };
-                                    toggle_tag(inside_selected, tag, *checked).invoke(());
+                                    toggle_tag(inside_selected, tag, *checked, max_number).invoke(());
                                 }>
                                     <Icon class="w-3 h-3" icon=crate::icon::CloseIcon() />
                                 </div>
@@ -340,7 +345,7 @@ where
                                 return ;
                             };
 
-                            toggle_tag(inside_selected, tag, *checked).invoke(());
+                            toggle_tag(inside_selected, tag, *checked, max_number).invoke(());
                         } else if key.code() == "ArrowUp" {
                             focus_ith.update(|old_value| *old_value = old_value.saturating_sub(1));
                         } else if key.code() == "ArrowDown" {
@@ -397,7 +402,7 @@ where
                                 node_ref=div_ref
                                 on:click={
                                     let tag = tag.clone();
-                                    toggle_tag(inside_selected, tag, *checked)
+                                    toggle_tag(inside_selected, tag, *checked, max_number)
                                 }
                             >
                                 {let tag=tag.clone(); let tag2=tag.clone(); {
@@ -410,7 +415,7 @@ where
                                             hidden=true
                                             disabled=!is_checked
                                             name=name
-                                            value={tag2.as_ref().to_string()}
+                                            value={tag2.value()}
                                             aria-hidden=true
                                         />
                                     }
@@ -476,25 +481,39 @@ fn toggle_tag<T, Event>(
     inside_selected: RwSignal<Vec<T>>,
     tag: T,
     checked: RwSignal<bool>,
+    max_number: Signal<usize>,
 ) -> impl FnMut(Event) + 'static
 where
     T: AsRef<str> + Eq + Clone + Send + Sync + 'static,
 {
     move |_| {
+        let current_selected = inside_selected.get();
+        let tag_is_selected = current_selected.contains(&tag);
+        if current_selected.len() >= max_number.get() && !tag_is_selected {
+            debug_log!(
+                "Cancelling toggle-tag, max number ({}) of tags reached.",
+                max_number.get()
+            );
+            return;
+        }
+
         // Toggle selection
         inside_selected.update(|old_sel| {
-            debug_log!("Toggling {}", tag.as_ref());
-            if old_sel.contains(&tag) {
+            if tag_is_selected {
                 if let Some(pos) = old_sel.iter().position(|sel_tag| sel_tag == &tag) {
+                    debug_log!("Toggling {}", tag.as_ref());
                     old_sel.remove(pos);
+                } else {
+                    debug_log!("{} not found", tag.as_ref());
                 }
             } else {
+                debug_log!("Toggling {}", tag.as_ref());
                 old_sel.push(tag.clone());
             }
         });
 
         checked.update(|old| {
-            debug_log!("Flipping chekcbox to {}", !*old);
+            debug_log!("Flipping checkbox to {}", !*old);
             *old = !*old
         });
     }

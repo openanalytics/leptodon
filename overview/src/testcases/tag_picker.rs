@@ -60,6 +60,7 @@ pub fn TestTagPicker() -> impl IntoView {
             id="tag_picker"
             class="mt-[150vh]"
             selected=selected
+            max_number=6
             tags=elements
         />
         <Button id="set-5" on_click=move |_e| {
