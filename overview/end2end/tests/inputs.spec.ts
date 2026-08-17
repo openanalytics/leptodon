@@ -137,3 +137,27 @@ test("Decimal number input", async ({ page }) => {
   await number_input.press("3"); // -3
   await expect(number_input_invalid).toContainText("-2"); // Input needs to be >= -2
 });
+
+test("Optional u32 input", async ({ page }) => {
+  await page.goto("/test_inputs");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Inputs");
+
+  let form = page.getByTestId("opt-u32-form");
+  let submit_form = form.locator("button");
+  let number_disp = page.locator("#opt-u32-input-display");
+  let number_input = page.locator("#opt-u32-input");
+
+  await submit_form.click();
+  await expect(number_input).toBeFocused();
+  await page.keyboard.press("5");
+  await expect(number_disp).toHaveText("5");
+  await Promise.all([
+    page.waitForURL('/test_inputs'),
+    submit_form.click()
+  ]);
+
+  await expect(number_disp).toHaveText("none");
+
+})

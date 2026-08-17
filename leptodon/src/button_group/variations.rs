@@ -79,9 +79,9 @@ pub fn Pagination(
 
                 <Button appearance icon=next_icon on_click=move |_| {
                     current_page.update(|old| *old = std::cmp::min(*old+1, page_count.get()));
-                } ></Button>
+                } />
                 <Last slot:last>
-                    <Button on_click=move |_| { current_page.set(page_count.get()); } appearance icon=last_icon></Button>
+                    <Button on_click=move |_| { current_page.set(page_count.get()); } appearance icon=last_icon />
                 </Last>
             </ButtonGroup>
         </nav>

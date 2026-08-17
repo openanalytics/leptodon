@@ -51,7 +51,7 @@ use leptos::server::SharedValue;
 use leptos::server::codee::string::FromToStringCodec;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
 
-#[derive(Default)]
+#[derive(Default, Clone, Copy)]
 pub enum ToastAppearance {
     Success,
     Warning,

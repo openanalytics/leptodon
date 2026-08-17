@@ -31,6 +31,7 @@ use leptos::{
 use leptos_use::math::use_or;
 
 use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::form_input::FormInputContext;
 use crate::form_input::Label;
 
@@ -45,7 +46,7 @@ pub fn TextArea(
     id: MaybeProp<String>,
     /// Extra classes added to the <textarea> the default style.
     #[prop(optional, into)]
-    class: MaybeProp<String>,
+    class: MaybeReactiveClass,
     /// Text above the input that informs the user what to type.
     #[prop(optional, into)]
     label: MaybeProp<String>,
