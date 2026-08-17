@@ -131,16 +131,27 @@ test("Tag Picker max_number", async ({ page }) => {
   let btn_set_5 = page.locator("#set-5");
   let tag_picker = page.locator("#tag_picker");
   let tag_content = page.locator("#tag_picker-content");
+  let tag_search = page.locator("#tag_picker-search");
 
+  // Select 5 items
   await btn_set_5.click();
 
+  // Open menu
   await tag_picker.click();
 
-  // Test mouse selection
+  // Select 6th item
   await tag_content.locator("div").filter({ hasText: "hydrogen" }).click();
+  // Try selecting 7th item
   await tag_content.locator("div").filter({ hasText: "nitrogen" }).click();
 
   await expect(getTagInputLocator(tag_content, "hydrogen")).toBeChecked();
+  await expect(getTagInputLocator(tag_content, "nitrogen")).not.toBeChecked();
+
+  // Try selecting 7th item via keyboard
+  tag_search.focus();
+  page.keyboard.press("nitrogen");
+  page.keyboard.press("Enter");
+
   await expect(getTagInputLocator(tag_content, "nitrogen")).not.toBeChecked();
 });
 

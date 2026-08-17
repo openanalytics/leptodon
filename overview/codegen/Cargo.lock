@@ -1098,6 +1098,7 @@ dependencies = [
 [[package]]
 name = "leptos-struct-table"
 version = "0.19.0"
+source = "git+https://github.com/ToxicMushroom/leptos-struct-table?rev=e86949fd7443c66b8b69f37c7ed1b045e673e527#e86949fd7443c66b8b69f37c7ed1b045e673e527"
 dependencies = [
  "chrono",
  "leptos",
