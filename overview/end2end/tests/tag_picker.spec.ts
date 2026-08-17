@@ -19,7 +19,11 @@ import { test, expect } from "@playwright/test";
 
 // Helper function to get input locator for a tag by text
 function getTagInputLocator(tag_content: any, tagText: string) {
-  return tag_content.locator("div").filter({ hasText: tagText }).locator("input").locator("visible=true");
+  return tag_content
+    .locator("div")
+    .filter({ hasText: tagText })
+    .locator("input")
+    .locator("visible=true");
 }
 
 // Check that the radio reactively updates its signal.
@@ -115,6 +119,29 @@ test("Tag Picker functionality", async ({ page }) => {
   ).toHaveCount(0);
   // Should be unchecked now in the dropdown.
   await expect(getTagInputLocator(tag_content, "Beryllium")).not.toBeChecked();
+});
+
+// Only select up to 6 elems.
+test("Tag Picker max_number", async ({ page }) => {
+  await page.goto("/test_tag_picker");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Tag Picker");
+
+  let btn_set_5 = page.locator("#set-5");
+  let tag_picker = page.locator("#tag_picker");
+  let tag_content = page.locator("#tag_picker-content");
+
+  await btn_set_5.click();
+
+  await tag_picker.click();
+
+  // Test mouse selection
+  await tag_content.locator("div").filter({ hasText: "hydrogen" }).click();
+  await tag_content.locator("div").filter({ hasText: "nitrogen" }).click();
+
+  await expect(getTagInputLocator(tag_content, "hydrogen")).toBeChecked();
+  await expect(getTagInputLocator(tag_content, "nitrogen")).not.toBeChecked();
 });
 
 // Check that the radio reactively updates its signal.
