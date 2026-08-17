@@ -148,9 +148,9 @@ test("Tag Picker max_number", async ({ page }) => {
   await expect(getTagInputLocator(tag_content, "nitrogen")).not.toBeChecked();
 
   // Try selecting 7th item via keyboard
-  tag_search.focus();
-  page.keyboard.press("nitrogen");
-  page.keyboard.press("Enter");
+  await tag_search.focus();
+  await tag_search.fill("nitrogen");
+  await page.keyboard.press("Enter");
 
   await expect(getTagInputLocator(tag_content, "nitrogen")).not.toBeChecked();
 });
