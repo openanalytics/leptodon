@@ -154,7 +154,7 @@ impl Display for CellType {
         match self {
             CellType::DayHeader(day) => write!(f, "dayheader-{day}"),
             CellType::MonthHeader(month) => write!(f, "monthheader-{}", month.number_from_month()),
-            CellType::Day(naive_date) => write!(f, "day-{}", naive_date.format("%F").to_string()),
+            CellType::Day(naive_date) => write!(f, "day-{}", naive_date.format("%F")),
             CellType::Filler => write!(f, "filler"),
         }
     }
