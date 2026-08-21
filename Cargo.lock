@@ -712,7 +712,7 @@ dependencies = [
 
 [[package]]
 name = "demo"
-version = "1.6.0"
+version = "1.7.0-pre"
 dependencies = [
  "anyhow",
  "axum",
@@ -1558,7 +1558,7 @@ checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 
 [[package]]
 name = "leptodon"
-version = "1.6.0"
+version = "1.7.0-pre"
 dependencies = [
  "axum",
  "axum-extra",
@@ -1591,7 +1591,7 @@ dependencies = [
 
 [[package]]
 name = "leptodon-proc-macros"
-version = "1.6.0"
+version = "1.7.0-pre"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1645,8 +1645,7 @@ dependencies = [
 [[package]]
 name = "leptos-struct-table"
 version = "0.19.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c07fea88b3965e9cb15aba0f3adbb4c72639ab8050a56bf2991482bdc947f40a"
+source = "git+https://github.com/ToxicMushroom/leptos-struct-table?rev=e86949fd7443c66b8b69f37c7ed1b045e673e527#e86949fd7443c66b8b69f37c7ed1b045e673e527"
 dependencies = [
  "chrono",
  "leptos",
@@ -2127,7 +2126,7 @@ checksum = "8c04f5d74368e4d0dfe06c45c8627c81bd7c317d52762d118fb9b3076f6420fd"
 
 [[package]]
 name = "overview"
-version = "1.6.0"
+version = "1.7.0-pre"
 dependencies = [
  "anyhow",
  "axum",
@@ -3533,9 +3532,9 @@ checksum = "b6c140620e7ffbb22c2dee59cafe6084a59b5ffc27a8859a5f0d494b5d52b6be"
 
 [[package]]
 name = "uuid"
-version = "1.24.0"
+version = "1.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf3923a6f5c4c6382e0b653c4117f48d631ea17f38ed86e2a828e6f7412f5239"
+checksum = "2cefc03fd367c0c6d4305de1b312cf00248c4114f4a0418ce6a6af769e3b0bd9"
 dependencies = [
  "getrandom 0.4.3",
  "js-sys",
