@@ -140,7 +140,7 @@ remote_version=$(
         grep -oP "$crate\s*=\s*\"\K[^\"]+"
 );
 
-if stringContain "dev" $local_version; then
+if stringContain "-" $local_version; then
     echo "Dev version '$local_version' detected.";
     echo "Skipping publishing of $crate.";
     exit 0;
