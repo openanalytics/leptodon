@@ -185,10 +185,11 @@ where
                 window(),
                 pointerdown,
                 move |event| {
-                    if let Some(el) = target.get_untracked() {
-                        if !event.composed_path().includes(&el, 0) && !should_ignore(&event) {
-                            listener(event.into());
-                        }
+                    if let Some(el) = target.get_untracked()
+                        && !event.composed_path().includes(&el, 0)
+                        && !should_ignore(&event)
+                    {
+                        listener(event.into());
                     }
                 },
                 UseEventListenerOptions::default()

@@ -28,6 +28,7 @@
             skopeo
             cargo-hack
             cargo-nextest
+            cargo-deny
             zstd
             licensure
           ];

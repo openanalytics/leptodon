@@ -712,7 +712,7 @@ dependencies = [
 
 [[package]]
 name = "demo"
-version = "0.0.0"
+version = "1.6.0-dev"
 dependencies = [
  "anyhow",
  "axum",
@@ -2126,7 +2126,7 @@ checksum = "8c04f5d74368e4d0dfe06c45c8627c81bd7c317d52762d118fb9b3076f6420fd"
 
 [[package]]
 name = "overview"
-version = "1.0.0"
+version = "1.6.0-dev"
 dependencies = [
  "anyhow",
  "axum",
