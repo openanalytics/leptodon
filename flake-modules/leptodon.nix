@@ -31,7 +31,7 @@ let
     doCheck = false;
   };
 
-  src = craneLib.cleanCargoSource ../../.;
+  src = craneLib.cleanCargoSource ../.;
 
   # Common arguments can be set here to avoid repeating them later
   commonArgs = {
@@ -75,16 +75,16 @@ let
   mergeWithCommonFileset =
     extraPaths:
     lib.fileset.toSource {
-      root = ../../.;
+      root = ../.;
       fileset = lib.fileset.unions (
         [
-          ../../Cargo.toml
-          ../../Cargo.lock
+          ../Cargo.toml
+          ../Cargo.lock
           # These need to be included since they're listed as workspace dependencies.
-          (craneLib.fileset.commonCargoSources ../../demo)
-          (craneLib.fileset.commonCargoSources ../../overview)
-          (craneLib.fileset.commonCargoSources ../../proc-macros)
-          (craneLib.fileset.commonCargoSources ../../leptodon)
+          (craneLib.fileset.commonCargoSources ../demo)
+          (craneLib.fileset.commonCargoSources ../overview)
+          (craneLib.fileset.commonCargoSources ../proc-macros)
+          (craneLib.fileset.commonCargoSources ../leptodon)
         ]
         ++ extraPaths
       );
@@ -157,9 +157,9 @@ let
 
   # Defines file sets relevant for specific projects.
   overviewFileSet = mergeWithCommonFileset [
-    ../../overview/style
-    ../../overview/assets
-    (craneLib.fileset.commonCargoSources ../../overview/codegen)
+    ../overview/style
+    ../overview/assets
+    (craneLib.fileset.commonCargoSources ../overview/codegen)
   ];
 
   # The overview is used for CI-tests, provided via the overview-site derivation.
@@ -178,9 +178,9 @@ let
   '';
 
   demoFileSet = mergeWithCommonFileset [
-    ../../demo/style
-    ../../demo/assets
-    (craneLib.fileset.commonCargoSources ../../demo/codegen)
+    ../demo/style
+    ../demo/assets
+    (craneLib.fileset.commonCargoSources ../demo/codegen)
   ];
 
   # The demo is hosted on leptodon.dev, provided via the docker image below, published via skopeo.
