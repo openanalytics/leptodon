@@ -1020,7 +1020,7 @@ checksum = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
 
 [[package]]
 name = "leptodon"
-version = "1.6.0-dev"
+version = "1.6.0"
 dependencies = [
  "base64 0.23.1",
  "cfg-if",
@@ -1047,7 +1047,7 @@ dependencies = [
 
 [[package]]
 name = "leptodon-proc-macros"
-version = "1.6.0-dev"
+version = "1.6.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1098,7 +1098,8 @@ dependencies = [
 [[package]]
 name = "leptos-struct-table"
 version = "0.19.0"
-source = "git+https://github.com/ToxicMushroom/leptos-struct-table?rev=e86949fd7443c66b8b69f37c7ed1b045e673e527#e86949fd7443c66b8b69f37c7ed1b045e673e527"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c07fea88b3965e9cb15aba0f3adbb4c72639ab8050a56bf2991482bdc947f40a"
 dependencies = [
  "chrono",
  "leptos",
