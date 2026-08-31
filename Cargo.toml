@@ -67,7 +67,7 @@ wasm-cookies = { version = "=0.2.1" }
 web-sys = { version = "=0.3.103" }
 reactive_stores = { version = "=0.4.3" }
 send_wrapper = { version = "0.6.0" }
-leptos-struct-table = { git = "https://github.com/ToxicMushroom/leptos-struct-table", rev = "e86949fd7443c66b8b69f37c7ed1b045e673e527", features = ["chrono"] }
+leptos-struct-table = { git = "https://github.com/ToxicMushroom/leptos-struct-table", branch = "master", features = ["chrono"] }
 leptos-use = { version = "0.19.0" }
 
 # Leptos additions
