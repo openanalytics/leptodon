@@ -448,60 +448,47 @@ impl<T> IsOption for Option<T> {
 
 // }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub struct OptionalU32(Option<u32>);
-impl From<u32> for OptionalU32 {
-    fn from(value: u32) -> Self {
-        Self(Some(value))
-    }
-}
-impl IsOption for OptionalU32 {
-    type Inner = u32;
-
-    fn into_option(self) -> Option<Self::Inner> {
-        self.0
-    }
-}
-impl ConstructSelfFromInner<u32> for OptionalU32 {
-    fn construct_self(inner: u32) -> Self {
-        OptionalU32(Some(inner))
-    }
-}
-
-impl Display for OptionalU32 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self.0 {
-            Some(number) => write!(f, "{number}"),
-            None => write!(f, "none"),
+macro_rules! define_optional {
+    ($T:ty, $name:ident) => {
+        #[derive(Debug, Clone, PartialEq, Eq, Default)]
+        pub struct $name(Option<$T>);
+        impl From<$T> for $name {
+            fn from(value: $T) -> Self {
+                Self(Some(value))
+            }
         }
-    }
-}
+        impl IsOption for $name {
+            type Inner = $T;
 
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub struct OptionalU8(Option<u8>);
-impl From<u8> for OptionalU8 {
-    fn from(value: u8) -> Self {
-        Self(Some(value))
-    }
-}
-impl IsOption for OptionalU8 {
-    type Inner = u8;
-
-    fn into_option(self) -> Option<Self::Inner> {
-        self.0
-    }
-}
-impl ConstructSelfFromInner<u8> for OptionalU8 {
-    fn construct_self(inner: u8) -> Self {
-        OptionalU8(Some(inner))
-    }
-}
-
-impl Display for OptionalU8 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self.0 {
-            Some(number) => write!(f, "{number}"),
-            None => write!(f, "none"),
+            fn into_option(self) -> Option<Self::Inner> {
+                self.0
+            }
         }
-    }
+        impl ConstructSelfFromInner<$T> for $name {
+            fn construct_self(inner: $T) -> Self {
+                Self(Some(inner))
+            }
+        }
+
+        impl Display for $name {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                match self.0 {
+                    Some(number) => write!(f, "{number}"),
+                    None => write!(f, "none"),
+                }
+            }
+        }
+    };
 }
+
+define_optional!(u8, OptionalU8);
+define_optional!(u16, OptionalU16);
+define_optional!(u32, OptionalU32);
+define_optional!(u64, OptionalU64);
+define_optional!(u128, OptionalU128);
+
+define_optional!(i8, OptionalI8);
+define_optional!(i16, OptionalI16);
+define_optional!(i32, OptionalI32);
+define_optional!(i64, OptionalI64);
+define_optional!(i128, OptionalI128);

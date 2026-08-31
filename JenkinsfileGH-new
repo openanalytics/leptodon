@@ -39,6 +39,8 @@ pipeline {
           echo "TAG is set to ${env.TAG}"
         }
         sh "chown -R root:root ."
+        sh "log-memusage &"
+        sh "log-diskusage &"
       }
     }
     stage('Attic login & watch') {
@@ -62,9 +64,15 @@ pipeline {
       parallel {
         stage('Unit Tests') {
           steps {
-            sh "nix build .#nextest -o nextest-result"
+            sh "nix build .#nextest -o nextest-result -L -v"
             sh "ls -Hal nextest-result"
             withChecks('Unit Tests') {
+              sh "cp /var/log/mem.log ${env.WORKSPACE}/mem-after-nextest.log"
+              archiveArtifacts artifacts: 'mem-after-nextest.log', fingerprint: true
+
+              sh "cp /var/log/disk.log ${env.WORKSPACE}/disk-after-nextest.log"
+              archiveArtifacts artifacts: 'disk-after-nextest.log', fingerprint: true
+
               sh "cp nextest-result/junit.xml ${env.WORKSPACE}"
               junit "junit.xml"
             }
@@ -75,7 +83,7 @@ pipeline {
             LEPTOS_SITE_ADDR="0.0.0.0:3000"
           }
           steps {
-            sh "nix build .#overview-site -o overview-site-result"
+            sh "nix build .#overview-site -o overview-site-result -L -v"
             sh """
               ./overview-site-result/bin/overview-site &
 
@@ -88,6 +96,12 @@ pipeline {
               kill \$! && echo "killed server";
             """
             withChecks('Integration Tests') {
+              sh "cp /var/log/mem.log ${env.WORKSPACE}/mem-after-end2end.log"
+              archiveArtifacts artifacts: 'mem-after-end2end.log', fingerprint: true
+
+              sh "cp /var/log/disk.log ${env.WORKSPACE}/disk-after-end2end.log"
+              archiveArtifacts artifacts: 'disk-after-end2end.log', fingerprint: true
+
               junit "overview/end2end/reports/test-report-e2e.xml"
             }
           }
@@ -95,7 +109,7 @@ pipeline {
         stage('Build Demo') {
           steps {
             sh """
-              nix build .#demo-site-image -o demo-image
+              nix build .#demo-site-image -o demo-image -L -v
             """
           }
         }
