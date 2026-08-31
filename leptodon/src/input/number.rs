@@ -450,6 +450,11 @@ impl<T> IsOption for Option<T> {
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct OptionalU32(Option<u32>);
+impl From<u32> for OptionalU32 {
+    fn from(value: u32) -> Self {
+        Self(Some(value))
+    }
+}
 impl IsOption for OptionalU32 {
     type Inner = u32;
 
@@ -474,6 +479,11 @@ impl Display for OptionalU32 {
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct OptionalU8(Option<u8>);
+impl From<u8> for OptionalU8 {
+    fn from(value: u8) -> Self {
+        Self(Some(value))
+    }
+}
 impl IsOption for OptionalU8 {
     type Inner = u8;
 
