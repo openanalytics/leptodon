@@ -67,7 +67,7 @@ wasm-cookies = { version = "=0.2.1" }
 web-sys = { version = "=0.3.103" }
 reactive_stores = { version = "=0.4.3" }
 send_wrapper = { version = "0.6.0" }
-leptos-struct-table = { git = "https://github.com/ToxicMushroom/leptos-struct-table", branch = "master", features = ["chrono"] }
+leptos-struct-table = { git = "https://github.com/ToxicMushroom/leptos-struct-table", rev = "e8fc29f3dc8e96711325aa974810583c9ed4967a", features = ["chrono"] }
 leptos-use = { version = "0.19.0" }
 
 # Leptos additions
@@ -81,8 +81,8 @@ thiserror = "2.0.20"
 
 # Time and date
 chrono = { version = "0.4.45", features = ["serde"] }
-dateparser = { version = "0.2.1" }                                                                           # TODO: Use new wasm feature to hopefully exclude regex and reduce wasm size.
-ical = { git = "https://github.com/lennart-k/caldata-rs", rev = "474caf58acbc8ebefd90e6b848741d7ed5136d65" }
+dateparser = { version = "0.2.1" }
+ical = { git = "https://github.com/lennart-k/caldata-rs", rev = "474caf58acbc8ebefd90e6b848741d7ed5136d65" } # Pinned due to serde removal
 rrule = { version = "0.14", features = ["serde"] }
 
 # String utils

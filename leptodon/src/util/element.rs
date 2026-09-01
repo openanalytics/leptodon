@@ -17,12 +17,11 @@
 // If not, see <http://www.apache.org/licenses/>
 use leptos::html::ElementType;
 use send_wrapper::SendWrapper;
-use std::ops::Deref;
 
 /// Allows using node_refs to generic elements, these elements need to be Send to be rendered by leptos.
 #[derive(Debug, Clone)]
 pub struct Element {
-    el: SendWrapper<web_sys::Element>,
+    el: Option<SendWrapper<web_sys::Element>>,
 }
 
 impl ElementType for Element {
@@ -41,17 +40,9 @@ impl ElementType for Element {
     }
 }
 
-impl Deref for Element {
-    type Target = web_sys::Element;
-
-    fn deref(&self) -> &Self::Target {
-        &self.el
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct HtmlElement {
-    el: SendWrapper<web_sys::HtmlElement>,
+    el: Option<SendWrapper<web_sys::HtmlElement>>,
 }
 
 impl ElementType for HtmlElement {
@@ -67,13 +58,5 @@ impl ElementType for HtmlElement {
 
     fn tag(&self) -> &str {
         ""
-    }
-}
-
-impl Deref for HtmlElement {
-    type Target = web_sys::HtmlElement;
-
-    fn deref(&self) -> &Self::Target {
-        &self.el
     }
 }
