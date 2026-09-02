@@ -52,7 +52,7 @@ axum-extra = { version = "0.12.6", features = ["cookie"] }
 
 # Middleware
 tower = { version = "0.5.3" }
-tower-http = { version = "0.7.0", features = ["fs"] }
+tower-http = { version = "0.7.1", features = ["fs"] }
 # Async
 tokio = { version = "1", features = ["rt-multi-thread"] }
 
@@ -67,7 +67,7 @@ wasm-cookies = { version = "=0.2.1" }
 web-sys = { version = "=0.3.103" }
 reactive_stores = { version = "=0.4.3" }
 send_wrapper = { version = "0.6.0" }
-leptos-struct-table = { git = "https://github.com/ToxicMushroom/leptos-struct-table", rev = "e8fc29f3dc8e96711325aa974810583c9ed4967a", features = ["chrono"] }
+leptos-struct-table = { version = "0.19.1", features = ["chrono"] }
 leptos-use = { version = "0.19.0" }
 
 # Leptos additions
@@ -81,7 +81,7 @@ thiserror = "2.0.20"
 
 # Time and date
 chrono = { version = "0.4.45", features = ["serde"] }
-dateparser = { version = "0.2.1" }
+dateparser = { version = "=0.2.1" }
 ical = { git = "https://github.com/lennart-k/caldata-rs", rev = "474caf58acbc8ebefd90e6b848741d7ed5136d65" } # Pinned due to serde removal
 rrule = { version = "0.14", features = ["serde"] }
 
@@ -97,7 +97,7 @@ nucleo-matcher = { version = "0.3.1" }         # Fuzzy search
 # Other utils
 itertools = "0.15.0"
 zxcvbn = { version = "3.1.1" }
-uuid = { version = "1.24.1" }
+uuid = { version = "1.26.0" }
 
 # Macros
 cfg-if = "1.0.4"
@@ -105,7 +105,7 @@ derive_more = { version = "2.1.1", features = ["display"] }
 serde = "1"
 num-traits = { version = "0.2.19" }
 # Build macros
-syn = { version = "2.0.119" }
+syn = { version = "=2.0.119" }
 quote = { version = "1.0.47" }
 proc-macro2 = { version = "1.0.107" }
 walkdir = { version = "2.5.0" }
