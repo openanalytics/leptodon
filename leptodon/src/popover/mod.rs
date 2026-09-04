@@ -1,3 +1,4 @@
+use std::ops::Deref;
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV
@@ -35,6 +36,7 @@ use leptos::{
     logging::{debug_log, debug_warn, error},
     tachys::{html::node_ref::node_ref, renderer::dom::CssStyleDeclaration},
 };
+use leptos_use::use_document;
 use leptos_use::{math::use_or, use_window_scroll};
 use web_sys::{DomRect, HtmlDivElement, MouseEvent};
 
@@ -91,6 +93,21 @@ where
 {
     let trigger_ref: NodeRef<Element> = NodeRef::new();
     let popover_ref: NodeRef<Div> = NodeRef::new();
+
+    // move popover to <body> so it is never affected by relative positioned containers
+    Effect::watch(
+        || (),
+        move |_, _, _| {
+            if let Some(popover) = popover_ref.get()
+                && let Some(body) = use_document().body()
+            {
+                body.append_child(popover.deref())
+                    .expect("failed to append child to body");
+            }
+        },
+        true,
+    );
+
     let arrow_ref: NodeRef<Div> = NodeRef::new();
 
     // Delays the opening of popover
