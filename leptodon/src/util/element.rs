@@ -40,6 +40,12 @@ impl ElementType for Element {
     }
 }
 
+impl Element {
+    pub fn get_inner(&self) -> Option<&web_sys::Element> {
+        self.el.as_deref()
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct HtmlElement {
     el: Option<SendWrapper<web_sys::HtmlElement>>,

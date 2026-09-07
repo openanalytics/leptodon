@@ -18,6 +18,10 @@
 use std::ops::RangeInclusive;
 
 use leptodon::button::Button;
+use leptodon::button::ButtonAppearance;
+use leptodon::button::ModalButton;
+use leptodon::button::ModalButtonChildren;
+use leptodon::modal::ModalFooterChildren;
 use leptodon::tag_picker::TagPicker;
 use leptos::prelude::CollectView;
 use leptos::prelude::ElementChild;
@@ -39,6 +43,7 @@ pub fn TestTagPicker() -> impl IntoView {
             .map(|(_, e)| e)
             .collect::<Vec<Element>>()
     };
+    let modal_visible = RwSignal::new(false);
     let elements = RwSignal::new(Element::iter().collect::<Vec<_>>());
     let selected = RwSignal::new(vec![]);
     view! {
@@ -63,6 +68,26 @@ pub fn TestTagPicker() -> impl IntoView {
             max_number=6
             tags=elements
         />
+        <ModalButton modal_title="Test tag_picker modal" modal_visible>
+            <ModalButtonChildren slot:button_children>"Toggle Modal"</ModalButtonChildren>
+            <ModalFooterChildren slot:modal_footer>
+                <Button
+                    appearance=ButtonAppearance::Primary
+                    on_click=move |_| {
+                        modal_visible.set(false);
+                    }
+                >Modal action 1</Button>
+            </ModalFooterChildren>
+
+            <TagPicker
+                id="tag_picker2"
+                class="mt-[150vh]"
+                selected=selected
+                max_number=6
+                tags=elements
+            />
+        </ModalButton>
+
         <Button id="set-5" on_click=move |_e| {
             selected.set(range_to_tags(1..=5));
         }>"Set 1..=5 as Selected"</Button>

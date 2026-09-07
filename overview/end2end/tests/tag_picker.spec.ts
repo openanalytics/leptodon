@@ -183,6 +183,36 @@ test("Tag Picker keyboard-navigation", async ({ page }) => {
   await expect(tag_trigger).toBeFocused();
 });
 
+test("Tag Picker dropdown opens adjacent to the trigger, inside a modal", async ({
+  page,
+}) => {
+  await page.goto("/test_tag_picker");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Tag Picker");
+
+  // Open modal
+  await page.getByRole("button", { name: "Toggle Modal" }).click();
+
+  // Open tag_picker2
+  await page.locator("#tag_picker2").click();
+
+  let triggerBox = await page.locator("#tag_picker2-trigger").boundingBox();
+  let popoverBox = await page.locator("#tag_picker2-trigger + div").boundingBox();
+  if (!triggerBox || !popoverBox) {
+    throw new Error("Could not get bounding boxes");
+  }
+
+  // Check that bottom side of popover aligns with top side of trigger.
+  const y_gap = Math.abs(popoverBox.y + popoverBox.height - triggerBox.y);
+
+  // Left sides should align
+  const x_shift = Math.abs(popoverBox.x - triggerBox.x);
+
+  expect(y_gap).toBeLessThanOrEqual(5);
+  expect(x_shift).toBeLessThanOrEqual(5);
+});
+
 // LLM QWEN3:30b generated test, only took a minimal look at it.
 test("Tag Picker dropdown opens without scrolling the page", async ({
   page,
