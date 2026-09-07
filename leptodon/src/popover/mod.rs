@@ -96,10 +96,10 @@ where
 
     // move popover to <body> so it is never affected by relative positioned containers
     Effect::watch(
-        || (),
-        move |_, _, _| {
+        move || popover_ref.get(),
+        move |popover, _, _| {
             debug_log!("calling move popover handler");
-            if let Some(popover) = popover_ref.get()
+            if let Some(popover) = popover
                 && let Some(body) = use_document().body()
             {
                 debug_log!("adding popover to body");
