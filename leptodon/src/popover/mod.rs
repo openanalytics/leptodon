@@ -98,9 +98,12 @@ where
     Effect::watch(
         || (),
         move |_, _, _| {
+            debug_log!("calling move popover handler");
             if let Some(popover) = popover_ref.get()
                 && let Some(body) = use_document().body()
             {
+                debug_log!("adding popover to body");
+
                 body.append_child(popover.deref())
                     .expect("failed to append child to body");
             }
