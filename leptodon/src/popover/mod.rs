@@ -35,6 +35,7 @@ use leptos::{
     logging::{debug_log, debug_warn, error},
     tachys::{html::node_ref::node_ref, renderer::dom::CssStyleDeclaration},
 };
+use leptos_use::use_document;
 use leptos_use::{math::use_or, use_window_scroll};
 use web_sys::{DomRect, HtmlDivElement, MouseEvent};
 
@@ -91,6 +92,7 @@ where
 {
     let trigger_ref: NodeRef<Element> = NodeRef::new();
     let popover_ref: NodeRef<Div> = NodeRef::new();
+
     let arrow_ref: NodeRef<Div> = NodeRef::new();
 
     // Delays the opening of popover
@@ -146,7 +148,7 @@ where
             false,
         );
     }
-
+    let doc = use_document();
     Effect::new(move || {
         let popover_visible = popover_visible.get();
 
@@ -157,11 +159,28 @@ where
         // Skip recalculate when invisible.
         if let Some(popover) = popover_ref.get()
             && let Some(trigger) = trigger_ref.get()
+            && let Some(doc) = doc.document_element()
             && popover_visible
         {
+            let first_rel_parent = find_first_relative_parent(popover.clone().into());
+            let first_rel_parent = if let Some(first_rel_parent) = first_rel_parent {
+                debug_log!(
+                    "found first relative parent: {:?}",
+                    web_sys::Node::from(first_rel_parent.clone())
+                );
+                first_rel_parent
+            } else {
+                doc.clone()
+            };
             debug_log!("recalculating style");
-            let popover_placement =
-                find_popover_abs_position(preferred_pos, &popover, &trigger, show_arrow);
+            let popover_placement = find_popover_abs_position(
+                &doc,
+                &first_rel_parent,
+                preferred_pos,
+                &popover,
+                &trigger,
+                show_arrow,
+            );
             if let Some(popover_placement) = popover_placement
                 && let HorizontalOffset::Left(x) = popover_placement.abs_hoffset
                 && let VerticalOffset::Top(y) = popover_placement.abs_voffset
@@ -169,7 +188,13 @@ where
                 let popover_width = popover_placement.width;
                 let popover_height = popover_placement.height;
                 if let Some(arrow) = arrow_ref.get() {
-                    set_arrow_position(arrow, &popover, (x, y), popover_placement.chosen_anchor);
+                    set_arrow_position(
+                        &first_rel_parent,
+                        arrow,
+                        &popover,
+                        (x, y),
+                        popover_placement.chosen_anchor,
+                    );
                 }
 
                 debug_log!("Rel_pos: {popover_placement:?}");
@@ -324,6 +349,27 @@ where
     }
 }
 
+/// Traverses up the DOM tree to find the nearest ancestor with `position: relative`.
+fn find_first_relative_parent(mut element: web_sys::Element) -> Option<web_sys::Element> {
+    let window = web_sys::window()?;
+
+    // Loop upward through parent elements
+    while let Some(parent) = element.parent_element() {
+        // Get computed styles for the current parent
+        let style = window.get_computed_style(&parent).ok()??;
+        let position = style.get_property_value("position").ok()?;
+
+        if position == "relative" {
+            return Some(parent);
+        }
+
+        // Move up to the next ancestor
+        element = parent;
+    }
+
+    None
+}
+
 /// To test if the mouse is still on the element, like when hovering a scrollbar.
 fn element_contains_pointer(popover_ref: &HtmlDivElement, e: MouseEvent) -> bool {
     let rect = (*popover_ref).get_bounding_client_rect();
@@ -355,17 +401,12 @@ fn set_style_property(css_style: &CssStyleDeclaration, property: &str, value: St
 }
 
 /// Gets bounding box of [e] wrt page origin 0,0 in the top left.
-fn get_true_bb(e: &web_sys::Element) -> DomRect {
+fn get_rel_bb(relative_to: &web_sys::Element, e: &web_sys::Element) -> DomRect {
+    let relative_to_rect = relative_to.get_bounding_client_rect();
     let rect = e.get_bounding_client_rect();
-    let Some(window) = web_sys::window() else {
-        return rect;
-    };
-    if let Ok(s) = window.scroll_x() {
-        rect.set_x(rect.x() + s);
-    }
-    if let Ok(s) = window.scroll_y() {
-        rect.set_y(rect.y() + s);
-    }
+
+    rect.set_x(rect.x() - relative_to_rect.x());
+    rect.set_y(rect.y() - relative_to_rect.y());
     rect
 }
 
@@ -395,6 +436,7 @@ struct RelativePosition {
 ///  - **popover_coords** x and y position of the popover.
 ///  - **position** How the popover is positioned relative to it's trigger element. The arrow is placed at PopoverPosition::mirrored(*position*).
 fn set_arrow_position(
+    rel_parent: &web_sys::Element,
     arrow_ref: HtmlDivElement,
     popover_ref: &web_sys::Element,
     popover_coords: (u32, u32),
@@ -404,7 +446,7 @@ fn set_arrow_position(
     let base_x = base_x as f64;
     let base_y = base_y as f64;
     let arrow_style = (*arrow_ref).style();
-    let popover_rect = get_true_bb(popover_ref);
+    let popover_rect = get_rel_bb(rel_parent, popover_ref);
     let arrow_size = 12.0;
     let corner_offset = 12.0;
     let arrow_middle = arrow_size / 2.0;
@@ -480,26 +522,31 @@ struct PopoverPlacement {
 }
 
 /// Finds an ideal collision-free area next to [trigger] to place [popover].
-/// returns the chosen position, and absolute coordinates [popover] needs to be placed at for this position.
+/// returns the chosen position, and parent-rel coordinates [popover] needs to be placed at for this position.
 fn find_popover_abs_position(
+    doc_root: &web_sys::Element,
+    rel_parent: &web_sys::Element,
     preferred_position: PopoverAnchor,
     popover: &web_sys::Element,
     trigger: &web_sys::Element,
     show_arrow: bool,
 ) -> Option<PopoverPlacement> {
     let fallback = None;
-    let popover_rect = get_true_bb(popover);
-    let trigger_rect = get_true_bb(trigger);
+    let popover_rect = get_rel_bb(rel_parent, popover);
+    let abs_trigger_rect = get_rel_bb(doc_root, trigger);
+    let trigger_rect = get_rel_bb(rel_parent, trigger);
 
     // Popover trigger element, we normally display next to it.
-    let trigger_x = trigger_rect.x();
+    let abs_trigger_x = abs_trigger_rect.x();
+    let abs_trigger_y = abs_trigger_rect.y();
     let trigger_y = trigger_rect.y();
     let trigger_width = trigger_rect.width();
     let trigger_height = trigger_rect.height();
 
     let popover_width = popover_rect.width();
     let popover_height = popover_rect.height();
-    debug_log!("trigger_x: {trigger_x:?}");
+    debug_log!("abs_trigger_x: {abs_trigger_x:?}");
+    debug_log!("abs_trigger_y: {abs_trigger_y:?}");
     debug_log!("trigger_y: {trigger_y:?}");
     debug_log!("trigger_width: {trigger_width:?}");
     debug_log!("trigger_height: {trigger_height:?}");
@@ -530,18 +577,20 @@ fn find_popover_abs_position(
     };
     let window_vertical_max = window_vertical_min + window_height;
 
-    let top_top_is_open = window_vertical_min < trigger_y - (popover_height + arrow_bump);
+    let top_top_is_open = window_vertical_min < abs_trigger_y - (popover_height + arrow_bump);
     let bot_bot_is_open =
-        window_vertical_max > trigger_y + trigger_height + (popover_height + arrow_bump);
-    let left_left_is_open = window_horizontal_min < trigger_x - (popover_width + arrow_bump);
+        window_vertical_max > abs_trigger_y + trigger_height + (popover_height + arrow_bump);
+    let left_left_is_open = window_horizontal_min < abs_trigger_x - (popover_width + arrow_bump);
     debug_log!("Left is open: {left_left_is_open}");
     let right_right_is_open =
-        window_horizontal_max > trigger_x + trigger_width + (popover_width + arrow_bump);
+        window_horizontal_max > abs_trigger_x + trigger_width + (popover_width + arrow_bump);
 
-    let horizontal_start_is_open = window_horizontal_max > trigger_x + popover_width;
-    let horizontal_end_is_open = window_horizontal_min < trigger_x + trigger_width - popover_width;
-    let vertical_start_is_open = window_vertical_max > trigger_y + popover_height;
-    let vertical_end_is_open = window_vertical_min < trigger_y + trigger_height - popover_height;
+    let horizontal_start_is_open = window_horizontal_max > abs_trigger_x + popover_width;
+    let horizontal_end_is_open =
+        window_horizontal_min < abs_trigger_x + trigger_width - popover_width;
+    let vertical_start_is_open = window_vertical_max > abs_trigger_y + popover_height;
+    let vertical_end_is_open =
+        window_vertical_min < abs_trigger_y + trigger_height - popover_height;
 
     // * Popovers should not be wider than the page_width.
     // * Assumes the trigger is not half-onscreen.
