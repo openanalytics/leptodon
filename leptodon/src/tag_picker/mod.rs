@@ -16,6 +16,7 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use leptodon_proc_macros::generate_docs;
+use leptos::context::Provider;
 use leptos::ev::EventCallback;
 use leptos::html::Div;
 use leptos::logging::debug_log;
@@ -66,6 +67,7 @@ use web_sys::ScrollLogicalPosition;
 use crate::checkbox::Checkbox;
 use crate::class_list;
 use crate::class_list::reactive_class::MaybeReactiveClass;
+use crate::form_input::FormInputContext;
 use crate::icon::Icon;
 use crate::input::PLACEHOLDER_TEXT_CLASS;
 use crate::input::TextInput;
@@ -120,6 +122,13 @@ where
     let inside_selected = RwSignal::new(selected.get_untracked());
     // Index of which element the select box is focusing, defaults to 0/first element, can be moved via arrowUp, arrowDown.
     let focus_ith = RwSignal::new(0);
+
+    // Disable form-item context for inputs that dont relate to the form-submission.
+    let disable_required_context = FormInputContext {
+        required: false,
+        label: MaybeProp::default(),
+        feedback: RwSignal::new(Option::<String>::None),
+    };
 
     // When the outside tags change, update selected tags as some may have become non-options.
     Effect::watch(
@@ -321,40 +330,42 @@ where
             </PopoverTrigger>
             <PopoverHeader slot>
                 // Search Inputbox
-                <TextInput
-                    id=id.get().map(|id| format!("{id}-search"))
-                    class="mb-2"
-                    placeholder="Search..."
-                    value=search_filter
-                    input_ref=search_ref
-                    on:keydown=move |key: KeyboardEvent| {
-                        debug_log!("keypress in popover-search: {}", key.code().as_str());
-                        if key.code() == "Escape" || key.code() == "Tab" {
-                            close_popover.notify();
-                            let Some(tag_picker_ref): Option<HtmlDivElement> = tag_picker_ref.get() else {
-                                error!("tag_picker_ref is None");
-                                return;
-                            };
-                            tag_picker_ref.focus().expect("Tag_picker should be focus-able.");
-                        } else if key.code() == "Enter" {
-                            let Some(tag) = tags_grouped.get().get(focus_ith.get()).cloned() else {
-                                return;
-                            };
-                            let checkboxes = checkboxes.get();
-                            let Some(checked) = checkboxes.get(&tag) else {
-                                return ;
-                            };
+                <Provider value=disable_required_context>
+                    <TextInput
+                        id=id.get().map(|id| format!("{id}-search"))
+                        class="mb-2"
+                        placeholder="Search..."
+                        value=search_filter
+                        input_ref=search_ref
+                        on:keydown=move |key: KeyboardEvent| {
+                            debug_log!("keypress in popover-search: {}", key.code().as_str());
+                            if key.code() == "Escape" || key.code() == "Tab" {
+                                close_popover.notify();
+                                let Some(tag_picker_ref): Option<HtmlDivElement> = tag_picker_ref.get() else {
+                                    error!("tag_picker_ref is None");
+                                    return;
+                                };
+                                tag_picker_ref.focus().expect("Tag_picker should be focus-able.");
+                            } else if key.code() == "Enter" {
+                                let Some(tag) = tags_grouped.get().get(focus_ith.get()).cloned() else {
+                                    return;
+                                };
+                                let checkboxes = checkboxes.get();
+                                let Some(checked) = checkboxes.get(&tag) else {
+                                    return ;
+                                };
 
-                            toggle_tag(inside_selected, tag, *checked, max_number).invoke(());
-                        } else if key.code() == "ArrowUp" {
-                            focus_ith.update(|old_value| *old_value = old_value.saturating_sub(1));
-                        } else if key.code() == "ArrowDown" {
-                            focus_ith.update(|old_value| *old_value = old_value.saturating_add(1));
+                                toggle_tag(inside_selected, tag, *checked, max_number).invoke(());
+                            } else if key.code() == "ArrowUp" {
+                                focus_ith.update(|old_value| *old_value = old_value.saturating_sub(1));
+                            } else if key.code() == "ArrowDown" {
+                                focus_ith.update(|old_value| *old_value = old_value.saturating_add(1));
+                            }
                         }
-                    }
-                    {..}
-                    role="combobox" // Makes vimium like plugins pass special keys through
-                />
+                        {..}
+                        role="combobox" // Makes vimium like plugins pass special keys through
+                    />
+                </Provider>
             </PopoverHeader>
 
             // Popover Contents VV
