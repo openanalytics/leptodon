@@ -17,11 +17,10 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 
-use cfg_if::cfg_if;
 use leptos_use::core::{ElementsMaybeSignal, IntoElementMaybeSignal, IntoElementsMaybeSignal};
 
-cfg_if! {
-    if #[cfg(not(feature = "ssr"))] {
+cfg_select! {
+    not(feature = "ssr") => {
     // if #[cfg(feature = "csr")] {
         use leptos::leptos_dom::helpers::document;
         use leptos::leptos_dom::helpers::event_target;
@@ -37,6 +36,7 @@ cfg_if! {
         };
         use web_sys::wasm_bindgen::JsCast;
     }
+    _ => {}
 }
 
 #[cfg(not(feature = "ssr"))]

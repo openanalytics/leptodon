@@ -13,7 +13,9 @@ flake-utils.lib.eachSystemPassThrough linux-systems (
     overrides = (fromTOML (builtins.readFile (self + "/rust-toolchain.toml")));
   in
   {
-    ${system}.default = pkgs.mkShell rec {
+    ${system}.default = pkgs.mkShell.override {
+      stdenv = pkgs.stdenvAdapters.useMoldLinker pkgs.clangStdenv;
+    } rec {
       nativeBuildInputs = [ pkgs.pkg-config ];
       buildInputs = with pkgs; [
         clang

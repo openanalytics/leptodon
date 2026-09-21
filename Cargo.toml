@@ -97,10 +97,9 @@ nucleo-matcher = { version = "0.3.1" }         # Fuzzy search
 # Other utils
 itertools = "0.15.0"
 zxcvbn = { version = "3.1.1" }
-uuid = { version = "1.26.0" }
+uuid = { version = "1.26.1" }
 
 # Macros
-cfg-if = "1.0.4"
 derive_more = { version = "2.1.1", features = ["display"] }
 serde = "1"
 num-traits = { version = "0.2.19" }
