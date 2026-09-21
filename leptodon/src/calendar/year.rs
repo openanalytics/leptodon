@@ -356,13 +356,21 @@ pub fn YearCalendarNavbar(
             <span>
                 <ButtonGroup>
                     <First slot:first>
-                        <Button icon=PreviousIcon() on_click=move |_|
-                            current_year.update(|current_year| *current_year -= 1)
+                        <Button
+                            icon=PreviousIcon()
+                            on_click=move |_| {
+                                current_year.update(|current_year| *current_year -= 1)
+                            }
+                            attr:data-testid="prev-year"
                         />
                     </First>
                     <Last slot:last>
-                        <Button icon=NextIcon() on_click=move |_|
-                            current_year.update(|current_year| *current_year += 1)
+                        <Button
+                            icon=NextIcon()
+                            on_click=move |_| {
+                                current_year.update(|current_year| *current_year += 1)
+                            }
+                            attr:data-testid="next-year"
                         />
                     </Last>
                 </ButtonGroup>
