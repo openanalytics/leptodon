@@ -14,7 +14,13 @@ let
   pkgs = nixpkgs.legacyPackages.${system};
   lib = pkgs.lib;
 
-  craneLib = crane.mkLib pkgs;
+  craneLib = (crane.mkLib pkgs).overrideScope (final: prev: {
+    # This is a function which is provided an instance of `pkgs`
+    # (which may be tailored for cross compilation, DO NOT reuse
+    # the `pkgs` from above`) and returns the `stdenv` instance
+    # that should be used across all derivations.
+    stdenvSelector = p: p.stdenvAdapters.useMoldLinker p.clangStdenv;
+  });
 
   # Build custom cargo-leptos
   cargo-leptos = craneLib.buildPackage {
