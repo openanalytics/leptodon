@@ -21,7 +21,7 @@
 
           buildInputs = with pkgs; [
             jq
-            nodejs
+            nodejs_26
           ];
 
           PLAYWRIGHT_BROWSERS_PATH = "${pkgs-playwright.playwright.browsers}";

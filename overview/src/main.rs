@@ -17,11 +17,9 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 
-use cfg_if::cfg_if;
-
 // boilerplate to run in different modes
-cfg_if! {
-    if #[cfg(feature = "ssr")] {
+cfg_select! {
+    feature = "ssr" => {
 
         #[tokio::main]
         async fn main() {
@@ -56,7 +54,8 @@ cfg_if! {
                 .await
                 .unwrap();
         }
-    } else {
+    }
+    _ => {
         pub fn main() {
             // no client-side main function
             // unless we want this to work with e.g., Trunk for pure client-side testing

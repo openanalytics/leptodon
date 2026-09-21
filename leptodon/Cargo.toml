@@ -39,7 +39,6 @@ web-sys = { workspace = true, features = [
 
 axum = { workspace = true, optional = true }
 axum-extra = { workspace = true, optional = true, features = [ "cookie" ] }
-cfg-if.workspace = true
 rstml-to-string-macro = { workspace = true }
 serde = { workspace = true, features = [ "derive" ] }
 num-traits = { workspace = true }

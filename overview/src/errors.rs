@@ -30,7 +30,6 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use cfg_if::cfg_if;
 use derive_more::Display;
 use http::status::StatusCode;
 use leptos::{
@@ -91,14 +90,15 @@ pub fn ErrorTemplate(
 
     // Only the response code for the first error is actually sent from the server
     // this may be customized by the specific application
-    cfg_if! {
-      if #[cfg(feature="ssr")]{
+    cfg_select! {
+      feature = "ssr" => {
         use leptos::context::use_context;
         let response = use_context::<ResponseOptions>();
         if let Some(response) = response{
           response.set_status(errors[0].status_code());
         }
       }
+      _ => {}
     }
 
     view! {
