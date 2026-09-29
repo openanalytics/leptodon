@@ -42,9 +42,9 @@ cfg_select! {
                     let leptos_options = leptos_options.clone();
                     move || overview::app::shell(leptos_options.clone())
                 })
+                .layer(CompressionLayer::new())
                 .fallback(leptos_axum::file_and_error_handler(shell))
-                .with_state(leptos_options)
-                .layer(CompressionLayer::new());
+                .with_state(leptos_options);
 
             // run our app with hyper
             // `axum::Server` is a re-export of `hyper::Server`

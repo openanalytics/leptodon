@@ -60,6 +60,8 @@ async fn get_static_file(uri: Uri, root: &str) -> Result<Response<Body>, (Status
     // This path is relative to the cargo root
     log::info!("serving from dir: {root}");
     ServeDir::new(root)
+        .precompressed_br()
+        .precompressed_gzip()
         .oneshot(req)
         .await
         .map(|res| res.into_response())
