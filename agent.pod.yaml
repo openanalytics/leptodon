@@ -18,7 +18,7 @@ spec:
       image: registry.openanalytics.eu/openanalytics/leptodon-build
       resources:
         limits:
-          memory: "12Gi"
+          memory: "20Gi"
           ephemeral-storage: "30Gi"
           cpu: 7
         requests:
