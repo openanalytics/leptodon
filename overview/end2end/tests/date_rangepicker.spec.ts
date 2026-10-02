@@ -110,24 +110,21 @@ test("Test date-picker functionality", async ({ page }) => {
     .toLocaleString("en-US", { year: "numeric" })
     .replace(/..$/, "90");
   await page.locator("#date_range_picker-left").click();
-  await page.getByRole("button", { name: month }).click();
-  await page.getByRole("button", { name: year }).click();
-  await page.getByRole("button", { name: `- ${decenium}` }).click();
-  await page.getByRole("button", { name: `- ${millenium}` }).click();
-  await page
+  let popup = page.locator("#date_range_picker-left-popup");
+  await popup.getByRole("button", { name: month }).click();
+  await popup.getByRole("button", { name: year }).click();
+  await popup.getByRole("button", { name: `- ${decenium}` }).click();
+  await popup.getByRole("button", { name: `- ${millenium}` }).click();
+  await popup
     .locator(
-      "#date_range_picker-left-popup > .inline-block > .datepicker-header > .flex > button:nth-child(3)",
+      ".inline-block > .datepicker-header > .flex > button:nth-child(3)",
     )
     .first()
     .click();
-  await page.getByText("2130").click();
-  await page.getByText("2135").click();
-  await page.getByText("Oct").click();
-  await page
-    .locator(
-      "#date_range_picker-left-popup",
-    )
-    .first()
+  await popup.getByText("2130").click();
+  await popup.getByText("2135").click();
+  await popup.getByText("Oct").click();
+  await popup
     .getByText("1", { exact: true })
     .first()
     .click();
