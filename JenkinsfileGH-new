@@ -83,7 +83,7 @@ pipeline {
             LEPTOS_SITE_ADDR="0.0.0.0:3000"
           }
           steps {
-            sh "nix build .#overview-site -o overview-site-result -L -v"
+            sh "nix build .#overviewSite -o overview-site-result -L -v"
             sh """
               ./overview-site-result/bin/overview-site &
 
@@ -109,7 +109,7 @@ pipeline {
         stage('Build Demo') {
           steps {
             sh """
-              nix build .#demo-site-image -o demo-image -L -v
+              nix build .#demoSiteImage -o demo-image -L -v
             """
           }
         }

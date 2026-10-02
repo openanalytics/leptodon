@@ -224,6 +224,7 @@ let
     // {
       RUST_BACKTRACE = "full";
       inherit cargoArtifacts;
+      doCheck = true;
       partitions = 1;
       partitionType = "count";
       cargoNextestPartitionsExtraArgs = "--no-tests=pass";
