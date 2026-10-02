@@ -718,7 +718,7 @@ dependencies = [
 
 [[package]]
 name = "demo"
-version = "1.7.0"
+version = "1.8.0-pre"
 dependencies = [
  "anyhow",
  "axum",
@@ -1571,7 +1571,7 @@ checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 
 [[package]]
 name = "leptodon"
-version = "1.7.0"
+version = "1.8.0-pre"
 dependencies = [
  "axum",
  "axum-extra",
@@ -1603,7 +1603,7 @@ dependencies = [
 
 [[package]]
 name = "leptodon-proc-macros"
-version = "1.7.0"
+version = "1.8.0-pre"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2142,7 +2142,7 @@ checksum = "8c04f5d74368e4d0dfe06c45c8627c81bd7c317d52762d118fb9b3076f6420fd"
 
 [[package]]
 name = "overview"
-version = "1.7.0"
+version = "1.8.0-pre"
 dependencies = [
  "anyhow",
  "axum",

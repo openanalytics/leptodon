@@ -139,7 +139,7 @@ pipeline {
     }
     stage('Packaging') {
       when {
-        expression { env.VERSION && !env.VERSION.contains("dev") }
+        expression { env.VERSION && !env.VERSION.contains("-") }
       }
       stages {
         stage('Package leptodon-proc-macros') {
