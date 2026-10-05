@@ -184,7 +184,7 @@ pub fn CopyButton(
             .clipboard()
             .write_text(&to_copy.get());
         btn_text.set("Copied!");
-        set_timeout(
+        let _ = set_timeout(
             move || {
                 btn_text.set("Copy");
             },
