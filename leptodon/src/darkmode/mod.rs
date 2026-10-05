@@ -149,7 +149,7 @@ impl FromStr for Theme {
 
 const THEME_COOKIE: &str = "theme";
 
-#[server(UpdateTheme, "/api")]
+#[server(UpdateTheme, endpoint = "/update_theme")]
 pub async fn update_theme(new_theme: Theme) -> Result<Theme, ServerFnError> {
     use axum::http::{HeaderMap, HeaderValue, header::SET_COOKIE};
     use leptos::context::use_context;
