@@ -1,7 +1,7 @@
 [workspace.metadata.crane]
 name = "Leptodon"
 [workspace.package]
-version = "1.8.0-pre"                                    # version-sync-⤴️ (marker for cargo-make)
+version = "2.0.0-pre"                                    # version-sync-⤴️ (marker for cargo-make)
 edition = "2024"
 license = "Apache-2.0"
 homepage = "https://leptodon.dev"
@@ -41,8 +41,8 @@ codegen-units = 1
 panic = "abort"
 
 [workspace.dependencies]
-leptodon = { path = "./leptodon", version = "=1.8.0-pre" }                # version-sync-⤴️
-leptodon-proc-macros = { path = "./proc-macros", version = "=1.8.0-pre" } # version-sync-⤴️
+leptodon = { path = "./leptodon", version = "=2.0.0-pre" }                # version-sync-⤴️
+leptodon-proc-macros = { path = "./proc-macros", version = "=2.0.0-pre" } # version-sync-⤴️
 
 # Protocol
 http = "1"
@@ -57,18 +57,20 @@ tower-http = { version = "0.7.1", features = ["fs"] }
 tokio = { version = "1", features = ["rt-multi-thread"] }
 
 # Leptos core
-leptos = { version = "0.8.21", features = ["rkyv", "tracing"] }
-leptos_axum = { version = "0.8.10" }
-leptos_meta = { version = "0.8.7" }
-leptos_router = { version = "0.8.16" }
+leptos = { version = "0.9.0-beta2", features = ["rkyv", "tracing"] }
+leptos_axum = { version = "0.9.0-beta2" }
+leptos_meta = { version = "0.9.0-beta2" }
+leptos_router = { version = "0.9.0-beta2" }
 wasm-bindgen = { version = "=0.2.127" }
 wasm-streams = { version = "=0.6.0" }
 wasm-cookies = { version = "=0.2.1" }
 web-sys = { version = "=0.3.104" }
 reactive_stores = { version = "=0.4.4" }
 send_wrapper = { version = "0.6.0" }
-leptos-struct-table = { version = "0.19.1", features = ["chrono"] }
-leptos-use = { version = "0.19.2" }
+leptos-struct-table = { git = "https://github.com/ToxicMushroom/leptos-struct-table.git", branch = "leptos-0.9", features = [
+    "chrono",
+] }
+leptos-use = { git = "https://github.com/EvanCarroll/leptos-use.git", branch = "leptos-0.9-resync" }
 
 # Leptos additions
 # Log and error
@@ -97,7 +99,7 @@ nucleo-matcher = { version = "0.3.1" }         # Fuzzy search
 # Other utils
 itertools = "0.15.0"
 zxcvbn = { version = "3.1.1" }
-uuid = { version = "1.26.1" }
+uuid = { version = "1.27" }
 
 # Macros
 derive_more = { version = "2.1.1", features = ["display"] }

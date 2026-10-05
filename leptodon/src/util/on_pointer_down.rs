@@ -208,11 +208,11 @@ where
                 move |event| {
                     use std::time::Duration;
 
-                    use leptos::leptos_dom::helpers::set_timeout_with_handle;
+                    use leptos::leptos_dom::helpers::set_timeout;
 
                     let mut handler = handler.clone();
 
-                    let _ = set_timeout_with_handle(
+                    let _ = set_timeout(
                         move || {
                             if let Some(el) = target.get_untracked()
                                 && let Some(active_element) = document().active_element()
