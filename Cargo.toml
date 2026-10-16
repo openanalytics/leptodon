@@ -57,15 +57,15 @@ tower-http = { version = "0.7.1", features = ["fs"] }
 tokio = { version = "1", features = ["rt-multi-thread"] }
 
 # Leptos core
-leptos = { version = "0.9.0-beta2", features = ["rkyv", "tracing"] }
-leptos_axum = { version = "0.9.0-beta2" }
-leptos_meta = { version = "0.9.0-beta2" }
-leptos_router = { version = "0.9.0-beta2" }
-wasm-bindgen = { version = "=0.2.127" }
-wasm-streams = { version = "=0.6.0" }
+leptos = { version = "0.9.0-rc0", features = ["rkyv", "tracing"] }
+leptos_axum = { version = "0.9.0-rc0" }
+leptos_meta = { version = "0.9.0-rc0" }
+leptos_router = { version = "0.9.0-rc0" }
+wasm-bindgen = { version = "=0.2.129" }
+wasm-streams = { version = "=0.7.0" }
 wasm-cookies = { version = "=0.2.1" }
-web-sys = { version = "=0.3.104" }
-reactive_stores = { version = "=0.4.4" }
+web-sys = { version = "=0.3.106" }
+reactive_stores = { version = "0.5.0-rc0" }
 send_wrapper = { version = "0.6.0" }
 leptos-struct-table = { git = "https://github.com/ToxicMushroom/leptos-struct-table.git", branch = "leptos-0.9", features = [
     "chrono",
@@ -99,14 +99,14 @@ nucleo-matcher = { version = "0.3.1" }         # Fuzzy search
 # Other utils
 itertools = "0.15.0"
 zxcvbn = { version = "3.1.1" }
-uuid = { version = "1.27" }
+uuid = { version = "1.28" }
 
 # Macros
 derive_more = { version = "2.1.1", features = ["display"] }
 serde = "1"
 num-traits = { version = "0.2.19" }
 # Build macros
-syn = { version = "=2.0.119" }
+syn = { version = "3.0.9" }
 quote = { version = "1.0.47" }
 proc-macro2 = { version = "1.0.107" }
 walkdir = { version = "2.5.0" }
