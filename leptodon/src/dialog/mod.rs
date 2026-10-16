@@ -27,6 +27,7 @@ use leptos::{
 
 use crate::button::{Button, ButtonAppearance};
 use crate::modal::{Modal, ModalFooterChildren};
+use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxCallback;
 
 #[generate_docs]
@@ -56,21 +57,48 @@ pub fn Dialog(
     /// Click handler secondary-button
     #[prop(default = BoxCallback::new(|| ()), into)]
     on_click_secondary: BoxCallback,
+    /// On dialog close handler, runs on backdrop clicked, title-bar close button clicked, or "Escape".
+    #[prop(default = ArcOneCallback::new(|_| ()), into)]
+    on_close: ArcOneCallback<()>,
+    /// On dialog cancel/close handler, runs on the same events as on_close, an additionally runs on a press of the secondary button.
+    #[prop(default = ArcOneCallback::new(|_| ()), into)]
+    on_close_or_secondary: ArcOneCallback<()>,
     /// Dialog content
     children: Children,
 ) -> impl IntoView {
     let footer = ModalFooterChildren::builder()
-        .children(Box::new(|| {
-            view! {
-                <div class="w-full flex justify-end">
-                    <Button on_click=move |_| on_click_secondary()>{secondary_text}</Button>
-                    <Button on_click=move |_| on_click_primary() appearance=ButtonAppearance::Primary>{primary_text}</Button>
-                </div>
-            }
-            .into_any()
-        }))
+        .children({
+            let on_close_or_secondary = on_close_or_secondary.clone();
+            Box::new(|| {
+                view! {
+                    <div class="w-full flex justify-end">
+                        <Button on_click={
+                            move |_| {
+                                on_click_secondary();
+                                on_close_or_secondary(());
+                            }
+                        }>{secondary_text}</Button>
+                        <Button
+                            on_click=move |_| on_click_primary()
+                            appearance=ButtonAppearance::Primary
+                        >
+                            {primary_text}
+                        </Button>
+                    </div>
+                }
+                .into_any()
+            })
+        })
         .build();
     view! {
-        <Modal id class title visible children footer />
+        <Modal id class title visible children footer
+            on_close=ArcOneCallback::new({
+                let on_close_or_secondary = on_close_or_secondary.clone();
+                move |_| {
+                    on_close(());
+                    on_close_or_secondary(());
+                }
+            })
+        />
     }
 }
