@@ -57,7 +57,7 @@ pub fn Modal(
     id: MaybeProp<String>,
     /// Extra modal classes
     #[prop(optional, into)]
-    class: MaybeProp<String>,
+    class: MaybeReactiveClass,
     /// Title shown in the modal heading
     #[prop(optional, into)]
     title: MaybeProp<String>,
@@ -125,7 +125,7 @@ pub fn Modal(
                 // Modal header
                 <div class="flex items-center justify-between p-2 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-lg font-medium text-heading">
-                        { title.get() }
+                        { move || title.get() }
                     </h3>
                     <ControlButton
                         icon=CloseIcon()
