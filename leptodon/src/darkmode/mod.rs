@@ -149,7 +149,7 @@ impl FromStr for Theme {
 
 const THEME_COOKIE: &str = "theme";
 
-#[server(UpdateTheme, "/api")]
+#[server(UpdateTheme, endpoint = "/update_theme")]
 pub async fn update_theme(new_theme: Theme) -> Result<Theme, ServerFnError> {
     use axum::http::{HeaderMap, HeaderValue, header::SET_COOKIE};
     use leptos::context::use_context;
@@ -251,7 +251,7 @@ pub fn ThemeSelector(
     }
 }
 
-#[cfg(not(feature = "ssr"))]
+#[cfg(target_arch = "wasm32")]
 pub fn initial_theme_from_cookie() -> Theme {
     use leptos::prelude::document;
     use wasm_cookies::cookies;
@@ -266,6 +266,13 @@ pub fn initial_theme_from_cookie() -> Theme {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(feature = "ssr"))]
+pub fn initial_theme_from_cookie() -> Theme {
+    unimplemented!("Please enable ssr.");
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 #[cfg(feature = "ssr")]
 pub fn initial_theme_from_cookie() -> Theme {
     use axum_extra::extract::cookie::Cookie;

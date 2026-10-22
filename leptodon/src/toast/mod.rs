@@ -15,8 +15,6 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use std::sync::Arc;
-
 use crate::button::Button;
 use crate::button::ButtonAppearance;
 use crate::class_list;
@@ -33,6 +31,7 @@ use crate::util::shared_id::shared_id;
 use leptodon_proc_macros::generate_docs;
 use leptos::context::Provider;
 use leptos::logging::debug_log;
+use leptos::prelude::AriaAttributes;
 use leptos::prelude::Callable;
 use leptos::prelude::Callback;
 use leptos::prelude::Children;
@@ -50,8 +49,9 @@ use leptos::prelude::ViewFn;
 use leptos::server::SharedValue;
 use leptos::server::codee::string::FromToStringCodec;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
+use std::sync::Arc;
 
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, PartialEq)]
 pub enum ToastAppearance {
     Success,
     Warning,
@@ -176,8 +176,8 @@ pub fn Toaster(#[prop(optional)] _location: ToastLocation, children: Children) -
         <Provider<ToasterContext, _> value=toast_ctx>
             {children()}
         </Provider<ToasterContext, _>>
-        <div class="fixed z-[1100] right-0 bottom-0">
-            <div class="flex flex-col p-4 gap-4">
+        <div id="toast-container" class="fixed z-[1100] right-0 bottom-0">
+            <div class="flex flex-col p-4 gap-4" aria-live="polite">
                 {move || {
                     let toasts = toast_queue.get();
                     toasts.iter().map(|(_, toast)| view! {
@@ -225,7 +225,11 @@ pub fn Toast(
                 "flex flex-col items-start w-full max-w-sm max-h-[75vh] p-4 text-body bg-gray-100 dark:bg-gray-700 rounded-lg shadow border border-gray-300 dark:border-gray-600",
                 class
             )
-            role="alert"
+            role=move || if appearance == ToastAppearance::Danger {
+                "alert"
+            } else {
+                "status"
+            }
         >
             <div class="flex items-center justify-between w-full">
                 <div class="flex items-center">

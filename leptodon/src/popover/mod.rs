@@ -21,6 +21,8 @@ use crate::class_list;
 use crate::util::on_pointer_down::{
     OnPointerDownOutsideOptions, on_pointer_down_outside_with_options,
 };
+use leptos::leptos_dom::helpers::set_timeout;
+
 use crate::{
     class_list::reactive_class::MaybeReactiveClass,
     util::{callback::BoxCallback, element::Element},
@@ -223,7 +225,7 @@ where
                 handle.clear();
             }
             if let Some(hover_open_delay) = hover_open_delay.get() {
-                *handle = set_timeout_with_handle(
+                *handle = set_timeout(
                     move || {
                         show_by_hover.set(true);
                     },
@@ -256,7 +258,7 @@ where
                 handle.clear();
             }
             if let Some(hover_close_delay) = hover_close_delay {
-                *handle = set_timeout_with_handle(
+                *handle = set_timeout(
                     move || {
                         show_by_hover.set(false);
                     },

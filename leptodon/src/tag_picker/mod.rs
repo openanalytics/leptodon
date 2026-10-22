@@ -252,7 +252,7 @@ where
         };
 
         // Run next tick such that the input box can first unhide itself. Can't focus invisible elements.
-        set_timeout(
+        let _ = set_timeout(
             move || {
                 input
                     .focus()
