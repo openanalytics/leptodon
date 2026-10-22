@@ -198,7 +198,7 @@ where
                 if loading.get() {
                     EitherOf3::A(
                         view! {
-                            <Spinner />
+                            <Spinner class="w-5 h-5" />
                         },
                     )
                 } else if let Some(icon) = icon.get() {
