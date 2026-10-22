@@ -251,7 +251,7 @@ pub fn ThemeSelector(
     }
 }
 
-#[cfg(not(feature = "ssr"))]
+#[cfg(target_arch = "wasm32")]
 pub fn initial_theme_from_cookie() -> Theme {
     use leptos::prelude::document;
     use wasm_cookies::cookies;
@@ -266,6 +266,13 @@ pub fn initial_theme_from_cookie() -> Theme {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(feature = "ssr"))]
+pub fn initial_theme_from_cookie() -> Theme {
+    unimplemented!("Please enable ssr.");
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 #[cfg(feature = "ssr")]
 pub fn initial_theme_from_cookie() -> Theme {
     use axum_extra::extract::cookie::Cookie;

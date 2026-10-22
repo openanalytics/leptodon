@@ -736,11 +736,9 @@ dependencies = [
  "chrono",
  "console_error_panic_hook",
  "console_log",
- "dateparser",
  "derive_more",
  "heck",
  "http",
- "ical",
  "itertools 0.15.0",
  "leptodon",
  "leptodon-proc-macros",
@@ -751,7 +749,6 @@ dependencies = [
  "leptos_router",
  "log",
  "regex",
- "rrule",
  "serde",
  "strum",
  "strum_macros",
@@ -1587,7 +1584,6 @@ dependencies = [
  "axum-extra",
  "base64 0.23.1",
  "chrono",
- "console_error_panic_hook",
  "const-str",
  "http",
  "leptodon-proc-macros",
@@ -1603,7 +1599,6 @@ dependencies = [
  "rstml-to-string-macro",
  "send_wrapper",
  "serde",
- "uuid",
  "walkdir",
  "wasm-bindgen",
  "wasm-cookies",
@@ -3541,7 +3536,6 @@ version = "1.28.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
 dependencies = [
- "getrandom 0.4.3",
  "js-sys",
  "wasm-bindgen",
 ]

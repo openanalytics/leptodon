@@ -62,7 +62,6 @@ leptos_axum = { version = "0.9.0-rc0" }
 leptos_meta = { version = "0.9.0-rc0" }
 leptos_router = { version = "0.9.0-rc0" }
 wasm-bindgen = { version = "=0.2.129" }
-wasm-streams = { version = "=0.7.0" }
 wasm-cookies = { version = "=0.2.1" }
 web-sys = { version = "=0.3.106" }
 reactive_stores = { version = "0.5.0-rc0" }
@@ -99,7 +98,6 @@ nucleo-matcher = { version = "0.3.1" }         # Fuzzy search
 # Other utils
 itertools = "0.15.0"
 zxcvbn = { version = "3.1.1" }
-uuid = { version = "1.28" }
 
 # Macros
 derive_more = { version = "2.1.1", features = ["display"] }

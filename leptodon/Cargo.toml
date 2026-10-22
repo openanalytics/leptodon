@@ -9,21 +9,23 @@ edition.workspace = true
 publish = true
 
 [dependencies]
-console_error_panic_hook = { workspace = true, optional = true }
 leptos = { workspace = true }
 leptos_meta = { workspace = true }
 leptos_router = { workspace = true }
 leptos_axum = { workspace = true, optional = true }
-leptos-use = { workspace = true, features = [ "use_calendar", "on_click_outside", "math" ] }
+leptos-use = { workspace = true, features = [
+    "use_calendar",
+    "on_click_outside",
+    "math",
+] }
 leptodon-proc-macros = { workspace = true }
 
 # Bumping reactive_stores causes hydration errors.
 reactive_stores = { workspace = true }
-uuid = { workspace = true, features = [ "v4", "js" ] }
 
 # Pinned together, updating wasm-bindgen beyond 0.2.108 breaks the leptos-wasm loading
 wasm-bindgen = { workspace = true, optional = true }
-wasm-cookies = { workspace = true }
+
 # Newer versions of web-sys require newer wasm-bindgen.
 web-sys = { workspace = true, features = [
     "HtmlDocument",
@@ -34,22 +36,25 @@ web-sys = { workspace = true, features = [
     "KeyboardEvent",
     "ScrollIntoViewOptions",
     "ScrollIntoViewContainer",
-    "ScrollLogicalPosition"
+    "ScrollLogicalPosition",
 ] }
 
 axum = { workspace = true, optional = true }
-axum-extra = { workspace = true, optional = true, features = [ "cookie" ] }
+axum-extra = { workspace = true, optional = true, features = ["cookie"] }
 rstml-to-string-macro = { workspace = true }
-serde = { workspace = true, features = [ "derive" ] }
+serde = { workspace = true, features = ["derive"] }
 num-traits = { workspace = true }
 http = { workspace = true, optional = true }
 const-str = { workspace = true }
 chrono = { workspace = true }
 base64 = { workspace = true }
 send_wrapper = { workspace = true }
-leptos-struct-table = { workspace = true, features = [ "chrono" ] }
+leptos-struct-table = { workspace = true, features = ["chrono"] }
 nucleo-matcher = { workspace = true }
 zxcvbn = { workspace = true }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-cookies = { workspace = true }
 
 [build-dependencies]
 walkdir = { workspace = true }
@@ -65,11 +70,9 @@ ssr = [
     "dep:axum-extra",
     "dep:http",
     "leptos-use/axum",
-    "leptos-use/ssr"
+    "leptos-use/ssr",
 ]
-hydrate = [
-    "leptos/hydrate",
-]
+hydrate = ["leptos/hydrate"]
 
 [lints.rust]
 dead_code = "allow"
