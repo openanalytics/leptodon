@@ -515,7 +515,7 @@ where
         <input id=id.get()
             type=move || input_type.get().as_str()
             inputmode=move || input_mode.get().as_str()
-            name={name.get()}
+            name=move || name.get()
             class=class_list![
                 ("border-oa-red", move || invalid_reason.get().is_some()),
                 group_classes.unwrap_or_default(),
@@ -523,11 +523,12 @@ where
                 (OA_READONLY_INPUT_CLASSES, move || readonly.get()),
                 (OA_INPUT_CLASSES, move || !readonly.get())
             ]
-            disabled={readonly.get()}
-            readonly={readonly.get()}
+            // TODO: Readonly should not disable, disabled should have a reason in tooltip.
+            disabled=move || readonly.get()
+            readonly=move || readonly.get()
             node_ref=input_ref
-            placeholder={placeholder.get()}
-            required={required.get()}
+            placeholder=move || placeholder.get()
+            required=move || required.get()
             on:blur=on_blur
             on:input=on_input
             on:focus=move |e| {if let Some(on_focus) = on_focus.get() { on_focus(e) }}
