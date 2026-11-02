@@ -81,6 +81,7 @@ pub fn FileUpload(
                 name=name.get()
                 type="file"
                 accept=accept.get()
+                required=required
                 node_ref=input_ref
                 multiple=multiple
                 on:change=move |_| trigger_list_refresh.notify()
