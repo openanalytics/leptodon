@@ -248,7 +248,7 @@ pub fn Toast(
                             view! { <b>{title}</b> }.into_any()
                         } else {
                             view! {
-                                <div class="text-sm overflow-scroll">
+                                <div class="text-sm overflow-auto">
                                     {message}
                                 </div>
                             }.into_any()
@@ -265,7 +265,7 @@ pub fn Toast(
             {move || {
                 if title.get().is_some() && let Some(message) = message.get() {
                     view! {
-                        <div class="text-sm mt-1 overflow-scroll">
+                        <div class="text-sm mt-1 overflow-auto">
                             {message}
                         </div>
                     }.into_any()
@@ -274,7 +274,7 @@ pub fn Toast(
                 }
             }}
             <OptionComp value=children let:children>
-                <div class="mt-1 overflow-scroll max-w-full max-h-full">
+                <div class="mt-1 overflow-auto max-w-full max-h-full">
                     {children()}
                 </div>
             </OptionComp>
