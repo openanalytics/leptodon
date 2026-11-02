@@ -770,7 +770,7 @@ impl PopoverAnchor {
     fn mirrored(&self) -> PopoverAnchor {
         match self {
             PopoverAnchor::Top => Self::Bottom,
-            PopoverAnchor::Bottom => Self::Bottom,
+            PopoverAnchor::Bottom => Self::Top,
             PopoverAnchor::Left => Self::Right,
             PopoverAnchor::Right => Self::Left,
             PopoverAnchor::TopStart => Self::BottomStart,
