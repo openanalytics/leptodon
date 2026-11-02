@@ -21,7 +21,7 @@
 cfg_select! {
     feature = "ssr" => {
 
-        #[tokio::main]
+        #[tokio::main(flavor = "multi_thread")]
         async fn main() {
             use axum::Router;
             use leptos::logging::log;
@@ -29,6 +29,9 @@ cfg_select! {
             use leptos_axum::{LeptosRoutes, generate_route_list};
             use tower_http::compression::CompressionLayer;
             use overview::app::*;
+            use axum::handler::Handler;
+            use http::{HeaderValue, header::CACHE_CONTROL};
+            use tower_http::set_header::SetResponseHeaderLayer;
 
             let conf = get_configuration(None).unwrap();
             let addr = conf.leptos_options.site_addr;
@@ -43,7 +46,8 @@ cfg_select! {
                     move || overview::app::shell(leptos_options.clone())
                 })
                 .layer(CompressionLayer::new())
-                .fallback(leptos_axum::file_and_error_handler(shell))
+                .fallback(leptos_axum::file_and_error_handler(shell)
+                    .layer(SetResponseHeaderLayer::overriding(CACHE_CONTROL, HeaderValue::from_static("max-age=604800"))))
                 .with_state(leptos_options);
 
             // run our app with hyper

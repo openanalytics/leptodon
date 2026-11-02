@@ -17,17 +17,19 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 
-
 // boilerplate to run in different modes
 cfg_select! {
     feature = "ssr" => {
-        #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
+        #[tokio::main(flavor = "multi_thread")]
         async fn main() {
             use axum::Router;
             use leptos::logging::log;
             use leptos::prelude::*;
             use leptos_axum::{LeptosRoutes, generate_route_list};
             use tower_http::compression::CompressionLayer;
+            use axum::handler::Handler;
+            use http::{HeaderValue, header::CACHE_CONTROL};
+            use tower_http::set_header::SetResponseHeaderLayer;
             use demo::app::*;
 
             let conf = get_configuration(None).unwrap();
@@ -42,9 +44,10 @@ cfg_select! {
                     let leptos_options = leptos_options.clone();
                     move || demo::app::shell(leptos_options.clone())
                 })
-                .fallback(leptos_axum::file_and_error_handler(shell))
-                .with_state(leptos_options)
-                .layer(CompressionLayer::new());
+                .layer(CompressionLayer::new())
+                .fallback(leptos_axum::file_and_error_handler(shell)
+                    .layer(SetResponseHeaderLayer::overriding(CACHE_CONTROL, HeaderValue::from_static("max-age=604800"))))
+                .with_state(leptos_options);
 
             // run our app with hyper
             // `axum::Server` is a re-export of `hyper::Server`
