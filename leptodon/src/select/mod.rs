@@ -245,22 +245,22 @@ where
                 when=move || { !options.get().is_empty() }
                 fallback=|| view! { <option disabled=true selected=true>No options</option> }
             >
-               {
-                   let placeholder = placeholder.clone();
-                   view! {
-                       <Show
-                            when=move || { required.get() }
-                            fallback=|| ().into_any()
-                        >
-                            // Placeholder option
-                            <option
-                                value=""
-                                disabled=true
-                                selected=move || { selected.get().is_none() && required.get() }
-                            >{ placeholder.clone() }</option>
-                        </Show>
-                   }
-               }
+            {
+                let placeholder = placeholder.clone();
+                view! {
+                    <Show
+                        when=move || { required.get() }
+                        fallback=|| ().into_any()
+                    >
+                        // Placeholder option
+                        <option
+                            value=""
+                            disabled=true
+                            selected=move || { selected.get().is_none() && required.get() }
+                        >{ placeholder.clone() }</option>
+                    </Show>
+                }
+            }
             </Show>
             <Show
                 when=move || { !required.get() }
@@ -292,11 +292,9 @@ where
         && form_context.is_none()
     {
         view! {
-            <span class=class_list!(class)>
-                <Label required=required.get() label>
-                    {select}
-                </Label>
-            </span>
+            <Label required=required.get() label>
+                {select}
+            </Label>
         }
         .into_any()
     } else {

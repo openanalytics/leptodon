@@ -163,7 +163,7 @@ pub async fn update_theme(new_theme: Theme) -> Result<Theme, ServerFnError> {
     headers.insert(
         SET_COOKIE,
         HeaderValue::from_str(&format!(
-            "{THEME_COOKIE}={theme_value}; Path=/; Max-Age=186400; SameSite=Strict"
+            "{THEME_COOKIE}={theme_value}; Path=/; Max-Age=157784760; SameSite=Strict"
         ))
         .expect("to create header value"),
     );
@@ -178,7 +178,6 @@ pub fn fetch_ssr_tailwind_class(browser_prefers_dark: Signal<bool>) -> String {
         return "".to_string();
     }
     debug_log!("Final theme: {theme:?}");
-    // console_log(format!("Final theme: {theme:?}").as_str());
     let resulting_theme = match theme {
         Theme::Light => "light",
         Theme::FollowSystem if browser_prefers_dark.get() => "dark",
@@ -186,7 +185,6 @@ pub fn fetch_ssr_tailwind_class(browser_prefers_dark: Signal<bool>) -> String {
         Theme::Dark => "dark",
     };
     debug_log!("Resulting theme: {resulting_theme:?}");
-    // console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
     resulting_theme.to_string()
 }
 
@@ -211,7 +209,6 @@ pub fn ThemeSelector(
     let resulting_dark = Memo::new(move |_| {
         let theme = color_scheme.signal.get();
         debug_log!("Final theme: {theme:?}");
-        // console_log(format!("Final theme: {theme:?}").as_str());
         let resulting_theme = match theme {
             Theme::Light => "light",
             Theme::FollowSystem if browser_prefers_dark.get() => "dark",
@@ -220,7 +217,6 @@ pub fn ThemeSelector(
         };
         debug_log!("Resulting theme: {resulting_theme:?}");
 
-        // console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
         resulting_theme
     });
 

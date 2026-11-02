@@ -15,10 +15,9 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use std::marker::PhantomData;
-
 use leptodon_proc_macros::generate_docs;
 use leptos::context::Provider;
+use leptos::control_flow::ShowLet;
 use leptos::logging::debug_log;
 use leptos::prelude::{
     ClassAttribute, ElementChild, Get, IntoAny, MaybeProp, NodeRef, NodeRefAttribute, OnAttribute,
@@ -27,6 +26,7 @@ use leptos::prelude::{
 use leptos::tachys::renderer::dom::Node;
 use leptos::wasm_bindgen::JsCast;
 use leptos::{IntoView, component, prelude::Children, view};
+use std::marker::PhantomData;
 
 use crate::class_list;
 
@@ -87,14 +87,15 @@ where
             </Label>
 
             // Feedback
-            <Show
-                when=move || feedback.get().is_some()
+            <ShowLet
+                some=move || feedback.get()
                 fallback=|| ()
+                let:feedback
             >
                 <span class="text-red-500">{
-                    move || feedback.get().unwrap().to_string()
+                    move || feedback.to_string()
                 }</span>
-            </Show>
+            </ShowLet>
         </div>
     }
 }

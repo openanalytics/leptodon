@@ -17,6 +17,7 @@
 // If not, see <http://www.apache.org/licenses/>
 use leptodon_proc_macros::generate_docs;
 use leptos::children::Children;
+use leptos::leptos_dom::helpers::set_timeout;
 use leptos::logging::debug_log;
 use leptos::logging::error;
 use leptos::prelude::AriaAttributes;
@@ -31,8 +32,7 @@ use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::slot;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
-use leptos_use::UseTimeoutFnReturn;
-use leptos_use::use_timeout_fn;
+use std::time::Duration;
 use web_sys::KeyboardEvent;
 
 use crate::button::ButtonRef;
@@ -80,14 +80,9 @@ pub fn Modal(
             error!("Internal modal first-div reference is not mounted!");
             return;
         };
+
         // Somehow this hack makes focus work..
-        let UseTimeoutFnReturn { start, .. } = use_timeout_fn(
-            move |_| {
-                first_button.focus();
-            },
-            0.0,
-        );
-        start(());
+        let _ = set_timeout(move || first_button.focus(), Duration::ZERO);
         debug_log!("modal: successfully focused first-div");
     };
 
