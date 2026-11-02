@@ -286,9 +286,9 @@ dependencies = [
 
 [[package]]
 name = "brotli"
-version = "9.0.0"
+version = "9.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8b851b75c23ca7873623d612fe49bd1989aeb03d08fb9432187eb253d3d4c6b"
+checksum = "627b7cfb0578f0eafce087a90fcd40add1231900b69e4d4de2d456260a4f5d81"
 dependencies = [
  "alloc-no-stdlib",
  "alloc-stdlib",
@@ -297,9 +297,9 @@ dependencies = [
 
 [[package]]
 name = "brotli-decompressor"
-version = "6.0.1"
+version = "6.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "941cd9bd4ddab83cb46fa5a2d428f1c857b24ac78cb876cf7beb710840934bd7"
+checksum = "34c6783f42c21c952ad7112b354f0ba2f10760e9decea5b1b60523d6e270faaf"
 dependencies = [
  "alloc-no-stdlib",
  "alloc-stdlib",
@@ -357,9 +357,9 @@ checksum = "bbbad30e4b4c14a39e3cc8aed085a12a327257c316619c93581e017bc52be591"
 
 [[package]]
 name = "cc"
-version = "1.9.0"
+version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
+checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
 dependencies = [
  "find-msvc-tools",
  "shlex",
@@ -484,9 +484,9 @@ checksum = "18f12cc9948ed9604230cdddc7c86e270f9401ccbe3c2e98a4378c5e7632212f"
 
 [[package]]
 name = "const_format"
-version = "0.2.36"
+version = "0.2.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4481a617ad9a412be3b97c5d403fef8ed023103368908b9c50af598ff467cc1e"
+checksum = "a3decb4d6965448659923544a634a0571ba44cede4e11ef15a5a317126840454"
 dependencies = [
  "const_format_proc_macros",
  "konst",
@@ -494,9 +494,9 @@ dependencies = [
 
 [[package]]
 name = "const_format_proc_macros"
-version = "0.2.34"
+version = "0.2.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d57c2eccfb16dbac1f4e61e206105db5820c9d26c3c472bc17c774259ef7744"
+checksum = "941b570269a642506f08cb5b688c04bfa6cfd41a26f8bcdc49db8fd00c0ab659"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -579,9 +579,9 @@ dependencies = [
 
 [[package]]
 name = "crc32fast"
-version = "1.5.3"
+version = "1.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
+checksum = "5f97d3416d5337d15c4b0d78c8c91df922ca143f57ec20e2d1c188333047ef04"
 dependencies = [
  "cfg-if",
 ]
@@ -887,9 +887,9 @@ dependencies = [
 
 [[package]]
 name = "encoding_rs"
-version = "0.8.42"
+version = "0.8.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e985e0451871ad22fb8d2b6b076e2028a502a0d3950998c2c5c0a4f9b5d9679"
+checksum = "89253175e704ab869b04f9db224d38630e0211a53841a79181deae0889e169f5"
 dependencies = [
  "cfg-if",
  "core_detect",
@@ -1233,9 +1233,9 @@ checksum = "df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9"
 
 [[package]]
 name = "hydration_context"
-version = "0.4.0-rc0"
+version = "0.4.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a8b26a5daebd0c1de1c163bfecd2883837836411a7a05133e0cb0b52f8dd3333"
+checksum = "d864d41e0db2805cb37b439c48a609a685de02504d01b6e7219bf3be0ca8cd3d"
 dependencies = [
  "futures",
  "js-sys",
@@ -1590,6 +1590,13 @@ dependencies = [
  "leptos",
  "leptos-struct-table",
  "leptos-use",
+ "leptos-use-calendar",
+ "leptos-use-document",
+ "leptos-use-event-listener",
+ "leptos-use-math",
+ "leptos-use-preferences",
+ "leptos-use-window",
+ "leptos-use-window-scroll",
  "leptos_axum",
  "leptos_meta",
  "leptos_router",
@@ -1618,9 +1625,9 @@ dependencies = [
 
 [[package]]
 name = "leptos"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6c7a984e27b491f037a6b552a6a7b55b8f19395d6558b17c5231353ec8ce4be"
+checksum = "9cc814b3a2c6183629a1595538db463d9646cae8f62de9014e588c068905c7ce"
 dependencies = [
  "any_spawner",
  "base64 0.23.1",
@@ -1661,13 +1668,16 @@ dependencies = [
 
 [[package]]
 name = "leptos-struct-table"
-version = "0.19.1"
-source = "git+https://github.com/ToxicMushroom/leptos-struct-table.git?branch=leptos-0.9#664228ccbf9f4f81ff06804a41e7d51a50d1a367"
+version = "0.20.0"
+source = "git+https://github.com/ToxicMushroom/leptos-struct-table.git?branch=leptos-0.9#203ace0861ba196a372fd3bd4a85784dc7097cae"
 dependencies = [
  "chrono",
  "leptos",
  "leptos-struct-table-macro",
  "leptos-use",
+ "leptos-use-element-size",
+ "leptos-use-fn-debounce-throttle",
+ "leptos-use-scroll",
  "serde",
  "wasm-bindgen",
  "web-sys",
@@ -1688,8 +1698,8 @@ dependencies = [
 
 [[package]]
 name = "leptos-use"
-version = "0.19.2"
-source = "git+https://github.com/EvanCarroll/leptos-use.git?branch=leptos-0.9-resync#efc26c7d878f31c737917fbdbd682141274b28c2"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
 dependencies = [
  "cfg-if",
  "chrono",
@@ -1700,24 +1710,1147 @@ dependencies = [
  "gloo-timers",
  "http",
  "js-sys",
- "lazy_static",
  "leptos",
+ "leptos-use-active-element",
+ "leptos-use-breakpoints",
+ "leptos-use-broadcast-channel",
+ "leptos-use-calendar",
+ "leptos-use-clipboard",
+ "leptos-use-color-mode",
+ "leptos-use-cookie",
+ "leptos-use-core",
+ "leptos-use-css-var",
+ "leptos-use-cycle-list",
+ "leptos-use-derive-signal",
+ "leptos-use-device-orientation",
+ "leptos-use-device-pixel-ratio",
+ "leptos-use-display-media",
+ "leptos-use-docs",
+ "leptos-use-document",
+ "leptos-use-document-visibility",
+ "leptos-use-draggable",
+ "leptos-use-drop-zone",
+ "leptos-use-element",
+ "leptos-use-element-bounding",
+ "leptos-use-element-hover",
+ "leptos-use-element-size",
+ "leptos-use-element-visibility",
+ "leptos-use-event-listener",
+ "leptos-use-event-source",
+ "leptos-use-favicon",
+ "leptos-use-filters",
+ "leptos-use-fn-debounce-throttle",
+ "leptos-use-geolocation",
+ "leptos-use-header",
+ "leptos-use-idle",
+ "leptos-use-infinite-scroll",
+ "leptos-use-intersection-observer",
+ "leptos-use-interval",
+ "leptos-use-interval-fn",
+ "leptos-use-intl-datetime-format",
+ "leptos-use-intl-number-format",
+ "leptos-use-is",
+ "leptos-use-locale",
+ "leptos-use-locales",
+ "leptos-use-math",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-media-query",
+ "leptos-use-mouse",
+ "leptos-use-mouse-in-element",
+ "leptos-use-now",
+ "leptos-use-on-click-outside",
+ "leptos-use-option-local-signal",
+ "leptos-use-permission",
+ "leptos-use-preferences",
+ "leptos-use-raf-fn",
+ "leptos-use-resize-observer",
+ "leptos-use-rw-signal",
+ "leptos-use-screen-orientation",
+ "leptos-use-scroll",
+ "leptos-use-service-worker",
+ "leptos-use-signal-debounce-throttle",
+ "leptos-use-sorted",
+ "leptos-use-storage",
+ "leptos-use-supported",
+ "leptos-use-sync-signal",
+ "leptos-use-textarea-autosize",
+ "leptos-use-timeout-fn",
+ "leptos-use-timestamp",
+ "leptos-use-to-string",
+ "leptos-use-toggle",
+ "leptos-use-user-media",
+ "leptos-use-watch-debounce-throttle",
+ "leptos-use-watch-pausable",
+ "leptos-use-watch-with-options",
+ "leptos-use-web-lock",
+ "leptos-use-web-notification",
+ "leptos-use-websocket",
+ "leptos-use-whenever",
+ "leptos-use-window",
+ "leptos-use-window-focus",
+ "leptos-use-window-scroll",
+ "leptos-use-window-size",
  "leptos_axum",
  "num",
  "paste",
  "send_wrapper",
+ "sendwrap-fn",
  "thiserror 2.0.21",
  "unic-langid",
  "wasm-bindgen",
  "wasm-bindgen-futures",
+ "wasm-js-macros",
  "web-sys",
 ]
 
 [[package]]
+name = "leptos-use-active-element"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-document",
+ "leptos-use-event-listener",
+ "leptos-use-option-local-signal",
+ "leptos-use-window",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-breakpoints"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-media-query",
+ "leptos-use-window",
+ "paste",
+]
+
+[[package]]
+name = "leptos-use-broadcast-channel"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "codee",
+ "js-sys",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-option-local-signal",
+ "leptos-use-supported",
+ "send_wrapper",
+ "sendwrap-fn",
+ "thiserror 2.0.21",
+ "wasm-bindgen",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-calendar"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "chrono",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+]
+
+[[package]]
+name = "leptos-use-clipboard"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-supported",
+ "leptos-use-timeout-fn",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-color-mode"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "codee",
+ "default-struct-builder",
+ "http",
+ "leptos",
+ "leptos-use-cookie",
+ "leptos-use-element",
+ "leptos-use-header",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-preferences",
+ "leptos-use-storage",
+ "leptos-use-sync-signal",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-cookie"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "codee",
+ "cookie",
+ "default-struct-builder",
+ "http",
+ "leptos",
+ "leptos-use-broadcast-channel",
+ "leptos-use-header",
+ "leptos-use-now",
+ "leptos-use-watch-with-options",
+ "leptos_axum",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-core"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+
+[[package]]
+name = "leptos-use-css-var"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-watch-with-options",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-cycle-list"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+]
+
+[[package]]
+name = "leptos-use-derive-signal"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+
+[[package]]
+name = "leptos-use-device-orientation"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "js-sys",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-supported",
+ "send_wrapper",
+ "wasm-bindgen",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-device-pixel-ratio"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-event-listener",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-display-media"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-option-local-signal",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-docs"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-document"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "js-sys",
+ "leptos",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-document-visibility"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-event-listener",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-draggable"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-window",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-drop-zone"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "send_wrapper",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-element"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-supported",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-element-bounding"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-resize-observer",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-element-hover"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-element-size"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-resize-observer",
+ "leptos-use-watch-with-options",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-element-visibility"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-intersection-observer",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-event-listener"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-watch-with-options",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-event-source"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "codee",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-event-listener",
+ "send_wrapper",
+ "sendwrap-fn",
+ "thiserror 2.0.21",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-favicon"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-filters"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-now",
+ "send_wrapper",
+ "sendwrap-fn",
+]
+
+[[package]]
+name = "leptos-use-fn-debounce-throttle"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-filters",
+]
+
+[[package]]
+name = "leptos-use-geolocation"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-option-local-signal",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-header"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "http",
+ "leptos",
+]
+
+[[package]]
+name = "leptos-use-idle"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-document",
+ "leptos-use-event-listener",
+ "leptos-use-filters",
+ "leptos-use-now",
+ "send_wrapper",
+ "sendwrap-fn",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-infinite-scroll"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "futures-util",
+ "gloo-timers",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-element-visibility",
+ "leptos-use-event-listener",
+ "leptos-use-scroll",
+ "send_wrapper",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-intersection-observer"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-watch-with-options",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-interval"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-filters",
+ "leptos-use-interval-fn",
+ "send_wrapper",
+ "sendwrap-fn",
+]
+
+[[package]]
+name = "leptos-use-interval-fn"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-filters",
+ "send_wrapper",
+ "sendwrap-fn",
+]
+
+[[package]]
+name = "leptos-use-intl-datetime-format"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "chrono",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-js-macros",
+]
+
+[[package]]
+name = "leptos-use-intl-number-format"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-js-macros",
+]
+
+[[package]]
+name = "leptos-use-is"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-derive-signal",
+]
+
+[[package]]
+name = "leptos-use-locale"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-locales",
+ "unic-langid",
+]
+
+[[package]]
+name = "leptos-use-locales"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "http",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-header",
+ "leptos-use-window",
+]
+
+[[package]]
+name = "leptos-use-math"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "num",
+ "paste",
+]
+
+[[package]]
+name = "leptos-use-maybe-rw-signal"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-sync-signal",
+]
+
+[[package]]
+name = "leptos-use-media-query"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-event-listener",
+ "send_wrapper",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-mouse"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-window",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-mouse-in-element"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-mouse",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-now"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "js-sys",
+]
+
+[[package]]
+name = "leptos-use-on-click-outside"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "lazy_static",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-option-local-signal"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+]
+
+[[package]]
+name = "leptos-use-permission"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "js-sys",
+ "leptos",
+ "leptos-use-event-listener",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-preferences"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "http",
+ "leptos",
+ "leptos-use-header",
+ "leptos-use-media-query",
+]
+
+[[package]]
+name = "leptos-use-raf-fn"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-filters",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "leptos-use-resize-observer"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-supported",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-rw-signal"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+]
+
+[[package]]
+name = "leptos-use-screen-orientation"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-event-listener",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-scroll"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-filters",
+ "leptos-use-fn-debounce-throttle",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-service-worker"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-signal-debounce-throttle"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-filters",
+ "leptos-use-fn-debounce-throttle",
+ "paste",
+]
+
+[[package]]
+name = "leptos-use-sorted"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+]
+
+[[package]]
+name = "leptos-use-storage"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "codee",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-filters",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-watch-with-options",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "thiserror 2.0.21",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-supported"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+]
+
+[[package]]
+name = "leptos-use-sync-signal"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-rw-signal",
+]
+
+[[package]]
+name = "leptos-use-textarea-autosize"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-resize-observer",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-timeout-fn"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "send_wrapper",
+ "sendwrap-fn",
+]
+
+[[package]]
+name = "leptos-use-timestamp"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-filters",
+ "leptos-use-interval-fn",
+ "leptos-use-now",
+ "leptos-use-raf-fn",
+]
+
+[[package]]
+name = "leptos-use-to-string"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-derive-signal",
+]
+
+[[package]]
+name = "leptos-use-toggle"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+]
+
+[[package]]
+name = "leptos-use-user-media"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-option-local-signal",
+ "leptos-use-window",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-watch-debounce-throttle"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-filters",
+ "leptos-use-watch-with-options",
+]
+
+[[package]]
+name = "leptos-use-watch-pausable"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-watch-with-options",
+]
+
+[[package]]
+name = "leptos-use-watch-with-options"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-filters",
+]
+
+[[package]]
+name = "leptos-use-web-lock"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "thiserror 2.0.21",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-web-notification"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-option-local-signal",
+ "leptos-use-supported",
+ "leptos-use-window",
+ "send_wrapper",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-websocket"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "codee",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-filters",
+ "leptos-use-interval-fn",
+ "send_wrapper",
+ "sendwrap-fn",
+ "thiserror 2.0.21",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-whenever"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-watch-with-options",
+]
+
+[[package]]
+name = "leptos-use-window"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-document",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-window-focus"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-event-listener",
+]
+
+[[package]]
+name = "leptos-use-window-scroll"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-window",
+]
+
+[[package]]
+name = "leptos-use-window-size"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-event-listener",
+ "leptos-use-media-query",
+ "leptos-use-window",
+]
+
+[[package]]
 name = "leptos_axum"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f7a19f34a0bfb320409609237c0eec672ebfdfdb8b09e28c4bfd69916c3d5e9"
+checksum = "74f2c2a8a7cd00a0a653583b2ed84b98d15f28f64f6be39b5a7883e8bb9d9ba3"
 dependencies = [
  "any_spawner",
  "axum",
@@ -1739,9 +2872,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_config"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "547b04b259e24676e616b6447b63cb2e522522051f6775c44c782d2540b806a9"
+checksum = "fca5949d35c4f8491d0f6d282085aecee538b893bd835e91cffda9a4fe310ead"
 dependencies = [
  "config",
  "serde",
@@ -1751,9 +2884,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_dom"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d13a3e5f65433d01e36696fdd88e2d4fc11a73820556972cd81d29890c42230f"
+checksum = "515e11a1d184b993f17aacc09117d5794e931ce17f984ada07445ecd4e4ea5e2"
 dependencies = [
  "js-sys",
  "or_poisoned",
@@ -1767,9 +2900,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_hot_reload"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60ac286a7f529c19f77cc6705c1c2b11565d827ab23d2c5936fb6f886f477b81"
+checksum = "17f14b476b076ef8a9ade3cca9e1f8853678fa9ba2f5792c1f8277e805d5ad73"
 dependencies = [
  "anyhow",
  "camino",
@@ -1785,9 +2918,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_integration_utils"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "842e343997b419ac10853032dcb1280cec1d843d7f44c9eee97f6542530f05af"
+checksum = "a931f5797803f452626175b053f1137264cb00bc9ae3cd007bd6b195656aa017"
 dependencies = [
  "futures",
  "hydration_context",
@@ -1804,9 +2937,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_macro"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f13c5bc3c635d9c6f83e15494541612bf3c9aac4a0912b709bd8151d7189aebd"
+checksum = "2a54eaf7b0fdf6b1cc6fdd15b198cf2ad334e300ff79ce4be5a6a48cf2a23395"
 dependencies = [
  "attribute-derive",
  "convert_case 0.12.0",
@@ -1825,9 +2958,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_meta"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67e6a47272482b377a50aac1f7e1fb9c9e6265edc1b4567fa28bb804b7376d4a"
+checksum = "3e546a215809e9ff38aaa1a6f08a77c60c058bbf56a3d564fe9e6f43dcbb2dfd"
 dependencies = [
  "futures",
  "indexmap 2.14.2",
@@ -1840,9 +2973,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_router"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "600d259c4b5bc5b9e601b943dcd670a2ab25967b8ac51b2b0b9929f3307c2b12"
+checksum = "408d4e3a90136dddf54fcbaceb6f8d794981e565367cb6ba22312f77cff79b1e"
 dependencies = [
  "any_spawner",
  "either_of",
@@ -1865,9 +2998,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_router_macro"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1d9edf1acd4582dd336f0711d39d698d5a4a484a53b95613242b213bd12afbf"
+checksum = "3624db7adde10cc94d338b84035fd4d735fc7b9742143eece37fe735d351a791"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1876,9 +3009,9 @@ dependencies = [
 
 [[package]]
 name = "leptos_server"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "44ae3756f8152ae7c768c39056e260632a021e54b2163b1410f50efc5123f9c5"
+checksum = "9bf0858128de73330826ec343d5f5f438fcd892b50caacc1d6fa83e23cc4964e"
 dependencies = [
  "any_spawner",
  "base64 0.23.1",
@@ -1909,9 +3042,9 @@ checksum = "47d9d19d1d6efa0109d2f65ff4c85cddd50bd572e5a00127ab10987290bcefae"
 
 [[package]]
 name = "log"
-version = "0.4.34"
+version = "0.4.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
+checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
 
 [[package]]
 name = "lru"
@@ -2490,9 +3623,9 @@ checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
 
 [[package]]
 name = "reactive_graph"
-version = "0.3.0-rc0"
+version = "0.3.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f341eb0a6541e99d85583c3289ad39f056436dfd2f50dca37a884039d4ca062c"
+checksum = "dd58eb4309d97cd249fa2fddf16dbbf141b9c360e7e7f7b930765c058a760fe1"
 dependencies = [
  "any_spawner",
  "async-lock",
@@ -2515,9 +3648,9 @@ dependencies = [
 
 [[package]]
 name = "reactive_stores"
-version = "0.5.0-rc0"
+version = "0.5.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "732b34d30d0319f53f4b4b6626b143cb4ca170e9f6f2797c62da5eeacfe73caa"
+checksum = "1bbb289f3a96225c4f09d8a6f39c92eb857a9876554739f034cbf564637e81d2"
 dependencies = [
  "guardian",
  "indexmap 2.14.2",
@@ -2532,9 +3665,9 @@ dependencies = [
 
 [[package]]
 name = "reactive_stores_macro"
-version = "0.5.0-rc0"
+version = "0.5.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a2afab7e4046c4b701e5015d511e560d61abd3fcea02930f87e4660ae62c118"
+checksum = "431658b8b87fb47e57464b3561acd8685ddd5784e0ae1fc7bd06335eb96aad29"
 dependencies = [
  "convert_case 0.12.0",
  "proc-macro2",
@@ -2767,6 +3900,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sendwrap-fn"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "send_wrapper",
+]
+
+[[package]]
 name = "serde"
 version = "1.0.229"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2888,9 +4029,9 @@ dependencies = [
 
 [[package]]
 name = "server_fn"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43bf20d4a56c4b3d78c3662dd0263675f646ca43d5d5355f2b407edbef103904"
+checksum = "e9c407b62e563d801e57e0f271adc18844359f2d4c6b29b81fe965c11d14f914"
 dependencies = [
  "axum",
  "base64 0.23.1",
@@ -2919,6 +4060,7 @@ dependencies = [
  "tokio",
  "tower",
  "tower-layer",
+ "tracing",
  "typed-builder",
  "url",
  "wasm-bindgen",
@@ -2930,9 +4072,9 @@ dependencies = [
 
 [[package]]
 name = "server_fn_macro"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "134fcb4b9a251149173912d383a5fb087491a91210d50433d54aa0b274dcfd60"
+checksum = "b4556e05e0b2911782cb2f7c772a1471cdaee90f6c9bb0fd17445e2107d65573"
 dependencies = [
  "const_format",
  "convert_case 0.12.0",
@@ -2945,9 +4087,9 @@ dependencies = [
 
 [[package]]
 name = "server_fn_macro_default"
-version = "0.9.0-rc0"
+version = "0.9.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b00e3addaf7647e656ed9418a7905bec5c5b65f6f7059886abc74d414e38766d"
+checksum = "f608a9755eaf46838140293001493e3f7acb1329065579436e840ecf62985247"
 dependencies = [
  "server_fn_macro",
  "syn 3.0.9",
@@ -3016,9 +4158,9 @@ dependencies = [
 
 [[package]]
 name = "smallvec"
-version = "1.16.3"
+version = "1.16.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b3dc8af474f516a851ff4bd12db780f948b9250ad37211e4eec0bccea54e01b"
+checksum = "d0d5d4b1981b8bbbb7aed204cae5726d683d5d6ac7e74ec54122ea28f315e7c8"
 
 [[package]]
 name = "socket2"
@@ -3119,9 +4261,9 @@ dependencies = [
 
 [[package]]
 name = "tachys"
-version = "0.3.0-rc0"
+version = "0.3.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9705b7ad5e642b1ea8256a19bd86eec799160be8b13964623a1abeb61e7a5210"
+checksum = "b975577bcfbe568b1789fa0c0c85760db25acf08ab586740628efb37a73c8434"
 dependencies = [
  "any_spawner",
  "async-trait",
@@ -3192,9 +4334,9 @@ dependencies = [
 
 [[package]]
 name = "throw_error"
-version = "0.4.0-rc0"
+version = "0.4.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef44aa60615e1df932663e55c4522d13609d19cfb3efa617ba11826553b30f06"
+checksum = "5aa7cf90ca45c8751ec02c33c2944432baa805f2c1a755448e575c611f5c5491"
 dependencies = [
  "pin-project-lite",
 ]
@@ -3526,15 +4668,24 @@ checksum = "5a1f0175e03a0973cf4afd476bef05c26e228520400eb1fd473ad417b1c00ffb"
 
 [[package]]
 name = "utf8_iter"
-version = "1.0.4"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6c140620e7ffbb22c2dee59cafe6084a59b5ffc27a8859a5f0d494b5d52b6be"
+checksum = "af3bd9d3e571c26fcce9d033b87ea5ab061b8d2ffe9b7a5675d810d68f03edf0"
+dependencies = [
+ "utf_types",
+]
+
+[[package]]
+name = "utf_types"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a3b425286980a367278453f3b6d28cdcb134b574e5a35824a6ff5eebad50bb6"
 
 [[package]]
 name = "uuid"
-version = "1.28.0"
+version = "1.29.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
+checksum = "4a0e2d11620c50695fe12bbbfde96b3477fe606e7284c22d505c12ce51214514"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
@@ -3638,6 +4789,16 @@ dependencies = [
  "urlencoding",
  "wasm-bindgen",
  "web-sys",
+]
+
+[[package]]
+name = "wasm-js-macros"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "js-sys",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
 ]
 
 [[package]]

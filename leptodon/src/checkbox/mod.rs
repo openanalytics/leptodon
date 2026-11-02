@@ -30,7 +30,7 @@ use leptos::{
     prelude::{MaybeProp, Signal},
     view,
 };
-use leptos_use::math::use_or;
+use leptos_use_math::use_or;
 
 use crate::class_list;
 use crate::form_input::FormInputContext;

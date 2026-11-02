@@ -33,7 +33,8 @@ use leptos::{
     prelude::*,
     tachys::view::any_view::AnyView,
 };
-use leptos_use::{CalendarDate, UseCalendarOptions, UseCalendarReturn, use_calendar_with_options};
+use leptos_use::{CalendarDate, UseCalendarOptions, UseCalendarReturn};
+use leptos_use_calendar::use_calendar_with_options;
 use std::{fmt, iter, ops::Deref};
 
 mod year;
@@ -53,7 +54,7 @@ const WORK_WEEK: WeekdaySet = WeekdaySet::from_array([
 /// [show_days] days visible in the calendar, non visible days are skipped
 ///
 /// Returns whether the week should be shown.
-fn should_show_week(date: &CalendarDate, show_days: WeekdaySet) -> bool {
+fn should_show_week(date: &CalendarDate<NaiveDate>, show_days: WeekdaySet) -> bool {
     if !date.is_other_month() {
         return true;
     }
@@ -166,7 +167,7 @@ pub fn MonthCalendarUncontrolled(
     /// Provide content inside the day cell
     children: Option<CalendarChildrenFn>,
     /// Days in this month.
-    dates: Signal<Vec<CalendarDate>>,
+    dates: Signal<Vec<CalendarDate<NaiveDate>>>,
 ) -> impl IntoView {
     // Explicity is needed for tailwind's css generation.
     let grid_col_class = move || match show_days.get().len() {
@@ -287,7 +288,7 @@ pub fn Calendar(
 // this is a specific component for grid based calendar, uses col and row to position days in combination with [weekdays].
 #[component]
 fn CalendarDay(
-    date: CalendarDate,
+    date: CalendarDate<NaiveDate>,
     start_of_week: Weekday,
     /// weekdays of the week being shown
     weekdays: WeekdaySet,

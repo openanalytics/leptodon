@@ -22,6 +22,8 @@ use crate::util::on_pointer_down::{
     OnPointerDownOutsideOptions, on_pointer_down_outside_with_options,
 };
 use leptos::leptos_dom::helpers::set_timeout;
+use leptos_use_document::use_document;
+use leptos_use_window_scroll::use_window_scroll;
 
 use crate::{
     class_list::reactive_class::MaybeReactiveClass,
@@ -37,8 +39,7 @@ use leptos::{
     logging::{debug_log, debug_warn, error},
     tachys::{html::node_ref::node_ref, renderer::dom::CssStyleDeclaration},
 };
-use leptos_use::use_document;
-use leptos_use::{math::use_or, use_window_scroll};
+use leptos_use_math::use_or;
 use web_sys::{DomRect, HtmlDivElement, MouseEvent};
 
 #[derive(Default)]

@@ -41,7 +41,7 @@ use leptos::prelude::Update;
 use leptos_use::CalendarDate;
 
 use leptos_use::UseCalendarReturn;
-use leptos_use::use_calendar;
+use leptos_use_calendar::use_calendar;
 use num_traits::FromPrimitive;
 use std::cmp::Ordering;
 use std::str::FromStr;
@@ -258,7 +258,7 @@ where
 fn DayPickerMenu(
     weekdays: Signal<Vec<usize>>,
     #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
-    dates: Signal<Vec<CalendarDate>>,
+    dates: Signal<Vec<CalendarDate<NaiveDate>>>,
     value: RwSignal<Option<NaiveDate>>,
     min_date: MaybeProp<NaiveDate>,
     max_date: MaybeProp<NaiveDate>,
@@ -631,7 +631,7 @@ where
 
 #[derive(Clone, Copy)]
 pub enum DateMenuOption {
-    Day(CalendarDate),
+    Day(CalendarDate<NaiveDate>),
     /// Year, Month
     Month(i32, u32),
     Year(i32),
@@ -827,7 +827,7 @@ pub fn DatePicker(
         month_by_date,
         next_month,
         ..
-    } = use_calendar();
+    } = use_calendar::<NaiveDate>();
 
     // Current date fetched from the calendar helper
     let current_date = Memo::new(move |_| {

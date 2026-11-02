@@ -37,7 +37,7 @@ use leptos::{
     prelude::{MaybeProp, Signal},
     view,
 };
-use leptos_use::math::use_or;
+use leptos_use_math::use_or;
 use std::fmt::Display;
 use std::hash::Hash;
 

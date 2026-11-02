@@ -52,7 +52,7 @@ use leptos::prelude::Signal;
 use leptos::prelude::Update;
 use leptos::prelude::use_context;
 use leptos::{IntoView, component, view};
-use leptos_use::math::use_or;
+use leptos_use_math::use_or;
 use std::fmt::Debug;
 use web_sys::Event;
 use web_sys::FocusEvent;

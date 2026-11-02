@@ -52,6 +52,13 @@ send_wrapper = { workspace = true }
 leptos-struct-table = { workspace = true, features = ["chrono"] }
 nucleo-matcher = { workspace = true }
 zxcvbn = { workspace = true }
+leptos-use-math = { workspace = true }
+leptos-use-document = { workspace = true }
+leptos-use-window-scroll = { workspace = true }
+leptos-use-calendar = { workspace = true }
+leptos-use-preferences = { workspace = true }
+leptos-use-window = { workspace = true }
+leptos-use-event-listener = { workspace = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-cookies = { workspace = true }
@@ -71,6 +78,13 @@ ssr = [
     "dep:http",
     "leptos-use/axum",
     "leptos-use/ssr",
+    "leptos-use-math/ssr",
+    "leptos-use-document/ssr",
+    "leptos-use-window-scroll/ssr",
+    "leptos-use-calendar/ssr",
+    "leptos-use-preferences/ssr",
+    "leptos-use-window/ssr",
+    "leptos-use-event-listener/ssr",
 ]
 hydrate = ["leptos/hydrate"]
 

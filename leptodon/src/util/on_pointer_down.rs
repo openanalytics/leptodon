@@ -21,14 +21,16 @@ use leptos_use::core::{ElementsMaybeSignal, IntoElementMaybeSignal, IntoElements
 
 cfg_select! {
     not(feature = "ssr") => {
-    // if #[cfg(feature = "csr")] {
+    // feature = "csr" => {
         use leptos::leptos_dom::helpers::document;
         use leptos::leptos_dom::helpers::event_target;
         use leptos::leptos_dom::helpers::window;
         use leptos::reactive::traits::GetUntracked;
         use leptos_use::UseEventListenerOptions;
-        use leptos_use::use_event_listener_with_options;
-        use leptos_use::use_window;
+        use leptos_use_event_listener::use_event_listener_with_options;
+        use leptos_use_event_listener::use_event_listener;
+        use leptos_use_window::use_window;
+
         use std::{
             cell::Cell,
             rc::Rc,
@@ -200,7 +202,6 @@ where
 
         let remove_blur_listener = if detect_iframes {
             use leptos::ev::blur;
-            use leptos_use::use_event_listener;
 
             Some(use_event_listener::<_, web_sys::Window, _, _>(
                 window(),

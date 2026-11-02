@@ -69,7 +69,14 @@ send_wrapper = { version = "0.6.0" }
 leptos-struct-table = { git = "https://github.com/ToxicMushroom/leptos-struct-table.git", branch = "leptos-0.9", features = [
     "chrono",
 ] }
-leptos-use = { git = "https://github.com/EvanCarroll/leptos-use.git", branch = "leptos-0.9-resync" }
+leptos-use = { git = "https://github.com/Synphonyte/leptos-use.git", branch = "leptos-0.9" }
+leptos-use-math = { git = "https://github.com/Synphonyte/leptos-use.git", branch = "leptos-0.9" }
+leptos-use-document = { git = "https://github.com/Synphonyte/leptos-use.git", branch = "leptos-0.9" }
+leptos-use-window-scroll = { git = "https://github.com/Synphonyte/leptos-use.git", branch = "leptos-0.9" }
+leptos-use-calendar = { git = "https://github.com/Synphonyte/leptos-use.git", branch = "leptos-0.9" }
+leptos-use-preferences = { git = "https://github.com/Synphonyte/leptos-use.git", branch = "leptos-0.9" }
+leptos-use-window = { git = "https://github.com/Synphonyte/leptos-use.git", branch = "leptos-0.9" }
+leptos-use-event-listener = { git = "https://github.com/Synphonyte/leptos-use.git", branch = "leptos-0.9" }
 
 # Leptos additions
 # Log and error

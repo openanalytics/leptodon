@@ -32,7 +32,7 @@ use leptos::server::ServerAction;
 use leptos::{prelude::ServerFnError, *};
 use leptos_meta::Html;
 use leptos_meta::Meta;
-use leptos_use::use_preferred_dark;
+use leptos_use_preferences::use_preferred_dark;
 use std::fmt::Display;
 use std::str::FromStr;
 

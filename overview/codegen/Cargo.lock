@@ -969,7 +969,14 @@ dependencies = [
  "leptodon-proc-macros",
  "leptos",
  "leptos-struct-table",
- "leptos-use",
+ "leptos-use 0.20.0",
+ "leptos-use-calendar",
+ "leptos-use-document",
+ "leptos-use-event-listener",
+ "leptos-use-math",
+ "leptos-use-preferences",
+ "leptos-use-window",
+ "leptos-use-window-scroll",
  "leptos_meta",
  "leptos_router",
  "nucleo-matcher",
@@ -1042,7 +1049,7 @@ dependencies = [
  "chrono",
  "leptos",
  "leptos-struct-table-macro",
- "leptos-use",
+ "leptos-use 0.19.2",
  "serde",
  "wasm-bindgen",
  "web-sys",
@@ -1067,6 +1074,24 @@ version = "0.19.2"
 source = "git+https://github.com/EvanCarroll/leptos-use.git?branch=leptos-0.9-resync#efc26c7d878f31c737917fbdbd682141274b28c2"
 dependencies = [
  "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "lazy_static",
+ "leptos",
+ "paste",
+ "send_wrapper",
+ "thiserror 2.0.18",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
  "chrono",
  "codee",
  "cookie",
@@ -1074,16 +1099,1118 @@ dependencies = [
  "futures-util",
  "gloo-timers",
  "js-sys",
- "lazy_static",
  "leptos",
+ "leptos-use-active-element",
+ "leptos-use-breakpoints",
+ "leptos-use-broadcast-channel",
+ "leptos-use-calendar",
+ "leptos-use-clipboard",
+ "leptos-use-color-mode",
+ "leptos-use-cookie",
+ "leptos-use-core",
+ "leptos-use-css-var",
+ "leptos-use-cycle-list",
+ "leptos-use-derive-signal",
+ "leptos-use-device-orientation",
+ "leptos-use-device-pixel-ratio",
+ "leptos-use-display-media",
+ "leptos-use-document",
+ "leptos-use-document-visibility",
+ "leptos-use-draggable",
+ "leptos-use-drop-zone",
+ "leptos-use-element",
+ "leptos-use-element-bounding",
+ "leptos-use-element-hover",
+ "leptos-use-element-size",
+ "leptos-use-element-visibility",
+ "leptos-use-event-listener",
+ "leptos-use-event-source",
+ "leptos-use-favicon",
+ "leptos-use-filters",
+ "leptos-use-fn-debounce-throttle",
+ "leptos-use-geolocation",
+ "leptos-use-header",
+ "leptos-use-idle",
+ "leptos-use-infinite-scroll",
+ "leptos-use-intersection-observer",
+ "leptos-use-interval",
+ "leptos-use-interval-fn",
+ "leptos-use-intl-datetime-format",
+ "leptos-use-intl-number-format",
+ "leptos-use-is",
+ "leptos-use-locale",
+ "leptos-use-locales",
+ "leptos-use-math",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-media-query",
+ "leptos-use-mouse",
+ "leptos-use-mouse-in-element",
+ "leptos-use-now",
+ "leptos-use-on-click-outside",
+ "leptos-use-option-local-signal",
+ "leptos-use-permission",
+ "leptos-use-preferences",
+ "leptos-use-raf-fn",
+ "leptos-use-resize-observer",
+ "leptos-use-rw-signal",
+ "leptos-use-screen-orientation",
+ "leptos-use-scroll",
+ "leptos-use-service-worker",
+ "leptos-use-signal-debounce-throttle",
+ "leptos-use-sorted",
+ "leptos-use-storage",
+ "leptos-use-supported",
+ "leptos-use-sync-signal",
+ "leptos-use-textarea-autosize",
+ "leptos-use-timeout-fn",
+ "leptos-use-timestamp",
+ "leptos-use-to-string",
+ "leptos-use-toggle",
+ "leptos-use-user-media",
+ "leptos-use-watch-debounce-throttle",
+ "leptos-use-watch-pausable",
+ "leptos-use-watch-with-options",
+ "leptos-use-web-lock",
+ "leptos-use-web-notification",
+ "leptos-use-websocket",
+ "leptos-use-whenever",
+ "leptos-use-window",
+ "leptos-use-window-focus",
+ "leptos-use-window-scroll",
+ "leptos-use-window-size",
  "num",
  "paste",
  "send_wrapper",
+ "sendwrap-fn",
  "thiserror 2.0.18",
  "unic-langid",
  "wasm-bindgen",
  "wasm-bindgen-futures",
+ "wasm-js-macros",
  "web-sys",
+]
+
+[[package]]
+name = "leptos-use-active-element"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-document",
+ "leptos-use-event-listener",
+ "leptos-use-option-local-signal",
+ "leptos-use-window",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-breakpoints"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-media-query",
+ "leptos-use-window",
+ "paste",
+]
+
+[[package]]
+name = "leptos-use-broadcast-channel"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "codee",
+ "js-sys",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-option-local-signal",
+ "leptos-use-supported",
+ "send_wrapper",
+ "sendwrap-fn",
+ "thiserror 2.0.18",
+ "wasm-bindgen",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-calendar"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "chrono",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+]
+
+[[package]]
+name = "leptos-use-clipboard"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-supported",
+ "leptos-use-timeout-fn",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-color-mode"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "codee",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-cookie",
+ "leptos-use-element",
+ "leptos-use-header",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-preferences",
+ "leptos-use-storage",
+ "leptos-use-sync-signal",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-cookie"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "codee",
+ "cookie",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-broadcast-channel",
+ "leptos-use-header",
+ "leptos-use-now",
+ "leptos-use-watch-with-options",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-core"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+
+[[package]]
+name = "leptos-use-css-var"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-watch-with-options",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-cycle-list"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+]
+
+[[package]]
+name = "leptos-use-derive-signal"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+
+[[package]]
+name = "leptos-use-device-orientation"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "js-sys",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-supported",
+ "send_wrapper",
+ "wasm-bindgen",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-device-pixel-ratio"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-event-listener",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-display-media"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-option-local-signal",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-document"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "js-sys",
+ "leptos",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-document-visibility"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-event-listener",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-draggable"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-window",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-drop-zone"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "send_wrapper",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-element"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-supported",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-element-bounding"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-resize-observer",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-element-hover"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-element-size"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-resize-observer",
+ "leptos-use-watch-with-options",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-element-visibility"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-intersection-observer",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-event-listener"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-watch-with-options",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-event-source"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "codee",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-event-listener",
+ "send_wrapper",
+ "sendwrap-fn",
+ "thiserror 2.0.18",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-favicon"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-filters"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-now",
+ "send_wrapper",
+ "sendwrap-fn",
+]
+
+[[package]]
+name = "leptos-use-fn-debounce-throttle"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-filters",
+]
+
+[[package]]
+name = "leptos-use-geolocation"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-option-local-signal",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-header"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+
+[[package]]
+name = "leptos-use-idle"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-document",
+ "leptos-use-event-listener",
+ "leptos-use-filters",
+ "leptos-use-now",
+ "send_wrapper",
+ "sendwrap-fn",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-infinite-scroll"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "futures-util",
+ "gloo-timers",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-element-visibility",
+ "leptos-use-event-listener",
+ "leptos-use-scroll",
+ "send_wrapper",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-intersection-observer"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-watch-with-options",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-interval"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-filters",
+ "leptos-use-interval-fn",
+ "send_wrapper",
+ "sendwrap-fn",
+]
+
+[[package]]
+name = "leptos-use-interval-fn"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-filters",
+ "send_wrapper",
+ "sendwrap-fn",
+]
+
+[[package]]
+name = "leptos-use-intl-datetime-format"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "chrono",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-js-macros",
+]
+
+[[package]]
+name = "leptos-use-intl-number-format"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-js-macros",
+]
+
+[[package]]
+name = "leptos-use-is"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-derive-signal",
+]
+
+[[package]]
+name = "leptos-use-locale"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-locales",
+ "unic-langid",
+]
+
+[[package]]
+name = "leptos-use-locales"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-header",
+ "leptos-use-window",
+]
+
+[[package]]
+name = "leptos-use-math"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "num",
+ "paste",
+]
+
+[[package]]
+name = "leptos-use-maybe-rw-signal"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+]
+
+[[package]]
+name = "leptos-use-media-query"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-event-listener",
+ "send_wrapper",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-mouse"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-window",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-mouse-in-element"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-mouse",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-now"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "js-sys",
+]
+
+[[package]]
+name = "leptos-use-on-click-outside"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "lazy_static",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-option-local-signal"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+]
+
+[[package]]
+name = "leptos-use-permission"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "js-sys",
+ "leptos",
+ "leptos-use-event-listener",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-preferences"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-header",
+ "leptos-use-media-query",
+]
+
+[[package]]
+name = "leptos-use-raf-fn"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-filters",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "leptos-use-resize-observer"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-supported",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-rw-signal"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+]
+
+[[package]]
+name = "leptos-use-screen-orientation"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-event-listener",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-scroll"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-element",
+ "leptos-use-event-listener",
+ "leptos-use-filters",
+ "leptos-use-fn-debounce-throttle",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-service-worker"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-signal-debounce-throttle"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-filters",
+ "leptos-use-fn-debounce-throttle",
+ "paste",
+]
+
+[[package]]
+name = "leptos-use-sorted"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+]
+
+[[package]]
+name = "leptos-use-storage"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "codee",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-filters",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-watch-with-options",
+ "leptos-use-window",
+ "send_wrapper",
+ "sendwrap-fn",
+ "thiserror 2.0.18",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-supported"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+]
+
+[[package]]
+name = "leptos-use-sync-signal"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-rw-signal",
+]
+
+[[package]]
+name = "leptos-use-textarea-autosize"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-element",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-resize-observer",
+ "send_wrapper",
+ "sendwrap-fn",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-timeout-fn"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "send_wrapper",
+ "sendwrap-fn",
+]
+
+[[package]]
+name = "leptos-use-timestamp"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-filters",
+ "leptos-use-interval-fn",
+ "leptos-use-now",
+ "leptos-use-raf-fn",
+]
+
+[[package]]
+name = "leptos-use-to-string"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-derive-signal",
+]
+
+[[package]]
+name = "leptos-use-toggle"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+]
+
+[[package]]
+name = "leptos-use-user-media"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-maybe-rw-signal",
+ "leptos-use-option-local-signal",
+ "leptos-use-window",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-watch-debounce-throttle"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-filters",
+ "leptos-use-watch-with-options",
+]
+
+[[package]]
+name = "leptos-use-watch-pausable"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-watch-with-options",
+]
+
+[[package]]
+name = "leptos-use-watch-with-options"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-filters",
+]
+
+[[package]]
+name = "leptos-use-web-lock"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "thiserror 2.0.18",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-web-notification"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-option-local-signal",
+ "leptos-use-supported",
+ "leptos-use-window",
+ "send_wrapper",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-js-macros",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-websocket"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "codee",
+ "default-struct-builder",
+ "js-sys",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-filters",
+ "leptos-use-interval-fn",
+ "send_wrapper",
+ "sendwrap-fn",
+ "thiserror 2.0.18",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-whenever"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "leptos",
+ "leptos-use-watch-with-options",
+]
+
+[[package]]
+name = "leptos-use-window"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-document",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use-window-focus"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-event-listener",
+]
+
+[[package]]
+name = "leptos-use-window-scroll"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "cfg-if",
+ "leptos",
+ "leptos-use-event-listener",
+ "leptos-use-window",
+]
+
+[[package]]
+name = "leptos-use-window-size"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "default-struct-builder",
+ "leptos",
+ "leptos-use-core",
+ "leptos-use-event-listener",
+ "leptos-use-media-query",
+ "leptos-use-window",
 ]
 
 [[package]]
@@ -1834,6 +2961,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sendwrap-fn"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "send_wrapper",
+]
+
+[[package]]
 name = "serde"
 version = "1.0.228"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2447,6 +3582,16 @@ dependencies = [
  "urlencoding",
  "wasm-bindgen",
  "web-sys",
+]
+
+[[package]]
+name = "wasm-js-macros"
+version = "0.20.0"
+source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a24316f88fc6f7ffe20d5f6efacd873e88299b"
+dependencies = [
+ "js-sys",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
 ]
 
 [[package]]
