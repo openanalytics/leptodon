@@ -17,6 +17,7 @@
 // If not, see <http://www.apache.org/licenses/>
 use leptos::prelude::{ClassAttribute, For, Get, IntoAny, OnAttribute, Show};
 use leptos::prelude::{ElementChild, RwSignal, Signal};
+use leptos::reactive::traits::With;
 use std::fmt::Debug;
 use std::{hash::Hash, sync::Arc};
 
@@ -56,8 +57,7 @@ where
                 each=move || columns.get().into_iter()
                 key=|column| *column
                 children=move |column| {
-                    let temp_row = row.get();
-                    let grouping_info = temp_row.group_info();
+                    let grouping_info = row.with(|row| row.group_info().clone());
                     if !grouping_info.grouped_by.is_empty() {
                         let class = if grouping_info.grouped_by.contains(&column) && grouping_info.row_index == 0 {
                             "font-bold".into()
