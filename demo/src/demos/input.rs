@@ -15,10 +15,6 @@
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
-use leptodon::button::AddButton;
-use leptodon::button::DeleteButton;
-use leptodon::button::DownloadButton;
-use leptodon::button::EditButton;
 use leptodon::heading::Heading4;
 use leptodon::input::FileUpload;
 use leptodon::input::GenericInput;
@@ -175,21 +171,10 @@ pub fn GenericInputDemo() -> impl IntoView {
     }
 }
 
-#[generate_codeblock(StyledButtonExample)]
-#[component]
-pub fn PremadeButtonDemo() -> impl IntoView {
-    view! {
-        <AddButton/>
-        <EditButton/>
-        <DeleteButton/>
-        <DownloadButton/>
-    }
-}
-
 #[component]
 pub fn InputsDemoPage() -> impl IntoView {
     view! {
-        <Title text="Button Components"/>
+        <Title text="Input Components"/>
 
         <FixedCenterColumn>
             <Heading4 anchor="text-input">Text Input</Heading4>
