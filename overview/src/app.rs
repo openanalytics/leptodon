@@ -46,7 +46,7 @@ use leptodon::darkmode::ThemeSelector;
 use leptodon::darkmode::use_color_scheme;
 use leptodon::date_picker::DatePicker;
 use leptodon::date_picker::DateRangePicker;
-use leptodon::dropdown::DropdownItem;
+use leptodon::dropdown::DropdownButtonItem;
 use leptodon::heading::*;
 use leptodon::icon;
 use leptodon::infolabel::InfoLabel;
@@ -247,7 +247,7 @@ fn Home() -> impl IntoView {
             <Link href="https://www.openanalytics.eu/">"Click here"</Link>
             <DropdownButton {..} data-testid="test-dropdown">
                 <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>
-                <DropdownItem label="Entry-1" on_click=move |e| { log!("{:?}", e); } {..} data-testid="test-dropdown-item1" />
+                <DropdownButtonItem label="Entry-1" on_click=move |e| { log!("{:?}", e); } {..} data-testid="test-dropdown-item1" />
             </DropdownButton>
             <ModalButton id="modal-button1" modal_title="Example modal" modal_visible>
                 <ModalButtonChildren slot:button_children>Toggle Modal</ModalButtonChildren>
