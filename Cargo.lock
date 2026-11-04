@@ -48,7 +48,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1384d3fe1eecb464229fcf6eebb72306591c56bf27b373561489458a7c73027d"
 dependencies = [
  "futures",
- "thiserror 2.0.21",
+ "thiserror",
  "tokio",
  "wasm-bindgen-futures",
 ]
@@ -416,7 +416,7 @@ dependencies = [
  "rkyv",
  "serde",
  "serde_json",
- "thiserror 2.0.21",
+ "thiserror",
 ]
 
 [[package]]
@@ -723,7 +723,7 @@ version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "71958f69fb2de856c5dd51ac9377e986ca1aa5919f931bf5395a807277f889a0"
 dependencies = [
- "thiserror 2.0.21",
+ "thiserror",
 ]
 
 [[package]]
@@ -753,7 +753,7 @@ dependencies = [
  "strum",
  "strum_macros",
  "syn 3.0.9",
- "thiserror 2.0.21",
+ "thiserror",
  "tokio",
  "tower",
  "tower-http",
@@ -1113,7 +1113,7 @@ dependencies = [
  "pin-project",
  "serde",
  "serde_json",
- "thiserror 2.0.21",
+ "thiserror",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -1315,7 +1315,7 @@ dependencies = [
  "lazy_static",
  "regex",
  "serde",
- "thiserror 2.0.21",
+ "thiserror",
 ]
 
 [[package]]
@@ -1603,7 +1603,6 @@ dependencies = [
  "nucleo-matcher",
  "num-traits",
  "reactive_stores",
- "rstml-to-string-macro",
  "send_wrapper",
  "serde",
  "walkdir",
@@ -1619,6 +1618,7 @@ version = "2.0.0-pre"
 dependencies = [
  "proc-macro2",
  "quote",
+ "rstml",
  "syn 3.0.9",
  "walkdir",
 ]
@@ -1655,7 +1655,7 @@ dependencies = [
  "server_fn",
  "slotmap",
  "tachys",
- "thiserror 2.0.21",
+ "thiserror",
  "throw_error",
  "tracing",
  "typed-builder",
@@ -1795,7 +1795,7 @@ dependencies = [
  "paste",
  "send_wrapper",
  "sendwrap-fn",
- "thiserror 2.0.21",
+ "thiserror",
  "unic-langid",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -1840,7 +1840,7 @@ dependencies = [
  "leptos-use-supported",
  "send_wrapper",
  "sendwrap-fn",
- "thiserror 2.0.21",
+ "thiserror",
  "wasm-bindgen",
  "wasm-js-macros",
  "web-sys",
@@ -2161,7 +2161,7 @@ dependencies = [
  "leptos-use-event-listener",
  "send_wrapper",
  "sendwrap-fn",
- "thiserror 2.0.21",
+ "thiserror",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -2611,7 +2611,7 @@ dependencies = [
  "leptos-use-window",
  "send_wrapper",
  "sendwrap-fn",
- "thiserror 2.0.21",
+ "thiserror",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -2744,7 +2744,7 @@ source = "git+https://github.com/Synphonyte/leptos-use.git?branch=leptos-0.9#a5a
 dependencies = [
  "default-struct-builder",
  "leptos",
- "thiserror 2.0.21",
+ "thiserror",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wasm-js-macros",
@@ -2786,7 +2786,7 @@ dependencies = [
  "leptos-use-interval-fn",
  "send_wrapper",
  "sendwrap-fn",
- "thiserror 2.0.21",
+ "thiserror",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -2878,7 +2878,7 @@ checksum = "fca5949d35c4f8491d0f6d282085aecee538b893bd835e91cffda9a4fe310ead"
 dependencies = [
  "config",
  "serde",
- "thiserror 2.0.21",
+ "thiserror",
  "typed-builder",
 ]
 
@@ -2910,7 +2910,7 @@ dependencies = [
  "or_poisoned",
  "proc-macro2",
  "quote",
- "rstml 0.13.1",
+ "rstml",
  "serde",
  "syn 3.0.9",
  "walkdir",
@@ -2949,7 +2949,7 @@ dependencies = [
  "prettyplease",
  "proc-macro2",
  "quote",
- "rstml 0.13.1",
+ "rstml",
  "rustc_version",
  "server_fn_macro",
  "syn 3.0.9",
@@ -2990,7 +2990,7 @@ dependencies = [
  "rustc_version",
  "send_wrapper",
  "tachys",
- "thiserror 2.0.21",
+ "thiserror",
  "url",
  "wasm-bindgen",
  "web-sys",
@@ -3268,7 +3268,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed0423ff9973dea4d6bd075934fdda86ebb8c05bdf9d6b0507067d4a1226371d"
 dependencies = [
  "serde",
- "thiserror 2.0.21",
+ "thiserror",
 ]
 
 [[package]]
@@ -3310,7 +3310,7 @@ dependencies = [
  "serde",
  "strum",
  "strum_macros",
- "thiserror 2.0.21",
+ "thiserror",
  "tokio",
  "tower",
  "tower-http",
@@ -3436,29 +3436,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "proc-macro-error"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da25490ff9892aab3fcf7c36f08cfb902dd3e71ca0f9f9517bea02a73a5ce38c"
-dependencies = [
- "proc-macro-error-attr",
- "proc-macro2",
- "quote",
- "version_check",
-]
-
-[[package]]
-name = "proc-macro-error-attr"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1be40180e52ecc98ad80b184934baf3d0d29f979574e439af5a55274b35f869"
-dependencies = [
- "proc-macro2",
- "quote",
- "version_check",
-]
-
-[[package]]
 name = "proc-macro-utils"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3476,19 +3453,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9"
 dependencies = [
  "unicode-ident",
-]
-
-[[package]]
-name = "proc-macro2-diagnostics"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "af066a9c399a26e020ada66a034357a868728e72cd426f3adcd35f80d88d88c8"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.119",
- "version_check",
- "yansi",
 ]
 
 [[package]]
@@ -3641,7 +3605,7 @@ dependencies = [
  "send_wrapper",
  "serde",
  "slotmap",
- "thiserror 2.0.21",
+ "thiserror",
  "tracing",
  "web-sys",
 ]
@@ -3774,21 +3738,7 @@ dependencies = [
  "log",
  "regex",
  "serde_with",
- "thiserror 2.0.21",
-]
-
-[[package]]
-name = "rstml"
-version = "0.11.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe542870b8f59dd45ad11d382e5339c9a1047cde059be136a7016095bbdefa77"
-dependencies = [
- "proc-macro2",
- "proc-macro2-diagnostics 0.10.1",
- "quote",
- "syn 2.0.119",
- "syn_derive",
- "thiserror 1.0.69",
+ "thiserror",
 ]
 
 [[package]]
@@ -3799,23 +3749,10 @@ checksum = "c6bd1bfba3c4c0b57aae906204d9e5744f3f65800ce6c75bd4cc162f2c26f3aa"
 dependencies = [
  "derive-where",
  "proc-macro2",
- "proc-macro2-diagnostics 0.11.0",
+ "proc-macro2-diagnostics",
  "quote",
  "syn 3.0.9",
- "thiserror 2.0.21",
-]
-
-[[package]]
-name = "rstml-to-string-macro"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7549bc7c5686ff4021c2c80c7816b0aaf4192c69190b5f80d0e858c407b4d3cf"
-dependencies = [
- "proc-macro2",
- "proc-macro2-diagnostics 0.10.1",
- "quote",
- "rstml 0.11.2",
- "syn 2.0.119",
+ "thiserror",
 ]
 
 [[package]]
@@ -4055,7 +3992,7 @@ dependencies = [
  "serde_json",
  "serde_qs",
  "server_fn_macro_default",
- "thiserror 2.0.21",
+ "thiserror",
  "throw_error",
  "tokio",
  "tower",
@@ -4231,18 +4168,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "syn_derive"
-version = "0.1.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1329189c02ff984e9736652b1631330da25eaa6bc639089ed4915d25446cbe7b"
-dependencies = [
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "syn 2.0.119",
-]
-
-[[package]]
 name = "sync_wrapper"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4294,31 +4219,11 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "1.0.69"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52"
-dependencies = [
- "thiserror-impl 1.0.69",
-]
-
-[[package]]
-name = "thiserror"
 version = "2.0.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09e52cb86a36cede5cb101bf8908837b3e4c6e5e59fe7fd85c23fb56200d189e"
 dependencies = [
- "thiserror-impl 2.0.21",
-]
-
-[[package]]
-name = "thiserror-impl"
-version = "1.0.69"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.119",
+ "thiserror-impl",
 ]
 
 [[package]]
@@ -4577,7 +4482,7 @@ dependencies = [
  "log",
  "rand 0.9.5",
  "sha1",
- "thiserror 2.0.21",
+ "thiserror",
 ]
 
 [[package]]
@@ -4949,12 +4854,6 @@ name = "xxhash-rust"
 version = "0.8.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "550a2b930b62486a393c52d5c3b84bff264b28aa437ed64694d31e93b1757af7"
-
-[[package]]
-name = "yansi"
-version = "1.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cfe53a6657fd280eaa890a3bc59152892ffa3e30101319d168b781ed6529b049"
 
 [[package]]
 name = "yoke"

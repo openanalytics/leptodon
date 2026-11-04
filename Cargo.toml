@@ -99,7 +99,8 @@ strum = "0.28.0"
 strum_macros = "0.28.0"
 const-str = { version = "1.1.0" }
 base64 = { version = "0.23.1" }
-rstml-to-string-macro = { version = "=0.1.0" } # 0.2.0 panics on stable, compiles on nightly (debug-proc-macro is nightly-only flag :p -> the errors are hiding!)
+# RSTML parser: used by the `svg!` proc macro to validate markup at compile time.
+rstml = { version = "=0.13.1" } # Pinned to match the version Leptos pulls in.
 nucleo-matcher = { version = "0.3.1" }         # Fuzzy search
 
 # Other utils

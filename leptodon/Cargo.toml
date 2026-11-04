@@ -23,7 +23,6 @@ leptodon-proc-macros = { workspace = true }
 # Bumping reactive_stores causes hydration errors.
 reactive_stores = { workspace = true }
 
-# Pinned together, updating wasm-bindgen beyond 0.2.108 breaks the leptos-wasm loading
 wasm-bindgen = { workspace = true, optional = true }
 
 # Newer versions of web-sys require newer wasm-bindgen.
@@ -41,7 +40,6 @@ web-sys = { workspace = true, features = [
 
 axum = { workspace = true, optional = true }
 axum-extra = { workspace = true, optional = true, features = ["cookie"] }
-rstml-to-string-macro = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 num-traits = { workspace = true }
 http = { workspace = true, optional = true }

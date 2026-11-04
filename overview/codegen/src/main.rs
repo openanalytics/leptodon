@@ -30,7 +30,7 @@ fn gen_icons() -> Result<(), Error> {
     )
     .expect("valid source code");
 
-    let func_count = leptodon_icons.items.len();
+    let mut func_count = 0;
     let functions = leptodon_icons.items.iter().filter(|item| {
         if let syn::Item::Fn(item_fn) = item {
             item_fn.sig.inputs.is_empty()
@@ -42,12 +42,13 @@ fn gen_icons() -> Result<(), Error> {
     let icon_html = functions
         .map(|func| match func {
             syn::Item::Fn(item_fn) if matches!(item_fn.vis, Visibility::Public(_)) => {
+                func_count += 1;
                 format!(
                     r#"
-            <span>
-                <Icon icon=leptodon::icon::{}() class="border-2 border-solid w-24 h-24"/>
-                {}
-            </span>
+        <span>
+            <Icon icon=leptodon::icon::{}() class="border-2 border-solid w-24 h-24"/>
+            {}
+        </span>
 "#,
                     item_fn.sig.ident, item_fn.sig.ident
                 )
@@ -69,7 +70,7 @@ pub fn IconList() -> impl IntoView {{
     view! {{{}    }}
 }}
 
-// {}
+// Number of icons: {}
 "#,
             icon_html, func_count
         ),
