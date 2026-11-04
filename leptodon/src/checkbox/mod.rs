@@ -16,11 +16,9 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use leptodon_proc_macros::generate_docs;
-use leptos::logging::debug_log;
 use leptos::prelude::BindAttribute;
 use leptos::prelude::Children;
 use leptos::prelude::ClassAttribute;
-use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
@@ -32,7 +30,7 @@ use leptos::{
     prelude::{MaybeProp, Signal},
     view,
 };
-use leptos_use::math::use_or;
+use leptos_use_math::use_or;
 
 use crate::class_list;
 use crate::form_input::FormInputContext;
@@ -77,10 +75,11 @@ pub fn Checkbox(
         use_or(required, form_required)
     };
 
-    Effect::watch(
+    #[cfg(debug_assertions)]
+    leptos::prelude::Effect::watch(
         move || checked.get(),
         |new, _, _| {
-            debug_log!("Checkbox checked state changed to {new}");
+            leptos::logging::debug_log!("Checkbox checked state changed to {new}");
         },
         false,
     );

@@ -26,6 +26,9 @@ flake-utils.lib.eachSystemPassThrough linux-systems (
         cargo-hack
         cargo-nextest
         cargo-deny
+        cargo-leptos
+        binaryen
+        wasm-bindgen-cli_0_2_129
         zstd
         licensure
       ];

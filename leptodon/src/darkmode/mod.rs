@@ -32,7 +32,7 @@ use leptos::server::ServerAction;
 use leptos::{prelude::ServerFnError, *};
 use leptos_meta::Html;
 use leptos_meta::Meta;
-use leptos_use::use_preferred_dark;
+use leptos_use_preferences::use_preferred_dark;
 use std::fmt::Display;
 use std::str::FromStr;
 
@@ -149,7 +149,7 @@ impl FromStr for Theme {
 
 const THEME_COOKIE: &str = "theme";
 
-#[server(UpdateTheme, "/api")]
+#[server(UpdateTheme, endpoint = "/update_theme")]
 pub async fn update_theme(new_theme: Theme) -> Result<Theme, ServerFnError> {
     use axum::http::{HeaderMap, HeaderValue, header::SET_COOKIE};
     use leptos::context::use_context;
@@ -163,7 +163,7 @@ pub async fn update_theme(new_theme: Theme) -> Result<Theme, ServerFnError> {
     headers.insert(
         SET_COOKIE,
         HeaderValue::from_str(&format!(
-            "{THEME_COOKIE}={theme_value}; Path=/; Max-Age=186400; SameSite=Strict"
+            "{THEME_COOKIE}={theme_value}; Path=/; Max-Age=157784760; SameSite=Strict"
         ))
         .expect("to create header value"),
     );
@@ -178,7 +178,6 @@ pub fn fetch_ssr_tailwind_class(browser_prefers_dark: Signal<bool>) -> String {
         return "".to_string();
     }
     debug_log!("Final theme: {theme:?}");
-    // console_log(format!("Final theme: {theme:?}").as_str());
     let resulting_theme = match theme {
         Theme::Light => "light",
         Theme::FollowSystem if browser_prefers_dark.get() => "dark",
@@ -186,7 +185,6 @@ pub fn fetch_ssr_tailwind_class(browser_prefers_dark: Signal<bool>) -> String {
         Theme::Dark => "dark",
     };
     debug_log!("Resulting theme: {resulting_theme:?}");
-    // console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
     resulting_theme.to_string()
 }
 
@@ -211,7 +209,6 @@ pub fn ThemeSelector(
     let resulting_dark = Memo::new(move |_| {
         let theme = color_scheme.signal.get();
         debug_log!("Final theme: {theme:?}");
-        // console_log(format!("Final theme: {theme:?}").as_str());
         let resulting_theme = match theme {
             Theme::Light => "light",
             Theme::FollowSystem if browser_prefers_dark.get() => "dark",
@@ -220,7 +217,6 @@ pub fn ThemeSelector(
         };
         debug_log!("Resulting theme: {resulting_theme:?}");
 
-        // console_log(format!("Resulting theme: {resulting_theme:?}").as_str());
         resulting_theme
     });
 
@@ -251,7 +247,7 @@ pub fn ThemeSelector(
     }
 }
 
-#[cfg(not(feature = "ssr"))]
+#[cfg(target_arch = "wasm32")]
 pub fn initial_theme_from_cookie() -> Theme {
     use leptos::prelude::document;
     use wasm_cookies::cookies;
@@ -266,6 +262,13 @@ pub fn initial_theme_from_cookie() -> Theme {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(feature = "ssr"))]
+pub fn initial_theme_from_cookie() -> Theme {
+    unimplemented!("Please enable ssr.");
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 #[cfg(feature = "ssr")]
 pub fn initial_theme_from_cookie() -> Theme {
     use axum_extra::extract::cookie::Cookie;

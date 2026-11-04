@@ -21,6 +21,7 @@ pub mod icon_data;
 use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::icon::icon_data::*;
 use crate::icon_data;
+use leptodon_proc_macros::svg;
 use leptos::IntoView;
 use leptos::component;
 use leptos::prelude::ClassAttribute;
@@ -88,7 +89,7 @@ pub fn Icon(
 /// Creates a [LazyLock] around a rendered version of the passed `html! {...}`.
 macro_rules! lazy_path {
     ($name:ident, html! $vw:tt) => {
-        static $name: LazyLock<String> = std::sync::LazyLock::new(|| rstml_to_string_macro::html!$vw);
+        static $name: LazyLock<&'static str> = std::sync::LazyLock::new(|| svg!$vw);
     };
 }
 

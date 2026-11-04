@@ -24,12 +24,8 @@ use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::RwSignal;
 use leptos::prelude::use_context;
-use leptos::{
-    IntoView, component,
-    prelude::{MaybeProp, Signal},
-    view,
-};
-use leptos_use::math::use_or;
+use leptos::{IntoView, component, prelude::MaybeProp, view};
+use leptos_use_math::use_or;
 
 use crate::class_list;
 use crate::form_input::FormInputContext;
@@ -56,12 +52,10 @@ pub fn Toggle(
 ) -> impl IntoView {
     // Form context
     let form_context = use_context::<FormInputContext<String>>();
-    let form_required = Signal::from(
-        form_context
-            .clone()
-            .map(|ctx| ctx.required)
-            .unwrap_or_default(),
-    );
+    let form_required = form_context
+        .clone()
+        .map(|ctx| ctx.required)
+        .unwrap_or_default();
     let required = use_or(required, form_required);
 
     view! {

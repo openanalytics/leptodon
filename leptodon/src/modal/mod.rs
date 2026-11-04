@@ -17,6 +17,7 @@
 // If not, see <http://www.apache.org/licenses/>
 use leptodon_proc_macros::generate_docs;
 use leptos::children::Children;
+use leptos::leptos_dom::helpers::set_timeout;
 use leptos::logging::debug_log;
 use leptos::logging::error;
 use leptos::prelude::AriaAttributes;
@@ -31,14 +32,15 @@ use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::slot;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
-use leptos_use::UseTimeoutFnReturn;
-use leptos_use::use_timeout_fn;
+use std::time::Duration;
 use web_sys::KeyboardEvent;
 
 use crate::button::ButtonRef;
 use crate::button::ControlButton;
 use crate::class_list;
+use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::icon::CloseIcon;
+use crate::util::callback::ArcOneCallback;
 use crate::util::signals::ComponentRef;
 
 const MODAL_CLASSES: &str = "relative flex flex-col bg-white rounded-lg shadow dark:bg-gray-800 px-2 md:px-4 m-4 w-full max-w-2xl max-h-[95vh]";
@@ -57,13 +59,15 @@ pub fn Modal(
     id: MaybeProp<String>,
     /// Extra modal classes
     #[prop(optional, into)]
-    class: MaybeProp<String>,
+    class: MaybeReactiveClass,
     /// Title shown in the modal heading
     #[prop(optional, into)]
     title: MaybeProp<String>,
     /// True shows the modal, false hides it.
     #[prop(optional, into)]
     visible: RwSignal<bool>,
+    // /// Close handler, execute cleanup
+    #[prop(default = ArcOneCallback::new(|_| ()), into)] on_close: ArcOneCallback<()>,
     /// Modal content
     children: Children,
     /// Modal footer (e.g. Ok and Cancel buttons)
@@ -76,14 +80,9 @@ pub fn Modal(
             error!("Internal modal first-div reference is not mounted!");
             return;
         };
+
         // Somehow this hack makes focus work..
-        let UseTimeoutFnReturn { start, .. } = use_timeout_fn(
-            move |_| {
-                first_button.focus();
-            },
-            0.0,
-        );
-        start(());
+        let _ = set_timeout(move || first_button.focus(), Duration::ZERO);
         debug_log!("modal: successfully focused first-div");
     };
 
@@ -98,15 +97,26 @@ pub fn Modal(
     );
 
     view! {
-        <div tabindex="-1"
+        <div
+            tabindex="-1"
             class=class_list!(
                 MODAL_BACKDROP_CLASSES,
                 ("hidden", move || !visible.get())
             )
-            on:click=move |_| visible.set(false)
-            on:keydown=move |key: KeyboardEvent| {
-                if key.code() == "Escape" {
+            on:click={
+                let on_close = on_close.clone();
+                move |_| {
                     visible.set(false);
+                    on_close(());
+                }
+            }
+            on:keydown= {
+                let on_close = on_close.clone();
+                move |key: KeyboardEvent| {
+                    if key.code() == "Escape" {
+                        visible.set(false);
+                        on_close(());
+                    }
                 }
             }
         >
@@ -125,12 +135,18 @@ pub fn Modal(
                 // Modal header
                 <div class="flex items-center justify-between p-2 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-lg font-medium text-heading">
-                        { title.get() }
+                        { move || title.get() }
                     </h3>
                     <ControlButton
                         icon=CloseIcon()
                         comp_ref=first_button
-                        on_click=move |_| visible.set(false)
+                        on_click={
+                            let on_close = on_close.clone();
+                            move |_| {
+                                visible.set(false);
+                                on_close(());
+                            }
+                        }
                     />
                 </div>
 

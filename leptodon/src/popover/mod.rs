@@ -21,6 +21,10 @@ use crate::class_list;
 use crate::util::on_pointer_down::{
     OnPointerDownOutsideOptions, on_pointer_down_outside_with_options,
 };
+use leptos::leptos_dom::helpers::set_timeout;
+use leptos_use_document::use_document;
+use leptos_use_window_scroll::use_window_scroll;
+
 use crate::{
     class_list::reactive_class::MaybeReactiveClass,
     util::{callback::BoxCallback, element::Element},
@@ -35,8 +39,7 @@ use leptos::{
     logging::{debug_log, debug_warn, error},
     tachys::{html::node_ref::node_ref, renderer::dom::CssStyleDeclaration},
 };
-use leptos_use::use_document;
-use leptos_use::{math::use_or, use_window_scroll};
+use leptos_use_math::use_or;
 use web_sys::{DomRect, HtmlDivElement, MouseEvent};
 
 #[derive(Default)]
@@ -223,7 +226,7 @@ where
                 handle.clear();
             }
             if let Some(hover_open_delay) = hover_open_delay.get() {
-                *handle = set_timeout_with_handle(
+                *handle = set_timeout(
                     move || {
                         show_by_hover.set(true);
                     },
@@ -256,7 +259,7 @@ where
                 handle.clear();
             }
             if let Some(hover_close_delay) = hover_close_delay {
-                *handle = set_timeout_with_handle(
+                *handle = set_timeout(
                     move || {
                         show_by_hover.set(false);
                     },
@@ -768,7 +771,7 @@ impl PopoverAnchor {
     fn mirrored(&self) -> PopoverAnchor {
         match self {
             PopoverAnchor::Top => Self::Bottom,
-            PopoverAnchor::Bottom => Self::Bottom,
+            PopoverAnchor::Bottom => Self::Top,
             PopoverAnchor::Left => Self::Right,
             PopoverAnchor::Right => Self::Left,
             PopoverAnchor::TopStart => Self::BottomStart,

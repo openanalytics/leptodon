@@ -1,4 +1,3 @@
-use crate::util::on_pointer_down::OnPointerDownOutsideOptions;
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV
@@ -16,6 +15,7 @@ use crate::util::on_pointer_down::OnPointerDownOutsideOptions;
 //
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
+use crate::util::on_pointer_down::OnPointerDownOutsideOptions;
 use crate::util::on_pointer_down::on_pointer_down_outside_with_options;
 use chrono::Datelike;
 use chrono::Days;
@@ -41,7 +41,7 @@ use leptos::prelude::Update;
 use leptos_use::CalendarDate;
 
 use leptos_use::UseCalendarReturn;
-use leptos_use::use_calendar;
+use leptos_use_calendar::use_calendar;
 use num_traits::FromPrimitive;
 use std::cmp::Ordering;
 use std::str::FromStr;
@@ -178,10 +178,10 @@ fn menu_item_intersects_range_opts(
         if let Some(max_date) = max_date {
             menu_max >= min_date && menu_min <= max_date
         } else {
-            menu_max > min_date
+            menu_max >= min_date
         }
     } else if let Some(max_date) = max_date {
-        menu_min < max_date
+        menu_min <= max_date
     } else {
         true
     }
@@ -258,7 +258,7 @@ where
 fn DayPickerMenu(
     weekdays: Signal<Vec<usize>>,
     #[prop(into)] highlighter: MaybeProp<ArcOneCallback<DateMenuOption, String>>,
-    dates: Signal<Vec<CalendarDate>>,
+    dates: Signal<Vec<CalendarDate<NaiveDate>>>,
     value: RwSignal<Option<NaiveDate>>,
     min_date: MaybeProp<NaiveDate>,
     max_date: MaybeProp<NaiveDate>,
@@ -631,7 +631,7 @@ where
 
 #[derive(Clone, Copy)]
 pub enum DateMenuOption {
-    Day(CalendarDate),
+    Day(CalendarDate<NaiveDate>),
     /// Year, Month
     Month(i32, u32),
     Year(i32),
@@ -827,7 +827,7 @@ pub fn DatePicker(
         month_by_date,
         next_month,
         ..
-    } = use_calendar();
+    } = use_calendar::<NaiveDate>();
 
     // Current date fetched from the calendar helper
     let current_date = Memo::new(move |_| {
@@ -845,13 +845,16 @@ pub fn DatePicker(
     });
 
     let initial_value = value.get_untracked();
-    if let Some(date) = initial_value
-        // Out of range
-        && date_in_range(date, min_date, max_date) != RangeOrdering::Contains
+    let initial_value = if let Some(date) = initial_value
+        // Check in range
+        && date_in_range(date, min_date, max_date) == RangeOrdering::Contains
     {
+        Some(date)
+    } else {
         // Reject invalid value
         value.set(None);
-    }
+        None
+    };
 
     let input_value = RwSignal::new(initial_value);
     let last_value = RwSignal::new(initial_value);
@@ -859,26 +862,25 @@ pub fn DatePicker(
     // Copy external changes into this component.
     Effect::watch(
         move || value.get(),
-        {
-            move |new, old, _| {
-                if
-                // Check if the value really got updated, like memo does
-                Some(new) != old &&
+        move |new, old, _| {
+            if
+            // Check if the value really got updated, like memo does
+            Some(new) != old &&
                 // Check if if this is not an internal change coming from the UI.
                 new != &last_value.get_untracked()
+            {
+                // New external value
+                // Check if its value is in the required range.
+                if let Some(date) = new
+                    && date_in_range(*date, min_date, max_date) != RangeOrdering::Contains
                 {
-                    // New external value
-                    // Check if its value is in the required range.
-                    if let Some(date) = new
-                        && date_in_range(*date, min_date, max_date) != RangeOrdering::Contains
-                    {
-                        // Reject if not.
-                        value.set(input_value.get());
-                    }
-                    // Update if all is ok.
-                    last_value.set(*new);
-                    input_value.set(*new);
+                    // Reject if not.
+                    value.set(input_value.get());
+                    return;
                 }
+                // Update if all is ok.
+                last_value.set(*new);
+                input_value.set(*new);
             }
         },
         // Internal state already gets intialised at creation time.

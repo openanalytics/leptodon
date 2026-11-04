@@ -20,7 +20,7 @@ use leptodon::button::DropdownButton;
 use leptodon::button::DropdownButtonChildren;
 use leptodon::dropdown::AlignmentAnchor;
 use leptodon::dropdown::Dropdown;
-use leptodon::dropdown::DropdownItem;
+use leptodon::dropdown::DropdownButtonItem;
 use leptodon::heading::Heading4;
 use leptodon::layout::FixedCenterColumn;
 use leptodon_proc_macros::generate_codeblock;
@@ -42,11 +42,11 @@ pub fn DropdownDemo() -> impl IntoView {
         "Last action: " {move || format!("{:?}", last_action.get())}
         <div class="relative">
             <Dropdown is_visible>
-                <DropdownItem label="Item-1" on_click=move |_e| {
+                <DropdownButtonItem label="Item-1" on_click=move |_e| {
                     last_action.set("item-1");
                     set_visible.set(false);
                 }/>
-                <DropdownItem label="Item-2" on_click=move |_e| {
+                <DropdownButtonItem label="Item-2" on_click=move |_e| {
                     last_action.set("item-2");
                     set_visible.set(false);
                 }/>
@@ -69,10 +69,10 @@ pub fn DropdownButtonDemo() -> impl IntoView {
         <DropdownButton alignment=AlignmentAnchor::BottomRight>
             // The button label
            <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>
-           <DropdownItem label="Entry-1" on_click=move |_e| {
+           <DropdownButtonItem label="Entry-1" on_click=move |_e| {
                last_action.set("item-1");
            } />
-           <DropdownItem label="Entry-2" on_click=move |_e| {
+           <DropdownButtonItem label="Entry-2" on_click=move |_e| {
                last_action.set("item-2");
            } />
         </DropdownButton>
@@ -92,7 +92,7 @@ pub fn DropdownDemoPage() -> impl IntoView {
             <DropdownButtonExample />
 
             <leptodon::dropdown::DropdownDocs />
-            <leptodon::dropdown::DropdownItemDocs />
+            <leptodon::dropdown::DropdownButtonItemDocs />
             <leptodon::button::DropdownButtonDocs />
         </FixedCenterColumn>
     }

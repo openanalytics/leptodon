@@ -75,7 +75,7 @@ pub fn RouteShell() -> impl IntoView {
         <main>
             <SideNavbar>
                 <NavbarEntries slot:entries>
-                    <li><SideBarLink href="#" icon=icon::HomeIcon()>Home</SideBarLink></li>
+                    <li><SideBarLink href="/" icon=icon::HomeIcon()>Home</SideBarLink></li>
                     {demo_links}
                 </NavbarEntries>
                 <NavbarEndChildren slot:end>
@@ -97,7 +97,7 @@ pub fn App() -> impl IntoView {
         <MetaColorScheme color_scheme />
         <Router>
             <Routes fallback=|| "Page not found.">
-                <ParentRoute path=StaticSegment("/") view=RouteShell>
+                <ParentRoute path=StaticSegment("") view=RouteShell>
                     <Route path=StaticSegment("/") view=Home/>
                     <DemoRoutes/>
                 </ParentRoute>
@@ -110,7 +110,7 @@ pub fn App() -> impl IntoView {
 fn Home() -> impl IntoView {
     view! {
         <Title text=NAME />
-        <main class="flex justify-center align-center items-center min-h-full mt-[20vh] lg:mt-[10vh] flex-col sm:flex-row">
+        <div class="flex justify-center align-center items-center min-h-full mt-[20vh] lg:mt-[10vh] flex-col sm:flex-row">
             <img
                 src="/logo.svg"
                 class="max-w-[50vw] md:max-w-[40vw]"
@@ -125,6 +125,6 @@ fn Home() -> impl IntoView {
                 <a href="https://crates.io/crates/leptodon"><Button>Crate</Button></a>
                 <a href="https://github.com/openanalytics/leptodon"><Button>Github</Button></a>
             </div>
-        </main>
+        </div>
     }
 }

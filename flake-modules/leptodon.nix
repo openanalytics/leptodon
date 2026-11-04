@@ -24,24 +24,6 @@ let
     }
   );
 
-  # Build custom cargo-leptos
-  cargo-leptos = craneLib.buildPackage {
-    src = pkgs.fetchFromGitHub {
-      owner = "ToxicMushroom";
-      repo = "cargo-leptos";
-      rev = "0951eb8b9a68131100609631bb159f9bf616ab84";
-      hash = "sha256-u5dU4dykzB9ChzVJM5ABbRhT9F5nB33J5qTzhSyB+Ew=";
-      # At least examples is required to be removed, as crane ends up looking at tomlv1.0 incompatible files there and fails.
-      postFetch = ''
-        rm -r $out/examples $out/.github $out/.vscode $out/dist-workspace.toml;
-      '';
-    };
-    nativeBuildInputs = [ pkgs.pkg-config ];
-    OPENSSL_NO_VENDOR = 1;
-    cargoExtraArgs = "--features no_downloads"; # cargo-leptos will try to install missing dependencies on its own otherwise
-    doCheck = false;
-  };
-
   src = craneLib.cleanCargoSource ../.;
 
   # Common arguments can be set here to avoid repeating them later
@@ -57,8 +39,8 @@ let
       pkgs.lld
       pkgs.pkg-config
       pkgs.binaryen # wasm-opt
-      pkgs.wasm-bindgen-cli_0_2_127
-      cargo-leptos
+      pkgs.wasm-bindgen-cli_0_2_129
+      pkgs.cargo-leptos
     ];
 
     LEPTOS_HASH_FILES = "true";
