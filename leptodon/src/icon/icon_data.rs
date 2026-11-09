@@ -19,7 +19,7 @@
 pub struct IconData {
     pub class: Option<&'static str>,
     // Like alt text on <img>
-    pub title: Option<&'static str>,
+    pub title: &'static str,
     pub x: Option<&'static str>,
     pub y: Option<&'static str>,
     pub width: Option<&'static str>,
@@ -39,7 +39,7 @@ impl IconData {
         self.class = class;
         self
     }
-    pub fn set_title(mut self, title: Option<&'static str>) -> Self {
+    pub fn set_title(mut self, title: &'static str) -> Self {
         self.title = title;
         self
     }
@@ -98,13 +98,13 @@ impl IconData {
 /// Signature 2: `icon_data!(path: LazyLock<String>, side: u32)` \
 /// This is not a simple constructor because icons need static str refs to their width, height, viewbox etc.
 macro_rules! icon_data {
-    ($html:expr, $side:expr) => {
-        icon_data!($html, $side, $side)
+    ($html:expr, $title:expr, $side:expr) => {
+        icon_data!($html, $title, $side, $side)
     };
-    ($html:expr, $width:expr, $height:expr) => {
+    ($html:expr, $title:expr, $width:expr, $height:expr) => {
         IconData {
             class: None,
-            title: None,
+            title: $title,
             x: Some("0"),
             y: Some("0"),
             width: Some(stringify!($width)),

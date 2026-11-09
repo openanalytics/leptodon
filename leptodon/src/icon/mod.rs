@@ -70,6 +70,7 @@ pub fn Icon(
             class=class_list!(icon.class.unwrap_or_default(), class)
             x=icon.x
             y=icon.y
+            aria-label=icon.title
             width=move || width.get()
             height=move || height.get()
             viewBox=icon.view_box
@@ -110,7 +111,7 @@ pub fn HomeIcon() -> IconRef {
             <path fill-rule="evenodd" d="M11.293 3.293a1 1 0 0 1 1.414 0l6 6 2 2a1 1 0 0 1-1.414 1.414L19 12.414V19a2 2 0 0 1-2 2h-3a1 1 0 0 1-1-1v-3h-2v3a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2v-6.586l-.293.293a1 1 0 0 1-1.414-1.414l2-2 6-6Z" clip-rule="evenodd"/>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "home", 24).filled());
 }
 
 pub fn HamburgerIcon() -> IconRef {
@@ -124,7 +125,7 @@ pub fn HamburgerIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "more options", 24).filled());
 }
 
 pub fn UserIcon() -> IconRef {
@@ -134,7 +135,7 @@ pub fn UserIcon() -> IconRef {
             <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z"></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "user", 20).filled());
 }
 
 pub fn CalendarIcon() -> IconRef {
@@ -149,7 +150,7 @@ pub fn CalendarIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "calendar", 24).filled());
 }
 
 pub fn ProjectsIcon() -> IconRef {
@@ -165,7 +166,7 @@ pub fn ProjectsIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "projects", 24).filled());
 }
 
 pub fn ProjectsIconFilled() -> IconRef {
@@ -175,7 +176,7 @@ pub fn ProjectsIconFilled() -> IconRef {
             <path d="M19.5 21a3 3 0 003-3v-4.5a3 3 0 00-3-3h-15a3 3 0 00-3 3V18a3 3 0 003 3h15zM1.5 10.146V6a3 3 0 013-3h5.379a2.25 2.25 0 011.59.659l2.122 2.121c.14.141.331.22.53.22H19.5a3 3 0 013 3v1.146A4.483 4.483 0 0019.5 9h-15a4.483 4.483 0 00-3 1.146z"></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "projects", 24).filled());
 }
 
 pub fn CustomersIcon() -> IconRef {
@@ -189,7 +190,7 @@ pub fn CustomersIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "customers", 24).filled());
 }
 
 pub fn ContractsIcon() -> IconRef {
@@ -205,7 +206,7 @@ pub fn ContractsIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24));
+    return_lazified_icon!(icon_data!(&HTML, "contracts", 24));
 }
 
 pub fn ConsultantsIcon() -> IconRef {
@@ -215,7 +216,7 @@ pub fn ConsultantsIcon() -> IconRef {
             <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z"></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "consultants", 24).filled());
 }
 
 pub fn BillingIcon() -> IconRef {
@@ -235,7 +236,7 @@ pub fn BillingIcon() -> IconRef {
             <path d="M10.5 14.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "billing", 24).filled());
 }
 
 pub fn TaskIcon() -> IconRef {
@@ -245,7 +246,7 @@ pub fn TaskIcon() -> IconRef {
             <path d="M17.133 12.632v-1.8a5.406 5.406 0 0 0-4.154-5.262.955.955 0 0 0 .021-.106V3.1a1 1 0 0 0-2 0v2.364a.955.955 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C6.867 15.018 5 15.614 5 16.807 5 17.4 5 18 5.538 18h12.924C19 18 19 17.4 19 16.807c0-1.193-1.867-1.789-1.867-4.175ZM8.823 19a3.453 3.453 0 0 0 6.354 0H8.823Z"></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "task", 24).filled());
 }
 
 pub fn ReportingIcon() -> IconRef {
@@ -259,7 +260,7 @@ pub fn ReportingIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "reporting", 24).filled());
 }
 
 pub fn ApproveIcon() -> IconRef {
@@ -273,7 +274,7 @@ pub fn ApproveIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "approve", 24).filled());
 }
 
 pub fn RejectIcon() -> IconRef {
@@ -287,7 +288,7 @@ pub fn RejectIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "reject", 24).filled());
 }
 
 pub fn CloseIcon() -> IconRef {
@@ -303,7 +304,7 @@ pub fn CloseIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 14).filled());
+    return_lazified_icon!(icon_data!(&HTML, "close", 14).filled());
 }
 
 pub fn SearchIcon() -> IconRef {
@@ -319,7 +320,7 @@ pub fn SearchIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20));
+    return_lazified_icon!(icon_data!(&HTML, "search", 20));
 }
 
 pub fn PreviousIcon() -> IconRef {
@@ -333,7 +334,7 @@ pub fn PreviousIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "previous", 20).filled());
 }
 
 pub fn NextIcon() -> IconRef {
@@ -347,7 +348,7 @@ pub fn NextIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "next", 20).filled());
 }
 
 pub fn DownIcon() -> IconRef {
@@ -363,7 +364,7 @@ pub fn DownIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 10, 6));
+    return_lazified_icon!(icon_data!(&HTML, "down", 10, 6));
 }
 
 pub fn RefreshIcon() -> IconRef {
@@ -379,7 +380,7 @@ pub fn RefreshIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24));
+    return_lazified_icon!(icon_data!(&HTML, "refresh", 24));
 }
 
 pub fn DecrementIcon() -> IconRef {
@@ -395,7 +396,7 @@ pub fn DecrementIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 18, 2));
+    return_lazified_icon!(icon_data!(&HTML, "decrement", 18, 2));
 }
 
 pub fn IncrementIcon() -> IconRef {
@@ -411,7 +412,7 @@ pub fn IncrementIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 18));
+    return_lazified_icon!(icon_data!(&HTML, "increment", 18));
 }
 
 pub fn NoteFilledIcon() -> IconRef {
@@ -425,7 +426,7 @@ pub fn NoteFilledIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "note", 24).filled());
 }
 
 pub fn NoteIcon() -> IconRef {
@@ -441,7 +442,7 @@ pub fn NoteIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24));
+    return_lazified_icon!(icon_data!(&HTML, "note", 24));
 }
 
 pub fn ProjectAssignmentsIconFilled() -> IconRef {
@@ -455,7 +456,7 @@ pub fn ProjectAssignmentsIconFilled() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "project assignments", 24).filled());
 }
 
 pub fn ProjectAssignmentsIcon() -> IconRef {
@@ -470,7 +471,7 @@ pub fn ProjectAssignmentsIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24));
+    return_lazified_icon!(icon_data!(&HTML, "project assignments", 24));
 }
 
 pub fn LockOpenIcon() -> IconRef {
@@ -484,7 +485,7 @@ pub fn LockOpenIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "lock-open", 24).filled());
 }
 
 pub fn LockIcon() -> IconRef {
@@ -498,7 +499,7 @@ pub fn LockIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "lock", 24).filled());
 }
 
 pub fn ApprovedIcon() -> IconRef {
@@ -515,7 +516,7 @@ pub fn ApprovedIcon() -> IconRef {
         }
     );
     return_lazified_icon! {
-        icon_data!(&HTML, 24)
+        icon_data!(&HTML, "approved", 24)
             .set_class(Some("text-oa-blue dark:text-white"))
     };
 }
@@ -534,7 +535,7 @@ pub fn RejectedIcon() -> IconRef {
         }
     );
     return_lazified_icon! {
-        icon_data!(&HTML, 24)
+        icon_data!(&HTML, "rejected", 24)
             .set_class(Some("text-red-600 dark:text-red-500"))
     };
 }
@@ -553,7 +554,7 @@ pub fn PendingApprovalIcon() -> IconRef {
         }
     );
     return_lazified_icon! {
-        icon_data!(&HTML, 24)
+        icon_data!(&HTML, "pending-approval", 24)
             .set_class(Some("text-yellow-300 dark:text-yellow-300"))
     };
 }
@@ -572,7 +573,7 @@ pub fn SavedIcon() -> IconRef {
         }
     );
     return_lazified_icon! {
-        icon_data!(&HTML, 24)
+        icon_data!(&HTML, "saved", 24)
             .set_class(Some("text-oa-blue dark:text-oa-blue"))
     };
 }
@@ -591,7 +592,7 @@ pub fn EmptyIcon() -> IconRef {
         }
     );
     return_lazified_icon! {
-        icon_data!(&HTML, 24)
+        icon_data!(&HTML, "empty", 24)
             .set_class(Some("text-gray-400 dark:text-gray-400"))
     };
 }
@@ -614,7 +615,7 @@ pub fn WarnIcon() -> IconRef {
         }
     );
     return_lazified_icon! {
-        icon_data!(&HTML, 24)
+        icon_data!(&HTML, "warning", 24)
             .set_class(Some("text-yellow-300 dark:text-yellow-300"))
     };
 }
@@ -626,7 +627,7 @@ pub fn InfoIcon() -> IconRef {
             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "info", 20).filled());
 }
 
 fn ArrowIconPath() -> &'static str {
@@ -645,12 +646,12 @@ fn ArrowIconPath() -> &'static str {
     &HTML
 }
 pub fn RightArrowIcon() -> IconRef {
-    return_lazified_icon!(icon_data!(ArrowIconPath(), 24).filled());
+    return_lazified_icon!(icon_data!(ArrowIconPath(), "arrow pointing right", 24).filled());
 }
 
 pub fn LeftArrowIcon() -> IconRef {
     return_lazified_icon!(
-        icon_data!(ArrowIconPath(), 24)
+        icon_data!(ArrowIconPath(), "arrow pointing left", 24)
             .filled()
             .set_class(Some("-scale-x-100"))
     );
@@ -667,7 +668,7 @@ pub fn SaveIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "save", 20).filled());
 }
 
 pub fn DateIcon() -> IconRef {
@@ -677,7 +678,7 @@ pub fn DateIcon() -> IconRef {
             <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "date", 20).filled());
 }
 
 pub fn TableSearchIcon() -> IconRef {
@@ -691,7 +692,7 @@ pub fn TableSearchIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "table search", 20).filled());
 }
 
 pub fn UnsortedIcon() -> IconRef {
@@ -705,7 +706,7 @@ pub fn UnsortedIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "unsorted", 20).filled());
 }
 
 pub fn SortedAscendingIcon() -> IconRef {
@@ -719,7 +720,7 @@ pub fn SortedAscendingIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "sorted ascending", 20).filled());
 }
 
 pub fn SortedDescendingIcon() -> IconRef {
@@ -733,7 +734,7 @@ pub fn SortedDescendingIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "sorted descending", 20).filled());
 }
 
 pub fn HideIcon() -> IconRef {
@@ -747,7 +748,7 @@ pub fn HideIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24));
+    return_lazified_icon!(icon_data!(&HTML, "hide", 24));
 }
 
 pub fn ShowIcon() -> IconRef {
@@ -766,7 +767,7 @@ pub fn ShowIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24));
+    return_lazified_icon!(icon_data!(&HTML, "show", 24));
 }
 
 pub fn MoveIcon() -> IconRef {
@@ -781,7 +782,7 @@ pub fn MoveIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24));
+    return_lazified_icon!(icon_data!(&HTML, "move", 24));
 }
 
 pub fn EditIcon() -> IconRef {
@@ -791,7 +792,7 @@ pub fn EditIcon() -> IconRef {
             <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z"></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "edit", 20).filled());
 }
 
 pub fn DeleteIcon() -> IconRef {
@@ -805,7 +806,7 @@ pub fn DeleteIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "delete", 20).filled());
 }
 
 pub fn WarningIcon() -> IconRef {
@@ -821,7 +822,7 @@ pub fn WarningIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20));
+    return_lazified_icon!(icon_data!(&HTML, "warning", 20));
 }
 
 pub fn CancelIcon() -> IconRef {
@@ -831,7 +832,7 @@ pub fn CancelIcon() -> IconRef {
             <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "cancel", 20).filled());
 }
 
 pub fn AddIcon() -> IconRef {
@@ -841,7 +842,7 @@ pub fn AddIcon() -> IconRef {
             <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "add", 20).filled());
 }
 
 pub fn FirstIcon() -> IconRef {
@@ -855,7 +856,7 @@ pub fn FirstIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "first", 20).filled());
 }
 
 pub fn LastIcon() -> IconRef {
@@ -874,7 +875,7 @@ pub fn LastIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 20).filled());
+    return_lazified_icon!(icon_data!(&HTML, "last", 20).filled());
 }
 
 pub fn DownloadIcon() -> IconRef {
@@ -893,7 +894,7 @@ pub fn DownloadIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24).filled());
+    return_lazified_icon!(icon_data!(&HTML, "download", 24).filled());
 }
 
 pub fn ClearIcon() -> IconRef {
@@ -909,5 +910,5 @@ pub fn ClearIcon() -> IconRef {
             ></path>
         }
     );
-    return_lazified_icon!(icon_data!(&HTML, 24));
+    return_lazified_icon!(icon_data!(&HTML, "clear", 24));
 }
