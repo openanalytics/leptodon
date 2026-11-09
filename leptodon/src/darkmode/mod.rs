@@ -241,6 +241,7 @@ pub fn ThemeSelector(
             id=id.get()
             required=true
             name="theme"
+            attr:aria-label="page theme selector"
             selected=color_scheme.signal
             options=RwSignal::new(vec![Theme::Light, Theme::Dark, Theme::FollowSystem])
         />

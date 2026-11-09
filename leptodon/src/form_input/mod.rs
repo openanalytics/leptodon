@@ -18,19 +18,18 @@
 use leptodon_proc_macros::generate_docs;
 use leptos::context::Provider;
 use leptos::control_flow::ShowLet;
-use leptos::logging::debug_log;
-use leptos::prelude::{
-    ClassAttribute, ElementChild, Get, IntoAny, MaybeProp, NodeRef, NodeRefAttribute, OnAttribute,
-    RwSignal, Show,
-};
-use leptos::tachys::renderer::dom::Node;
-use leptos::wasm_bindgen::JsCast;
+use leptos::prelude::ElementChild;
+use leptos::prelude::{ClassAttribute, Get, IntoAny, MaybeProp, RwSignal, Show};
+use leptos::reactive::owner::{StoredValue, take_context};
+use leptos::reactive::traits::GetValue;
+use leptos::reactive::wrappers::read::Signal;
 use leptos::{IntoView, component, prelude::Children, view};
 use std::marker::PhantomData;
 
 use crate::class_list;
+use crate::util::shared_id::shared_id;
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct FormInputContext<E: Clone + Send + Sync + std::fmt::Display + 'static> {
     pub required: bool,
     pub label: MaybeProp<String>,
@@ -103,6 +102,9 @@ where
 /// A label component, shown above its children.
 #[component]
 pub fn Label(
+    #[prop(optional, into)]
+    /// When a label is given, this used in <label for=propagated_id ..> and passed set on the first child leptodon-input.
+    propagated_id: MaybeProp<String>,
     #[prop(optional, into)] label: MaybeProp<String>,
     /// Displays a red star in front of the label to indicate an input is required to be completed.
     required: bool,
@@ -110,29 +112,23 @@ pub fn Label(
     children: Children,
 ) -> impl IntoView {
     if let Some(label) = label.get() {
-        let label_ref = NodeRef::new();
+        let label_id_str: String = propagated_id.get().unwrap_or(shared_id().to_string());
+        let label_id = LabelId(label_id_str.clone());
+
+        // debug_log!("Suspicious label_id: {label_id:?}");
         view! {
-            <label class="block" on:click=move |e| {
-                // Not the most fond of this fix, label should just only warp when clicking the label :/
-                // TODO: Proper fix would be to not wrap everything in the label and to the input via ids. But that adds an extra-id burden.
-                if
-                    let Some(target) = e.target() &&
-                    let Ok(target_node) = target.dyn_into::<Node>() &&
-                    let Some(label_node) = label_ref.get() &&
-                    // When clicking inputs the browser does not teleport focus, and we want to respect the input click events still.
-                    target_node.node_name() != "INPUT" &&
-                    !label_node.contains(Some(&target_node))
-                {
-                    debug_log!("Non-label label-child was clicked, preventing browser click handling.");
-                    e.prevent_default();
-                }
-            }>
-                <div class="text-sm font-semibold text-heading text-gray-900 dark:text-gray-100" node_ref=label_ref>
+            <label
+                for=label_id_str
+                class="block"
+            >
+                <span class="text-sm font-semibold text-heading text-gray-900 dark:text-gray-100">
                     <RequiredStar required/>
                     {label}
-                </div>
-                {children()}
+                </span>
             </label>
+            <Provider value=label_id>
+                {children()}
+            </Provider>
         }
         .into_any()
     } else {
@@ -142,7 +138,7 @@ pub fn Label(
 
 /// Style helper
 /// Used for inline labels behind checkbox and toggle.
-/// Provide the label via *children*, caller is expected to wrap this and the input in a <label>.
+/// Provide the label via *children*
 #[component]
 pub fn PostfixLabelStyle(required: bool, children: Children) -> impl IntoView {
     view! {
@@ -160,4 +156,28 @@ pub fn RequiredStar(required: bool) -> impl IntoView {
             <span class="text-red-500">*</span>
         </Show>
     }
+}
+
+#[derive(Clone)]
+pub struct LabelId(pub String);
+
+/// Resolves label id via the explicitely provided id or LabelId context.
+pub fn opt_resolve_label_id(explicit: Option<String>, label_id: Option<String>) -> Option<String> {
+    explicit.or(label_id)
+}
+
+pub fn take_provided_label_id() -> StoredValue<Option<String>> {
+    StoredValue::new(take_context::<LabelId>().map(|l| l.0))
+}
+
+pub fn resolved_label_id(
+    explicit: MaybeProp<String>,
+    label_id: StoredValue<Option<String>>,
+    prefix: &'static str,
+    shared_id: String,
+) -> Signal<String> {
+    Signal::derive(move || {
+        opt_resolve_label_id(explicit.get(), label_id.get_value())
+            .unwrap_or_else(|| format!("{prefix}-{shared_id}"))
+    })
 }

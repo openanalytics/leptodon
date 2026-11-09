@@ -25,18 +25,21 @@ test("Checkbox interactivity", async ({ page }) => {
   await expect(page).toHaveTitle("Test Checkbox");
 
   // Test generic button functionality
-  let checkbox_disp = page.getByTestId("checkbox-disp");
+  // div around checkbox
   let checkbox = page.getByTestId("checkbox");
+  let checkbox_disp = page.getByTestId("checkbox-disp");
+  // <input> elem
+  let checkbox_input = checkbox.getByRole("checkbox");
   let btn_on = page.getByTestId("btn-on");
   let btn_off = page.getByTestId("btn-off");
 
   async function check_checkbox_state(state: boolean) {
     if (state) {
       await expect(checkbox_disp).toHaveText("true");
-      await expect(checkbox).toBeChecked();
+      await expect(checkbox_input).toBeChecked();
     } else {
       await expect(checkbox_disp).toHaveText("false");
-      await expect(checkbox).not.toBeChecked();
+      await expect(checkbox_input).not.toBeChecked();
     }
   }
 
@@ -45,8 +48,8 @@ test("Checkbox interactivity", async ({ page }) => {
   await check_checkbox_state(false);
   await btn_on.click();
   await check_checkbox_state(true);
-  await checkbox.click();
+  await checkbox_input.click();
   await check_checkbox_state(false);
-  await checkbox.locator("span").click();
+  await checkbox.locator("label").click();
   await check_checkbox_state(true);
 });

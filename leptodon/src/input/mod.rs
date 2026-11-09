@@ -26,11 +26,14 @@ use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::form_input::FormInputContext;
 use crate::form_input::Label;
 use crate::form_input::MaybeLabelledFormInput;
+use crate::form_input::resolved_label_id;
+use crate::form_input::take_provided_label_id;
 use crate::icon::HideIcon;
 use crate::icon::ShowIcon;
 use crate::input_group::GroupItemClassContext;
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
+use crate::util::shared_id::shared_id;
 use leptodon_proc_macros::generate_docs;
 use leptos::either::Either;
 use leptos::html;
@@ -511,6 +514,10 @@ where
         true,
     );
 
+    let fallback = shared_id();
+    let label_id = take_provided_label_id();
+    let id: Signal<String> = resolved_label_id(id, label_id, "input", fallback.clone());
+
     let standalone_input = view! {
         <input id=id.get()
             type=move || input_type.get().as_str()
@@ -549,7 +556,7 @@ where
                 if let Some(invalid_reason) = invalid_reason.get() && !in_form {
                     Either::Left(view!{
                         <div
-                            id=id.get().map(|id| format!("{id}-invalid-reason"))
+                            id=move || format!("{}-invalid-reason", id.get())
                             class="text-oa-red"
                         >{
                             invalid_reason.to_string()
@@ -565,7 +572,7 @@ where
     {
         Either::Left(view! {
             <div class=class_list!(class)>
-                <Label required=required.get() label>
+                <Label propagated_id=id required=required.get() label>
                     {standalone_input}
                 </Label>
             </div>

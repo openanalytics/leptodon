@@ -77,7 +77,7 @@ test("Tag Picker functionality", async ({ page }) => {
   // Re-open
   await tag_picker.click();
   // Test mouse selection
-  await tag_content.locator("div").filter({ hasText: "Boron" }).click();
+  await tag_content.getByText("boron").click();
   await expect(getTagInputLocator(tag_content, "Boron")).toBeChecked();
   await expect(sel_disp).toHaveText("Boron");
 
@@ -140,9 +140,9 @@ test("Tag Picker max_number", async ({ page }) => {
   await tag_picker.click();
 
   // Select 6th item
-  await tag_content.locator("div").filter({ hasText: "hydrogen" }).click();
+  await tag_content.getByText("hydrogen").click();
   // Try selecting 7th item
-  await tag_content.locator("div").filter({ hasText: "nitrogen" }).click();
+  await tag_content.getByText("nitrogen").click();
 
   await expect(getTagInputLocator(tag_content, "hydrogen")).toBeChecked();
   await expect(getTagInputLocator(tag_content, "nitrogen")).not.toBeChecked();

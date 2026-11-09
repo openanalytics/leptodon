@@ -63,15 +63,14 @@ where
 
     view! {
         <div
-            role="tablist"
             class=class_list!(
                 "text-sm font-medium text-center text-body border-b border-default",
                 ("mb-4", move || default_spacing)
             )
         >
-            <ul class="flex flex-wrap -mb-px">
+            <div role="tablist" class="flex flex-wrap -mb-px">
                 {children.into_inner()()}
-            </ul>
+            </div>
         </div>
         <div
             role="tabpanel"
@@ -122,7 +121,7 @@ pub fn Tab(
             };
 
             view! {
-                <li
+                <div
                     role="tab"
                     class="me-2"
                 >
@@ -143,7 +142,7 @@ pub fn Tab(
                             (INACTIVE_TAB_CLASS, move || id3 != tab_ctx.active.get().0)
                         )
                     >{title}</a>
-                </li>
+                </div>
             }
             .into_any()
         }

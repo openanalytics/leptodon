@@ -29,6 +29,7 @@ pub mod radio;
 pub mod select;
 pub mod tabs;
 pub mod tag_picker;
+pub mod textarea;
 pub mod toast;
 pub mod toggle;
 pub mod upload;

@@ -127,6 +127,8 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_info_label") view=crate::testcases::infolabel::TestInfoLabel/>
                 <Route path=StaticSegment("/test_tabs") view=crate::testcases::tabs::TestTabs/>
                 <Route path=StaticSegment("/test_toggle") view=crate::testcases::toggle::TestToggle/>
+                <Route path=StaticSegment("/test_textarea") view=crate::testcases::textarea::TestTextArea/>
+                <Route path=StaticSegment("/test_toast") view=crate::testcases::toast::TestToast/>
                 <Route path=StaticSegment("/test_checkbox") view=crate::testcases::checkbox::TestCheckbox/>
                 <Route path=StaticSegment("/test_popover") view=crate::testcases::popover::TestPopover/>
                 <Route path=StaticSegment("/test_date_range_picker") view=crate::testcases::date_range_picker::TestDateRangePicker/>
@@ -134,7 +136,6 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_year_calendar") view=crate::testcases::year_calendar::TestYearCalendar/>
                 <Route path=StaticSegment("/test_copy_button") view=crate::testcases::copy_button::TestCopyButton/>
                 <Route path=StaticSegment("/test_upload") view=crate::testcases::upload::TestUpload/>
-                <Route path=StaticSegment("/test_toast") view=crate::testcases::toast::TestToast/>
                 <Route path=StaticSegment("/forms") view=crate::forms::Forms/>
             </Routes>
         </Router>

@@ -154,6 +154,18 @@ pub fn Forms() -> impl IntoView {
                     "Advertising cookies"
                 </Toggle>
                 <br/>
+                <FormInput<String> label="Wrapped checkbox" required=true>
+                    <Checkbox name="wrapped_checkbox" checked=RwSignal::new(false)>
+                        "I accept these extra terms"
+                    </Checkbox>
+                </FormInput<String>>
+                <br/>
+                <FormInput<String> label="Wrapped toggle" required=true>
+                    <Toggle name="wrapped_toggle" checked=RwSignal::new(false)>
+                        "Enable this extra option"
+                    </Toggle>
+                </FormInput<String>>
+                <br/>
                 <FormInput<String> label="End date" required=true>
                     <DatePicker name="end-date" value=RwSignal::new(None) />
                 </FormInput<String>>
