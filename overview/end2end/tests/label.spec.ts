@@ -185,6 +185,21 @@ test("Label click focuses FormInput-wrapped date picker", async ({ page }) => {
   );
 });
 
+
+// Check that clicking the label of a <FormInput>-wrapped upload focuses it.
+test("Label click focuses FormInput-wrapped upload", async ({ page }) => {
+  await page.goto("/forms");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Forms");
+
+  await click_label_expect_focus(
+    page,
+    /Wrapped upload/,
+    page.locator('input[name="wrapped_upload"]'),
+  );
+});
+
 // Check that clicking the label of a <FormInput>-wrapped checkbox toggles it.
 test("Label click toggles FormInput-wrapped checkbox", async ({ page }) => {
   await page.goto("/forms");

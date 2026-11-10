@@ -1,7 +1,3 @@
-use leptos::prelude::ClassAttribute;
-use leptos::prelude::CollectView;
-use leptos::prelude::Effect;
-use leptos::prelude::Get;
 // Leptodon
 //
 // Copyright (C) 2025-2026 Open Analytics NV
@@ -20,7 +16,11 @@ use leptos::prelude::Get;
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use leptodon_proc_macros::generate_docs;
+use leptos::prelude::ClassAttribute;
+use leptos::prelude::CollectView;
+use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
+use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
 use leptos::prelude::IntoAny;
 use leptos::prelude::MaybeProp;
@@ -32,11 +32,15 @@ use leptos::prelude::RwSignal;
 use leptos::prelude::Set;
 use leptos::prelude::Track;
 use leptos::prelude::Trigger;
+use leptos::reactive::wrappers::read::Signal;
 use leptos::{IntoView, component, view};
 use web_sys::HtmlInputElement;
 
 use crate::class_list;
 use crate::form_input::Label;
+use crate::form_input::resolved_label_id;
+use crate::form_input::take_provided_label_id;
+use crate::util::shared_id::shared_id;
 const FILE_UPLOAD_CLASS: &str = "cursor-pointer bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-heading text-sm rounded-lg block w-full !shadow-sm placeholder:text-gray-600 dark:placeholder:text-gray-400
 dark:focus:ring-gray-800 outline-offset-[-1px] outline-[5px]
 !outline-none focus:z-10 focus:outline-oa-blue ";
@@ -62,6 +66,7 @@ pub fn FileUpload(
     let input_ref = NodeRef::new();
     let trigger_list_refresh = Trigger::new();
     let has_multiple_entries = RwSignal::new(false);
+
     Effect::new(move || {
         trigger_list_refresh.track();
         let opt_input: Option<HtmlInputElement> = input_ref.get();
@@ -73,14 +78,19 @@ pub fn FileUpload(
             has_multiple_entries.set(false);
         }
     });
+
+    let fallback = shared_id();
+    let label_id = take_provided_label_id();
+    let id: Signal<String> = resolved_label_id(id, label_id, "upload", fallback.clone());
+
     view! {
         <Label label=label required=required>
             <input
                 class=class_list!(FILE_UPLOAD_CLASS, ("", move || has_multiple_entries.get()))
-                id=id.get()
-                name=name.get()
+                id=id
+                name=move || name.get()
                 type="file"
-                accept=accept.get()
+                accept=move || accept.get()
                 required=required
                 node_ref=input_ref
                 multiple=multiple

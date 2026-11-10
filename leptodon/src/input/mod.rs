@@ -519,7 +519,8 @@ where
     let id: Signal<String> = resolved_label_id(id, label_id, "input", fallback.clone());
 
     let standalone_input = view! {
-        <input id=id.get()
+        <input
+            id=id
             type=move || input_type.get().as_str()
             inputmode=move || input_mode.get().as_str()
             name=move || name.get()
@@ -547,9 +548,9 @@ where
                     }
                 }
             }
-            step=step.get()
-            min=min.get()
-            max=max.get()
+            step=move || step.get()
+            min=move || min.get()
+            max=move || max.get()
         />
         {
             move || {

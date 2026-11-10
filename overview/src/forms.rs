@@ -21,6 +21,7 @@ use leptodon::checkbox::Checkbox;
 use leptodon::date_picker::DatePicker;
 use leptodon::date_picker::DateRangePicker;
 use leptodon::form_input::FormInput;
+use leptodon::input::FileUpload;
 use leptodon::input::{InputType, PasswordInput, TextInput};
 use leptodon::link::Link;
 use leptodon::select::{MaybeSelect, Select};
@@ -174,6 +175,9 @@ pub fn Forms() -> impl IntoView {
                 </FormInput<String>>
                 <FormInput<String> label="Notes" required=true>
                     <TextArea value=RwSignal::new("".to_string()) name="notes" />
+                </FormInput<String>>
+                <FormInput<String> label="Wrapped upload" required=true>
+                    <FileUpload multiple=true name="wrapped_upload" />
                 </FormInput<String>>
                 <Button button_type=ButtonType::Submit>"Submit"</Button>
             </div>
