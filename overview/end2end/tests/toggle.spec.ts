@@ -47,6 +47,6 @@ test("Toggle interactivity", async ({ page }) => {
   await check_toggle_state(true);
   await toggle.click();
   await check_toggle_state(false);
-  await toggle.locator("span").click();
+  await toggle.getByRole("switch").click();
   await check_toggle_state(true);
 });

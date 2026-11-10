@@ -77,7 +77,7 @@ test("Tag Picker functionality", async ({ page }) => {
   // Re-open
   await tag_picker.click();
   // Test mouse selection
-  await tag_content.locator("div").filter({ hasText: "Boron" }).click();
+  await tag_content.getByText("boron").click();
   await expect(getTagInputLocator(tag_content, "Boron")).toBeChecked();
   await expect(sel_disp).toHaveText("Boron");
 
@@ -140,9 +140,9 @@ test("Tag Picker max_number", async ({ page }) => {
   await tag_picker.click();
 
   // Select 6th item
-  await tag_content.locator("div").filter({ hasText: "hydrogen" }).click();
+  await tag_content.getByText("hydrogen").click();
   // Try selecting 7th item
-  await tag_content.locator("div").filter({ hasText: "nitrogen" }).click();
+  await tag_content.getByText("nitrogen").click();
 
   await expect(getTagInputLocator(tag_content, "hydrogen")).toBeChecked();
   await expect(getTagInputLocator(tag_content, "nitrogen")).not.toBeChecked();
@@ -198,7 +198,9 @@ test("Tag Picker dropdown opens adjacent to the trigger, inside a modal", async 
   await page.locator("#tag_picker2").click();
 
   let triggerBox = await page.locator("#tag_picker2-trigger").boundingBox();
-  let popoverBox = await page.locator("#tag_picker2-trigger + div").boundingBox();
+  let popoverBox = await page
+    .locator("#tag_picker2-trigger + div")
+    .boundingBox();
   if (!triggerBox || !popoverBox) {
     throw new Error("Could not get bounding boxes");
   }
@@ -245,4 +247,90 @@ test("Tag Picker dropdown opens without scrolling the page", async ({
 
   expect(finalX).toBe(initialX);
   expect(finalY).toBe(initialY);
+});
+
+test("Tag Picker popover grows when tags are added", async ({ page }) => {
+  await page.goto("/test_tag_picker");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Tag Picker");
+
+  let tag_picker = page.locator("#tag_picker");
+  let tag_search = page.locator("#tag_picker-search");
+  let tag_content = page.locator("#tag_picker-content");
+  let popover = page.locator("#tag_picker-trigger + div");
+  let scroll_container = tag_content.locator("..");
+
+  // Check that nothing overflows.
+  const expectContentInsidePopover = async () => {
+    await expect(async () => {
+      const popoverBox = await popover.boundingBox();
+      const contentBox = await scroll_container.boundingBox();
+      if (!popoverBox || !contentBox) {
+        throw new Error("Could not get bounding boxes");
+      }
+      expect(contentBox.y + contentBox.height).toBeLessThanOrEqual(
+        popoverBox.y + popoverBox.height + 1,
+      );
+    }).toPass();
+  };
+
+  // Init the popover size by opening it, popover sets size via style="width=...; ..." when opened
+  await page.locator("#elems-1-7").click();
+  await tag_picker.click();
+  await expect(tag_search).toBeFocused();
+  await expect(tag_content.getByText("Nitrogen")).toBeVisible();
+  await expectContentInsidePopover();
+  await page.keyboard.press("Escape");
+
+  // Add tags.
+  await page.locator("#elems-all").click();
+  await tag_picker.click();
+  await expect(popover).toBeVisible();
+  await expect(tag_content.getByText("Hydrogen")).toBeAttached();
+  await expectContentInsidePopover();
+});
+
+test("Tag Picker dropdown follows its trigger when a parent modal scrolls", async ({
+  page,
+}) => {
+  await page.goto("/test_tag_picker");
+
+  await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle("Test Tag Picker");
+
+  await page.getByRole("button", { name: "Toggle Modal" }).click();
+
+  // Scrolls the modal body down to the trigger.
+  await page.locator("#tag_picker2").click();
+  await expect(page.locator("#tag_picker2-search")).toBeFocused();
+
+  let trigger = page.locator("#tag_picker2-trigger");
+  let popover = page.locator("#tag_picker2-trigger + div");
+  let modal_body = page.locator("#tag_picker2").locator("..");
+
+  // Checks that the bottom-left corner of the popover is next to the top-left corner of the trigger.
+  const expectPopoverAttachedToTrigger = async () => {
+    await expect(async () => {
+      const triggerBox = await trigger.boundingBox();
+      const popoverBox = await popover.boundingBox();
+      if (!triggerBox || !popoverBox) {
+        throw new Error("Could not get bounding boxes");
+      }
+      expect(
+        Math.abs(popoverBox.y + popoverBox.height - triggerBox.y),
+      ).toBeLessThanOrEqual(5);
+      expect(Math.abs(popoverBox.x - triggerBox.x)).toBeLessThanOrEqual(5);
+    }).toPass();
+  };
+
+  await expectPopoverAttachedToTrigger();
+
+  // Scroll up in the modal
+  await modal_body.evaluate((el) => el.scrollBy(0, -260));
+
+  await expect(popover).toBeVisible();
+
+  // Popover should still be next to its trigger
+  await expectPopoverAttachedToTrigger();
 });

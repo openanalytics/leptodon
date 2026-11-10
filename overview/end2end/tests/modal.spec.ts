@@ -29,7 +29,7 @@ test("Modal opens and closes.", async ({ page }) => {
   await expect(example_modal).toBeHidden();
   // Try opening modal
   await toggle_button.click();
-  // Assert Open
+  // Assert open
   await expect(example_modal).toBeVisible();
 
   // Focus tab-transfer from toggle-modal-btn -?> first button (close button).

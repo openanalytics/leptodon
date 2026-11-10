@@ -28,6 +28,7 @@ use leptos_meta::Title;
 pub fn TestSelect() -> impl IntoView {
     let elements = RwSignal::new((1..=10).collect::<Vec<u8>>());
     let selected = RwSignal::new(None);
+    let labeled_selected = RwSignal::new(None);
     view! {
         <Title text="Test Select"/>
         <p id="selected-display">
@@ -39,6 +40,14 @@ pub fn TestSelect() -> impl IntoView {
             selected=selected
             options=elements
             name="favorite_number"
+        />
+        <MaybeSelect
+            id="labeled-sel"
+            class="my-3"
+            label="Labeled select"
+            selected=labeled_selected
+            options=elements
+            name="labeled_select"
         />
         <Button id="set-5" on_click=move |_e| {
             selected.set(Some(5));

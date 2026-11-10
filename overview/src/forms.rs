@@ -21,6 +21,7 @@ use leptodon::checkbox::Checkbox;
 use leptodon::date_picker::DatePicker;
 use leptodon::date_picker::DateRangePicker;
 use leptodon::form_input::FormInput;
+use leptodon::input::FileUpload;
 use leptodon::input::{InputType, PasswordInput, TextInput};
 use leptodon::link::Link;
 use leptodon::select::{MaybeSelect, Select};
@@ -154,6 +155,18 @@ pub fn Forms() -> impl IntoView {
                     "Advertising cookies"
                 </Toggle>
                 <br/>
+                <FormInput<String> label="Wrapped checkbox" required=true>
+                    <Checkbox name="wrapped_checkbox" checked=RwSignal::new(false)>
+                        "I accept these extra terms"
+                    </Checkbox>
+                </FormInput<String>>
+                <br/>
+                <FormInput<String> label="Wrapped toggle" required=true>
+                    <Toggle name="wrapped_toggle" checked=RwSignal::new(false)>
+                        "Enable this extra option"
+                    </Toggle>
+                </FormInput<String>>
+                <br/>
                 <FormInput<String> label="End date" required=true>
                     <DatePicker name="end-date" value=RwSignal::new(None) />
                 </FormInput<String>>
@@ -162,6 +175,9 @@ pub fn Forms() -> impl IntoView {
                 </FormInput<String>>
                 <FormInput<String> label="Notes" required=true>
                     <TextArea value=RwSignal::new("".to_string()) name="notes" />
+                </FormInput<String>>
+                <FormInput<String> label="Wrapped upload" required=true>
+                    <FileUpload multiple=true name="wrapped_upload" />
                 </FormInput<String>>
                 <Button button_type=ButtonType::Submit>"Submit"</Button>
             </div>

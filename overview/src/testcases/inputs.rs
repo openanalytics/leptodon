@@ -26,6 +26,7 @@ use leptodon::input::NumberInput;
 use leptodon::input::NumberInputConfigProps;
 use leptodon::input::OptNumberInput;
 use leptodon::input::OptionalU32;
+use leptodon::input::PasswordInput;
 use leptodon::input::TextInput;
 use leptodon::input::TextInputConfigProps;
 use leptos::prelude::BindAttribute;
@@ -175,6 +176,25 @@ pub fn TestInputs() -> impl IntoView {
                     />
                     <Button button_type=ButtonType::Submit>"Submit"</Button>
                 </form>
+            </CardSection>
+        </Card>
+
+        <Card>
+            <CardSection>
+                <Heading4>"Labeled inputs"</Heading4>
+                <TextInput
+                    id="labeled-text-input"
+                    class="my-3"
+                    label="Labeled text input"
+                    placeholder="Text for the label test"
+                />
+                <PasswordInput
+                    id="labeled-password-input"
+                    class="my-3"
+                    label="Labeled password input"
+                    hazards=vec![]
+                    placeholder="Password for the label test"
+                />
             </CardSection>
         </Card>
 

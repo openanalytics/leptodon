@@ -184,7 +184,7 @@ pub fn CopyButton(
             .clipboard()
             .write_text(&to_copy.get());
         btn_text.set("Copied!");
-        set_timeout(
+        let _ = set_timeout(
             move || {
                 btn_text.set("Copy");
             },
@@ -221,14 +221,14 @@ pub struct DropdownButtonChildren {
 ///
 /// Example:
 /// ```no_run
-/// # use leptodon::dropdown::DropdownItem;
+/// # use leptodon::dropdown::DropdownButtonItem;
 /// # use leptodon::button::DropdownButtonChildren;
 /// # use leptodon::button::DropdownButton;
 /// # use leptos::logging::debug_log;
 /// leptos::view! {
 ///     <DropdownButton>
 ///         <DropdownButtonChildren slot:button_children>"DropDownButton"</DropdownButtonChildren>
-///         <DropdownItem label="Entry-1" on_click=move |e| { debug_log!("{e:?}"); } />
+///         <DropdownButtonItem label="Entry-1" on_click=move |e| { debug_log!("{e:?}"); } />
 ///     </DropdownButton>
 /// };
 /// ```

@@ -90,7 +90,7 @@ pub fn App() -> impl IntoView {
     view! {
         <Router>
             <Routes fallback=|| "Page not found.">
-                <ParentRoute path=StaticSegment("/") view=RouteShell>
+                <ParentRoute path=StaticSegment("") view=RouteShell>
                     <Route path=StaticSegment("/") view=Home/>
                     <DemoRoutes/>
                 </ParentRoute>
