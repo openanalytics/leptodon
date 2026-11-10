@@ -52,7 +52,7 @@ nucleo-matcher = { workspace = true }
 zxcvbn = { workspace = true }
 leptos-use-math = { workspace = true }
 leptos-use-document = { workspace = true }
-leptos-use-window-scroll = { workspace = true }
+leptos-use-resize-observer = { workspace = true }
 leptos-use-calendar = { workspace = true }
 leptos-use-preferences = { workspace = true }
 leptos-use-window = { workspace = true }
@@ -78,7 +78,7 @@ ssr = [
     "leptos-use/ssr",
     "leptos-use-math/ssr",
     "leptos-use-document/ssr",
-    "leptos-use-window-scroll/ssr",
+    "leptos-use-resize-observer/ssr",
     "leptos-use-calendar/ssr",
     "leptos-use-preferences/ssr",
     "leptos-use-window/ssr",

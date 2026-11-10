@@ -22,8 +22,12 @@ use crate::util::on_pointer_down::{
     OnPointerDownOutsideOptions, on_pointer_down_outside_with_options,
 };
 use leptos::leptos_dom::helpers::set_timeout;
+use leptos::prelude::Trigger as LeptosTrigger;
+use leptos_use::UseEventListenerOptions;
 use leptos_use_document::use_document;
-use leptos_use_window_scroll::use_window_scroll;
+use leptos_use_event_listener::use_event_listener_with_options;
+use leptos_use_resize_observer::use_resize_observer;
+use leptos_use_window::use_window;
 
 use crate::{
     class_list::reactive_class::MaybeReactiveClass,
@@ -31,7 +35,7 @@ use crate::{
 };
 use leptodon_proc_macros::generate_docs;
 use leptos::{
-    ev::{click, mouseenter, mouseleave, on},
+    ev::{click, mouseenter, mouseleave, on, scroll},
     html::Div,
     prelude::*,
 };
@@ -55,7 +59,6 @@ pub struct PopoverController {
 }
 
 #[generate_docs]
-// TODO: Resize observer ?
 #[component]
 pub fn Popover<Trigger, Content>(
     #[prop(optional, into)] id: MaybeProp<String>,
@@ -115,7 +118,6 @@ where
 
     let popover_visible = use_or(show_by_hover, popover_clicked_open);
 
-    let (x, y) = use_window_scroll();
     if let Some(popover_controller) = popover_controller {
         Effect::watch(
             move || popover_visible.get(),
@@ -151,13 +153,38 @@ where
             false,
         );
     }
+
+    // Re-position popover when it resizes.
+    let content_scroll_container_ref = content_scroll_container_ref
+        .get_untracked()
+        .unwrap_or_default();
+    let content_resized = LeptosTrigger::new();
+    let _ = use_resize_observer(content_scroll_container_ref, move |_, _| {
+        content_resized.notify();
+    });
+
+    let scrolled = LeptosTrigger::new();
+    let _ = use_event_listener_with_options(
+        use_window(),
+        scroll,
+        move |_| {
+            if popover_visible.get_untracked() {
+                scrolled.notify();
+            }
+        },
+        UseEventListenerOptions::default()
+            // Capture scroll events of all elements
+            .capture(true)
+            // Tell browser it shouldn't wait for our listener to finish, so it can scroll smoothly.
+            .passive(true),
+    );
+
     let doc = use_document();
     Effect::new(move || {
         let popover_visible = popover_visible.get();
 
-        // update on scroll
-        let _ = x.get();
-        let _ = y.get();
+        content_resized.track();
+        scrolled.track();
 
         // Skip recalculate when invisible.
         if let Some(popover) = popover_ref.get()
@@ -165,6 +192,11 @@ where
             && let Some(doc) = doc.document_element()
             && popover_visible
         {
+            // Unstyle the popover so we can recalculate the size it wants to take (e.g. when removing/adding dynamic elements).
+            let popover_style = (*popover).style();
+            remove_style_property(&popover_style, "width");
+            remove_style_property(&popover_style, "height");
+
             let first_rel_parent = find_first_relative_parent(popover.clone().into());
             let first_rel_parent = if let Some(first_rel_parent) = first_rel_parent {
                 debug_log!(
@@ -201,7 +233,6 @@ where
                 }
 
                 debug_log!("Rel_pos: {popover_placement:?}");
-                let popover_style = (*popover).style();
 
                 set_style_property(&popover_style, "left", format!("{x}px"));
                 set_style_property(&popover_style, "top", format!("{y}px"));
@@ -301,18 +332,11 @@ where
     let popover_content = view! {
         <div
             class="overflow-auto h-fit scroll-py-2 py-2 py-1 max-w-[80vw] md:max-w-[60vw] lg:max-w-[40vw] max-h-[70vh] lg:max-h-[50vh] w-full p-2"
+            node_ref=content_scroll_container_ref
         >
             {content_children}
         </div>
     }.into_any();
-    let popover_content =
-        if let Some(content_scroll_container_ref) = content_scroll_container_ref.get() {
-            popover_content
-                .add_any_attr(node_ref(content_scroll_container_ref))
-                .into_any()
-        } else {
-            popover_content
-        };
 
     view! {
         <div id=id.get() class=class_list!(class)>
@@ -398,6 +422,16 @@ fn set_style_property(css_style: &CssStyleDeclaration, property: &str, value: St
     if let Err(err) = css_style.set_property(property, value.as_str()) {
         error!(
             "Failed to set a css property `{property:?}={value:?}` in the style attribute: {:?}",
+            err
+        );
+    }
+}
+
+/// CssStyleDeclaration::remove_property wrapper with some error logging.
+fn remove_style_property(css_style: &CssStyleDeclaration, property: &str) {
+    if let Err(err) = css_style.remove_property(property) {
+        error!(
+            "Failed to remove a css property `{property:?}` in the style attribute: {:?}",
             err
         );
     }
