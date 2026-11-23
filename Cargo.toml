@@ -57,14 +57,14 @@ tower-http = { version = "0.7.1", features = ["fs"] }
 tokio = { version = "1", features = ["rt-multi-thread"] }
 
 # Leptos core
-leptos = { version = "0.9.0-rc0", features = ["rkyv", "tracing"] }
-leptos_axum = { version = "0.9.0-rc0" }
-leptos_meta = { version = "0.9.0-rc0" }
-leptos_router = { version = "0.9.0-rc0" }
-wasm-bindgen = { version = "=0.2.129" }
+leptos = { version = "0.9.0-rc1", features = ["rkyv", "tracing"] }
+leptos_axum = { version = "0.9.0-rc1" }
+leptos_meta = { version = "0.9.0-rc1" }
+leptos_router = { version = "0.9.0-rc1" }
+wasm-bindgen = { version = "=0.2.130" }
 wasm-cookies = { version = "=0.2.1" }
-web-sys = { version = "=0.3.106" }
-reactive_stores = { version = "0.5.0-rc0" }
+web-sys = { version = "=0.3.107" }
+reactive_stores = { version = "0.5.0-rc1" }
 send_wrapper = { version = "0.6.0" }
 leptos-struct-table = { git = "https://github.com/ToxicMushroom/leptos-struct-table.git", branch = "leptos-0.9", features = [
     "chrono",
