@@ -179,8 +179,7 @@ where
                     ButtonAppearance::Secondary => OA_SECONDARY_BUTTON_CLASSES,
                     ButtonAppearance::Primary => OA_PRIMARY_BUTTON_CLASSES,
                     ButtonAppearance::Danger => OA_DANGER_BUTTON_CLASSES,
-                    ButtonAppearance::Subtle => todo!(),
-                    ButtonAppearance::Transparent => OA_TRANSPARENT_BUTTON_CLASSES,
+                    ButtonAppearance::Subtle | ButtonAppearance::Transparent => OA_TRANSPARENT_BUTTON_CLASSES,
                     ButtonAppearance::Minimal => OA_MINIMAL_BUTTON_CLASSES,
                 },
                 match shape {
@@ -198,7 +197,7 @@ where
                 if loading.get() {
                     EitherOf3::A(
                         view! {
-                            <Spinner />
+                            <Spinner class="w-5 h-5" />
                         },
                     )
                 } else if let Some(icon) = icon.get() {

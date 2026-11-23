@@ -37,14 +37,17 @@ use leptos::{
     prelude::{MaybeProp, Signal},
     view,
 };
-use leptos_use::math::use_or;
+use leptos_use_math::use_or;
 use std::fmt::Display;
 use std::hash::Hash;
 
 use crate::class_list;
 use crate::form_input::FormInputContext;
 use crate::form_input::Label;
+use crate::form_input::resolved_label_id;
+use crate::form_input::take_provided_label_id;
 use crate::radio::FormValue;
+use crate::util::shared_id::shared_id;
 pub const SELECT_CLASSES: &str = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 
 #[generate_docs]
@@ -204,6 +207,10 @@ where
         false,
     );
 
+    let fallback = shared_id();
+    let label_id = take_provided_label_id();
+    let id: Signal<String> = resolved_label_id(id, label_id, "select", fallback.clone());
+
     let select = view! {
         // Read-only variant.
         <Show
@@ -216,13 +223,13 @@ where
             }
         </Show>
         <select
-            id=id.get()
+            id=id
             class=class_list!(
                 SELECT_CLASSES,
                 // Only visually hidden when read-only, will still be submitted with any forms.
                 ("hidden", move || read_only.get())
             )
-            name=name.get()
+            name=name
             node_ref=node_ref
             on:input=move |_| {
                 if let Some(input) = node_ref.get() && !input.value().is_empty() {
@@ -238,29 +245,29 @@ where
                     debug_log!("Nothing was selected for {:?}", node_ref.get());
                 }
             }
-            required=required.get()
+            required=required
             disabled=disabled
         >
             <Show
                 when=move || { !options.get().is_empty() }
                 fallback=|| view! { <option disabled=true selected=true>No options</option> }
             >
-               {
-                   let placeholder = placeholder.clone();
-                   view! {
-                       <Show
-                            when=move || { required.get() }
-                            fallback=|| ().into_any()
-                        >
-                            // Placeholder option
-                            <option
-                                value=""
-                                disabled=true
-                                selected=move || { selected.get().is_none() && required.get() }
-                            >{ placeholder.clone() }</option>
-                        </Show>
-                   }
-               }
+            {
+                let placeholder = placeholder.clone();
+                view! {
+                    <Show
+                        when=move || { required.get() }
+                        fallback=|| ().into_any()
+                    >
+                        // Placeholder option
+                        <option
+                            value=""
+                            disabled=true
+                            selected=move || { selected.get().is_none() && required.get() }
+                        >{ placeholder.clone() }</option>
+                    </Show>
+                }
+            }
             </Show>
             <Show
                 when=move || { !required.get() }
@@ -292,11 +299,9 @@ where
         && form_context.is_none()
     {
         view! {
-            <span class=class_list!(class)>
-                <Label required=required.get() label>
-                    {select}
-                </Label>
-            </span>
+            <Label propagated_id=id required=required.get() label>
+                {select}
+            </Label>
         }
         .into_any()
     } else {

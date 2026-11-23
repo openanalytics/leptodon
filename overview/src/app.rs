@@ -46,7 +46,7 @@ use leptodon::darkmode::ThemeSelector;
 use leptodon::darkmode::use_color_scheme;
 use leptodon::date_picker::DatePicker;
 use leptodon::date_picker::DateRangePicker;
-use leptodon::dropdown::DropdownItem;
+use leptodon::dropdown::DropdownButtonItem;
 use leptodon::heading::*;
 use leptodon::icon;
 use leptodon::infolabel::InfoLabel;
@@ -118,6 +118,8 @@ pub fn App() -> impl IntoView {
             <Routes fallback=|| "Page not found.">
                 <Route path=StaticSegment("") view=Home/>
                 <Route path=StaticSegment("/test_alert") view=crate::testcases::alert::TestAlerts/>
+                <Route path=StaticSegment("/test_dialog") view=crate::testcases::dialog::TestDialog/>
+                <Route path=StaticSegment("/test_modal") view=crate::testcases::modal::TestModal/>
                 <Route path=StaticSegment("/test_select") view=crate::testcases::select::TestSelect/>
                 <Route path=StaticSegment("/test_radio") view=crate::testcases::radio::TestRadio/>
                 <Route path=StaticSegment("/test_tag_picker") view=crate::testcases::tag_picker::TestTagPicker/>
@@ -125,6 +127,8 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_info_label") view=crate::testcases::infolabel::TestInfoLabel/>
                 <Route path=StaticSegment("/test_tabs") view=crate::testcases::tabs::TestTabs/>
                 <Route path=StaticSegment("/test_toggle") view=crate::testcases::toggle::TestToggle/>
+                <Route path=StaticSegment("/test_textarea") view=crate::testcases::textarea::TestTextArea/>
+                <Route path=StaticSegment("/test_toast") view=crate::testcases::toast::TestToast/>
                 <Route path=StaticSegment("/test_checkbox") view=crate::testcases::checkbox::TestCheckbox/>
                 <Route path=StaticSegment("/test_popover") view=crate::testcases::popover::TestPopover/>
                 <Route path=StaticSegment("/test_date_range_picker") view=crate::testcases::date_range_picker::TestDateRangePicker/>
@@ -132,7 +136,6 @@ pub fn App() -> impl IntoView {
                 <Route path=StaticSegment("/test_year_calendar") view=crate::testcases::year_calendar::TestYearCalendar/>
                 <Route path=StaticSegment("/test_copy_button") view=crate::testcases::copy_button::TestCopyButton/>
                 <Route path=StaticSegment("/test_upload") view=crate::testcases::upload::TestUpload/>
-                <Route path=StaticSegment("/test_toast") view=crate::testcases::toast::TestToast/>
                 <Route path=StaticSegment("/forms") view=crate::forms::Forms/>
             </Routes>
         </Router>
@@ -245,7 +248,7 @@ fn Home() -> impl IntoView {
             <Link href="https://www.openanalytics.eu/">"Click here"</Link>
             <DropdownButton {..} data-testid="test-dropdown">
                 <DropdownButtonChildren slot:button_children>DropDownButton</DropdownButtonChildren>
-                <DropdownItem label="Entry-1" on_click=move |e| { log!("{:?}", e); } {..} data-testid="test-dropdown-item1" />
+                <DropdownButtonItem label="Entry-1" on_click=move |e| { log!("{:?}", e); } {..} data-testid="test-dropdown-item1" />
             </DropdownButton>
             <ModalButton id="modal-button1" modal_title="Example modal" modal_visible>
                 <ModalButtonChildren slot:button_children>Toggle Modal</ModalButtonChildren>

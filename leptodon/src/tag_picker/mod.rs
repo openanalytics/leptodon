@@ -44,6 +44,7 @@ use leptos::prelude::Trigger;
 use leptos::prelude::Update;
 use leptos::prelude::Write;
 use leptos::prelude::set_timeout;
+use leptos::reactive::traits::With;
 use leptos::{IntoView, component, prelude::MaybeProp, view};
 use nucleo_matcher::Config;
 use nucleo_matcher::Matcher;
@@ -209,18 +210,30 @@ where
         let mut matcher = NUCLEO_MATCHER.lock().expect("Unpoised");
         let filtersorted_tags = pattern.match_list(tags, &mut matcher);
 
-        /* Pigibacking code snippet, unrelated to fuzzy search, keeps focus_ith in-bounds based on # visible entries */
-        let focus_ith_value = focus_ith.get();
-        if focus_ith_value >= filtersorted_tags.len() {
-            focus_ith.set(filtersorted_tags.len().saturating_sub(1));
-        }
-        /* end */
-
         filtersorted_tags
             .into_iter()
             .map(|(tag, _score)| tag)
             .collect()
     });
+
+    // Keeps focus_ith in-bounds based on # visible entries
+    Effect::watch(
+        move || (tags_filtersorted.get(), focus_ith.get()),
+        move |(new_tags, new_focus_ith), old, _| {
+            if let Some((old_tags, old_focus_ith)) = old
+                && new_tags.len() == old_tags.len()
+                && new_focus_ith == old_focus_ith
+            {
+                // Skip update when nothing changed.
+                return;
+            }
+
+            if *new_focus_ith >= new_tags.len() {
+                focus_ith.set(new_tags.len().saturating_sub(1));
+            }
+        },
+        true,
+    );
 
     // Sorted into selected and unselected.
     // [selected_T|unselected_T]
@@ -252,7 +265,7 @@ where
         };
 
         // Run next tick such that the input box can first unhide itself. Can't focus invisible elements.
-        set_timeout(
+        let _ = set_timeout(
             move || {
                 input
                     .focus()
@@ -292,26 +305,36 @@ where
                         }
                     }
                 >
-                    <div class="flex gap-2 overflow-scroll">
+                    <div class="flex gap-2 overflow-auto">
                         // Selected tags
                         <For
                             each=move || inside_selected.get()
                             key=|tag| tag.clone()
                             let:tag
-                            >
+                        >
                             <div class="p-1.5 bg-oa-gray dark:bg-gray-800 rounded-lg flex items-center gap-1.5">
                                 <span>{tag.as_ref().to_string()}</span>
-                                <div class="p-1 hover:bg-oa-gray-mid hover:dark:bg-gray-600 hover:cursor-pointer rounded" on:click=move |ev| {
-                                    ev.stop_propagation();
+                                <div class="p-1 hover:bg-oa-gray-mid hover:dark:bg-gray-600 hover:cursor-pointer rounded" on:click={
                                     let tag = tag.clone();
-                                    let checkboxes = checkboxes.get();
-                                    let Some(checked) = checkboxes.get(&tag) else {
-                                        return ;
-                                    };
-                                    toggle_tag(inside_selected, tag, *checked, max_number).invoke(());
+                                    move |ev| {
+                                        ev.stop_propagation();
+                                        let tag = tag.clone();
+                                        let checkboxes = checkboxes.get();
+                                        let Some(checked) = checkboxes.get(&tag) else {
+                                            return ;
+                                        };
+                                        toggle_tag(inside_selected, tag, *checked, max_number).invoke(());
+                                    }
                                 }>
                                     <Icon class="w-3 h-3" icon=crate::icon::CloseIcon() />
                                 </div>
+                                <input
+                                    type="text"
+                                    hidden=true
+                                    name=name
+                                    value={tag.value()}
+                                    aria-hidden=true
+                                />
                             </div>
                         </For>
                         // Placeholder, shown when empty
@@ -374,8 +397,7 @@ where
                 <For
                     each=move || tags_grouped.get().into_iter().enumerate()
                     key=move |tag_indexed| {
-                        let checkboxes = checkboxes.get();
-                        if let Some(checkbox) = checkboxes.get(&tag_indexed.1) {
+                        if let Some(checkbox) = checkboxes.with(|it| it.get(&tag_indexed.1).cloned()) {
                             (tag_indexed.clone(), checkbox.get())
                         } else {
                             warn!("Checkbox signal not found in tag_picker ");
@@ -383,11 +405,9 @@ where
                         }
                     }
                     children=move |(i, tag)| {
-                        let checkboxes = checkboxes.get();
-                        let Some(checked) = checkboxes.get(&tag) else {
+                        let Some(checked) = checkboxes.with(|it| it.get(&tag).cloned()) else {
                             return ().into_any()
                         };
-                        let is_checked = checked.get_untracked();
 
                         debug_log!("Creating tag item");
                         let div_ref: NodeRef<Div> = NodeRef::new();
@@ -413,25 +433,16 @@ where
                                 node_ref=div_ref
                                 on:click={
                                     let tag = tag.clone();
-                                    toggle_tag(inside_selected, tag, *checked, max_number)
+                                    toggle_tag(inside_selected, tag, checked, max_number)
                                 }
                             >
-                                {let tag=tag.clone(); let tag2=tag.clone(); {
+                                {let tag=tag.clone(); {
                                     view! {
-                                        <Checkbox disable_tab=true checked=*checked controlled=true>
+                                        <Checkbox disable_tab=true checked=checked controlled=true>
                                             {tag.as_ref().to_string()}
                                         </Checkbox>
-                                        <input
-                                            type="text"
-                                            hidden=true
-                                            disabled=!is_checked
-                                            name=name
-                                            value={tag2.value()}
-                                            aria-hidden=true
-                                        />
                                     }
                                 }}
-
                             </div>
                         }.into_any()
                     }

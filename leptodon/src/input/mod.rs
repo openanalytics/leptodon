@@ -26,11 +26,14 @@ use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::form_input::FormInputContext;
 use crate::form_input::Label;
 use crate::form_input::MaybeLabelledFormInput;
+use crate::form_input::resolved_label_id;
+use crate::form_input::take_provided_label_id;
 use crate::icon::HideIcon;
 use crate::icon::ShowIcon;
 use crate::input_group::GroupItemClassContext;
 use crate::util::callback::ArcOneCallback;
 use crate::util::callback::BoxOneCallback;
+use crate::util::shared_id::shared_id;
 use leptodon_proc_macros::generate_docs;
 use leptos::either::Either;
 use leptos::html;
@@ -52,7 +55,7 @@ use leptos::prelude::Signal;
 use leptos::prelude::Update;
 use leptos::prelude::use_context;
 use leptos::{IntoView, component, view};
-use leptos_use::math::use_or;
+use leptos_use_math::use_or;
 use std::fmt::Debug;
 use web_sys::Event;
 use web_sys::FocusEvent;
@@ -511,11 +514,16 @@ where
         true,
     );
 
+    let fallback = shared_id();
+    let label_id = take_provided_label_id();
+    let id: Signal<String> = resolved_label_id(id, label_id, "input", fallback.clone());
+
     let standalone_input = view! {
-        <input id=id.get()
+        <input
+            id=id
             type=move || input_type.get().as_str()
             inputmode=move || input_mode.get().as_str()
-            name={name.get()}
+            name=move || name.get()
             class=class_list![
                 ("border-oa-red", move || invalid_reason.get().is_some()),
                 group_classes.unwrap_or_default(),
@@ -523,11 +531,12 @@ where
                 (OA_READONLY_INPUT_CLASSES, move || readonly.get()),
                 (OA_INPUT_CLASSES, move || !readonly.get())
             ]
-            disabled={readonly.get()}
-            readonly={readonly.get()}
+            // TODO: Readonly should not disable, disabled should have a reason in tooltip.
+            disabled=move || readonly.get()
+            readonly=move || readonly.get()
             node_ref=input_ref
-            placeholder={placeholder.get()}
-            required={required.get()}
+            placeholder=move || placeholder.get()
+            required=move || required.get()
             on:blur=on_blur
             on:input=on_input
             on:focus=move |e| {if let Some(on_focus) = on_focus.get() { on_focus(e) }}
@@ -539,16 +548,16 @@ where
                     }
                 }
             }
-            step=step.get()
-            min=min.get()
-            max=max.get()
+            step=move || step.get()
+            min=move || min.get()
+            max=move || max.get()
         />
         {
             move || {
                 if let Some(invalid_reason) = invalid_reason.get() && !in_form {
                     Either::Left(view!{
                         <div
-                            id=id.get().map(|id| format!("{id}-invalid-reason"))
+                            id=move || format!("{}-invalid-reason", id.get())
                             class="text-oa-red"
                         >{
                             invalid_reason.to_string()
@@ -564,7 +573,7 @@ where
     {
         Either::Left(view! {
             <div class=class_list!(class)>
-                <Label required=required.get() label>
+                <Label propagated_id=id required=required.get() label>
                     {standalone_input}
                 </Label>
             </div>

@@ -18,6 +18,7 @@
 use std::sync::Arc;
 
 use leptodon_proc_macros::generate_docs;
+use leptos::attr::global::GlobalAttributes;
 use leptos::logging::warn;
 use leptos::prelude::ChildrenFn;
 use leptos::prelude::ClassAttribute;
@@ -61,15 +62,21 @@ where
     });
 
     view! {
-        <div class=class_list!(
-            "text-sm font-medium text-center text-body border-b border-default",
-            ("mb-4", move || default_spacing)
-        )>
-            <ul class="flex flex-wrap -mb-px">
+        <div
+            class=class_list!(
+                "text-sm font-medium text-center text-body border-b border-default",
+                ("mb-4", move || default_spacing)
+            )
+        >
+            <div role="tablist" class="flex flex-wrap -mb-px">
                 {children.into_inner()()}
-            </ul>
+            </div>
         </div>
-        {move || (selected_tab.get().1)()}
+        <div
+            role="tabpanel"
+        >
+            {move || (selected_tab.get().1)()}
+        </div>
     }
 }
 
@@ -114,7 +121,10 @@ pub fn Tab(
             };
 
             view! {
-                <li class="me-2">
+                <div
+                    role="tab"
+                    class="me-2"
+                >
                     <a
                         href="#"
                         on:click=move |e| {
@@ -132,7 +142,7 @@ pub fn Tab(
                             (INACTIVE_TAB_CLASS, move || id3 != tab_ctx.active.get().0)
                         )
                     >{title}</a>
-                </li>
+                </div>
             }
             .into_any()
         }

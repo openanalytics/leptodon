@@ -38,18 +38,24 @@ pub fn TestToggle() -> impl IntoView {
             checked=checked
             attr:data-testid="toggle"
         >
-            Test Label
+            "Test Label"
         </Toggle>
         <br/>
-        <Button on_click=move |_| {
-            checked.set(true);
-        } attr:data-testid="btn-on">
-            On
+        <Button
+            on_click=move |_| {
+                checked.set(true);
+            }
+            attr:data-testid="btn-on"
+        >
+            "On"
         </Button>
-        <Button on_click=move |_| {
-            checked.set(false);
-        } attr:data-testid="btn-off">
-            Off
+        <Button
+            on_click=move |_| {
+                checked.set(false);
+            }
+            attr:data-testid="btn-off"
+        >
+            "Off"
         </Button>
     }
 }

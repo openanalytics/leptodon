@@ -16,6 +16,7 @@ proc-macro = true
 quote = { workspace = true }
 proc-macro2 = { workspace = true }
 syn = { workspace = true, features = ["full"] }
+rstml = { workspace = true }
 
 [build-dependencies]
 walkdir = "2.5.0"

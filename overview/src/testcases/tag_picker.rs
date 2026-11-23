@@ -100,5 +100,8 @@ pub fn TestTagPicker() -> impl IntoView {
         <Button id="elems-3-10" on_click=move |_e| {
             elements.set(range_to_tags(3..=10));
         }>"Make selectable elements = (3..=10)"</Button>
+        <Button id="elems-all" on_click=move |_e| {
+            elements.set(Element::iter().collect());
+        }>"Make all elements selectable"</Button>
     }
 }

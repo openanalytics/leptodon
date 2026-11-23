@@ -258,6 +258,7 @@ where
         + Intness
         + Signedness
         + PartialOrd
+        + Ord
         + Clone
         + Default
         + Send
@@ -283,6 +284,10 @@ where
             input.as_str()
         };
 
+        if input.is_empty() {
+            return Ok(OptNumberType::default());
+        }
+
         let parsed_value = match NumberType::from_str_radix(input, 10) {
             Ok(parsed_value) => parsed_value,
             Err(_) => {
@@ -301,8 +306,14 @@ where
 
         if let Some(step) = number_config.step.get()
             && NumberType::is_int()
+            && !step.is_zero()
         {
-            let remainder = parsed_value.clone() % step.clone();
+            let min_or_zero = number_config.min.get().unwrap_or_default();
+            let relative_value = parsed_value
+                .clone()
+                .sub(std::cmp::min(parsed_value.clone(), min_or_zero));
+
+            let remainder = relative_value % step.clone();
             if remainder != NumberType::zero() {
                 return Err(format!(
                     "Value must be divisible by {step}, current remainder: {remainder}"

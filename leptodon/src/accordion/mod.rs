@@ -19,7 +19,7 @@ use crate::class_list;
 use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::util::shared_id::shared_id;
 use leptodon_proc_macros::generate_docs;
-use leptos::leptos_dom::logging::console_log;
+use leptos::logging::debug_log;
 use leptos::prelude::*;
 use leptos::{IntoView, component, view};
 
@@ -46,28 +46,46 @@ pub fn AccordionEntry(
     let (is_hidden, set_hidden) = signal(true);
     view! {
         <h2 id=head_id.clone()>
-          <button type="button" class=class_list![
-              ACCORDION_HEADING_CLASSES,
-              ("bg-gray-50 dark:bg-gray-900", move || !is_hidden.get())
-          ] aria-expanded="true" aria-controls=body_id.clone()
-            on:click=move |_| {
-                console_log(format!("Is_hidden: {}", is_hidden.get()).as_str());
-                set_hidden.set(!is_hidden.get());
-            }>
-            <span>{ title }</span>
-            <svg class=class_list![
-                "w-5 h-5 shrink-0",
-                ("rotate-180", move || is_hidden.get())
-            ] aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/></svg>
-          </button>
+            <button
+                type="button"
+                class=class_list![
+                    ACCORDION_HEADING_CLASSES,
+                    ("bg-gray-50 dark:bg-gray-900", move || !is_hidden.get())
+                ]
+                aria-expanded=move || !is_hidden.get()
+                aria-controls=body_id.clone()
+                on:click=move |_| {
+                    debug_log!("Is_hidden: {}", is_hidden.get());
+                    set_hidden.set(!is_hidden.get());
+                }
+            >
+                <span>{ title }</span>
+                <svg
+                    class=class_list![
+                        "w-5 h-5 shrink-0",
+                        ("rotate-180", move || is_hidden.get())
+                    ]
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                >
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/>
+                </svg>
+            </button>
         </h2>
-        <div id=body_id class=class_list![
-            ACCORDION_BODY_CLASSES,
-            ("hidden", move || is_hidden.get())
-        ] aria-labelledby=head_id>
-          <div class="p-4 md:p-5">
-            { children() }
-          </div>
+        <div
+            id=body_id
+            class=class_list![
+                ACCORDION_BODY_CLASSES,
+                ("hidden", move || is_hidden.get())
+            ]
+            aria-labelledby=head_id>
+            <div class="p-4 md:p-5">
+                { children() }
+            </div>
         </div>
     }
 }
@@ -85,8 +103,9 @@ pub fn Accordion<T>(
 where
     T: AddAnyAttr + IntoView + Send + 'static,
 {
+    let id = shared_id();
     view! {
-        <div id="accordion-collapse" data-accordion="collapse" class=class_list!(ACCORDION_CONTAINER_CLASS, class)>
+        <div id=format!("accordion-collapse-{id}") data-accordion="collapse" class=class_list!(ACCORDION_CONTAINER_CLASS, class)>
             { children.into_inner()() }
         </div>
     }

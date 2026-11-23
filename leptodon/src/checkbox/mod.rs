@@ -16,11 +16,9 @@
 // You should have received a copy of the Apache License along with this program.
 // If not, see <http://www.apache.org/licenses/>
 use leptodon_proc_macros::generate_docs;
-use leptos::logging::debug_log;
 use leptos::prelude::BindAttribute;
 use leptos::prelude::Children;
 use leptos::prelude::ClassAttribute;
-use leptos::prelude::Effect;
 use leptos::prelude::ElementChild;
 use leptos::prelude::Get;
 use leptos::prelude::GlobalAttributes;
@@ -32,11 +30,14 @@ use leptos::{
     prelude::{MaybeProp, Signal},
     view,
 };
-use leptos_use::math::use_or;
+use leptos_use_math::use_or;
 
 use crate::class_list;
 use crate::form_input::FormInputContext;
 use crate::form_input::PostfixLabelStyle;
+use crate::form_input::resolved_label_id;
+use crate::form_input::take_provided_label_id;
+use crate::util::shared_id::shared_id;
 
 const CHECKBOX_CLASS: &str = "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
 
@@ -77,25 +78,31 @@ pub fn Checkbox(
         use_or(required, form_required)
     };
 
-    Effect::watch(
+    #[cfg(debug_assertions)]
+    leptos::prelude::Effect::watch(
         move || checked.get(),
         |new, _, _| {
-            debug_log!("Checkbox checked state changed to {new}");
+            leptos::logging::debug_log!("Checkbox checked state changed to {new}");
         },
         false,
     );
 
+    let fallback = shared_id();
+    let label_id = take_provided_label_id();
+    let id: Signal<String> = resolved_label_id(id, label_id, "checkbox", fallback.clone());
+
     view! {
-        <label class=class_list!["relative inline-flex items-center cursor-pointer", class]
+        <div class=class_list!["relative inline-flex items-center cursor-pointer", class]
             on:click={
                 move |ev| {
                     if controlled {
                         ev.prevent_default();
                     }
                 }
-            }>
+            }
+        >
             <input
-                id=id.get()
+                id=move || id.get()
                 name=name.get()
                 type="checkbox"
                 bind:checked=checked
@@ -104,7 +111,9 @@ pub fn Checkbox(
                 // Non integer values should make tabbing reset to the default behaviour.
                 tabindex=move || if disable_tab { "-1" } else { "auto" }
             />
-            <PostfixLabelStyle required=required.get() children />
-        </label>
+            <label for=move || id.get()>
+                <PostfixLabelStyle required=required.get() children />
+            </label>
+        </div>
     }
 }

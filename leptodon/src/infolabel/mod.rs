@@ -37,9 +37,9 @@ pub fn InfoLabel(
     view! {
         <button type="button" class=class_list!(class, "info-label-anchor align-[center]")>
             <Icon class="h-4 w-4" icon=icon::InfoIcon() />
-            <div class="info-label m-1 p-2 rounded-lg">
+            <span class="info-label m-1 p-2 rounded-lg">
                 {children()}
-            </div>
+            </span>
         </button>
     }
 }

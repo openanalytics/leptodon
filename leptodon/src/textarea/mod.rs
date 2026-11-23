@@ -28,12 +28,15 @@ use leptos::{
     prelude::{MaybeProp, RwSignal},
     view,
 };
-use leptos_use::math::use_or;
+use leptos_use_math::use_or;
 
 use crate::class_list;
 use crate::class_list::reactive_class::MaybeReactiveClass;
 use crate::form_input::FormInputContext;
 use crate::form_input::Label;
+use crate::form_input::resolved_label_id;
+use crate::form_input::take_provided_label_id;
+use crate::util::shared_id::shared_id;
 
 const TA_CLASSES: &str = "block p-2.5 w-full resize text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 const LABEL_CLASSES: &str = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
@@ -81,12 +84,17 @@ pub fn TextArea(
             .unwrap_or_default(),
     );
     let required = use_or(required, form_required);
+
+    let fallback = shared_id();
+    let label_id = take_provided_label_id();
+    let id: Signal<String> = resolved_label_id(id, label_id, "textarea", fallback.clone());
+
     view! {
         <div class=class_list![("my-1", move || default_spacing)]>
-            <Label label required=required.get()>
+           <Label propagated_id=id label required=required.get()>
                 <textarea
-                    id=id.get()
-                    name=name.get()
+                    id=move || id.get()
+                    name=move || name.get()
                     class=class_list![TA_CLASSES, class]
                     rows="4"
                     placeholder=move || placeholder.get()
@@ -94,7 +102,7 @@ pub fn TextArea(
                     readonly=readonly
                     disabled=disabled
                     bind:value=value
-                ></textarea>
+                />
             </Label>
         </div>
     }

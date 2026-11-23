@@ -42,7 +42,7 @@ use leptos::prelude::*;
 use leptos_use::CalendarDate;
 use leptos_use::UseCalendarOptions;
 use leptos_use::UseCalendarReturn;
-use leptos_use::use_calendar_with_options;
+use leptos_use_calendar::use_calendar_with_options;
 
 #[derive(Default, Clone, PartialEq, Eq, Hash)]
 pub enum YearCalendarLayout {
@@ -88,7 +88,7 @@ const MONTHS_IN_YEAR: [Month; 12] = [
     Month::December,
 ];
 
-pub fn dates_from_month(year: i32, month: Month) -> Vec<CalendarDate> {
+pub fn dates_from_month(year: i32, month: Month) -> Vec<CalendarDate<NaiveDate>> {
     let Some(date_this_month) = NaiveDate::from_ymd_opt(year, month.number_from_month(), 1) else {
         return vec![];
     };
